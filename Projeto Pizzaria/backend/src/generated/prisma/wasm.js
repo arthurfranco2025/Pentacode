@@ -141,7 +141,8 @@ exports.Prisma.FavoritoScalarFieldEnum = {
   id: 'id',
   created_at: 'created_at',
   update_at: 'update_at',
-  product_id: 'product_id'
+  product_id: 'product_id',
+  cliente_id: 'cliente_id'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {

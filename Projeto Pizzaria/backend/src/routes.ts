@@ -29,6 +29,8 @@ import { AuthClienteController } from './controllers/cliente/AuthClienteControll
 import { EditClienteController } from './controllers/cliente/EditClienteController'
 import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPasswordClienteController'
 
+import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
+
 import uploadConfig from './config/multer'
 
 const router = Router()
@@ -65,5 +67,7 @@ router.post('/cadastro', new CreateClienteController().handle)
 router.post('/login', new AuthClienteController().handle)
 router.put("/edit", isAuthenticated, new EditClienteController().handle.bind(new EditClienteController()));
 router.put('/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
+
+router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 
 export {router};

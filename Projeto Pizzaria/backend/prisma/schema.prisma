@@ -38,6 +38,7 @@ model Cliente {
   update_at  DateTime? @default(now())
 
   avaliacao  Avaliacao[]
+  favoritos  Favorito[]
 
   @@map("clientes")
 }
@@ -49,6 +50,9 @@ model Favorito{
 
   product    Product @relation(fields: [product_id], references: [id])
   product_id String
+  
+  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+  cliente_id String
   
   @@map("favorites")
 }

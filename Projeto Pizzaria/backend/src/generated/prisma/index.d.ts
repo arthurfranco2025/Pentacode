@@ -1507,10 +1507,12 @@ export namespace Prisma {
 
   export type ClienteCountOutputType = {
     avaliacao: number
+    favoritos: number
   }
 
   export type ClienteCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     avaliacao?: boolean | ClienteCountOutputTypeCountAvaliacaoArgs
+    favoritos?: boolean | ClienteCountOutputTypeCountFavoritosArgs
   }
 
   // Custom InputTypes
@@ -1529,6 +1531,13 @@ export namespace Prisma {
    */
   export type ClienteCountOutputTypeCountAvaliacaoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AvaliacaoWhereInput
+  }
+
+  /**
+   * ClienteCountOutputType without action
+   */
+  export type ClienteCountOutputTypeCountFavoritosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoritoWhereInput
   }
 
 
@@ -2844,6 +2853,7 @@ export namespace Prisma {
     created_at?: boolean
     update_at?: boolean
     avaliacao?: boolean | Cliente$avaliacaoArgs<ExtArgs>
+    favoritos?: boolean | Cliente$favoritosArgs<ExtArgs>
     _count?: boolean | ClienteCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cliente"]>
 
@@ -2883,6 +2893,7 @@ export namespace Prisma {
   export type ClienteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "cpf" | "data_nasc" | "created_at" | "update_at", ExtArgs["result"]["cliente"]>
   export type ClienteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     avaliacao?: boolean | Cliente$avaliacaoArgs<ExtArgs>
+    favoritos?: boolean | Cliente$favoritosArgs<ExtArgs>
     _count?: boolean | ClienteCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClienteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2892,6 +2903,7 @@ export namespace Prisma {
     name: "Cliente"
     objects: {
       avaliacao: Prisma.$AvaliacaoPayload<ExtArgs>[]
+      favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3297,6 +3309,7 @@ export namespace Prisma {
   export interface Prisma__ClienteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     avaliacao<T extends Cliente$avaliacaoArgs<ExtArgs> = {}>(args?: Subset<T, Cliente$avaliacaoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvaliacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    favoritos<T extends Cliente$favoritosArgs<ExtArgs> = {}>(args?: Subset<T, Cliente$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3746,6 +3759,30 @@ export namespace Prisma {
   }
 
   /**
+   * Cliente.favoritos
+   */
+  export type Cliente$favoritosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Favorito
+     */
+    select?: FavoritoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Favorito
+     */
+    omit?: FavoritoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoritoInclude<ExtArgs> | null
+    where?: FavoritoWhereInput
+    orderBy?: FavoritoOrderByWithRelationInput | FavoritoOrderByWithRelationInput[]
+    cursor?: FavoritoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FavoritoScalarFieldEnum | FavoritoScalarFieldEnum[]
+  }
+
+  /**
    * Cliente without action
    */
   export type ClienteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3779,6 +3816,7 @@ export namespace Prisma {
     created_at: Date | null
     update_at: Date | null
     product_id: string | null
+    cliente_id: string | null
   }
 
   export type FavoritoMaxAggregateOutputType = {
@@ -3786,6 +3824,7 @@ export namespace Prisma {
     created_at: Date | null
     update_at: Date | null
     product_id: string | null
+    cliente_id: string | null
   }
 
   export type FavoritoCountAggregateOutputType = {
@@ -3793,6 +3832,7 @@ export namespace Prisma {
     created_at: number
     update_at: number
     product_id: number
+    cliente_id: number
     _all: number
   }
 
@@ -3802,6 +3842,7 @@ export namespace Prisma {
     created_at?: true
     update_at?: true
     product_id?: true
+    cliente_id?: true
   }
 
   export type FavoritoMaxAggregateInputType = {
@@ -3809,6 +3850,7 @@ export namespace Prisma {
     created_at?: true
     update_at?: true
     product_id?: true
+    cliente_id?: true
   }
 
   export type FavoritoCountAggregateInputType = {
@@ -3816,6 +3858,7 @@ export namespace Prisma {
     created_at?: true
     update_at?: true
     product_id?: true
+    cliente_id?: true
     _all?: true
   }
 
@@ -3896,6 +3939,7 @@ export namespace Prisma {
     created_at: Date | null
     update_at: Date | null
     product_id: string
+    cliente_id: string
     _count: FavoritoCountAggregateOutputType | null
     _min: FavoritoMinAggregateOutputType | null
     _max: FavoritoMaxAggregateOutputType | null
@@ -3920,7 +3964,9 @@ export namespace Prisma {
     created_at?: boolean
     update_at?: boolean
     product_id?: boolean
+    cliente_id?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorito"]>
 
   export type FavoritoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3928,7 +3974,9 @@ export namespace Prisma {
     created_at?: boolean
     update_at?: boolean
     product_id?: boolean
+    cliente_id?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorito"]>
 
   export type FavoritoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3936,7 +3984,9 @@ export namespace Prisma {
     created_at?: boolean
     update_at?: boolean
     product_id?: boolean
+    cliente_id?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorito"]>
 
   export type FavoritoSelectScalar = {
@@ -3944,29 +3994,35 @@ export namespace Prisma {
     created_at?: boolean
     update_at?: boolean
     product_id?: boolean
+    cliente_id?: boolean
   }
 
-  export type FavoritoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "update_at" | "product_id", ExtArgs["result"]["favorito"]>
+  export type FavoritoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "update_at" | "product_id" | "cliente_id", ExtArgs["result"]["favorito"]>
   export type FavoritoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }
   export type FavoritoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }
   export type FavoritoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    cliente?: boolean | ClienteDefaultArgs<ExtArgs>
   }
 
   export type $FavoritoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Favorito"
     objects: {
       product: Prisma.$ProductPayload<ExtArgs>
+      cliente: Prisma.$ClientePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       created_at: Date | null
       update_at: Date | null
       product_id: string
+      cliente_id: string
     }, ExtArgs["result"]["favorito"]>
     composites: {}
   }
@@ -4362,6 +4418,7 @@ export namespace Prisma {
   export interface Prisma__FavoritoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    cliente<T extends ClienteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClienteDefaultArgs<ExtArgs>>): Prisma__ClienteClient<$Result.GetResult<Prisma.$ClientePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4395,6 +4452,7 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Favorito", 'DateTime'>
     readonly update_at: FieldRef<"Favorito", 'DateTime'>
     readonly product_id: FieldRef<"Favorito", 'String'>
+    readonly cliente_id: FieldRef<"Favorito", 'String'>
   }
     
 
@@ -10449,7 +10507,8 @@ export namespace Prisma {
     id: 'id',
     created_at: 'created_at',
     update_at: 'update_at',
-    product_id: 'product_id'
+    product_id: 'product_id',
+    cliente_id: 'cliente_id'
   };
 
   export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
@@ -10681,6 +10740,7 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     update_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     avaliacao?: AvaliacaoListRelationFilter
+    favoritos?: FavoritoListRelationFilter
   }
 
   export type ClienteOrderByWithRelationInput = {
@@ -10693,6 +10753,7 @@ export namespace Prisma {
     created_at?: SortOrderInput | SortOrder
     update_at?: SortOrderInput | SortOrder
     avaliacao?: AvaliacaoOrderByRelationAggregateInput
+    favoritos?: FavoritoOrderByRelationAggregateInput
   }
 
   export type ClienteWhereUniqueInput = Prisma.AtLeast<{
@@ -10708,6 +10769,7 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     update_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     avaliacao?: AvaliacaoListRelationFilter
+    favoritos?: FavoritoListRelationFilter
   }, "id">
 
   export type ClienteOrderByWithAggregationInput = {
@@ -10746,7 +10808,9 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
     update_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
     product_id?: StringFilter<"Favorito"> | string
+    cliente_id?: StringFilter<"Favorito"> | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
   }
 
   export type FavoritoOrderByWithRelationInput = {
@@ -10754,7 +10818,9 @@ export namespace Prisma {
     created_at?: SortOrderInput | SortOrder
     update_at?: SortOrderInput | SortOrder
     product_id?: SortOrder
+    cliente_id?: SortOrder
     product?: ProductOrderByWithRelationInput
+    cliente?: ClienteOrderByWithRelationInput
   }
 
   export type FavoritoWhereUniqueInput = Prisma.AtLeast<{
@@ -10765,7 +10831,9 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
     update_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
     product_id?: StringFilter<"Favorito"> | string
+    cliente_id?: StringFilter<"Favorito"> | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
   }, "id">
 
   export type FavoritoOrderByWithAggregationInput = {
@@ -10773,6 +10841,7 @@ export namespace Prisma {
     created_at?: SortOrderInput | SortOrder
     update_at?: SortOrderInput | SortOrder
     product_id?: SortOrder
+    cliente_id?: SortOrder
     _count?: FavoritoCountOrderByAggregateInput
     _max?: FavoritoMaxOrderByAggregateInput
     _min?: FavoritoMinOrderByAggregateInput
@@ -10786,6 +10855,7 @@ export namespace Prisma {
     created_at?: DateTimeNullableWithAggregatesFilter<"Favorito"> | Date | string | null
     update_at?: DateTimeNullableWithAggregatesFilter<"Favorito"> | Date | string | null
     product_id?: StringWithAggregatesFilter<"Favorito"> | string
+    cliente_id?: StringWithAggregatesFilter<"Favorito"> | string
   }
 
   export type CategoryWhereInput = {
@@ -11187,6 +11257,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     update_at?: Date | string | null
     avaliacao?: AvaliacaoCreateNestedManyWithoutClienteInput
+    favoritos?: FavoritoCreateNestedManyWithoutClienteInput
   }
 
   export type ClienteUncheckedCreateInput = {
@@ -11199,6 +11270,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     update_at?: Date | string | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutClienteInput
+    favoritos?: FavoritoUncheckedCreateNestedManyWithoutClienteInput
   }
 
   export type ClienteUpdateInput = {
@@ -11211,6 +11283,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     avaliacao?: AvaliacaoUpdateManyWithoutClienteNestedInput
+    favoritos?: FavoritoUpdateManyWithoutClienteNestedInput
   }
 
   export type ClienteUncheckedUpdateInput = {
@@ -11223,6 +11296,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutClienteNestedInput
+    favoritos?: FavoritoUncheckedUpdateManyWithoutClienteNestedInput
   }
 
   export type ClienteCreateManyInput = {
@@ -11263,6 +11337,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     update_at?: Date | string | null
     product: ProductCreateNestedOneWithoutFavoritoInput
+    cliente: ClienteCreateNestedOneWithoutFavoritosInput
   }
 
   export type FavoritoUncheckedCreateInput = {
@@ -11270,6 +11345,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     update_at?: Date | string | null
     product_id: string
+    cliente_id: string
   }
 
   export type FavoritoUpdateInput = {
@@ -11277,6 +11353,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutFavoritoNestedInput
+    cliente?: ClienteUpdateOneRequiredWithoutFavoritosNestedInput
   }
 
   export type FavoritoUncheckedUpdateInput = {
@@ -11284,6 +11361,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type FavoritoCreateManyInput = {
@@ -11291,6 +11369,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     update_at?: Date | string | null
     product_id: string
+    cliente_id: string
   }
 
   export type FavoritoUpdateManyMutationInput = {
@@ -11304,6 +11383,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type CategoryCreateInput = {
@@ -11739,7 +11819,17 @@ export namespace Prisma {
     none?: AvaliacaoWhereInput
   }
 
+  export type FavoritoListRelationFilter = {
+    every?: FavoritoWhereInput
+    some?: FavoritoWhereInput
+    none?: FavoritoWhereInput
+  }
+
   export type AvaliacaoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FavoritoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11781,11 +11871,17 @@ export namespace Prisma {
     isNot?: ProductWhereInput
   }
 
+  export type ClienteScalarRelationFilter = {
+    is?: ClienteWhereInput
+    isNot?: ClienteWhereInput
+  }
+
   export type FavoritoCountOrderByAggregateInput = {
     id?: SortOrder
     created_at?: SortOrder
     update_at?: SortOrder
     product_id?: SortOrder
+    cliente_id?: SortOrder
   }
 
   export type FavoritoMaxOrderByAggregateInput = {
@@ -11793,6 +11889,7 @@ export namespace Prisma {
     created_at?: SortOrder
     update_at?: SortOrder
     product_id?: SortOrder
+    cliente_id?: SortOrder
   }
 
   export type FavoritoMinOrderByAggregateInput = {
@@ -11800,6 +11897,7 @@ export namespace Prisma {
     created_at?: SortOrder
     update_at?: SortOrder
     product_id?: SortOrder
+    cliente_id?: SortOrder
   }
 
   export type ProductListRelationFilter = {
@@ -11844,17 +11942,7 @@ export namespace Prisma {
     none?: ItemWhereInput
   }
 
-  export type FavoritoListRelationFilter = {
-    every?: FavoritoWhereInput
-    some?: FavoritoWhereInput
-    none?: FavoritoWhereInput
-  }
-
   export type ItemOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type FavoritoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12002,11 +12090,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type ClienteScalarRelationFilter = {
-    is?: ClienteWhereInput
-    isNot?: ClienteWhereInput
-  }
-
   export type OrderScalarRelationFilter = {
     is?: OrderWhereInput
     isNot?: OrderWhereInput
@@ -12097,11 +12180,25 @@ export namespace Prisma {
     connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
   }
 
+  export type FavoritoCreateNestedManyWithoutClienteInput = {
+    create?: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput> | FavoritoCreateWithoutClienteInput[] | FavoritoUncheckedCreateWithoutClienteInput[]
+    connectOrCreate?: FavoritoCreateOrConnectWithoutClienteInput | FavoritoCreateOrConnectWithoutClienteInput[]
+    createMany?: FavoritoCreateManyClienteInputEnvelope
+    connect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+  }
+
   export type AvaliacaoUncheckedCreateNestedManyWithoutClienteInput = {
     create?: XOR<AvaliacaoCreateWithoutClienteInput, AvaliacaoUncheckedCreateWithoutClienteInput> | AvaliacaoCreateWithoutClienteInput[] | AvaliacaoUncheckedCreateWithoutClienteInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutClienteInput | AvaliacaoCreateOrConnectWithoutClienteInput[]
     createMany?: AvaliacaoCreateManyClienteInputEnvelope
     connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
+  }
+
+  export type FavoritoUncheckedCreateNestedManyWithoutClienteInput = {
+    create?: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput> | FavoritoCreateWithoutClienteInput[] | FavoritoUncheckedCreateWithoutClienteInput[]
+    connectOrCreate?: FavoritoCreateOrConnectWithoutClienteInput | FavoritoCreateOrConnectWithoutClienteInput[]
+    createMany?: FavoritoCreateManyClienteInputEnvelope
+    connect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
   }
 
   export type AvaliacaoUpdateManyWithoutClienteNestedInput = {
@@ -12118,6 +12215,20 @@ export namespace Prisma {
     deleteMany?: AvaliacaoScalarWhereInput | AvaliacaoScalarWhereInput[]
   }
 
+  export type FavoritoUpdateManyWithoutClienteNestedInput = {
+    create?: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput> | FavoritoCreateWithoutClienteInput[] | FavoritoUncheckedCreateWithoutClienteInput[]
+    connectOrCreate?: FavoritoCreateOrConnectWithoutClienteInput | FavoritoCreateOrConnectWithoutClienteInput[]
+    upsert?: FavoritoUpsertWithWhereUniqueWithoutClienteInput | FavoritoUpsertWithWhereUniqueWithoutClienteInput[]
+    createMany?: FavoritoCreateManyClienteInputEnvelope
+    set?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    disconnect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    delete?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    connect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    update?: FavoritoUpdateWithWhereUniqueWithoutClienteInput | FavoritoUpdateWithWhereUniqueWithoutClienteInput[]
+    updateMany?: FavoritoUpdateManyWithWhereWithoutClienteInput | FavoritoUpdateManyWithWhereWithoutClienteInput[]
+    deleteMany?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
+  }
+
   export type AvaliacaoUncheckedUpdateManyWithoutClienteNestedInput = {
     create?: XOR<AvaliacaoCreateWithoutClienteInput, AvaliacaoUncheckedCreateWithoutClienteInput> | AvaliacaoCreateWithoutClienteInput[] | AvaliacaoUncheckedCreateWithoutClienteInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutClienteInput | AvaliacaoCreateOrConnectWithoutClienteInput[]
@@ -12132,10 +12243,30 @@ export namespace Prisma {
     deleteMany?: AvaliacaoScalarWhereInput | AvaliacaoScalarWhereInput[]
   }
 
+  export type FavoritoUncheckedUpdateManyWithoutClienteNestedInput = {
+    create?: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput> | FavoritoCreateWithoutClienteInput[] | FavoritoUncheckedCreateWithoutClienteInput[]
+    connectOrCreate?: FavoritoCreateOrConnectWithoutClienteInput | FavoritoCreateOrConnectWithoutClienteInput[]
+    upsert?: FavoritoUpsertWithWhereUniqueWithoutClienteInput | FavoritoUpsertWithWhereUniqueWithoutClienteInput[]
+    createMany?: FavoritoCreateManyClienteInputEnvelope
+    set?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    disconnect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    delete?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    connect?: FavoritoWhereUniqueInput | FavoritoWhereUniqueInput[]
+    update?: FavoritoUpdateWithWhereUniqueWithoutClienteInput | FavoritoUpdateWithWhereUniqueWithoutClienteInput[]
+    updateMany?: FavoritoUpdateManyWithWhereWithoutClienteInput | FavoritoUpdateManyWithWhereWithoutClienteInput[]
+    deleteMany?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
+  }
+
   export type ProductCreateNestedOneWithoutFavoritoInput = {
     create?: XOR<ProductCreateWithoutFavoritoInput, ProductUncheckedCreateWithoutFavoritoInput>
     connectOrCreate?: ProductCreateOrConnectWithoutFavoritoInput
     connect?: ProductWhereUniqueInput
+  }
+
+  export type ClienteCreateNestedOneWithoutFavoritosInput = {
+    create?: XOR<ClienteCreateWithoutFavoritosInput, ClienteUncheckedCreateWithoutFavoritosInput>
+    connectOrCreate?: ClienteCreateOrConnectWithoutFavoritosInput
+    connect?: ClienteWhereUniqueInput
   }
 
   export type ProductUpdateOneRequiredWithoutFavoritoNestedInput = {
@@ -12144,6 +12275,14 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutFavoritoInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutFavoritoInput, ProductUpdateWithoutFavoritoInput>, ProductUncheckedUpdateWithoutFavoritoInput>
+  }
+
+  export type ClienteUpdateOneRequiredWithoutFavoritosNestedInput = {
+    create?: XOR<ClienteCreateWithoutFavoritosInput, ClienteUncheckedCreateWithoutFavoritosInput>
+    connectOrCreate?: ClienteCreateOrConnectWithoutFavoritosInput
+    upsert?: ClienteUpsertWithoutFavoritosInput
+    connect?: ClienteWhereUniqueInput
+    update?: XOR<XOR<ClienteUpdateToOneWithWhereWithoutFavoritosInput, ClienteUpdateWithoutFavoritosInput>, ClienteUncheckedUpdateWithoutFavoritosInput>
   }
 
   export type ProductCreateNestedManyWithoutCategoryInput = {
@@ -12617,6 +12756,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FavoritoCreateWithoutClienteInput = {
+    id?: string
+    created_at?: Date | string | null
+    update_at?: Date | string | null
+    product: ProductCreateNestedOneWithoutFavoritoInput
+  }
+
+  export type FavoritoUncheckedCreateWithoutClienteInput = {
+    id?: string
+    created_at?: Date | string | null
+    update_at?: Date | string | null
+    product_id: string
+  }
+
+  export type FavoritoCreateOrConnectWithoutClienteInput = {
+    where: FavoritoWhereUniqueInput
+    create: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput>
+  }
+
+  export type FavoritoCreateManyClienteInputEnvelope = {
+    data: FavoritoCreateManyClienteInput | FavoritoCreateManyClienteInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AvaliacaoUpsertWithWhereUniqueWithoutClienteInput = {
     where: AvaliacaoWhereUniqueInput
     update: XOR<AvaliacaoUpdateWithoutClienteInput, AvaliacaoUncheckedUpdateWithoutClienteInput>
@@ -12643,6 +12806,33 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Avaliacao"> | Date | string | null
     cliente_id?: StringFilter<"Avaliacao"> | string
     order_id?: StringFilter<"Avaliacao"> | string
+  }
+
+  export type FavoritoUpsertWithWhereUniqueWithoutClienteInput = {
+    where: FavoritoWhereUniqueInput
+    update: XOR<FavoritoUpdateWithoutClienteInput, FavoritoUncheckedUpdateWithoutClienteInput>
+    create: XOR<FavoritoCreateWithoutClienteInput, FavoritoUncheckedCreateWithoutClienteInput>
+  }
+
+  export type FavoritoUpdateWithWhereUniqueWithoutClienteInput = {
+    where: FavoritoWhereUniqueInput
+    data: XOR<FavoritoUpdateWithoutClienteInput, FavoritoUncheckedUpdateWithoutClienteInput>
+  }
+
+  export type FavoritoUpdateManyWithWhereWithoutClienteInput = {
+    where: FavoritoScalarWhereInput
+    data: XOR<FavoritoUpdateManyMutationInput, FavoritoUncheckedUpdateManyWithoutClienteInput>
+  }
+
+  export type FavoritoScalarWhereInput = {
+    AND?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
+    OR?: FavoritoScalarWhereInput[]
+    NOT?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
+    id?: StringFilter<"Favorito"> | string
+    created_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
+    update_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
+    product_id?: StringFilter<"Favorito"> | string
+    cliente_id?: StringFilter<"Favorito"> | string
   }
 
   export type ProductCreateWithoutFavoritoInput = {
@@ -12672,6 +12862,35 @@ export namespace Prisma {
   export type ProductCreateOrConnectWithoutFavoritoInput = {
     where: ProductWhereUniqueInput
     create: XOR<ProductCreateWithoutFavoritoInput, ProductUncheckedCreateWithoutFavoritoInput>
+  }
+
+  export type ClienteCreateWithoutFavoritosInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    cpf: string
+    data_nasc?: Date | string | null
+    created_at?: Date | string | null
+    update_at?: Date | string | null
+    avaliacao?: AvaliacaoCreateNestedManyWithoutClienteInput
+  }
+
+  export type ClienteUncheckedCreateWithoutFavoritosInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    cpf: string
+    data_nasc?: Date | string | null
+    created_at?: Date | string | null
+    update_at?: Date | string | null
+    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutClienteInput
+  }
+
+  export type ClienteCreateOrConnectWithoutFavoritosInput = {
+    where: ClienteWhereUniqueInput
+    create: XOR<ClienteCreateWithoutFavoritosInput, ClienteUncheckedCreateWithoutFavoritosInput>
   }
 
   export type ProductUpsertWithoutFavoritoInput = {
@@ -12707,6 +12926,41 @@ export namespace Prisma {
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
     items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ClienteUpsertWithoutFavoritosInput = {
+    update: XOR<ClienteUpdateWithoutFavoritosInput, ClienteUncheckedUpdateWithoutFavoritosInput>
+    create: XOR<ClienteCreateWithoutFavoritosInput, ClienteUncheckedCreateWithoutFavoritosInput>
+    where?: ClienteWhereInput
+  }
+
+  export type ClienteUpdateToOneWithWhereWithoutFavoritosInput = {
+    where?: ClienteWhereInput
+    data: XOR<ClienteUpdateWithoutFavoritosInput, ClienteUncheckedUpdateWithoutFavoritosInput>
+  }
+
+  export type ClienteUpdateWithoutFavoritosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    cpf?: StringFieldUpdateOperationsInput | string
+    data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    avaliacao?: AvaliacaoUpdateManyWithoutClienteNestedInput
+  }
+
+  export type ClienteUncheckedUpdateWithoutFavoritosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    cpf?: StringFieldUpdateOperationsInput | string
+    data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutClienteNestedInput
   }
 
   export type ProductCreateWithoutCategoryInput = {
@@ -12822,12 +13076,14 @@ export namespace Prisma {
     id?: string
     created_at?: Date | string | null
     update_at?: Date | string | null
+    cliente: ClienteCreateNestedOneWithoutFavoritosInput
   }
 
   export type FavoritoUncheckedCreateWithoutProductInput = {
     id?: string
     created_at?: Date | string | null
     update_at?: Date | string | null
+    cliente_id: string
   }
 
   export type FavoritoCreateOrConnectWithoutProductInput = {
@@ -12907,16 +13163,6 @@ export namespace Prisma {
   export type FavoritoUpdateManyWithWhereWithoutProductInput = {
     where: FavoritoScalarWhereInput
     data: XOR<FavoritoUpdateManyMutationInput, FavoritoUncheckedUpdateManyWithoutProductInput>
-  }
-
-  export type FavoritoScalarWhereInput = {
-    AND?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
-    OR?: FavoritoScalarWhereInput[]
-    NOT?: FavoritoScalarWhereInput | FavoritoScalarWhereInput[]
-    id?: StringFilter<"Favorito"> | string
-    created_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
-    update_at?: DateTimeNullableFilter<"Favorito"> | Date | string | null
-    product_id?: StringFilter<"Favorito"> | string
   }
 
   export type AvaliacaoCreateWithoutOrderInput = {
@@ -13012,6 +13258,7 @@ export namespace Prisma {
     data_nasc?: Date | string | null
     created_at?: Date | string | null
     update_at?: Date | string | null
+    favoritos?: FavoritoCreateNestedManyWithoutClienteInput
   }
 
   export type ClienteUncheckedCreateWithoutAvaliacaoInput = {
@@ -13023,6 +13270,7 @@ export namespace Prisma {
     data_nasc?: Date | string | null
     created_at?: Date | string | null
     update_at?: Date | string | null
+    favoritos?: FavoritoUncheckedCreateNestedManyWithoutClienteInput
   }
 
   export type ClienteCreateOrConnectWithoutAvaliacaoInput = {
@@ -13077,6 +13325,7 @@ export namespace Prisma {
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    favoritos?: FavoritoUpdateManyWithoutClienteNestedInput
   }
 
   export type ClienteUncheckedUpdateWithoutAvaliacaoInput = {
@@ -13088,6 +13337,7 @@ export namespace Prisma {
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    favoritos?: FavoritoUncheckedUpdateManyWithoutClienteNestedInput
   }
 
   export type OrderUpsertWithoutAvaliacaoInput = {
@@ -13255,6 +13505,13 @@ export namespace Prisma {
     order_id: string
   }
 
+  export type FavoritoCreateManyClienteInput = {
+    id?: string
+    created_at?: Date | string | null
+    update_at?: Date | string | null
+    product_id: string
+  }
+
   export type AvaliacaoUpdateWithoutClienteInput = {
     id?: StringFieldUpdateOperationsInput | string
     nota?: IntFieldUpdateOperationsInput | number
@@ -13277,6 +13534,27 @@ export namespace Prisma {
     descricao?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     order_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FavoritoUpdateWithoutClienteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    product?: ProductUpdateOneRequiredWithoutFavoritoNestedInput
+  }
+
+  export type FavoritoUncheckedUpdateWithoutClienteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    product_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FavoritoUncheckedUpdateManyWithoutClienteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    product_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProductCreateManyCategoryInput = {
@@ -13335,6 +13613,7 @@ export namespace Prisma {
     id?: string
     created_at?: Date | string | null
     update_at?: Date | string | null
+    cliente_id: string
   }
 
   export type ItemUpdateWithoutProductInput = {
@@ -13365,18 +13644,21 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente?: ClienteUpdateOneRequiredWithoutFavoritosNestedInput
   }
 
   export type FavoritoUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type FavoritoUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     update_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type AvaliacaoCreateManyOrderInput = {
