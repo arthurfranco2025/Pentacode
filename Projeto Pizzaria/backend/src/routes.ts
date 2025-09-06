@@ -31,6 +31,7 @@ import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPas
 
 import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
 import { RemoveFavoritoController } from './controllers/favorito/removeFavoritoController'
+import { ListFavoritoController } from './controllers/favorito/listFavoritoController'
 
 import uploadConfig from './config/multer'
 
@@ -72,5 +73,6 @@ router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().han
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 //nesse o front tem q manda o id do favorito pra url de algum jeito
 router.delete('/favorito/:id', isAuthenticated, new RemoveFavoritoController().handle)
+router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
 
 export {router};
