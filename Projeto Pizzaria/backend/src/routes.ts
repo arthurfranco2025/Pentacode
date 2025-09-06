@@ -30,6 +30,7 @@ import { EditClienteController } from './controllers/cliente/EditClienteControll
 import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPasswordClienteController'
 
 import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
+import { RemoveFavoritoController } from './controllers/favorito/removeFavoritoController'
 
 import uploadConfig from './config/multer'
 
@@ -66,8 +67,10 @@ router.put('/order/finish', isAuthenticated, new FinishOrderController().handle)
 router.post('/cadastro', new CreateClienteController().handle)
 router.post('/login', new AuthClienteController().handle)
 router.put("/edit", isAuthenticated, new EditClienteController().handle.bind(new EditClienteController()));
-router.put('/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
+router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
 
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
+//nesse o front tem q manda o id do favorito pra url de algum jeito
+router.delete('/favorito/:id', isAuthenticated, new RemoveFavoritoController().handle)
 
 export {router};
