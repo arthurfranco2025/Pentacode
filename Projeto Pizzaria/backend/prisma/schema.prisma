@@ -4,7 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -15,13 +14,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @default(uuid())
-  name String
-  email String
-  password String
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  email      String
+  password   String
+  funcao     String
   created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+  update_at  DateTime? @default(now())
 
   @@map("users")
 }
@@ -33,97 +33,101 @@ model Cliente {
   email      String
   password   String
   cpf        String
-  data_nasc  DateTime? 
+  points     Float
+  data_nasc  DateTime?
   created_at DateTime? @default(now())
   update_at  DateTime? @default(now())
 
-  avaliacao  Avaliacao[]
-  favoritos  Favorito[]
+  avaliacao Avaliacao[]
+  favoritos Favorito[]
 
   @@map("clientes")
 }
 
-model Favorito{
-  id         String @id @default(uuid())
+model Favorito {
+  id         String    @id @default(uuid())
   created_at DateTime? @default(now())
   update_at  DateTime? @default(now())
 
   product    Product @relation(fields: [product_id], references: [id])
   product_id String
-  
+
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
-  
+
   @@map("favorites")
 }
 
-model Category{
-  id String @id @default(uuid())
-  name String
+model Category {
+  id         String    @id @default(uuid())
+  name       String
+  price      Float
   created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+  update_at  DateTime? @default(now())
+  products   Product[]
 
   @@map("categories")
-  products Product[]
 }
 
-model Product{
-  id String @id @default(uuid())
-  name String
-  price String
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  price       Float
+  points      Float
   description String
-  banner String
-  created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+  banner      String
+  created_at  DateTime? @default(now())
+  update_at   DateTime? @default(now())
 
-  category Category @relation(fields: [category_id], references: [id])
+  category    Category @relation(fields: [category_id], references: [id])
   category_id String
 
-  items Item[]
-  favorito    Favorito[]
+  items    Item[]
+  favorito Favorito[]
 
   @@map("products")
 }
 
-model Order{
-  id String @id @default(uuid())
-  table Int
-  status Boolean @default(false)
-  draft Boolean @default(true)
-  name String?
-  created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+model Order {
+  id             String    @id @default(uuid())
+  table          Int
+  status         Boolean   @default(false)
+  status_preparo String
+  draft          Boolean   @default(true)
+  name           String?
+  created_at     DateTime? @default(now())
+  update_at      DateTime? @default(now())
 
-  avaliacao  Avaliacao[]
-  items Item[]
+  avaliacao Avaliacao[]
+  items     Item[]
 
   @@map("orders")
 }
 
 model Avaliacao {
-  id        String @id @default(uuid())
-  nota      Int
-  descricao String
+  id         String    @id @default(uuid())
+  nota       Int
+  descricao  String
   created_at DateTime? @default(now())
 
-  cliente     Cliente   @relation(fields: [cliente_id], references: [id])
+  cliente    Cliente @relation(fields: [cliente_id], references: [id])
   order      Order   @relation(fields: [order_id], references: [id])
-  cliente_id  String
+  cliente_id String
   order_id   String
 
   @@map("avaliacoes")
 }
 
 model Item {
-  id String @id @default(uuid())
-  amount Int
+  id         String    @id @default(uuid())
+  amount     Int
   created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+  update_at  DateTime? @default(now())
 
-  order Order @relation(fields: [order_id], references: [id])
-  product Product @relation(fields: [product_id], references: [id])
+  order      Order   @relation(fields: [order_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
+  order_id   String
+  product_id String
 
   @@map("items")
-  order_id String
-  product_id String
 }
