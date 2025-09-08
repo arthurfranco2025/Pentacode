@@ -48,7 +48,7 @@ class CreateClienteService {
             where: {
                 email: email
             }
-        })  
+        })
         const clienteAlreadyExistsCPF = await prismaClient.cliente.findFirst({
             where: {
                 cpf: cpf
