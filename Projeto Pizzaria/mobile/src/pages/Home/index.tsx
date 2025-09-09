@@ -1,6 +1,6 @@
 import React from "react";
 import { SafeAreaView, View, ScrollView, Image, ImageBackground, Text, TouchableOpacity, } from "react-native";
-import LinearGradient from 'react-native-linear-gradient'; // Instalar LinearGradient: https://github.com/react-native-linear-gradient/react-native-linear-gradient ou yarn add react-native-linear-gradient
+import LinearGradient from 'react-native-linear-gradient'; // Instalar LinearGradient: https://github.com/react-native-linear-gradient/react-native-linear-gradient ou COMANDO npm install react-native-linear-gradient
 export default () => {
 	return (
 		<SafeAreaView 
