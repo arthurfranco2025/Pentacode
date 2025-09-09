@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import { SafeAreaView, View, ScrollView, Text, TextInput, TouchableOpacity, Image, } from "react-native";
-export default () => {
+export default (props) => {
 	const [textInput1, onChangeTextInput1] = useState('');
 	const [textInput2, onChangeTextInput2] = useState('');
 	const [textInput3, onChangeTextInput3] = useState('');
+	const [textInput4, onChangeTextInput4] = useState('');
+	const [textInput5, onChangeTextInput5] = useState('');
 	return (
 		<SafeAreaView 
 			style={{
@@ -51,7 +53,7 @@ export default () => {
 				<View 
 					style={{
 						alignItems: "center",
-						marginBottom: 56,
+						marginBottom: 57,
 					}}>
 					<Text 
 						style={{
@@ -59,13 +61,45 @@ export default () => {
 							fontSize: 38,
 							fontWeight: "bold",
 						}}>
-						{"Entrar"}
+						{"Cadastro"}
 					</Text>
 				</View>
 				<View 
 					style={{
-						marginBottom: 11,
+						marginBottom: 19,
 						marginHorizontal: 45,
+					}}>
+					<Text 
+						style={{
+							color: "#FFFFFF",
+							fontSize: 12,
+							fontWeight: "bold",
+							marginBottom: 12,
+						}}>
+						{"Nome"}
+					</Text>
+					<TextInput
+						placeholder={"Digite seu nome"}
+						value={textInput1}
+						onChangeText={onChangeTextInput1}
+						style={{
+							color: "#F0F0F0",
+							fontSize: 12,
+							fontWeight: "bold",
+							backgroundColor: "#101026",
+							borderColor: "#8A8A8A",
+							borderRadius: 3,
+							borderWidth: 1,
+							paddingVertical: 11,
+							paddingLeft: 12,
+							paddingRight: 24,
+						}}
+					/>
+				</View>
+				<View 
+					style={{
+						marginBottom: 19,
+						marginHorizontal: 44,
 					}}>
 					<Text 
 						style={{
@@ -78,8 +112,8 @@ export default () => {
 					</Text>
 					<TextInput
 						placeholder={"Digite seu email"}
-						value={textInput1}
-						onChangeText={onChangeTextInput1}
+						value={textInput2}
+						onChangeText={onChangeTextInput2}
 						style={{
 							color: "#F0F0F0",
 							fontSize: 12,
@@ -101,20 +135,20 @@ export default () => {
 						fontSize: 12,
 						fontWeight: "bold",
 						marginBottom: 13,
-						marginLeft: 45,
+						marginLeft: 44,
 					}}>
 					{"Senha"}
 				</Text>
 				<TextInput
 					placeholder={"Digite Sua senha"}
-					value={textInput2}
-					onChangeText={onChangeTextInput2}
+					value={textInput3}
+					onChangeText={onChangeTextInput3}
 					style={{
 						color: "#F0F0F0",
 						fontSize: 12,
 						fontWeight: "bold",
-						marginBottom: 10,
-						marginHorizontal: 46,
+						marginBottom: 18,
+						marginHorizontal: 45,
 						backgroundColor: "#101026",
 						borderColor: "#8A8A8A",
 						borderRadius: 3,
@@ -130,18 +164,37 @@ export default () => {
 						fontSize: 12,
 						fontWeight: "bold",
 						marginBottom: 11,
-						marginLeft: 43,
+						marginLeft: 45,
 					}}>
-					{"Esqueceu a senha?"}
+					{"Confirmar senha"}
 				</Text>
+				<TextInput
+					placeholder={"Confirme a sua senha"}
+					value={textInput4}
+					onChangeText={onChangeTextInput4}
+					style={{
+						color: "#F0F0F0",
+						fontSize: 12,
+						fontWeight: "bold",
+						marginBottom: 18,
+						marginHorizontal: 45,
+						backgroundColor: "#101026",
+						borderColor: "#8A8A8A",
+						borderRadius: 3,
+						borderWidth: 1,
+						paddingVertical: 10,
+						paddingLeft: 13,
+						paddingRight: 26,
+					}}
+				/>
 				<TouchableOpacity 
 					style={{
 						alignItems: "center",
 						backgroundColor: "#FF3F4B",
 						borderRadius: 3,
-						paddingVertical: 11,
-						marginBottom: 11,
-						marginHorizontal: 46,
+						paddingVertical: 10,
+						marginBottom: 19,
+						marginHorizontal: 45,
 					}} onPress={()=>alert('Pressed!')}>
 					<Text 
 						style={{
@@ -149,13 +202,13 @@ export default () => {
 							fontSize: 12,
 							fontWeight: "bold",
 						}}>
-						{"Acessar"}
+						{"Registrar"}
 					</Text>
 				</TouchableOpacity>
 				<View 
 					style={{
 						alignItems: "center",
-						marginBottom: 11,
+						marginBottom: 19,
 					}}>
 					<Text 
 						style={{
@@ -174,11 +227,11 @@ export default () => {
 						borderRadius: 3,
 						paddingVertical: 10,
 						paddingHorizontal: 63,
-						marginBottom: 11,
-						marginHorizontal: 46,
+						marginBottom: 19,
+						marginHorizontal: 45,
 					}}>
 					<Image
-						source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/k5Lg2oImfD/f1ss8fk5_expires_30_days.png"}} 
+						source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/yaigou25_expires_30_days.png"}} 
 						resizeMode = {"stretch"}
 						style={{
 							width: 18,
@@ -187,8 +240,8 @@ export default () => {
 					/>
 					<TextInput
 						placeholder={"Continuar com Google"}
-						value={textInput3}
-						onChangeText={onChangeTextInput3}
+						value={textInput5}
+						onChangeText={onChangeTextInput5}
 						style={{
 							color: "#1D1D2E",
 							fontSize: 12,
@@ -197,38 +250,10 @@ export default () => {
 						}}
 					/>
 				</View>
-				<TouchableOpacity 
-					style={{
-						alignItems: "center",
-						backgroundColor: "#FFFFFF",
-						borderRadius: 3,
-						paddingVertical: 12,
-						marginBottom: 11,
-						marginHorizontal: 46,
-					}} onPress={()=>alert('Pressed!')}>
-					<Text 
-						style={{
-							color: "#1D1D2E",
-							fontSize: 12,
-							fontWeight: "bold",
-						}}>
-						{"Entrar como convidado"}
-					</Text>
-				</TouchableOpacity>
-				<Image
-					source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/k5Lg2oImfD/g67ybkkp_expires_30_days.png"}} 
-					resizeMode = {"stretch"}
-					style={{
-						width: 24,
-						height: 24,
-						marginBottom: 11,
-						marginLeft: 98,
-					}}
-				/>
 				<View 
 					style={{
 						alignItems: "center",
-						marginBottom: 229,
+						marginBottom: 134,
 					}}>
 					<Text 
 						style={{
@@ -236,7 +261,7 @@ export default () => {
 							fontSize: 12,
 							fontWeight: "bold",
 						}}>
-						{"Não possui conta? Cadastre-se"}
+						{"Possui conta? Login"}
 					</Text>
 				</View>
 			</ScrollView>
