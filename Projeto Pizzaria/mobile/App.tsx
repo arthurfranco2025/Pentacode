@@ -1,15 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import SignIn from './src/pages/SignIn';
-import SignUp from './src/pages/SignUp';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import Routes from './src/routes';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Sujeito Pizzaria</Text>
-      <StatusBar style="auto" />
-      <SignUp></SignUp>
-    </View>
+    <NavigationContainer>
+      <StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false}/>
+      <Routes/>
+    </NavigationContainer>
   );
 }
 
