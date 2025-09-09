@@ -21,7 +21,7 @@ export function isAuthenticated(
     try{
         const {sub} = verify(
             token,
-            process.env.JWT_SECRET
+            'segredo_leticia'
         )as Payload
 
         req.user_id = sub

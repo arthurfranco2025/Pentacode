@@ -2,6 +2,9 @@ import express, { Request, Response, NextFunction } from 'express'
 import 'express-async-errors'
 import cors from 'cors'
 import path from 'path'
+import 'dotenv/config';   // carrega variáveis do .env automaticamente
+import prismaClient from './prisma';  // seu Prisma Client
+
 
 import { router } from './routes'
 
