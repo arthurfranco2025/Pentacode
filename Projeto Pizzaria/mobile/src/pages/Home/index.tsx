@@ -1,6 +1,6 @@
 import React from "react";
 import { SafeAreaView, View, ScrollView, Image, ImageBackground, Text, TouchableOpacity, } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';;
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default () => {
 	return (
