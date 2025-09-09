@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --transpile-only src/server.ts",
@@ -14,11 +14,13 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
+    "@types/node": "^24.3.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
+    "@supabase/supabase-js": "^2.57.2",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "cpf-cnpj-validator": "^1.0.3",

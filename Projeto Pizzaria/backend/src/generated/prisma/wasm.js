@@ -120,10 +120,11 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  funcao: 'funcao',
   email: 'email',
   password: 'password',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ClienteScalarFieldEnum = {
@@ -134,13 +135,13 @@ exports.Prisma.ClienteScalarFieldEnum = {
   cpf: 'cpf',
   data_nasc: 'data_nasc',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.FavoritoScalarFieldEnum = {
   id: 'id',
   created_at: 'created_at',
-  update_at: 'update_at',
+  updated_at: 'updated_at',
   product_id: 'product_id',
   cliente_id: 'cliente_id'
 };
@@ -149,28 +150,41 @@ exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   price: 'price',
+  points: 'points',
   description: 'description',
-  banner: 'banner',
+  promocao: 'promocao',
   created_at: 'created_at',
-  update_at: 'update_at',
+  updated_at: 'updated_at',
   category_id: 'category_id'
 };
 
-exports.Prisma.OrderScalarFieldEnum = {
+exports.Prisma.PedidoScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  price: 'price',
+  points: 'points',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  cliente_id: 'cliente_id'
+};
+
+exports.Prisma.ComandaScalarFieldEnum = {
   id: 'id',
   table: 'table',
   status: 'status',
-  draft: 'draft',
-  name: 'name',
+  price: 'price',
+  points: 'points',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at',
+  cliente_id: 'cliente_id',
+  pedido_id: 'pedido_id'
 };
 
 exports.Prisma.AvaliacaoScalarFieldEnum = {
@@ -179,15 +193,15 @@ exports.Prisma.AvaliacaoScalarFieldEnum = {
   descricao: 'descricao',
   created_at: 'created_at',
   cliente_id: 'cliente_id',
-  order_id: 'order_id'
+  comanda_id: 'comanda_id'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
   id: 'id',
-  amount: 'amount',
+  qtd: 'qtd',
   created_at: 'created_at',
-  update_at: 'update_at',
-  order_id: 'order_id',
+  updated_at: 'updated_at',
+  pedido_id: 'pedido_id',
   product_id: 'product_id'
 };
 
@@ -213,7 +227,8 @@ exports.Prisma.ModelName = {
   Favorito: 'Favorito',
   Category: 'Category',
   Product: 'Product',
-  Order: 'Order',
+  Pedido: 'Pedido',
+  Comanda: 'Comanda',
   Avaliacao: 'Avaliacao',
   Item: 'Item'
 };
