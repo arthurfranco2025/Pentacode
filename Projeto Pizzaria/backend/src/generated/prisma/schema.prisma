@@ -33,7 +33,7 @@ model Cliente {
   avaliacao Avaliacao[]
   favoritos Favorito[]
   comandas  Comanda[]
-  pedidos   Pedido[]
+  order     Order[]
 
   @@map("clientes")
 }
@@ -82,26 +82,28 @@ model Product {
   @@map("products")
 }
 
-model Pedido {
+model Order {
   id         String    @id @default(uuid())
   status     String
   price      Float
   points     Float
+  table      String
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
-  items   Item[]
-  comanda Comanda[]
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  comanda_id String
+
+  items Item[]
 
   @@map("pedidos")
 }
 
 model Comanda {
   id         String    @id @default(uuid())
-  table      String
   status     String
   price      Float
   points     Float
@@ -111,9 +113,7 @@ model Comanda {
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
-  pedido    Pedido @relation(fields: [pedido_id], references: [id])
-  pedido_id String
-
+  order     Order[]
   avaliacao Avaliacao[]
 
   @@map("comandas")
@@ -126,7 +126,7 @@ model Avaliacao {
   created_at DateTime? @default(now())
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
-  Comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
   cliente_id String
   comanda_id String
 
@@ -139,10 +139,10 @@ model Item {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  pedido  Pedido  @relation(fields: [pedido_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
 
-  pedido_id  String
+  order_id   String
   product_id String
 
   @@map("items")

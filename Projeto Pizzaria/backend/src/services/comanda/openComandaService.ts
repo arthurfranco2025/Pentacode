@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import  PrismaClient  from "../../prisma";
 
 interface OpenComandaRequest {
     cliente_id: string;
@@ -6,6 +6,7 @@ interface OpenComandaRequest {
 
 class OpenComandaService {
     async execute({ cliente_id }: OpenComandaRequest) {
+
         if (!cliente_id) {
             throw new Error("Cliente ID obrigatório.");
         }
@@ -18,12 +19,13 @@ class OpenComandaService {
             throw new Error("Cliente não encontrado.");
         }
 
+
         const comanda = await PrismaClient.comanda.create({
             data: {
-                cliente_id: cliente_id,
                 status: "open",
                 price: 0,
                 points: 0,
+                cliente: { connect: { id: cliente_id } },
             },
             select: {
                 id: true,

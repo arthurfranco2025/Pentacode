@@ -87,21 +87,23 @@ model Order {
   status     String
   price      Float
   points     Float
+  table      String
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
-  items   Item[]
-  comanda Comanda[]
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  comanda_id String
+
+  items Item[]
 
   @@map("pedidos")
 }
 
 model Comanda {
   id         String    @id @default(uuid())
-  table      String
   status     String
   price      Float
   points     Float
@@ -111,9 +113,7 @@ model Comanda {
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
-  order    Order  @relation(fields: [order_id], references: [id])
-  order_id String
-
+  order     Order[]
   avaliacao Avaliacao[]
 
   @@map("comandas")
