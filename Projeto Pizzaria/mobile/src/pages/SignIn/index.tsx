@@ -236,7 +236,7 @@ export default () => {
 							fontSize: 12,
 							fontWeight: "bold",
 						}}>
-						{"NÃ£o possui conta? Cadastre-se"}
+						{"Não possui conta? Cadastre-se"}
 					</Text>
 				</View>
 			</ScrollView>
