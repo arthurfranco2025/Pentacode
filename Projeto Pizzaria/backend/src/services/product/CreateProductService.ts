@@ -4,19 +4,32 @@ interface ProductRequest{
     name: string;
     price: string;
     description: string;
-    banner: string;
     category_id: string;
+    points?: string | number;
+    promocao?: boolean;
 }
 
 class CreateProductService{
-    async execute({name, price, description, banner, category_id}: ProductRequest){
-        
+    async execute({name, price, description, category_id, points, promocao}: ProductRequest){
+        const numericPrice = Number(price)
+        if (isNaN(numericPrice)) {
+            throw new Error("Preço inválido")
+        }
+
+        const numericPoints = points !== undefined ? Number(points) : 0
+        if (isNaN(numericPoints)) {
+            throw new Error("Pontos inválidos")
+        }
+
+        const isPromocao = Boolean(promocao)
+
         const product = await prismaClient.product.create({
             data:{
                 name: name,
-                price: price,
+                price: numericPrice,
+                points: numericPoints,
                 description: description,
-                banner: banner,
+                promocao: isPromocao,
                 category_id: category_id,
             }
         })
