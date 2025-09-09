@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { SafeAreaView, View, ScrollView, Text, TextInput, TouchableOpacity, Image, } from "react-native";
+import { SafeAreaView, View, ScrollView, Image, Text, TextInput, TouchableOpacity, } from "react-native";
 export default () => {
 	const [textInput1, onChangeTextInput1] = useState('');
 	const [textInput2, onChangeTextInput2] = useState('');
@@ -18,35 +18,17 @@ export default () => {
 				<View 
 					style={{
 						alignItems: "center",
-						marginVertical: 57,
+						marginTop: 54,
+						marginBottom: 59,
 					}}>
-					<View 
+					<Image
+						source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/qyzu6lm0_expires_30_days.png"}} 
+						resizeMode = {"stretch"}
 						style={{
-							paddingVertical: 4,
-							paddingHorizontal: 1,
-						}}>
-						<View 
-							style={{
-								alignItems: "flex-end",
-							}}>
-							<Text 
-								style={{
-									color: "#FF3F4B",
-									fontSize: 48,
-									fontWeight: "bold",
-								}}>
-								{"Pizza"}
-							</Text>
-						</View>
-						<Text 
-							style={{
-								color: "#FFFFFF",
-								fontSize: 48,
-								fontWeight: "bold",
-							}}>
-							{"Sujeito"}
-						</Text>
-					</View>
+							width: 261,
+							height: 58,
+						}}
+					/>
 				</View>
 				<View 
 					style={{
@@ -178,7 +160,7 @@ export default () => {
 						marginHorizontal: 46,
 					}}>
 					<Image
-						source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/k5Lg2oImfD/f1ss8fk5_expires_30_days.png"}} 
+						source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8mdbogfu_expires_30_days.png"}} 
 						resizeMode = {"stretch"}
 						style={{
 							width: 18,
@@ -216,7 +198,7 @@ export default () => {
 					</Text>
 				</TouchableOpacity>
 				<Image
-					source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/k5Lg2oImfD/g67ybkkp_expires_30_days.png"}} 
+					source = {{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/v6vtz4xc_expires_30_days.png"}} 
 					resizeMode = {"stretch"}
 					style={{
 						width: 24,
