@@ -22,6 +22,9 @@ import { CreateFavoritoController } from './controllers/favorito/createFavoritoC
 import { RemoveFavoritoController } from './controllers/favorito/removeFavoritoController'
 import { ListFavoritoController } from './controllers/favorito/listFavoritoController'
 
+import { OpenComandaController } from './controllers/comanda/openComandaController'
+import { CloseComandaController } from './controllers/comanda/closeComandaController'
+
 import uploadConfig from './config/multer'
 
 const router = Router()
@@ -51,5 +54,8 @@ router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 //nesse o front tem q manda o id do favorito pra url de algum jeito
 router.delete('/favorito/:id', isAuthenticated, new RemoveFavoritoController().handle)
 router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
+
+router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
+router.put('/comanda/fechar', new CloseComandaController().handle)
 
 export {router};

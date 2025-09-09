@@ -175,19 +175,18 @@ exports.Prisma.OrderScalarFieldEnum = {
   points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  cliente_id: 'cliente_id'
+  cliente_id: 'cliente_id',
+  comanda_id: 'comanda_id'
 };
 
 exports.Prisma.ComandaScalarFieldEnum = {
   id: 'id',
-  table: 'table',
   status: 'status',
   price: 'price',
   points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  cliente_id: 'cliente_id',
-  order_id: 'order_id'
+  cliente_id: 'cliente_id'
 };
 
 exports.Prisma.AvaliacaoScalarFieldEnum = {
