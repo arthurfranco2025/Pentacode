@@ -56,7 +56,7 @@ router.post('/funcionario/login', new AuthFuncionarioController().handle)
 //PRODUCTS ROUTE
 router.post('/product', isAuthenticated, new CreateProductController().handle.bind(new CreateProductController()))
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
-router.put('/product/id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
+router.put('/product/edit/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
 
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)

@@ -4,7 +4,7 @@ import { EditProductService } from '../../services/product/editProductService';
 class EditProductController {
     async handle(req: Request, res: Response) {
         const { name, price, points, description, promocao, category_id } = req.body;
-        const { id } = req.body;
+        const { id } = req.params;
 
         const editProductService = new EditProductService();
 
