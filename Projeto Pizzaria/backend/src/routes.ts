@@ -33,6 +33,8 @@ import { EditItemController } from './controllers/item/editItemController'
 import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
 import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
 
+import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
+
 const router = Router()
 
 //CATEGORIES ROUTE
@@ -76,5 +78,8 @@ router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( 
 //INGREDIENTE ROUTE
 router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
 router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
+
+//PRODUTO_INGREDIENTE ROUTE
+router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
 
 export { router };
