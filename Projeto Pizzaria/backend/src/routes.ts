@@ -17,7 +17,7 @@ import { ListFavoritoController } from './controllers/favorito/listFavoritoContr
 import { CreateFuncionarioController } from './controllers/funcionario/createFuncionarioController'
 import { AuthFuncionarioController } from './controllers/funcionario/authFuncionarioController'
 
-import { CreateProductController } from './controllers/product/createProductService'
+import { CreateProductController } from './controllers/product/createProductController'
 import { DeleteProductController } from './controllers/product/deleteProductController'
 import { EditProductController } from './controllers/product/editProductController'
 
