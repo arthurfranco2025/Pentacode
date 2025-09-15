@@ -97,6 +97,9 @@ model Order {
   comanda    Comanda @relation(fields: [comanda_id], references: [id])
   comanda_id String
 
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  comanda_id String
+
   items Item[]
 
   @@map("pedidos")
@@ -105,8 +108,8 @@ model Order {
 model Comanda {
   id         String    @id @default(uuid())
   status     String
-  price      Float
-  points     Float
+  price      Int
+  points     Int
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
