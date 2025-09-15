@@ -3,7 +3,7 @@ import RemoveFavoritoService from "../../services/favorito/removeFavoritoService
 
 class RemoveFavoritoController {
     async handle(request: Request, response: Response) {
-        const { id } = request.params;
+        const { id } = request.body;
 
         const removeFavoritoService = new RemoveFavoritoService();
 

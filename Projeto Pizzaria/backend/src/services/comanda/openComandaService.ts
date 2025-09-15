@@ -25,7 +25,7 @@ class OpenComandaService {
         const comandaExistente = await PrismaClient.comanda.findFirst({
             where: {
                 cliente_id,
-                status: "aberta"
+                status: "aberta" // ou o valor que você definiu no banco
             }
         });
 
@@ -33,21 +33,21 @@ class OpenComandaService {
             throw new Error('Feche sua comanda para abrir outra')
         }
 
-        const comanda = await  PrismaClient.comanda.create({
+        const comanda = await PrismaClient.comanda.create({
             data: {
                 status: "aberta",
                 price: 0,
                 points: 0,
-                order: {},
+                pedido: {},
                 cliente: { connect: { id: cliente_id } }
             },
             select: {
                 id: true,
                 cliente_id: true,
             }
-        })
+        });
 
-        return comanda
+        return comanda;
     }
 }
 

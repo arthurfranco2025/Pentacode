@@ -1,40 +1,55 @@
 import prismaClient from "../../prisma";
 
-interface ProductRequest{
+interface createRequest {
     name: string;
-    price: string;
+    price: number;
+    points: number;
     description: string;
-    category_id: string;
-    points?: string | number;
     promocao?: boolean;
+    category_id: string;
 }
 
-class CreateProductService{
-    async execute({name, price, description, category_id, points, promocao}: ProductRequest){
-        const numericPrice = Number(price)
-        if (isNaN(numericPrice)) {
-            throw new Error("Preço inválido")
+class CreateProductService {
+    async execute({ name, price, points, description, promocao, category_id }: createRequest) {
+
+        if (!name) {
+            throw new Error("Insira o nome do produto");
         }
 
-        const numericPoints = points !== undefined ? Number(points) : 0
-        if (isNaN(numericPoints)) {
-            throw new Error("Pontos inválidos")
+        if (!price) {
+            throw new Error("Insira o preço do produto");
         }
 
-        const isPromocao = Boolean(promocao)
+        if (!points) {
+            throw new Error("Insira os pontos do produto");
+        }
+
+        if(name){
+            const productAlreadyExists = await prismaClient.product.findFirst({
+                where:{
+                    name: name
+                }
+            })
+
+            if (productAlreadyExists) {
+                throw new Error("Produto já existe");
+            }
+        }
+
 
         const product = await prismaClient.product.create({
-            data:{
+            data: {
                 name: name,
-                price: numericPrice,
-                points: numericPoints,
+                price: price,
+                points: points,
                 description: description,
-                promocao: isPromocao,
-                category_id: category_id,
+                promocao: promocao,
+                category_id: category_id
             }
         })
+
         return product
     }
 }
 
-export {CreateProductService}
+export { CreateProductService }

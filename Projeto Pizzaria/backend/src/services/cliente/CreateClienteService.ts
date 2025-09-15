@@ -21,15 +21,11 @@ class CreateClienteService {
             throw new Error('CPF é obrigatório')
         }
 
-        // NOVA VALIDAÇÃO RIGOROSA DO CPF
-        const cpfNumeros = cpf.replace(/\D/g, ""); // remove pontos e traços
-        if (!/^\d{11}$/.test(cpfNumeros)) {
-            throw new Error("CPF deve conter exatamente 11 dígitos numéricos");
+        if (cpfValidator.isValid(cpf)) {
+            //nada
+        } else {
+            throw new Error(" CPF inválido")
         }
-        if (!cpfValidator.isValid(cpfNumeros)) {
-            throw new Error("CPF inválido");
-        }
-        const cpfFormatado = cpfValidator.format(cpfNumeros); // formata para padrão 000.000.000-00
 
         if (!password) {
             throw new Error('Senha é obrigatória')
@@ -52,10 +48,10 @@ class CreateClienteService {
             where: {
                 email: email
             }
-        })
+        })  
         const clienteAlreadyExistsCPF = await prismaClient.cliente.findFirst({
             where: {
-                cpf: cpfFormatado
+                cpf: cpf
             }
         })
         if (clienteAlreadyExists || clienteAlreadyExistsCPF) {
@@ -71,7 +67,7 @@ class CreateClienteService {
                 name: name,
                 email: email,
                 password: passwordHash,
-                cpf: cpfFormatado,
+                cpf: cpf,
                 data_nasc: dataDefault,
             },
             select: {

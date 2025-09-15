@@ -51,7 +51,7 @@ class CloseComandaService {
             },
             data: {
                 status: "fechada",
-                order: {},
+                pedido: {},
                 cliente: { connect: { id: cliente_id } }
             },
             select: {

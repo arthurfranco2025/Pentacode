@@ -1,15 +1,7 @@
 import {Router} from 'express'
-import multer from 'multer'
-
-import { CreateUserController } from './controllers/user/CreateUserController'
-import { AuthUserController } from './controllers/user/AuthUserController'
-import { DetailUserController } from './controllers/user/DetailUserController'
 
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
-
-import { CreateProductController } from './controllers/product/CreateProductController'
-import { ListByCategoryController } from './controllers/product/ListByCategoryController'
 
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
@@ -22,40 +14,57 @@ import { CreateFavoritoController } from './controllers/favorito/createFavoritoC
 import { RemoveFavoritoController } from './controllers/favorito/removeFavoritoController'
 import { ListFavoritoController } from './controllers/favorito/listFavoritoController'
 
+import { CreateFuncionarioController } from './controllers/funcionario/createFuncionarioController'
+import { AuthFuncionarioController } from './controllers/funcionario/authFuncionarioController'
+
+import { CreateProductController } from './controllers/product/createProductService'
+import { DeleteProductController } from './controllers/product/deleteProductController'
+import { EditProductController } from './controllers/product/editProductController'
+
 import { OpenComandaController } from './controllers/comanda/openComandaController'
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
 
-import uploadConfig from './config/multer'
+import { OpenPedidoController } from './controllers/pedido/openPedidoController'
+
+import { CreateItemController } from './controllers/item/createItemController'
+import { DeleteItemController } from './controllers/item/deleteItemController'
+import { EditItemController } from './controllers/item/editItemController'
 
 const router = Router()
 
-const upload = multer(uploadConfig.upload("./tmp"))
-
-router.post('/users', new CreateUserController().handle)
-
-router.post('/session', new AuthUserController().handle)
-
-router.get('/me', isAuthenticated, new DetailUserController().handle)
-
+//CATEGORIES ROUTE
 router.post('/category', isAuthenticated, new CreateCategoryController().handle)
+router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
 
-router.get('/category', isAuthenticated, new ListCategoryController().handle)
-
-router.post('/product', isAuthenticated, upload.single('file') ,new CreateProductController().handle)
-
-router.get('/category/product', isAuthenticated, new ListByCategoryController().handle)
-
+//CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)
 router.post('/login', new AuthClienteController().handle)
 router.put("/edit", isAuthenticated, new EditClienteController().handle.bind(new EditClienteController()));
 router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
 
+//FAVORITOS ROUTE
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 //nesse o front tem q manda o id do favorito pra url de algum jeito
-router.delete('/favorito/:id', isAuthenticated, new RemoveFavoritoController().handle)
+router.delete('/favorito', isAuthenticated, new RemoveFavoritoController().handle)
 router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
 
-router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
-router.put('/comanda/fechar', new CloseComandaController().handle)
 
-export {router};
+//FUNCIONARIOS ROUTE
+router.post('/funcionario', new CreateFuncionarioController().handle.bind(new CreateFuncionarioController()))
+router.post('/funcionario/login', new AuthFuncionarioController().handle)
+
+//PRODUCTS ROUTE
+router.post('/product', isAuthenticated, new CreateProductController().handle.bind(new CreateProductController()))
+router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
+router.put('/product/id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
+
+router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
+router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
+
+router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
+
+router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
+router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle.bind(new DeleteItemController))
+router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( new EditItemController))
+
+export { router };
