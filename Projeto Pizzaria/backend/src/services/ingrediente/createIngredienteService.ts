@@ -5,7 +5,7 @@ interface createIngredienteRequest {
     price: number;
 }
 
-class CreateProductService {
+class CreateIngredienteService {
     async execute({ name, price }: createIngredienteRequest) {
 
         if (!name) {
@@ -40,4 +40,4 @@ class CreateProductService {
     }
 }
 
-export { CreateProductService }
+export { CreateIngredienteService }

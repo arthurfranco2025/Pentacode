@@ -30,6 +30,8 @@ import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
 import { EditItemController } from './controllers/item/editItemController'
 
+import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
+
 const router = Router()
 
 //CATEGORIES ROUTE
@@ -58,13 +60,19 @@ router.post('/product', isAuthenticated, new CreateProductController().handle.bi
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
 router.put('/product/edit/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
 
+//COMANDA ROUTE
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 
+//PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
 
+//ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
 router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle.bind(new DeleteItemController))
 router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( new EditItemController))
+
+//INGREDIENTE ROUTE
+router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
 
 export { router };
