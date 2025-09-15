@@ -73,7 +73,7 @@ export function AuthProvider({children}: AuthProviderProps){
         setLoadingAuth(true);
 
         try {
-            const response = await api.post('/session', {
+            const response = await api.post('/login', {
                 email,
                 password
             })
@@ -90,6 +90,7 @@ export function AuthProvider({children}: AuthProviderProps){
 
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
+
             setUser({
                 id,
                 name,
@@ -104,6 +105,16 @@ export function AuthProvider({children}: AuthProviderProps){
             setLoadingAuth(false)
         }
 
+        // } catch (err: any) {
+        // if (err.response) {
+        //     console.log('Status:', err.response.status);         // deve mostrar 400
+        //     console.log('Data:', err.response.data);             // mostra mensagem de erro da API
+        //     console.log('Headers:', err.response.headers);
+        // } else {
+        //     console.log('Erro inesperado:', err.message);
+        // }
+        // setLoadingAuth(false);
+        // }
 
     }
 
