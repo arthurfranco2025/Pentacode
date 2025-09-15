@@ -31,6 +31,7 @@ import { DeleteItemController } from './controllers/item/deleteItemController'
 import { EditItemController } from './controllers/item/editItemController'
 
 import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
+import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
 
 const router = Router()
 
@@ -74,5 +75,6 @@ router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( 
 
 //INGREDIENTE ROUTE
 router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
+router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
 
 export { router };
