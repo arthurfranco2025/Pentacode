@@ -1746,13 +1746,11 @@ export namespace Prisma {
   export type ComandaCountOutputType = {
     order: number
     avaliacao: number
-    order: number
   }
 
   export type ComandaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | ComandaCountOutputTypeCountOrderArgs
     avaliacao?: boolean | ComandaCountOutputTypeCountAvaliacaoArgs
-    order?: boolean | ComandaCountOutputTypeCountOrderArgs
   }
 
   // Custom InputTypes
@@ -1778,13 +1776,6 @@ export namespace Prisma {
    */
   export type ComandaCountOutputTypeCountAvaliacaoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AvaliacaoWhereInput
-  }
-
-  /**
-   * ComandaCountOutputType without action
-   */
-  export type ComandaCountOutputTypeCountOrderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OrderWhereInput
   }
 
 
@@ -7615,7 +7606,7 @@ export namespace Prisma {
     comanda_id?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id" | "comanda_id", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "table" | "created_at" | "updated_at" | "cliente_id" | "comanda_id", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
     comanda?: boolean | ComandaDefaultArgs<ExtArgs>
@@ -8078,6 +8069,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Order", 'String'>
     readonly price: FieldRef<"Order", 'Float'>
     readonly points: FieldRef<"Order", 'Float'>
+    readonly table: FieldRef<"Order", 'String'>
     readonly created_at: FieldRef<"Order", 'DateTime'>
     readonly updated_at: FieldRef<"Order", 'DateTime'>
     readonly cliente_id: FieldRef<"Order", 'String'>
@@ -8739,8 +8731,8 @@ export namespace Prisma {
     updated_at?: boolean
     cliente_id?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
-    avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     order?: boolean | Comanda$orderArgs<ExtArgs>
+    avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     _count?: boolean | ComandaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comanda"]>
 
@@ -8779,8 +8771,8 @@ export namespace Prisma {
   export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id", ExtArgs["result"]["comanda"]>
   export type ComandaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
-    avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     order?: boolean | Comanda$orderArgs<ExtArgs>
+    avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     _count?: boolean | ComandaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ComandaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8794,8 +8786,8 @@ export namespace Prisma {
     name: "Comanda"
     objects: {
       cliente: Prisma.$ClientePayload<ExtArgs>
-      avaliacao: Prisma.$AvaliacaoPayload<ExtArgs>[]
       order: Prisma.$OrderPayload<ExtArgs>[]
+      avaliacao: Prisma.$AvaliacaoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9200,8 +9192,8 @@ export namespace Prisma {
   export interface Prisma__ComandaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     cliente<T extends ClienteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClienteDefaultArgs<ExtArgs>>): Prisma__ClienteClient<$Result.GetResult<Prisma.$ClientePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    avaliacao<T extends Comanda$avaliacaoArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$avaliacaoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvaliacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     order<T extends Comanda$orderArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$orderArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    avaliacao<T extends Comanda$avaliacaoArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$avaliacaoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvaliacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9679,30 +9671,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AvaliacaoScalarFieldEnum | AvaliacaoScalarFieldEnum[]
-  }
-
-  /**
-   * Comanda.order
-   */
-  export type Comanda$orderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Order
-     */
-    select?: OrderSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Order
-     */
-    omit?: OrderOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrderInclude<ExtArgs> | null
-    where?: OrderWhereInput
-    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
-    cursor?: OrderWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
   }
 
   /**
@@ -12514,6 +12482,7 @@ export namespace Prisma {
     status?: StringFilter<"Order"> | string
     price?: FloatFilter<"Order"> | number
     points?: FloatFilter<"Order"> | number
+    table?: StringFilter<"Order"> | string
     created_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     cliente_id?: StringFilter<"Order"> | string
@@ -12546,6 +12515,7 @@ export namespace Prisma {
     status?: StringFilter<"Order"> | string
     price?: FloatFilter<"Order"> | number
     points?: FloatFilter<"Order"> | number
+    table?: StringFilter<"Order"> | string
     created_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     cliente_id?: StringFilter<"Order"> | string
@@ -12580,6 +12550,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Order"> | string
     price?: FloatWithAggregatesFilter<"Order"> | number
     points?: FloatWithAggregatesFilter<"Order"> | number
+    table?: StringWithAggregatesFilter<"Order"> | string
     created_at?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     cliente_id?: StringWithAggregatesFilter<"Order"> | string
@@ -12598,8 +12569,8 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
-    avaliacao?: AvaliacaoListRelationFilter
     order?: OrderListRelationFilter
+    avaliacao?: AvaliacaoListRelationFilter
   }
 
   export type ComandaOrderByWithRelationInput = {
@@ -12611,8 +12582,8 @@ export namespace Prisma {
     updated_at?: SortOrderInput | SortOrder
     cliente_id?: SortOrder
     cliente?: ClienteOrderByWithRelationInput
-    avaliacao?: AvaliacaoOrderByRelationAggregateInput
     order?: OrderOrderByRelationAggregateInput
+    avaliacao?: AvaliacaoOrderByRelationAggregateInput
   }
 
   export type ComandaWhereUniqueInput = Prisma.AtLeast<{
@@ -12627,8 +12598,8 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
-    avaliacao?: AvaliacaoListRelationFilter
     order?: OrderListRelationFilter
+    avaliacao?: AvaliacaoListRelationFilter
   }, "id">
 
   export type ComandaOrderByWithAggregationInput = {
@@ -13243,9 +13214,9 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
-    avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     order?: OrderCreateNestedManyWithoutComandaInput
+    avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
 
   export type ComandaUncheckedCreateInput = {
@@ -13255,9 +13226,9 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
-    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
+    cliente_id?: string
     order?: OrderUncheckedCreateNestedManyWithoutComandaInput
+    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
   export type ComandaUpdateInput = {
@@ -13268,8 +13239,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
-    avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     order?: OrderUpdateManyWithoutComandaNestedInput
+    avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
   }
 
   export type ComandaUncheckedUpdateInput = {
@@ -13280,8 +13251,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
-    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     order?: OrderUncheckedUpdateManyWithoutComandaNestedInput
+    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
   export type ComandaCreateManyInput = {
@@ -13291,7 +13262,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
   }
 
   export type ComandaUpdateManyMutationInput = {
@@ -14392,13 +14363,6 @@ export namespace Prisma {
     connect?: ClienteWhereUniqueInput
   }
 
-  export type AvaliacaoCreateNestedManyWithoutComandaInput = {
-    create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
-    connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
-    createMany?: AvaliacaoCreateManyComandaInputEnvelope
-    connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
-  }
-
   export type OrderCreateNestedManyWithoutComandaInput = {
     create?: XOR<OrderCreateWithoutComandaInput, OrderUncheckedCreateWithoutComandaInput> | OrderCreateWithoutComandaInput[] | OrderUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutComandaInput | OrderCreateOrConnectWithoutComandaInput[]
@@ -14406,7 +14370,7 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
-  export type AvaliacaoUncheckedCreateNestedManyWithoutComandaInput = {
+  export type AvaliacaoCreateNestedManyWithoutComandaInput = {
     create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
     createMany?: AvaliacaoCreateManyComandaInputEnvelope
@@ -14418,6 +14382,13 @@ export namespace Prisma {
     connectOrCreate?: OrderCreateOrConnectWithoutComandaInput | OrderCreateOrConnectWithoutComandaInput[]
     createMany?: OrderCreateManyComandaInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type AvaliacaoUncheckedCreateNestedManyWithoutComandaInput = {
+    create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
+    connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
+    createMany?: AvaliacaoCreateManyComandaInputEnvelope
+    connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -14436,20 +14407,6 @@ export namespace Prisma {
     update?: XOR<XOR<ClienteUpdateToOneWithWhereWithoutComandasInput, ClienteUpdateWithoutComandasInput>, ClienteUncheckedUpdateWithoutComandasInput>
   }
 
-  export type AvaliacaoUpdateManyWithoutComandaNestedInput = {
-    create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
-    connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
-    upsert?: AvaliacaoUpsertWithWhereUniqueWithoutComandaInput | AvaliacaoUpsertWithWhereUniqueWithoutComandaInput[]
-    createMany?: AvaliacaoCreateManyComandaInputEnvelope
-    set?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
-    disconnect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
-    delete?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
-    connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
-    update?: AvaliacaoUpdateWithWhereUniqueWithoutComandaInput | AvaliacaoUpdateWithWhereUniqueWithoutComandaInput[]
-    updateMany?: AvaliacaoUpdateManyWithWhereWithoutComandaInput | AvaliacaoUpdateManyWithWhereWithoutComandaInput[]
-    deleteMany?: AvaliacaoScalarWhereInput | AvaliacaoScalarWhereInput[]
-  }
-
   export type OrderUpdateManyWithoutComandaNestedInput = {
     create?: XOR<OrderCreateWithoutComandaInput, OrderUncheckedCreateWithoutComandaInput> | OrderCreateWithoutComandaInput[] | OrderUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutComandaInput | OrderCreateOrConnectWithoutComandaInput[]
@@ -14464,7 +14421,7 @@ export namespace Prisma {
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
-  export type AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput = {
+  export type AvaliacaoUpdateManyWithoutComandaNestedInput = {
     create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
     upsert?: AvaliacaoUpsertWithWhereUniqueWithoutComandaInput | AvaliacaoUpsertWithWhereUniqueWithoutComandaInput[]
@@ -14490,6 +14447,20 @@ export namespace Prisma {
     update?: OrderUpdateWithWhereUniqueWithoutComandaInput | OrderUpdateWithWhereUniqueWithoutComandaInput[]
     updateMany?: OrderUpdateManyWithWhereWithoutComandaInput | OrderUpdateManyWithWhereWithoutComandaInput[]
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
+  export type AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput = {
+    create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
+    connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
+    upsert?: AvaliacaoUpsertWithWhereUniqueWithoutComandaInput | AvaliacaoUpsertWithWhereUniqueWithoutComandaInput[]
+    createMany?: AvaliacaoCreateManyComandaInputEnvelope
+    set?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
+    disconnect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
+    delete?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
+    connect?: AvaliacaoWhereUniqueInput | AvaliacaoWhereUniqueInput[]
+    update?: AvaliacaoUpdateWithWhereUniqueWithoutComandaInput | AvaliacaoUpdateWithWhereUniqueWithoutComandaInput[]
+    updateMany?: AvaliacaoUpdateManyWithWhereWithoutComandaInput | AvaliacaoUpdateManyWithWhereWithoutComandaInput[]
+    deleteMany?: AvaliacaoScalarWhereInput | AvaliacaoScalarWhereInput[]
   }
 
   export type ClienteCreateNestedOneWithoutAvaliacaoInput = {
@@ -14739,8 +14710,8 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     order?: OrderCreateNestedManyWithoutComandaInput
+    avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
 
   export type ComandaUncheckedCreateWithoutClienteInput = {
@@ -14750,8 +14721,8 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     order?: OrderUncheckedCreateNestedManyWithoutComandaInput
+    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
   export type ComandaCreateOrConnectWithoutClienteInput = {
@@ -14906,6 +14877,7 @@ export namespace Prisma {
     status?: StringFilter<"Order"> | string
     price?: FloatFilter<"Order"> | number
     points?: FloatFilter<"Order"> | number
+    table?: StringFilter<"Order"> | string
     created_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Order"> | Date | string | null
     cliente_id?: StringFilter<"Order"> | string
@@ -15297,7 +15269,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
 
@@ -15308,7 +15280,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -15464,6 +15436,40 @@ export namespace Prisma {
     create: XOR<ClienteCreateWithoutComandasInput, ClienteUncheckedCreateWithoutComandasInput>
   }
 
+  export type OrderCreateWithoutComandaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    table: string
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente: ClienteCreateNestedOneWithoutOrderInput
+    items?: ItemCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutComandaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    table: string
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente_id: string
+    items?: ItemUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutComandaInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutComandaInput, OrderUncheckedCreateWithoutComandaInput>
+  }
+
+  export type OrderCreateManyComandaInputEnvelope = {
+    data: OrderCreateManyComandaInput | OrderCreateManyComandaInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AvaliacaoCreateWithoutComandaInput = {
     id?: string
     nota: number
@@ -15487,38 +15493,6 @@ export namespace Prisma {
 
   export type AvaliacaoCreateManyComandaInputEnvelope = {
     data: AvaliacaoCreateManyComandaInput | AvaliacaoCreateManyComandaInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type OrderCreateWithoutComandaInput = {
-    id?: string
-    status: string
-    price: number
-    points: number
-    created_at?: Date | string | null
-    updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutOrderInput
-    items?: ItemCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderUncheckedCreateWithoutComandaInput = {
-    id?: string
-    status: string
-    price: number
-    points: number
-    created_at?: Date | string | null
-    updated_at?: Date | string | null
-    cliente_id: string
-    items?: ItemUncheckedCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderCreateOrConnectWithoutComandaInput = {
-    where: OrderWhereUniqueInput
-    create: XOR<OrderCreateWithoutComandaInput, OrderUncheckedCreateWithoutComandaInput>
-  }
-
-  export type OrderCreateManyComandaInputEnvelope = {
-    data: OrderCreateManyComandaInput | OrderCreateManyComandaInput[]
     skipDuplicates?: boolean
   }
 
@@ -15561,22 +15535,6 @@ export namespace Prisma {
     order?: OrderUncheckedUpdateManyWithoutClienteNestedInput
   }
 
-  export type AvaliacaoUpsertWithWhereUniqueWithoutComandaInput = {
-    where: AvaliacaoWhereUniqueInput
-    update: XOR<AvaliacaoUpdateWithoutComandaInput, AvaliacaoUncheckedUpdateWithoutComandaInput>
-    create: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput>
-  }
-
-  export type AvaliacaoUpdateWithWhereUniqueWithoutComandaInput = {
-    where: AvaliacaoWhereUniqueInput
-    data: XOR<AvaliacaoUpdateWithoutComandaInput, AvaliacaoUncheckedUpdateWithoutComandaInput>
-  }
-
-  export type AvaliacaoUpdateManyWithWhereWithoutComandaInput = {
-    where: AvaliacaoScalarWhereInput
-    data: XOR<AvaliacaoUpdateManyMutationInput, AvaliacaoUncheckedUpdateManyWithoutComandaInput>
-  }
-
   export type OrderUpsertWithWhereUniqueWithoutComandaInput = {
     where: OrderWhereUniqueInput
     update: XOR<OrderUpdateWithoutComandaInput, OrderUncheckedUpdateWithoutComandaInput>
@@ -15591,6 +15549,22 @@ export namespace Prisma {
   export type OrderUpdateManyWithWhereWithoutComandaInput = {
     where: OrderScalarWhereInput
     data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutComandaInput>
+  }
+
+  export type AvaliacaoUpsertWithWhereUniqueWithoutComandaInput = {
+    where: AvaliacaoWhereUniqueInput
+    update: XOR<AvaliacaoUpdateWithoutComandaInput, AvaliacaoUncheckedUpdateWithoutComandaInput>
+    create: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput>
+  }
+
+  export type AvaliacaoUpdateWithWhereUniqueWithoutComandaInput = {
+    where: AvaliacaoWhereUniqueInput
+    data: XOR<AvaliacaoUpdateWithoutComandaInput, AvaliacaoUncheckedUpdateWithoutComandaInput>
+  }
+
+  export type AvaliacaoUpdateManyWithWhereWithoutComandaInput = {
+    where: AvaliacaoScalarWhereInput
+    data: XOR<AvaliacaoUpdateManyMutationInput, AvaliacaoUncheckedUpdateManyWithoutComandaInput>
   }
 
   export type ClienteCreateWithoutAvaliacaoInput = {
@@ -15633,7 +15607,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     order?: OrderCreateNestedManyWithoutComandaInput
   }
 
@@ -15644,7 +15618,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
     order?: OrderUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -15944,8 +15918,8 @@ export namespace Prisma {
     points?: IntFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     order?: OrderUpdateManyWithoutComandaNestedInput
+    avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
   }
 
   export type ComandaUncheckedUpdateWithoutClienteInput = {
@@ -15955,8 +15929,8 @@ export namespace Prisma {
     points?: IntFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     order?: OrderUncheckedUpdateManyWithoutComandaNestedInput
+    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
   export type ComandaUncheckedUpdateManyWithoutClienteInput = {
@@ -16143,6 +16117,17 @@ export namespace Prisma {
     product_id?: StringFieldUpdateOperationsInput | string
   }
 
+  export type OrderCreateManyComandaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    table: string
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente_id: string
+  }
+
   export type AvaliacaoCreateManyComandaInput = {
     id?: string
     nota: number
@@ -16151,14 +16136,39 @@ export namespace Prisma {
     cliente_id: string
   }
 
-  export type OrderCreateManyComandaInput = {
-    id?: string
-    status: string
-    price: number
-    points: number
-    created_at?: Date | string | null
-    updated_at?: Date | string | null
-    cliente_id: string
+  export type OrderUpdateWithoutComandaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    table?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente?: ClienteUpdateOneRequiredWithoutOrderNestedInput
+    items?: ItemUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutComandaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    table?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
+    items?: ItemUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateManyWithoutComandaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    table?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type AvaliacaoUpdateWithoutComandaInput = {
@@ -16182,38 +16192,6 @@ export namespace Prisma {
     nota?: IntFieldUpdateOperationsInput | number
     descricao?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cliente_id?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type OrderUpdateWithoutComandaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    points?: FloatFieldUpdateOperationsInput | number
-    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cliente?: ClienteUpdateOneRequiredWithoutOrderNestedInput
-    items?: ItemUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateWithoutComandaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    points?: FloatFieldUpdateOperationsInput | number
-    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cliente_id?: StringFieldUpdateOperationsInput | string
-    items?: ItemUncheckedUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateManyWithoutComandaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    points?: FloatFieldUpdateOperationsInput | number
-    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
   }
 

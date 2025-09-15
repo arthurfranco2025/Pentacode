@@ -33,7 +33,7 @@ class OpenComandaService {
             throw new Error('Feche sua comanda para abrir outra')
         }
 
-        const comanda = await prismaClient.comanda.create({
+        const comanda = await  PrismaClient.comanda.create({
             data: {
                 status: "aberta",
                 price: 0,

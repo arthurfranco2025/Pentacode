@@ -96,10 +96,7 @@ model Order {
 
   comanda    Comanda @relation(fields: [comanda_id], references: [id])
   comanda_id String
-
-  comanda    Comanda @relation(fields: [comanda_id], references: [id])
-  comanda_id String
-
+  
   items Item[]
 
   @@map("pedidos")
