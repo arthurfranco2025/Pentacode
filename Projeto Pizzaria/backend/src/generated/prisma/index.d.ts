@@ -6628,6 +6628,7 @@ export namespace Prisma {
     points: number | null
     description: string | null
     promocao: boolean | null
+    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
     category_id: string | null
@@ -6640,6 +6641,7 @@ export namespace Prisma {
     points: number | null
     description: string | null
     promocao: boolean | null
+    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
     category_id: string | null
@@ -6652,6 +6654,7 @@ export namespace Prisma {
     points: number
     description: number
     promocao: number
+    image_url: number
     created_at: number
     updated_at: number
     category_id: number
@@ -6676,6 +6679,7 @@ export namespace Prisma {
     points?: true
     description?: true
     promocao?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
     category_id?: true
@@ -6688,6 +6692,7 @@ export namespace Prisma {
     points?: true
     description?: true
     promocao?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
     category_id?: true
@@ -6700,6 +6705,7 @@ export namespace Prisma {
     points?: true
     description?: true
     promocao?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
     category_id?: true
@@ -6799,6 +6805,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
     category_id: string
@@ -6830,6 +6837,7 @@ export namespace Prisma {
     points?: boolean
     description?: boolean
     promocao?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
     category_id?: boolean
@@ -6847,6 +6855,7 @@ export namespace Prisma {
     points?: boolean
     description?: boolean
     promocao?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
     category_id?: boolean
@@ -6860,6 +6869,7 @@ export namespace Prisma {
     points?: boolean
     description?: boolean
     promocao?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
     category_id?: boolean
@@ -6873,12 +6883,13 @@ export namespace Prisma {
     points?: boolean
     description?: boolean
     promocao?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
     category_id?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "points" | "description" | "promocao" | "created_at" | "updated_at" | "category_id", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "points" | "description" | "promocao" | "image_url" | "created_at" | "updated_at" | "category_id", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     items?: boolean | Product$itemsArgs<ExtArgs>
@@ -6908,6 +6919,7 @@ export namespace Prisma {
       points: number
       description: string
       promocao: boolean
+      image_url: string | null
       created_at: Date | null
       updated_at: Date | null
       category_id: string
@@ -7344,6 +7356,7 @@ export namespace Prisma {
     readonly points: FieldRef<"Product", 'Float'>
     readonly description: FieldRef<"Product", 'String'>
     readonly promocao: FieldRef<"Product", 'Boolean'>
+    readonly image_url: FieldRef<"Product", 'String'>
     readonly created_at: FieldRef<"Product", 'DateTime'>
     readonly updated_at: FieldRef<"Product", 'DateTime'>
     readonly category_id: FieldRef<"Product", 'String'>
@@ -16842,6 +16855,7 @@ export namespace Prisma {
     points: 'points',
     description: 'description',
     promocao: 'promocao',
+    image_url: 'image_url',
     created_at: 'created_at',
     updated_at: 'updated_at',
     category_id: 'category_id'
@@ -17298,6 +17312,7 @@ export namespace Prisma {
     points?: FloatFilter<"Product"> | number
     description?: StringFilter<"Product"> | string
     promocao?: BoolFilter<"Product"> | boolean
+    image_url?: StringNullableFilter<"Product"> | string | null
     created_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     category_id?: StringFilter<"Product"> | string
@@ -17314,6 +17329,7 @@ export namespace Prisma {
     points?: SortOrder
     description?: SortOrder
     promocao?: SortOrder
+    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     category_id?: SortOrder
@@ -17333,6 +17349,7 @@ export namespace Prisma {
     points?: FloatFilter<"Product"> | number
     description?: StringFilter<"Product"> | string
     promocao?: BoolFilter<"Product"> | boolean
+    image_url?: StringNullableFilter<"Product"> | string | null
     created_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     category_id?: StringFilter<"Product"> | string
@@ -17349,6 +17366,7 @@ export namespace Prisma {
     points?: SortOrder
     description?: SortOrder
     promocao?: SortOrder
+    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     category_id?: SortOrder
@@ -17369,6 +17387,7 @@ export namespace Prisma {
     points?: FloatWithAggregatesFilter<"Product"> | number
     description?: StringWithAggregatesFilter<"Product"> | string
     promocao?: BoolWithAggregatesFilter<"Product"> | boolean
+    image_url?: StringNullableWithAggregatesFilter<"Product"> | string | null
     created_at?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     category_id?: StringWithAggregatesFilter<"Product"> | string
@@ -18160,6 +18179,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -18175,6 +18195,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
@@ -18190,6 +18211,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -18205,6 +18227,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
@@ -18220,6 +18243,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
@@ -18232,6 +18256,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -18243,6 +18268,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
@@ -18998,6 +19024,21 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type CategoryScalarRelationFilter = {
     is?: CategoryWhereInput
     isNot?: CategoryWhereInput
@@ -19030,6 +19071,7 @@ export namespace Prisma {
     points?: SortOrder
     description?: SortOrder
     promocao?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     category_id?: SortOrder
@@ -19047,6 +19089,7 @@ export namespace Prisma {
     points?: SortOrder
     description?: SortOrder
     promocao?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     category_id?: SortOrder
@@ -19059,6 +19102,7 @@ export namespace Prisma {
     points?: SortOrder
     description?: SortOrder
     promocao?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     category_id?: SortOrder
@@ -19091,6 +19135,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type ComandaScalarRelationFilter = {
@@ -19725,6 +19787,10 @@ export namespace Prisma {
     set?: boolean
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type CategoryUpdateOneRequiredWithoutProductsNestedInput = {
     create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput>
     connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput
@@ -20325,6 +20391,20 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -20347,6 +20427,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -20600,6 +20697,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -20614,6 +20712,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
@@ -20677,6 +20776,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -20691,6 +20791,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
@@ -20744,6 +20845,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     items?: ItemCreateNestedManyWithoutProductInput
@@ -20758,6 +20860,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     items?: ItemUncheckedCreateNestedManyWithoutProductInput
@@ -20801,6 +20904,7 @@ export namespace Prisma {
     points?: FloatFilter<"Product"> | number
     description?: StringFilter<"Product"> | string
     promocao?: BoolFilter<"Product"> | boolean
+    image_url?: StringNullableFilter<"Product"> | string | null
     created_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     category_id?: StringFilter<"Product"> | string
@@ -21506,6 +21610,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -21520,6 +21625,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
@@ -21603,6 +21709,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -21617,6 +21724,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
@@ -21696,6 +21804,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -21710,6 +21819,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
@@ -21761,6 +21871,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -21775,6 +21886,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
@@ -22098,6 +22210,7 @@ export namespace Prisma {
     points: number
     description: string
     promocao: boolean
+    image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -22109,6 +22222,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: ItemUpdateManyWithoutProductNestedInput
@@ -22123,6 +22237,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: ItemUncheckedUpdateManyWithoutProductNestedInput
@@ -22137,6 +22252,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     description?: StringFieldUpdateOperationsInput | string
     promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }

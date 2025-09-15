@@ -1,40 +1,69 @@
 import prismaClient from "../../prisma";
+import { cloudinary } from "../../config/cloudinary";
 
-interface ProductRequest{
-    name: string;
-    price: string;
-    description: string;
-    category_id: string;
-    points?: string | number;
-    promocao?: boolean;
+interface BannerUpload {
+  buffer: Buffer;
+  mimeType: string;
 }
 
-class CreateProductService{
-    async execute({name, price, description, category_id, points, promocao}: ProductRequest){
-        const numericPrice = Number(price)
-        if (isNaN(numericPrice)) {
-            throw new Error("Preço inválido")
+interface CreateRequest {
+  name: string;
+  price: number;
+  points: number;
+  description: string;
+  promocao?: boolean;
+  category_id: string;
+  banner?: string | BannerUpload; // Pode ser URL ou objeto de upload
+}
+
+class CreateProductService {
+  async execute({ name, price, points, description, promocao, category_id, banner }: CreateRequest) {
+    if (!name) throw new Error("Insira o nome do produto");
+    if (!price) throw new Error("Insira o preço do produto");
+    if (!points) throw new Error("Insira os pontos do produto");
+
+    const productAlreadyExists = await prismaClient.product.findFirst({
+      where: { name },
+    });
+
+    let imageUrl: string | undefined;
+
+    if (banner) {
+      if (typeof banner === "string") {
+        // Se já for uma URL, apenas atribui
+        imageUrl = banner;
+      } else {
+        try {
+          // Convertemos o buffer para base64 antes de enviar
+          const bufferToBase64 = banner.buffer.toString("base64");
+          const dataUri = `data:${banner.mimeType};base64,${bufferToBase64}`;
+
+          const uploadResult = await cloudinary.uploader.upload(dataUri, {
+            folder: "produtos",
+            resource_type: "image",
+          });
+
+          imageUrl = uploadResult.secure_url;
+        } catch (error) {
+          throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
         }
-
-        const numericPoints = points !== undefined ? Number(points) : 0
-        if (isNaN(numericPoints)) {
-            throw new Error("Pontos inválidos")
-        }
-
-        const isPromocao = Boolean(promocao)
-
-        const product = await prismaClient.product.create({
-            data:{
-                name: name,
-                price: numericPrice,
-                points: numericPoints,
-                description: description,
-                promocao: isPromocao,
-                category_id: category_id,
-            }
-        })
-        return product
+      }
     }
+
+    const product = await prismaClient.product.create({
+      data: {
+        name,
+        price,
+        points,
+        description,
+        promocao,
+        category_id,
+        image_url: imageUrl,
+      },
+    });
+
+    return product;
+  }
 }
 
-export {CreateProductService}
+export { CreateProductService };

@@ -160,6 +160,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   points: 'points',
   description: 'description',
   promocao: 'promocao',
+  image_url: 'image_url',
   created_at: 'created_at',
   updated_at: 'updated_at',
   category_id: 'category_id'

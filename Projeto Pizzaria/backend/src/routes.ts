@@ -1,4 +1,8 @@
 import {Router} from 'express'
+const router = Router();
+
+import uploadConfig from './config/multer';
+import multer from 'multer';
 
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
@@ -30,12 +34,7 @@ import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
 import { EditItemController } from './controllers/item/editItemController'
 
-import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
-import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
-
-import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
-
-const router = Router()
+const upload = multer(uploadConfig);
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, new CreateCategoryController().handle)
@@ -59,27 +58,17 @@ router.post('/funcionario', new CreateFuncionarioController().handle.bind(new Cr
 router.post('/funcionario/login', new AuthFuncionarioController().handle)
 
 //PRODUCTS ROUTE
-router.post('/product', isAuthenticated, new CreateProductController().handle.bind(new CreateProductController()))
+router.post('/product', isAuthenticated, upload.single('image'), new CreateProductController().handle.bind(new CreateProductController()))  
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
-router.put('/product/edit/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
+router.put('/product/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
 
-//COMANDA ROUTE
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 
-//PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
 
-//ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
 router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle.bind(new DeleteItemController))
 router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( new EditItemController))
-
-//INGREDIENTE ROUTE
-router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
-router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
-
-//PRODUTO_INGREDIENTE ROUTE
-router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
 
 export { router };
