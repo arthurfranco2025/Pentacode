@@ -54,6 +54,6 @@ router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 router.delete('/favorito/:id', isAuthenticated, new RemoveFavoritoController().handle)
 router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
 
-router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
+router.post('/comanda', new OpenComandaController().handle)
 
 export {router};

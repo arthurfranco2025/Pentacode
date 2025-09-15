@@ -13214,7 +13214,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     order?: OrderCreateNestedManyWithoutComandaInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
@@ -13226,7 +13226,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
     order?: OrderUncheckedCreateNestedManyWithoutComandaInput
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -13262,7 +13262,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
   }
 
   export type ComandaUpdateManyMutationInput = {
@@ -15269,7 +15269,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
 
@@ -15280,7 +15280,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -15607,7 +15607,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente: ClienteCreateNestedOneWithoutComandasInput
+    cliente?: ClienteCreateNestedOneWithoutComandasInput
     order?: OrderCreateNestedManyWithoutComandaInput
   }
 
@@ -15618,7 +15618,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    cliente_id: string
+    cliente_id?: string
     order?: OrderUncheckedCreateNestedManyWithoutComandaInput
   }
 

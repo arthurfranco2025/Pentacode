@@ -111,7 +111,7 @@ model Comanda {
   updated_at DateTime? @default(now())
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
-  cliente_id String
+  cliente_id String  @default(uuid())
 
   order     Order[]
   avaliacao Avaliacao[]
