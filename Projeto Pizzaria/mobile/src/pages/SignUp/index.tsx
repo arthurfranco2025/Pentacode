@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { DateTimePickerEvent, default as DateTimePicker } from "@react-native-community/datetimepicker";
+import { AuthContext } from "../../contexts/AuthContext";
 import {
-  SafeAreaView,
   View,
   ScrollView,
   KeyboardAvoidingView,
@@ -8,24 +9,80 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
   StyleSheet,
 } from "react-native";
 
 export default function SignUp() {
+  const { signUp, loadingAuth } = useContext(AuthContext)
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [cpf, setCpf] = useState("");
 
-  function handleLogin(){
-	if(name === '' || email === '' || password === '' || confirmPassword === ''){
-		return
-	} 
+  const [data_nasc, setData_Nasc] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false)
+
+  const [error, setError] = useState("");
+
+  // function validateEmail(email: string) {
+  //   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   return re.test(email);
+  // }
+
+  // function validateCPF(cpf: string) {
+  //   return cpf.length === 11 && /^\d+$/.test(cpf);
+  // }
+
+  async function handleSubmit() {
+
+    try {
+    if (name === '' || email === '' || password === '' || confirmPassword === '' || cpf === '' || !data_nasc) {
+      setError('Preencha todos os campos!');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem!');
+      return;
+    }
+    
+    setError('')
+
+    await signUp({
+      name, 
+      email, 
+      password, 
+      cpf, 
+      data_nasc
+    });
+
+    console.log('Cadastro realizado com sucesso!');
+    // adicionar navegação para login
+    
+  } catch (err: any) { 
+    let mensagem = 'Erro desconhecido';
+
+    if (err.response?.data?.message) {
+      mensagem = err.response.data.message; 
+    } else if (err.message) {
+      mensagem = err.message; 
+    }
+
+    setError('Erro ao cadastrar!\n'+mensagem);
+    console.log('Erro:', mensagem);
   }
+}
+
+  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) setData_Nasc(selectedDate);
+  };
+
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -60,6 +117,7 @@ export default function SignUp() {
             />
           </View>
 
+
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Senha</Text>
             <TextInput
@@ -69,7 +127,7 @@ export default function SignUp() {
               value={password}
               onChangeText={setPassword}
               style={styles.input}
-            />
+              />
           </View>
 
           <View style={styles.inputGroup}>
@@ -81,30 +139,62 @@ export default function SignUp() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               style={styles.input}
+              />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>CPF</Text>
+            <TextInput
+              placeholder="Digite seu CPF"
+              placeholderTextColor="#8A8A8A"
+              value={cpf}
+              onChangeText={setCpf}
+              style={styles.input}
             />
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Registrar</Text>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Data de Nascimento:</Text>
+            <TouchableOpacity
+              style={styles.buttonDate}
+              onPress={() => setShowDatePicker(true)}
+              activeOpacity={0.7} // efeito de opacidade ao tocar
+            >
+              <Text style={styles.buttonText2}>
+                {data_nasc instanceof Date
+                  ? data_nasc.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  })
+                  : 'Selecione uma data'}
+              </Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date(data_nasc)}
+                mode="date"
+                display="default"
+                onChange={onChange}
+                maximumDate={new Date()}
+              />
+            )}
+          </View>
+
+          {/* Mostra o erro somente se existir */}
+          {error !== "" && <Text style={styles.errorText}>{error}</Text>}
+
+          <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit} disabled={loadingAuth}>
+            <Text style={styles.buttonText}>{loadingAuth ? 'Carregando...' : 'Cadastrar'}</Text>
           </TouchableOpacity>
 
           <Text style={styles.dividerText}>ou</Text>
 
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              source={{
-                uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/yaigou25_expires_30_days.png",
-              }}
-              resizeMode="contain"
-              style={styles.googleIcon}
-            />
-            <Text style={styles.googleText}>Continuar com Google</Text>
-          </TouchableOpacity>
-
           <Text style={styles.loginText}>Possui conta? Login</Text>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -152,7 +242,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
   },
-  button: {
+  buttonSubmit: {
     backgroundColor: "#FF3F4B",
     borderRadius: 5,
     paddingVertical: 12,
@@ -163,6 +253,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
+  },
+  buttonText2: {
+    color: "#8A8A8A",
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  buttonDate: {
+    backgroundColor: "#101026",
+    borderRadius: 5,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginBottom: 20,
+    outlineWidth: 1,
+    outlineColor: "#8A8A8A"
   },
   dividerText: {
     textAlign: "center",
@@ -196,5 +300,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     marginBottom: 60,
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 20,
+    fontWeight: "bold",
   },
 });
