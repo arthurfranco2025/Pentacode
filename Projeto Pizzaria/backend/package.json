@@ -17,7 +17,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.6.0",
+    "@prisma/client": "^6.16.2",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
@@ -29,6 +29,6 @@
     "express-fileupload": "^1.5.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "prisma": "^6.6.0"
+    "prisma": "^6.16.2"
   }
 }
