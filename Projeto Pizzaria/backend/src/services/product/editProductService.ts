@@ -31,7 +31,7 @@ class EditProductService {
 
         const updatedProduct = await prismaClient.product.update({
             where: {
-                id: id
+                id
             },
             data: {
                 name: name ? name : product.name,
