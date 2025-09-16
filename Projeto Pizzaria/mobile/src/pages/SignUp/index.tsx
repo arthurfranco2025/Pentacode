@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { DateTimePickerEvent, default as DateTimePicker } from "@react-native-community/datetimepicker";
 import { AuthContext } from "../../contexts/AuthContext";
 import {
@@ -12,7 +13,13 @@ import {
   StyleSheet,
 } from "react-native";
 
+type RootStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
+};
+
 export default function SignUp() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { signUp, loadingAuth } = useContext(AuthContext)
 
   const [name, setName] = useState("");
@@ -34,6 +41,10 @@ export default function SignUp() {
   // function validateCPF(cpf: string) {
   //   return cpf.length === 11 && /^\d+$/.test(cpf);
   // }
+
+  function handleHasLogin(){
+    navigation.navigate('SignIn')
+  }
 
   async function handleSubmit() {
 
@@ -59,7 +70,7 @@ export default function SignUp() {
     });
 
     console.log('Cadastro realizado com sucesso!');
-    // adicionar navegação para login
+    navigation.navigate('SignIn')
     
   } catch (err: any) { 
     let mensagem = 'Erro desconhecido';
@@ -191,7 +202,11 @@ export default function SignUp() {
 
           <Text style={styles.dividerText}>ou</Text>
 
-          <Text style={styles.loginText}>Possui conta? Login</Text>
+          <TouchableOpacity onPress={handleHasLogin}>
+            <Text style={styles.loginText}>Possui conta? Login</Text>
+          </TouchableOpacity>
+
+
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -275,25 +290,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  googleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    paddingVertical: 10,
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  googleIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  googleText: {
-    color: "#1D1D2E",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
   loginText: {
     textAlign: "center",
     color: "#fff",
@@ -306,4 +302,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "bold",
   },
-});
+  // HasLoginText: {
+  //   textAlign: "center",
+  //   color: "#fff",
+  //   fontSize: 12,
+  //   fontWeight: "bold",
+  //   marginBottom: 60,
+  //   textDecorationLine: 'underline',
+  // }
+})
