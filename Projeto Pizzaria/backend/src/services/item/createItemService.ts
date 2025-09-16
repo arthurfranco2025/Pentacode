@@ -94,16 +94,17 @@ class CreateItemService {
             // 2. Busca todos os pedidos dessa comanda
             const pedidos = await PrismaClient.pedido.findMany({
                 where: { comanda_id: pedidoComanda.comanda_id }, // ou comandaId
-                select: { price: true }
+                select: { price: true, points: true }
             });
 
             // 3. Soma o preço de todos os pedidos
             const totalComanda = pedidos.reduce((acc, p) => acc + p.price, 0);
+            const totalComandaPoints = pedidos.reduce((acc, p) => acc + p.points, 0)
 
             // 4. Atualiza a comanda com o total
             await PrismaClient.comanda.update({
                 where: { id: pedidoComanda.comanda_id },
-                data: { price: totalComanda }
+                data: { price: totalComanda, points: totalComandaPoints }
             });
         }
         return item;
