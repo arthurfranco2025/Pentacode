@@ -74,6 +74,15 @@ class CreateItemService {
       data: { price: total }
     });
 
+    await PrismaClient.pedido.update({
+        where:{
+            id: pedido_id
+        },
+        data:{
+            points: total*1.5
+        }
+    })
+
     return item;
   }
 }
