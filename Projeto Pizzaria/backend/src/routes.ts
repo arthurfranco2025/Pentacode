@@ -4,6 +4,8 @@ const router = Router();
 import uploadConfig from './config/multer';
 import multer from 'multer';
 
+const upload = multer(uploadConfig);
+
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
 
@@ -38,8 +40,6 @@ import { CreateIngredienteController } from './controllers/ingrediente/createIng
 import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
 
 import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
-
-const router = Router()
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, new CreateCategoryController().handle)
@@ -76,10 +76,10 @@ router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle
 router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind( new EditItemController))
 
 //INGREDIENTE ROUTE
-router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
-router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
+ router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
+ router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
 
 //PRODUTO_INGREDIENTE ROUTE
-router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
+ router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
 
 export { router };
