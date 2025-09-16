@@ -48,6 +48,8 @@ import { CreateAdicionalController } from './controllers/adicionais/createAdicio
 import { EditAdicionalController } from './controllers/adicionais/editAdicionalController';
 import { DeleteAdicionalController } from './controllers/adicionais/deleteAdicionalController';
 
+import { CreateItemAdicionalController } from './controllers/item_adicionais/createItemAdicionalController';
+
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, new CreateCategoryController().handle)
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
@@ -95,5 +97,7 @@ router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductI
 router.post('/adicionais', isAuthenticated, new CreateAdicionalController().handle.bind(new CreateAdicionalController))
 router.put('/adicionais/edit', isAuthenticated, new EditAdicionalController().handle.bind(new EditAdicionalController()))
 router.delete('/adicionais/delete', isAuthenticated, new DeleteAdicionalController().handle.bind(new DeleteAdicionalController))
+
+router.post('/itemAdicional', isAuthenticated, new CreateItemAdicionalController().handle.bind(new CreateItemAdicionalController()))
 
 export { router };
