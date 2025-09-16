@@ -26,6 +26,7 @@ import { AuthFuncionarioController } from './controllers/funcionario/authFuncion
 import { CreateProductController } from './controllers/product/createProductController'
 import { DeleteProductController } from './controllers/product/deleteProductController'
 import { EditProductController } from './controllers/product/editProductController'
+import { ListProductByCategoryController } from './controllers/product/listProductController';
 
 import { OpenComandaController } from './controllers/comanda/openComandaController'
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
@@ -65,6 +66,7 @@ router.post('/funcionario/login', new AuthFuncionarioController().handle)
 router.post('/product', isAuthenticated, upload.single('image'), new CreateProductController().handle.bind(new CreateProductController()))  
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
 router.put('/product/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
+router.get('/category/products', isAuthenticated, new ListProductByCategoryController().handle.bind(new ListProductByCategoryController))
 
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
