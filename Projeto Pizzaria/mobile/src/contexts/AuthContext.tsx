@@ -8,6 +8,7 @@ type AuthContextData = {
     user: UserProps;
     isAuthenticated: boolean;
     signIn: (credentials: SignInProps) => Promise<void>;
+    signUp: (credentials: SignUpProps) => Promise<void>;
     loadingAuth: boolean;
     loading: boolean;
     signOut: () => Promise<void>;
@@ -27,6 +28,14 @@ type AuthProviderProps = {
 type SignInProps = {
     email: string;
     password: string;
+}
+
+type SignUpProps = {
+    name: string;
+    email: string;
+    password: string;
+    cpf: string;
+    data_nasc: Date;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -107,8 +116,8 @@ export function AuthProvider({children}: AuthProviderProps){
 
         // } catch (err: any) {
         // if (err.response) {
-        //     console.log('Status:', err.response.status);         // deve mostrar 400
-        //     console.log('Data:', err.response.data);             // mostra mensagem de erro da API
+        //     console.log('Status:', err.response.status);         
+        //     console.log('Data:', err.response.data);             
         //     console.log('Headers:', err.response.headers);
         // } else {
         //     console.log('Erro inesperado:', err.message);
@@ -131,15 +140,58 @@ export function AuthProvider({children}: AuthProviderProps){
             
         }
 
+        async function signUp({name, email, password, cpf, data_nasc}: SignUpProps) {
+        setLoadingAuth(true);
+
+        try {
+            const response = await api.post('/cadastro', { 
+                name,
+                email,
+                password,
+                cpf,
+                data_nasc,
+            })
+
+            const { id, token } = response.data;
+
+            const data = {
+                ...response.data
+            }
+
+            await AsyncStorage.setItem('@sujeitopizzaria', JSON.stringify(data))
+
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+            setUser({
+                id,
+                name,
+                email,
+                token,
+            })
+
+            setLoadingAuth(false)
+
+        } catch (err: any) {
+            setLoadingAuth(false)
+            if(err.response) {
+                throw new Error(err.response.data.error || 'Erro ao cadastrar')
+            } 
+            throw new Error('Erro de conexão');
+        }
+    }
+
+        
+
     return(
         <AuthContext.Provider 
         value={{ 
             user, 
             isAuthenticated, 
             signIn, 
+            signUp,
             loading, 
             loadingAuth,
-            signOut
+            signOut,
             }}
         >
             {children}

@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import {
-  SafeAreaView,
   View,
   ScrollView,
   KeyboardAvoidingView,
@@ -32,7 +31,7 @@ export default function SignIn() {
 }
 
   return (
-	<SafeAreaView style={styles.safeArea}>
+	<View style={styles.safeArea}>
 	  <KeyboardAvoidingView
 		style={{ flex: 1 }}
 		behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -93,7 +92,7 @@ export default function SignIn() {
 		  <Text style={styles.loginText}>Não tem uma conta? Cadastre-se </Text>
 		</ScrollView>
 	  </KeyboardAvoidingView>
-	</SafeAreaView>
+	</View>
   );
 }
 
