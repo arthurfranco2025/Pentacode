@@ -16,18 +16,20 @@ import {
 import { AuthContext } from "../../contexts/AuthContext";
 
 export default function SignIn() {
+  const { signIn, loadingAuth } = useContext(AuthContext)
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { signIn, loadingAuth } = useContext(AuthContext)
 
   async function handleLogin(){
 	if(email === '' || password === ''){
-		return
+		alert('erro')
+		return;
 	} 
 
 	await signIn({email, password})
-  }
+}
 
   return (
 	<SafeAreaView style={styles.safeArea}>

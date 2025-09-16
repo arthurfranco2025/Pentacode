@@ -70,6 +70,7 @@ model Product {
   points      Float
   description String
   promocao    Boolean
+  image_url   String?
   created_at  DateTime? @default(now())
   updated_at  DateTime? @default(now())
 
