@@ -45,6 +45,7 @@ import { CreateProductIngredienteController } from './controllers/product_ingred
 import { DeleteProductIngredienteController } from './controllers/product_ingrediente/deleteProdutoIngredienteController';
 
 import { CreateAdicionalController } from './controllers/adicionais/createAdicionaisController';
+import { EditAdicionalController } from './controllers/adicionais/editAdicionalController';
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, new CreateCategoryController().handle)
@@ -91,5 +92,6 @@ router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredient
 router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController()))
 
 router.post('/adicionais', isAuthenticated, new CreateAdicionalController().handle.bind(new CreateAdicionalController))
+router.put('/adicionais/edit', isAuthenticated, new EditAdicionalController().handle.bind(new EditAdicionalController()))
 
 export { router };
