@@ -39,6 +39,7 @@ import { EditItemController } from './controllers/item/editItemController'
 
 import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
 import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
+import { EditIngredienteController } from './controllers/ingrediente/editIngredienteController';
 
 import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
 import { DeleteProductIngredienteController } from './controllers/product_ingrediente/deleteProdutoIngredienteController';
@@ -83,10 +84,11 @@ router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind(n
 //INGREDIENTE ROUTE
 router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
 router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))
+router.put('/ingrediente/edit', isAuthenticated, new EditIngredienteController().handle.bind(new EditIngredienteController()))
 
 //PRODUTO_INGREDIENTE ROUTE
 router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
-router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController))
+router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController()))
 
 router.post('/adicionais', isAuthenticated, new CreateAdicionalController().handle.bind(new CreateAdicionalController))
 
