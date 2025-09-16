@@ -23,8 +23,12 @@ class CreateProductService {
     if (!points) throw new Error("Insira os pontos do produto");
 
     const productAlreadyExists = await prismaClient.product.findFirst({
-      where: { name },
+      where: { name : name},
     });
+
+    if(productAlreadyExists){
+      throw new Error('Esse produto já existe, caso queira muda-lo vá em EDIT PRODUTO')
+    }
 
     let imageUrl: string | undefined;
 
