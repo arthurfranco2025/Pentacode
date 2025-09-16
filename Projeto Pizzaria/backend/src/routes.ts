@@ -34,6 +34,7 @@ import { CreateIngredienteController } from './controllers/ingrediente/createIng
 import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
 
 import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
+import { DeleteProductIngredienteController } from './controllers/product_ingrediente/deleteProdutoIngredienteController'
 
 const router = Router()
 
@@ -52,7 +53,6 @@ router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 //nesse o front tem q manda o id do favorito pra url de algum jeito
 router.delete('/favorito', isAuthenticated, new RemoveFavoritoController().handle)
 router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
-
 
 //FUNCIONARIOS ROUTE
 router.post('/funcionario', new CreateFuncionarioController().handle.bind(new CreateFuncionarioController()))
@@ -81,5 +81,6 @@ router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteContr
 
 //PRODUTO_INGREDIENTE ROUTE
 router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
+router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController))
 
 export { router };
