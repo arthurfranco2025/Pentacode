@@ -4,13 +4,16 @@ import Routes from './src/routes';
 
 import { AuthProvider } from './src/contexts/AuthContext';
 
+import Home from './src/pages/Home';
+
 export default function App() {
   return (
     <NavigationContainer>
-      <AuthProvider>
+      {/* <AuthProvider> */}
+      <Home />
         <StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false}/>
-        <Routes/>
-      </AuthProvider>
+        {/* <Routes/> */}
+      {/* </AuthProvider> */}
     </NavigationContainer>
   );
 }
