@@ -24,7 +24,7 @@ class CreateClienteService {
         if (cpfValidator.isValid(cpf)) {
             //nada
         } else {
-            throw new Error(" CPF inválido")
+            throw new Error("CPF inválido")
         }
 
         if (!password) {
@@ -60,7 +60,7 @@ class CreateClienteService {
 
         const passwordHash = await hash(password, 8)
 
-        const dataDefault = data_nasc + 'T00:00:00.000Z'
+        const dataDefault = data_nasc
 
         const cliente = await prismaClient.cliente.create({
             data: {
