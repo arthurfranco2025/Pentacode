@@ -44,7 +44,6 @@ class OpenPedidoService {
                 status: "pedido realizado",
                 price: 0,
                 points: 0,
-                items: {},
                 cliente: { connect: { id: cliente_id } },
                 comanda: { connect: { id: comandaExistente.id } }
             },
