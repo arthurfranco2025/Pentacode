@@ -53,6 +53,7 @@ class CreateProductService {
         }
       }
     }
+    
 
     const product = await prismaClient.product.create({
       data: {

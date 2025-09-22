@@ -23,7 +23,7 @@ class DeleteProductService{
             }
         })
 
-        return { message: "Produto deletado" }
+        return { message: `Produto deletado: ${product.name}` }
     }
 }
 

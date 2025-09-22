@@ -8,6 +8,7 @@ const upload = multer(uploadConfig);
 
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
+import { EditCategoryController } from './controllers/category/editCategoryController';
 
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
@@ -30,12 +31,21 @@ import { ListProductByCategoryController } from './controllers/product/listProdu
 
 import { OpenComandaController } from './controllers/comanda/openComandaController'
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
+import { ListComandaController } from './controllers/comanda/listComandasController';
+import { PagarComandaController } from './controllers/comanda/pagarComandaController';
+
 
 import { OpenPedidoController } from './controllers/pedido/openPedidoController'
+import { ListPedidoPorComandaController } from './controllers/pedido/listPedidosPorComandaController';
+import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoController';
+import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoController';
+
 
 import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
 import { EditItemController } from './controllers/item/editItemController'
+import { ListItensPorPedidoController } from './controllers/item/listItensPorPedidoController';
+
 
 import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
 import { DeleteIngredienteController } from './controllers/ingrediente/deleteIngredienteController'
@@ -52,8 +62,9 @@ import { CreateItemAdicionalController } from './controllers/item_adicionais/add
 import { RemoveItemAdicionalController } from './controllers/item_adicionais/removeItemAdicionalController';
 
 //CATEGORIES ROUTE
-router.post('/category', isAuthenticated, new CreateCategoryController().handle)
+router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
+router.put('/category/editar', isAuthenticated, new EditCategoryController().handle)
 
 //CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)
@@ -77,14 +88,23 @@ router.delete('/product/delete', isAuthenticated, new DeleteProductController().
 router.put('/product/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
 router.get('/category/products', isAuthenticated, new ListProductByCategoryController().handle.bind(new ListProductByCategoryController))
 
+//COMANDA ROUTE
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
+router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
+router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
 
+//PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
+router.get('/pedido/listaPorComanda', isAuthenticated, new ListPedidoPorComandaController().handle.bind(new ListPedidoPorComandaController))
+router.put('/pedido/pagar', isAuthenticated, new PagarPedidoController().handle)
+router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().handle)
 
+//ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
 router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle.bind(new DeleteItemController))
 router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind(new EditItemController))
+router.get('/item/listaPorPedido', isAuthenticated, new ListItensPorPedidoController().handle.bind(new ListItensPorPedidoController))
 
 //INGREDIENTE ROUTE
 router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
@@ -95,10 +115,12 @@ router.put('/ingrediente/edit', isAuthenticated, new EditIngredienteController()
 router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
 router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController()))
 
+//ADICIONAIS ROUTE
 router.post('/adicionais', isAuthenticated, new CreateAdicionalController().handle.bind(new CreateAdicionalController))
 router.put('/adicionais/edit', isAuthenticated, new EditAdicionalController().handle.bind(new EditAdicionalController()))
 router.delete('/adicionais/delete', isAuthenticated, new DeleteAdicionalController().handle.bind(new DeleteAdicionalController))
 
+//ITEM_ADICIONAL ROUTE
 router.post('/itemAdicional', isAuthenticated, new CreateItemAdicionalController().handle.bind(new CreateItemAdicionalController()))
 router.delete('/itemAdicional/delete', isAuthenticated, new RemoveItemAdicionalController().handle.bind(new RemoveItemAdicionalController))
 

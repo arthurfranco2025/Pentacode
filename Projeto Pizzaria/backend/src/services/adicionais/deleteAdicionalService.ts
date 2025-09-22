@@ -23,7 +23,7 @@ class DeleteAdicionalService{
             }
         })
 
-        return { message: "Adicional Deletado" }
+        return { message: `Adicional Deletado: ${adicional.nome}` }
     }
 }
 

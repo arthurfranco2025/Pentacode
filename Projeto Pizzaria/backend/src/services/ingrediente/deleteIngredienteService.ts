@@ -23,7 +23,7 @@ class DeleteIngredienteService{
             }
         })
 
-        return { message: "Ingrediente Deletado" }
+        return { message:  `Ingrediente Deletado: ${ingrediente.nome}` }
     }
 }
 
