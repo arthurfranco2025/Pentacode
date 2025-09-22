@@ -7,6 +7,7 @@ class ListCategoryService{
             select:{
                 id: true,
                 name: true,
+                image_url: true
             }
         })
 
