@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	View,
 	ScrollView,
@@ -10,7 +10,7 @@ import {
 	StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 type RootStackParamList = {
@@ -27,38 +27,70 @@ type RootStackParamList = {
 // 		</TouchableOpacity>
 // 	</View>
 // );
+interface Categories {
+	name: string;
+	id: string;
+	image: string;
+}
 
-const ItemCard = ({ title, price, image }: { title: string; price: string; image: string }) => (
+interface Product {
+	name: string;
+	price: string;
+	image: string;
+	categoryId: string
+}
+
+const ItemCard = ({ product }: { product: Product }) => (
 	<View style={styles.card}>
-		<Text style={styles.promoText}>{title}</Text>
-		<Text style={styles.priceText}>{price}</Text>
+		<Image
+			source={{ uri: product.image }}
+			// style={styles.image}
+			resizeMode="cover"
+		/>
+		<Text style={styles.promoText}>{product.name}</Text>
+		<Text style={styles.priceText}>R$ {product.price}</Text>
 		<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
 			<Text style={styles.buttonText}>VER</Text>
 		</TouchableOpacity>
 	</View>
 );
 
+
 const CategoryCard = ({
 	image,
 	label,
-	bgImage,
 }: {
 	image: string;
 	label: string;
-	bgImage: string;
 }) => (
-	<ImageBackground source={{ uri: bgImage }} resizeMode="stretch" style={styles.categoryBg}>
-		<Image source={{ uri: image }} resizeMode="stretch" style={styles.categoryImage} />
-		<Text style={styles.categoryText}>{label}</Text>
-	</ImageBackground>
+	<View style={styles.categoryBg}>
+		<Image source={{ uri: image }} style={styles.categoryImage} />
+		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
+	</View>
 );
 
 export default function Home() {
 	const [showCategories, setShowCategories] = useState(true);
+	const [categories, setCategories] = useState<Categories[]>([])
+	const [products, setProducts] = useState<Product[]>([]);
+	const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+	useEffect(() => {
+		async function loadCategories() {
+			try {
+				const dbaCategories = await api.get('/category/list');
+				console.log('sucesso em puxar as categorias')
+				setCategories(dbaCategories.data);
+			} catch (error) {
+				console.error('Error loading data:', error)
+			}
+		}
+
+		loadCategories()
+	}, [])
 
 	return (
 		<View style={styles.container}>
-			<ScrollView style={styles.scroll}>
 				{/* Header */}
 				<LinearGradient
 					start={{ x: 0, y: 0 }}
@@ -66,22 +98,19 @@ export default function Home() {
 					colors={["#391D8A", "#261B47"]}
 					style={styles.header}
 				>
-					<Image
-						source={{
-							uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/ak455z3e_expires_30_days.png",
-						}}
-						resizeMode="stretch"
-						style={styles.logo}
-					/>
-					<Image
-						source={{
-							uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/58aawfe4_expires_30_days.png",
-						}}
-						resizeMode="stretch"
-						style={styles.titleLogo}
-					/>
+					<TouchableOpacity>
+						<Image
+							source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+							style={{ width: 24, height: 24 }}
+						/>
+					</TouchableOpacity>
+					<Text style={styles.logoText}>
+						Sujeito<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+					</Text>
+					<View style={{ width: 24 }} />
 				</LinearGradient>
 
+			<ScrollView style={styles.scroll}>
 				{/* Categorias */}
 				<View style={styles.menuSearchRow}>
 					{/* Menu só no ícone */}
@@ -114,27 +143,33 @@ export default function Home() {
 
 				<View style={styles.mainRow}>
 					{showCategories && (
-						<View style={styles.leftColumn}>
-							<CategoryCard
-								image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png"
-								bgImage="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8p1f6qnp_expires_30_days.png"
-								label="Pizzas"
-							/>
-
-							{/* <CategoryCard
-								image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png"
-								bgImage="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8p1f6qnp_expires_30_days.png"
-								label="Pizzas"
-							/> É POSSÍVEL ADICIONAR MAIS CATEGORIAS AQUI, mas não é um jeito automatizado  */}
-						</View>
-					)
-					}
+						<ScrollView
+							style={styles.leftColumn}
+							showsVerticalScrollIndicator={false}
+						>
+							{categories.map((category, idx) => (
+								<TouchableOpacity
+									key={category.id}
+									onPress={() => setSelectedCategory(category.id)}
+									style={[
+										styles.categoryItem,
+										selectedCategory === category.id && styles.selectedCategory
+									]}
+								>
+									<CategoryCard
+										image={category.image}
+										label={category.name}
+									/>
+								</TouchableOpacity>
+							))}
+						</ScrollView>
+					)}
 
 					<View style={styles.rightColumn}>
-						<Text style={styles.sectionTitle}>Destaques</Text>
+						<Text>Destaques</Text>
 
 						<View style={styles.row}>
-							<ItemCard image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png" title="2 por 1" price="R$50,00" />
+							{/* PRODUTOS AQUI */}
 
 							{/* <ItemCard image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png" title="2 por 1" price="R$50,00" />  É POSSÍVEL ADICIONAR MAIS CARDS AQUI */}
 						</View>
@@ -186,6 +221,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 7,
 		paddingHorizontal: 30,
 	},
+	logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
 	logo: { width: 59, height: 59 },
 	titleLogo: { width: 194, height: 44, marginTop: 8, marginBottom: 7 },
 	categoriesRow: { flexDirection: "row", marginLeft: 25 },
@@ -215,22 +251,22 @@ const styles = StyleSheet.create({
 	},
 	mainRow: { flexDirection: "row" },
 	leftColumn: {
-		alignItems: "center",
-		backgroundColor: "#fff",
-		paddingBottom: 99,
-		marginRight: 9,
+		width: 100, 
+		backgroundColor: '#fff',
+		borderRightWidth: 1,
+		borderRightColor: '#ECECEC',
+		height: '100%',
 		shadowColor: "#00000040",
 		shadowOpacity: 0.3,
 		shadowOffset: { width: 0, height: 4 },
 		shadowRadius: 4,
 		elevation: 4,
 	},
-	rightColumn: { marginVertical: 5, marginLeft: 5 },
-	sectionTitle: {
-		color: "#38207F",
-		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 8,
+	rightColumn: {
+		flex: 1,
+		marginVertical: 5,
+		marginLeft: 10,
+		paddingHorizontal: 10,
 	},
 	row: { flexDirection: "row", marginBottom: 32 },
 	card: {
@@ -263,23 +299,34 @@ const styles = StyleSheet.create({
 		elevation: 4,
 	},
 	buttonText: { color: "#fff", fontSize: 24 },
-	categoryBg: { alignItems: "center", paddingVertical: 40, paddingHorizontal: 13 },
-	categoryImage: { width: 126, height: 118 },
-	categoryText: { color: "#38207F", fontSize: 32, marginTop: 10 },
-	// emptyCard: {
-	// 	width: 139,
-	// 	height: 244,
-	// 	backgroundColor: "#fff",
-	// 	borderColor: "#ECECEC75",
-	// 	borderRadius: 20,
-	// 	borderWidth: 1,
-	// 	shadowColor: "#00000040",
-	// 	shadowOpacity: 0.3,
-	// 	shadowOffset: { width: 0, height: 4 },
-	// 	shadowRadius: 3,
-	// 	elevation: 3,
-	// },
-	// decoration: { position: "absolute", bottom: 174, left: 0, width: 151, height: 236 },
+	categoryBg: {
+		alignItems: 'center',
+		paddingHorizontal: 5,
+		width: '100%',
+	},
+
+	categoryItem: {
+		paddingVertical: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: '#ECECEC',
+	},
+	categoryImage: {
+		width: 80,
+		height: 80,
+		borderRadius: 40,
+	},
+	selectedCategory: {
+		backgroundColor: '#f0f0f0',
+		borderLeftWidth: 3,
+		borderLeftColor: '#391D8A',
+	},
+	categoryText: {
+		color: '#38207F',
+		fontSize: 24,
+		marginTop: 5,
+		textAlign: 'left',
+		width:'100%',
+	},
 	footer: {
 		// position: "absolute",
 		bottom: 0,
@@ -314,4 +361,5 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	orderText: { color: "#fff", fontSize: 20, fontWeight: "bold" },
+
 });

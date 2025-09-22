@@ -108,6 +108,7 @@ export function AuthProvider({children}: AuthProviderProps){
             })
 
             setLoadingAuth(false)
+            console.log('sucesso')
 
         } catch (err) {
             console.log('erro ao acessar', err)
