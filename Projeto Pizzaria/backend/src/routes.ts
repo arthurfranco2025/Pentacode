@@ -39,7 +39,7 @@ import { OpenPedidoController } from './controllers/pedido/openPedidoController'
 import { ListPedidoPorComandaController } from './controllers/pedido/listPedidosPorComandaController';
 import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoController';
 import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoController';
-
+import { EditPedidoStatusController } from './controllers/pedido/editPedidoStatusController';
 
 import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
@@ -99,6 +99,7 @@ router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
 router.get('/pedido/listaPorComanda', isAuthenticated, new ListPedidoPorComandaController().handle.bind(new ListPedidoPorComandaController))
 router.put('/pedido/pagar', isAuthenticated, new PagarPedidoController().handle)
 router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().handle)
+router.put('/pedido/editarStatus', isAuthenticated, new EditPedidoStatusController().handle)
 
 //ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
