@@ -54,7 +54,10 @@ const CategoryCard = ({
 );
 
 export default function Home() {
+
+	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const [showCategories, setShowCategories] = useState(true);
+
 
 	return (
 		<View style={styles.container}>
@@ -84,13 +87,9 @@ export default function Home() {
 
 				{/* Categorias */}
 				<View style={styles.menuSearchRow}>
-					{/* Menu só no ícone */}
 					<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
 						<Image
-							source={{
-								uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/elfbi5a5_expires_30_days.png",
-							}}
-							resizeMode="stretch"
+							source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
 							style={styles.sideIcon}
 						/>
 					</TouchableOpacity>
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
 	categoriesRow: { flexDirection: "row", marginLeft: 25 },
 	sideIcon: { width: 40, height: 40, marginRight: 10 },
 	searchBox: {
-		flex: 1, // 👈 ocupa o resto do espaço
+		flex: 1,
 		flexDirection: "row",
 		alignItems: "center",
 		borderColor: "#0000003b",

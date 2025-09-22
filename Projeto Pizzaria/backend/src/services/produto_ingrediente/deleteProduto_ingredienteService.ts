@@ -23,7 +23,7 @@ class DeleteProductIngredienteService{
             }
         })
 
-        return { message: "Relação de ingrediente e produto deletada" }
+        return { message: `Relação de ingrediente e produto deletada: ${produto_ingrediente.id}` }
     }
 }
 
