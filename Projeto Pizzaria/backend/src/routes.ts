@@ -61,7 +61,7 @@ import { CreateItemAdicionalController } from './controllers/item_adicionais/add
 import { RemoveItemAdicionalController } from './controllers/item_adicionais/removeItemAdicionalController';
 
 //CATEGORIES ROUTE
-router.post('/category', isAuthenticated, new CreateCategoryController().handle)
+router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
 
 //CLIENTES ROUTE

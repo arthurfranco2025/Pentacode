@@ -55,6 +55,7 @@ model Favorito {
 model Category {
   id         String   @id @default(uuid())
   name       String
+  image_url  String?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
