@@ -1,20 +1,26 @@
-import { Request, Response } from 'express'
-import { EditCategoryService } from '../../services/category/editCategoryService'
+import { Request, Response } from 'express';
+import { EditCategoryService } from '../../services/category/editCategoryService';
 
-class EditCategoryController{
-    async handle(req: Request, res: Response){
+class EditCategoryController {
+    async handle(req: Request, res: Response) {
+        try {
+            const { category_id, name } = req.body;
+            const image = req.file; 
 
-        const {category_id, name} = req.body
+            const editCategoryService = new EditCategoryService();
 
-        const editCategoryService = new EditCategoryService()
+            const editCategory = await editCategoryService.execute({
+                category_id,
+                name,
+                image
+            });
 
-        const editCategory = await editCategoryService.execute({
-            category_id,
-            name
-        })
-
-        res.json(editCategory)
+            return res.json(editCategory);
+        } catch (error: any) {
+            console.error("Erro ao editar categoria:", error);
+            return res.status(400).json({ error: error.message || "Erro ao editar categoria" });
+        }
     }
 }
 
-export { EditCategoryController }
+export { EditCategoryController };
