@@ -1,5 +1,4 @@
 import PrismaClient from "../../prisma";
-import { OpenComandaController } from "../../controllers/comanda/openComandaController";
 
 interface PedidoRequest {
     cliente_id: string;
@@ -7,7 +6,7 @@ interface PedidoRequest {
 }
 
 class OpenPedidoService {
-    async execute({ cliente_id, }: PedidoRequest) {
+    async execute({ cliente_id }: PedidoRequest) {
         if (!cliente_id) {
             throw new Error('Id do cliente é obrigatório');
         }
