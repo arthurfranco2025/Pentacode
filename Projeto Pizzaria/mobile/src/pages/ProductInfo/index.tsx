@@ -1,132 +1,124 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
     View,
     ScrollView,
     Image,
     ImageBackground,
     Text,
+    TextInput,
     TouchableOpacity,
     StyleSheet,
+    Animated,
+    Easing,
 } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
+
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+
+type RootStackParamList = {
+    Home: undefined;
+};
+
+const CategoryCard = ({
+    image,
+    label,
+    bgImage,
+}: {
+    image: string;
+    label: string;
+    bgImage: string;
+}) => (
+    <ImageBackground source={{ uri: bgImage }} resizeMode="stretch" style={styles.categoryBg}>
+        <Image source={{ uri: image }} resizeMode="stretch" style={styles.categoryImage} />
+        <Text style={styles.categoryText}>{label}</Text>
+    </ImageBackground>
+);
 
 export default function ProductInfo() {
 
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+    // Mostrar/ocultar categorias
+    const [showCategories, setShowCategories] = useState(true);
+
+    // Setar como favorito
+    const [isFavorite, setIsFavorite] = useState(false);
+    const favoriteAnim = useRef(new Animated.Value(1)).current;
+
+    const handleFavoritePress = () => {
+        setIsFavorite(prev => !prev);
+
+        Animated.sequence([
+            Animated.timing(favoriteAnim, {
+                toValue: 1.5,
+                duration: 150,
+                useNativeDriver: true,
+                easing: Easing.out(Easing.ease),
+            }),
+            Animated.timing(favoriteAnim, {
+                toValue: 1,
+                duration: 150,
+                useNativeDriver: true,
+                easing: Easing.out(Easing.ease),
+            }),
+        ]).start();
+    };
+
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scrollView}>
-                {/* Header com gradiente */}
+            <ScrollView style={styles.scroll}>
+                {/* Header */}
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
                     colors={["#391D8A", "#261B47"]}
                     style={styles.header}
                 >
-                    <Image
-                        source={{
-                            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/m6rofw5v_expires_30_days.png",
-                        }}
-                        resizeMode="stretch"
-                        style={styles.backIcon}
-                    />
-                    <Image
-                        source={{
-                            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/sbg7gqtt_expires_30_days.png",
-                        }}
-                        resizeMode="stretch"
-                        style={styles.logo}
-                    />
+                    <TouchableOpacity>
+                        <Image
+                            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+                            style={{ width: 24, height: 24 }}
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.logoText}>
+                        Sujeito<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+                    </Text>
+                    <View style={{ width: 24 }} />
                 </LinearGradient>
 
-                {/* Search bar */}
-                <View style={styles.searchRow}>
-                    <Image
-                        source={{
-                            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/gwp9t6hl_expires_30_days.png",
-                        }}
-                        resizeMode="stretch"
-                        style={styles.menuIcon}
-                    />
-                    <View style={styles.searchContainer}>
-                        <View style={styles.searchInner}>
-                            <Image
-                                source={{
-                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/4nec9pur_expires_30_days.png",
-                                }}
-                                resizeMode="stretch"
-                                style={styles.searchIcon}
-                            />
-                        </View>
+                {/* Categorias */}
+                <View style={styles.menuSearchRow}>
+                    <TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
+                        <Image
+                            source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
+                            style={styles.sideIcon}
+                        />
+                    </TouchableOpacity>
+
+                    {/* Barra de busca */}
+                    <View style={styles.searchBox}>
+                        <Image
+                            source={{ uri: "https://img.icons8.com/ios-glyphs/30/000000/search--v1.png" }}
+                            style={styles.searchIcon}
+                        />
+                        <TextInput
+                            placeholder="Buscar"
+                            placeholderTextColor="#8A8A8A"
+                            style={styles.input}
+                        />
                     </View>
                 </View>
 
-                <View style={styles.contentRow}>
-                    {/* Sidebar */}
-                    <View style={styles.sidebar}>
-                        <View style={styles.sidebarMenu}>
-                            <ImageBackground
-                                source={{
-                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/dvy4homo_expires_30_days.png",
-                                }}
-                                resizeMode="stretch"
-                                style={styles.sidebarItem}
-                            >
-                                <Image
-                                    source={{
-                                        uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/q34j2vzl_expires_30_days.png",
-                                    }}
-                                    style={styles.sidebarImage}
-                                />
-                                <Text style={styles.sidebarText}>Bebidas</Text>
-                            </ImageBackground>
-
-                            <ImageBackground
-                                source={{
-                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/5o53bv9j_expires_30_days.png",
-                                }}
-                                resizeMode="stretch"
-                                style={styles.sidebarItem}
-                            >
-                                <Image
-                                    source={{
-                                        uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/pipz4ms2_expires_30_days.png",
-                                    }}
-                                    style={styles.sidebarImage}
-                                />
-                                <Text style={styles.sidebarText}>Pizzas</Text>
-                            </ImageBackground>
-
-                            <Image
-                                source={{ uri: "https://i.imgur.com/1tMFzp8.png" }}
-                                resizeMode="stretch"
-                                style={styles.sidebarExtra}
+                <View style={styles.mainRow}>
+                    {showCategories && (
+                        <View style={styles.leftColumn}>
+                            <CategoryCard
+                                image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png"
+                                bgImage="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8p1f6qnp_expires_30_days.png"
+                                label="Pizzas"
                             />
                         </View>
-
-                        {/* Footer pedido */}
-                        <LinearGradient
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }}
-                            colors={["#391E8B", "#261B47"]}
-                            style={styles.footer}
-                        >
-                            <View style={styles.footerRow}>
-                                <Image
-                                    source={{
-                                        uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/uywypiuo_expires_30_days.png",
-                                    }}
-                                    style={styles.cartIcon}
-                                />
-                                <Text style={styles.cartText}>: 0.00</Text>
-                            </View>
-                            <TouchableOpacity
-                                style={styles.orderButton}
-                                onPress={() => alert("Pedido!")}
-                            >
-                                <Text style={styles.orderButtonText}>Pedido</Text>
-                            </TouchableOpacity>
-                        </LinearGradient>
-                    </View>
+                    )}
 
                     {/* Conteúdo principal */}
                     <View style={styles.mainContent}>
@@ -139,107 +131,125 @@ export default function ProductInfo() {
 
                         <View style={styles.pizzaHeader}>
                             <Text style={styles.pizzaTitle}>Pizza de Calabresa</Text>
+                            <TouchableOpacity onPress={handleFavoritePress}>
+                                <Animated.Image
+                                    source={{
+                                        uri: isFavorite
+                                            ? "https://img.icons8.com/ios-filled/50/FF3F4B/like.png"
+                                            : "https://img.icons8.com/ios/50/000000/like--v1.png",
+                                    }}
+                                    style={[
+                                        styles.favoriteIcon,
+                                        { transform: [{ scale: favoriteAnim }] },
+                                    ]}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.pizzaDesc}>
+                            Uma clássica que conquista todos os paladares! Nossa pizza de
+                            calabresa é preparada com massa fresca artesanal.
+                        </Text>
+
+                        <View style={styles.priceRow}>
+                            <Text style={styles.price}>R$50.00</Text>
                             <Image
                                 source={{
-                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/2c9qbj2u_expires_30_days.png",
+                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/twy8g4s9_expires_30_days.png",
                                 }}
-                                style={styles.favoriteIcon}
+                                style={styles.moneyIcon}
+                            />
+                            <Text style={styles.rating}>30</Text>
+                            <Image
+                                source={{
+                                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/a8ywsjze_expires_30_days.png",
+                                }}
+                                style={styles.starIcon}
                             />
                         </View>
 
-                        <View style={styles.pizzaDetails}>
-                            <Text style={styles.pizzaDesc}>
-                                Uma clássica que conquista todos os paladares! Nossa pizza de
-                                calabresa é preparada com massa fresca artesanal.
-                            </Text>
-
-                            <View style={styles.priceColumn}>
-                                <Text style={styles.price}>R$50.00</Text>
-                                <Text style={styles.rating}>30</Text>
-                            </View>
-
-                            <View style={styles.iconsRow}>
-                                <Image
-                                    source={{
-                                        uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/twy8g4s9_expires_30_days.png",
-                                    }}
-                                    style={styles.moneyIcon}
-                                />
-                                <Image
-                                    source={{
-                                        uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/a8ywsjze_expires_30_days.png",
-                                    }}
-                                    style={styles.starIcon}
-                                />
-                            </View>
-                        </View>
-
-                        <TouchableOpacity
-                            style={styles.addButton}
-                            onPress={() => alert("Adicionado ao pedido!")} // Mudar posteriomente
-                        >
+                        {/* Botões */}
+                        <TouchableOpacity style={styles.addButton}>
                             <Text style={styles.addButtonText}>Adicionar ao pedido</Text>
                         </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.payButton}
-                            onPress={() => alert("Pagamento separado!")} // Mudar posteriomente
-                        >
+                        <TouchableOpacity style={styles.payButton}>
                             <Text style={styles.payButtonText}>Pagar separadamente</Text>
                         </TouchableOpacity>
-
                     </View>
                 </View>
             </ScrollView>
+
+            {/* Rodapé */}
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                colors={["#391E8B", "#261B47"]}
+                style={styles.footer}
+            >
+                <View style={styles.footerRow}>
+                    <Image
+                        source={{
+                            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/e6jpmght_expires_30_days.png",
+                        }}
+                        resizeMode="stretch"
+                        style={styles.cartIcon}
+                    />
+                    <Text style={styles.cartText}>: 0.00</Text>
+                </View>
+                <TouchableOpacity style={styles.orderButton}>
+                    <Text style={styles.orderText}>Pedido</Text>
+                </TouchableOpacity>
+            </LinearGradient>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#FFFFFF" },
-    scrollView: { flex: 1 },
+    container: { flex: 1, backgroundColor: "#fff" },
+    scroll: { flex: 1 },
     header: {
         flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        padding: 10,
+        paddingTop: 52,
+        paddingBottom: 12,
+        paddingHorizontal: 20,
     },
-    backIcon: { width: 30, height: 30, marginRight: 10 },
-    logo: { width: 140, height: 40 },
-    searchRow: { flexDirection: "row", alignItems: "center", margin: 10 },
-    menuIcon: { width: 30, height: 30 },
-    searchContainer: { flex: 1, marginLeft: 10 },
-    searchInner: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 8,
+    logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
+    sideIcon: { width: 28, height: 28, marginRight: 10 },
+    searchBox: {
+        flex: 1,
         flexDirection: "row",
         alignItems: "center",
+        borderColor: "#0000003b",
+        borderRadius: 15,
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        height: 40,
     },
-    searchIcon: { width: 20, height: 20 },
-    contentRow: { flexDirection: "row" },
-    sidebar: { width: 100, backgroundColor: "#F8F8F8" },
-    sidebarMenu: { alignItems: "center", paddingVertical: 20 },
-    sidebarItem: {
-        width: 90,
-        height: 120,
-        marginBottom: 20,
-        justifyContent: "center",
+    menuSearchRow: {
+        flexDirection: "row",
         alignItems: "center",
+        paddingHorizontal: 20,
+        marginVertical: 10,
     },
-    sidebarImage: { width: 50, height: 50 },
-    sidebarText: { marginTop: 5, fontWeight: "600", color: "#333" },
-    sidebarExtra: { width: 80, height: 80, marginTop: 20 },
-    footer: { padding: 15, marginTop: 40 },
-    footerRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
-    cartIcon: { width: 20, height: 20, marginRight: 8 },
-    cartText: { color: "#fff", fontWeight: "600" },
-    orderButton: {
-        backgroundColor: "#FF3F4B",
-        borderRadius: 16,
-        paddingVertical: 10,
+    input: { flex: 1 },
+    searchIcon: { width: 20, height: 20, marginRight: 8 },
+    mainRow: { flexDirection: "row" },
+    leftColumn: {
         alignItems: "center",
+        backgroundColor: "#fff",
+        marginRight: 9,
+        shadowColor: "#00000040",
+        shadowOpacity: 0.3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 4,
+        elevation: 4,
     },
-    orderButtonText: { color: "#fff", fontWeight: "700" },
+    categoryBg: { alignItems: "center", paddingVertical: 40, paddingHorizontal: 13 },
+    categoryImage: { width: 126, height: 118 },
+    categoryText: { color: "#38207F", fontSize: 22, marginTop: 10 },
+
     mainContent: { flex: 1, padding: 15 },
     pizzaImage: { width: "100%", height: 180, borderRadius: 12 },
     pizzaHeader: {
@@ -248,15 +258,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginVertical: 10,
     },
-    pizzaTitle: { fontSize: 18, fontWeight: "700" },
+    pizzaTitle: { fontSize: 20, fontWeight: "700" },
     favoriteIcon: { width: 24, height: 24 },
-    pizzaDetails: { marginBottom: 15 },
     pizzaDesc: { color: "#333", marginBottom: 10 },
-    priceColumn: { flexDirection: "row", alignItems: "center" },
-    price: { fontSize: 16, fontWeight: "700", marginRight: 10 },
-    rating: { fontSize: 16, fontWeight: "500" },
-    iconsRow: { flexDirection: "row", marginTop: 5 },
-    moneyIcon: { width: 20, height: 20, marginRight: 8 },
+    priceRow: { flexDirection: "row", alignItems: "center", marginBottom: 15 },
+    price: { fontSize: 16, fontWeight: "700", marginRight: 5 },
+    rating: { fontSize: 16, fontWeight: "500", marginHorizontal: 5 },
+    moneyIcon: { width: 20, height: 20 },
     starIcon: { width: 20, height: 20 },
     addButton: {
         backgroundColor: "#FF3F4B",
@@ -273,9 +281,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 15,
     },
-    payButtonText: {
-        color: "#fff",
-        fontWeight: "700",
-    },
+    payButtonText: { color: "#fff", fontWeight: "700" },
 
+    footer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    footerRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    cartIcon: { width: 28, height: 28 },
+    cartText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+    orderButton: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FF3F4B",
+        borderRadius: 12,
+        marginLeft: 16,
+        paddingVertical: 10,
+    },
+    orderText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
