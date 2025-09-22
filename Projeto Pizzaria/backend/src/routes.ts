@@ -64,7 +64,7 @@ import { RemoveItemAdicionalController } from './controllers/item_adicionais/rem
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
-router.put('/category/editar', isAuthenticated, new EditCategoryController().handle)
+router.put('/category/editar', isAuthenticated, upload.single('image'), new EditCategoryController().handle.bind(new EditCategoryController()))
 
 //CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)
