@@ -30,10 +30,6 @@ export default function CustomizeProduct() {
         option4: false
     });
 
-    function handleGoBack() {
-		navigation.goBack();
-	}
-
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scroll}>
@@ -44,7 +40,7 @@ export default function CustomizeProduct() {
                     colors={["#391D8A", "#261B47"]}
                     style={styles.header}
                 >
-                    <TouchableOpacity onPress={handleGoBack}>
+                    <TouchableOpacity>
                         <Image
                             source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
                             style={{ width: 24, height: 24 }}
