@@ -31,10 +31,13 @@ import { ListProductByCategoryController } from './controllers/product/listProdu
 import { OpenComandaController } from './controllers/comanda/openComandaController'
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
 import { ListComandaController } from './controllers/comanda/listComandasController';
+import { PagarComandaController } from './controllers/comanda/pagarComandaController';
 
 
 import { OpenPedidoController } from './controllers/pedido/openPedidoController'
 import { ListPedidoPorComandaController } from './controllers/pedido/listPedidosPorComandaController';
+import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoController';
+import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoController';
 
 
 import { CreateItemController } from './controllers/item/createItemController'
@@ -87,10 +90,13 @@ router.get('/category/products', isAuthenticated, new ListProductByCategoryContr
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
+router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
 
 //PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
 router.get('/pedido/listaPorComanda', isAuthenticated, new ListPedidoPorComandaController().handle.bind(new ListPedidoPorComandaController))
+router.put('/pedido/pagar', isAuthenticated, new PagarPedidoController().handle)
+router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().handle)
 
 //ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
