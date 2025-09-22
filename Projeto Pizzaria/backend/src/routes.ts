@@ -60,6 +60,7 @@ import { DeleteAdicionalController } from './controllers/adicionais/deleteAdicio
 
 import { CreateItemAdicionalController } from './controllers/item_adicionais/addItemAdicionalController';
 import { RemoveItemAdicionalController } from './controllers/item_adicionais/removeItemAdicionalController';
+import { SearchProductController } from './controllers/product/searchProductController';
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
@@ -87,6 +88,7 @@ router.post('/product', isAuthenticated, upload.single('image'), new CreateProdu
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
 router.put('/product/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
 router.get('/category/products', isAuthenticated, new ListProductByCategoryController().handle.bind(new ListProductByCategoryController))
+router.get('/product/search', isAuthenticated, new SearchProductController().handle)
 
 //COMANDA ROUTE
 router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
