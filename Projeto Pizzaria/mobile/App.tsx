@@ -5,6 +5,7 @@ import Routes from './src/routes';
 import { AuthProvider } from './src/contexts/AuthContext';
 
 import ProductInfo from './src/pages/ProductInfo';
+import CustomizeProduct from './src/pages/CustomizeProduct';
 
 export default function App() {
   return (

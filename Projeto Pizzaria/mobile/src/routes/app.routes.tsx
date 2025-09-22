@@ -1,9 +1,17 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
-import Dashboard from "../pages/Dashboard";
-import SignIn from "../pages/SignIn";
-import SignUp from "../pages/SignUp";
+import Home from "../pages/Home";
+import ProductInfo from "../pages/ProductInfo";
+import CustomizeProduct from "../pages/CustomizeProduct";
+
+export type StackParamsList ={
+    Home: undefined;
+    ProductInfo: undefined;
+    CustomizeProduct: undefined;
+    SignIn: undefined;
+    SignUp: undefined;
+};
 
 const Stack = createNativeStackNavigator();
 
@@ -11,20 +19,18 @@ function AppRoutes() {
     return(
         <Stack.Navigator>
             <Stack.Screen 
-                name="Dashboard" 
-                component={Dashboard}
+                name="Home" 
+                component={Home}
             />
 
             <Stack.Screen 
-                name="SignIn" 
-                component={SignIn} 
-                options={{ headerShown: false }}
+                name="ProductInfo" 
+                component={ProductInfo} 
             />
 
             <Stack.Screen 
-                name="SignUp" 
-                component={SignUp}
-                options={{ headerShown: false }}
+                name="CustomizeProduct" 
+                component={CustomizeProduct}
             />
         </Stack.Navigator>
     )
