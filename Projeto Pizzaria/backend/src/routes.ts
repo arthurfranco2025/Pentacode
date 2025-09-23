@@ -87,7 +87,7 @@ router.post('/funcionario/login', new AuthFuncionarioController().handle)
 router.post('/product', isAuthenticated, upload.single('image'), new CreateProductController().handle.bind(new CreateProductController()))
 router.delete('/product/delete', isAuthenticated, new DeleteProductController().handle.bind(new DeleteProductController()))
 router.put('/product/:id', isAuthenticated, new EditProductController().handle.bind(new EditProductController()))
-router.get('/category/products', isAuthenticated, new ListProductByCategoryController().handle.bind(new ListProductByCategoryController))
+router.get('/category/products', isAuthenticated, upload.single('image'), new ListProductByCategoryController().handle.bind(new ListProductByCategoryController))
 router.get('/product/search', isAuthenticated, new SearchProductController().handle)
 
 //COMANDA ROUTE

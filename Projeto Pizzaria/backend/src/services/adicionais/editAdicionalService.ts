@@ -33,7 +33,8 @@ class EditAdicionalService {
             },
             select:{
                 id: true,
-                price: true
+                price: true,
+                points: true
             }
         })
 
