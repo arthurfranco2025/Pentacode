@@ -3,10 +3,11 @@ import prismaClient from "../../prisma";
 interface createAdicionaisRequest {
     name: string;
     price: number;
+    points: number;
 }
 
 class CreateAdicionalService {
-    async execute({ name, price }: createAdicionaisRequest) {
+    async execute({ name, price, points }: createAdicionaisRequest) {
 
         if (!name) {
             throw new Error("Insira o nome do ingrediente");
@@ -14,6 +15,10 @@ class CreateAdicionalService {
 
         if (!price) {
             throw new Error("Insira o preço do ingrediente");
+        }
+
+        if(!points){
+            throw new Error('Insira os pontos do produto')
         }
 
         if(name){
@@ -32,7 +37,8 @@ class CreateAdicionalService {
         const adicional = await prismaClient.adicional.create({
             data: {
                 nome: name,
-                price: price
+                price: price,
+                points: points
             }
         })
 

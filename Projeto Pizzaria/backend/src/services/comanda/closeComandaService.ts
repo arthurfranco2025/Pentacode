@@ -21,11 +21,13 @@ class CloseComandaService {
         const comandaFechada = await PrismaClient.comanda.findFirst({
             where:{
                 id: comanda_id,
-                status: "fechada"
+            },
+            select:{
+                status: true
             }
         })
 
-        if(comandaFechada){
+        if(comandaFechada.status == 'fechada'){
             throw new Error('Essa comanda já está fechada')
         }
 
