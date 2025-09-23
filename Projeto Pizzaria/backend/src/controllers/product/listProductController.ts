@@ -8,7 +8,7 @@ class ListProductByCategoryController {
             const category_id = (req.query.category_id as string) || req.body.category_id
 
             if (!category_id) {
-                return res.status(400).json({ error: "A categoria é obrigatória." })
+                return res.status(400).json({ error: "Insira uma categoria." })
             }
 
             const listProductService = new ListProductByCategory()
