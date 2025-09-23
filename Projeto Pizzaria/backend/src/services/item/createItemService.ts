@@ -94,12 +94,13 @@ class CreateItemService {
     });
 
     const totalPedido = itens.reduce((acc, i) => acc + i.price, 0);
+    const totalPedidoPonto = itens.reduce((acc, i) => acc + i.points, 0)
 
     await PrismaClient.pedido.update({
       where: { id: pedido_id },
       data: {
         price: totalPedido,
-        points: totalPedido * 1.5,
+        points: totalPedidoPonto,
       },
     });
 
