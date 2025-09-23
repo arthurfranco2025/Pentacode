@@ -3,14 +3,15 @@ import { CreateAdicionalService } from '../../services/adicionais/createAdiciona
 
 class CreateAdicionalController {
     async handle(req: Request, res: Response) {
-        const { name, price } = req.body;
+        const { name, price, points } = req.body;
 
         const createAdicionalService = new CreateAdicionalService();
 
         try {
             const adicional = await createAdicionalService.execute({
                 name,
-                price
+                price,
+                points
             });
 
             return res.json(adicional);

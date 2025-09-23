@@ -5,7 +5,9 @@ class ListComandaService{
 
         const listaDeComanda = await PrismaClient.comanda.findMany({
             where:{
-                status: 'aberta'
+                status: {
+                    not: 'fechada'
+                }
             }
         })
 
