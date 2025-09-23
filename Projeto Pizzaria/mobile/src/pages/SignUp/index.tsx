@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, NavigationProp, CommonActions } from "@react-navigation/native";
 import { DateTimePickerEvent, default as DateTimePicker } from "@react-native-community/datetimepicker";
 import { AuthContext } from "../../contexts/AuthContext";
 import {
@@ -70,7 +70,13 @@ export default function SignUp() {
     });
 
     console.log('Cadastro realizado com sucesso!');
-    navigation.navigate('SignIn')
+    // navigation.navigate('SignIn')
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'SignIn' }],
+      })
+    );
     
   } catch (err: any) { 
     let mensagem = 'Erro desconhecido';
@@ -206,6 +212,9 @@ export default function SignUp() {
             <Text style={styles.loginText}>Possui conta? Login</Text>
           </TouchableOpacity>
 
+            {/* /* <TouchableOpacity onPress={handleHasLogin}>
+              <Text style={styles.loginText}>Entrar como convidado</Text>''
+            </TouchableOpacity> FUTURA FUNCAO DE ENTRAR COMO CONVIDADO */ }
 
         </ScrollView>
       </KeyboardAvoidingView>

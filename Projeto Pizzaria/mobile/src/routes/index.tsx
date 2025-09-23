@@ -13,7 +13,7 @@ function Routes (){
         return(
             <View style={{
                 flex:1,
-                backgroundColor: '1d1d2e',
+                backgroundColor: '#1d1d2e',
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
