@@ -3,12 +3,13 @@ import { OpenComandaService } from '../../services/comanda/openComandaService';
 
 class OpenComandaController{
     async handle(req: Request, res: Response){
-        const {cliente_id} = req.body;
+        const {cliente_id, mesa_id} = req.body;
 
         const openComandaService = new OpenComandaService();
 
         const comanda = await openComandaService.execute({
-            cliente_id
+            cliente_id,
+            mesa_id
         });
 
         res.json(comanda)

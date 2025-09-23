@@ -8,7 +8,7 @@ type AuthContextData = {
     user: UserProps;
     isAuthenticated: boolean;
     signIn: (credentials: SignInProps) => Promise<void>;
-    signUp: (credentials: SignUpProps) => Promise<void>;
+    signUp: (credentials: SignUpProps) => Promise<any>;
     loadingAuth: boolean;
     loading: boolean;
     signOut: () => Promise<void>;
@@ -153,27 +153,12 @@ export function AuthProvider({children}: AuthProviderProps){
                 data_nasc,
             })
 
-            const { id, token } = response.data;
-
-            const data = {
-                ...response.data
-            }
-
-            await AsyncStorage.setItem('@sujeitopizzaria', JSON.stringify(data))
-
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-
-            setUser({
-                id,
-                name,
-                email,
-                token,
-            })
-
-            setLoadingAuth(false)
+            setLoadingAuth(false);
+            return( response.data );
 
         } catch (err: any) {
             setLoadingAuth(false)
+            
             if(err.response) {
                 throw new Error(err.response.data.error || 'Erro ao cadastrar')
             } 

@@ -14,7 +14,7 @@ class CreateMesaService {
 
     // 🔎 verifica se já existe mesa com esse número
     const mesaExiste = await PrismaClient.mesa.findUnique({
-      where: { numero },
+      where: { numero_mesa : numero },
     });
 
     if (mesaExiste) {
@@ -24,12 +24,12 @@ class CreateMesaService {
     // 📝 cria mesa
     const mesa = await PrismaClient.mesa.create({
       data: {
-        numero,
+        numero_mesa: numero,
       },
     });
 
     // 🔗 gera URL que o QRCode vai apontar
-    const urlMesa = `https://seudominio.com/mesa/${mesa.id}`;
+    const urlMesa = `https://localhost/mesa/${mesa.id}`;
 
     // 🖼️ gera QRCode em base64
     const qrCodeDataURL = await QRCode.toDataURL(urlMesa);
