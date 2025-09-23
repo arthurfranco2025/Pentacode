@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express'
 import 'express-async-errors'
 import cors from 'cors'
+import '../src/services/cliente/cleanGuests'
+
+
 
 import { router } from './routes'
 
@@ -23,5 +26,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         message: 'Internal server error'
     })
 })
+
 
 app.listen(3333, () => console.log('Servidor online na porta 3333'))

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 const router = Router();
+import prismaClient from './prisma';
 
 import uploadConfig from './config/multer';
 import multer from 'multer';
@@ -128,5 +129,6 @@ router.delete('/adicionais/delete', isAuthenticated, new DeleteAdicionalControll
 //ITEM_ADICIONAL ROUTE
 router.post('/itemAdicional', isAuthenticated, new CreateItemAdicionalController().handle.bind(new CreateItemAdicionalController()))
 router.delete('/itemAdicional/delete', isAuthenticated, new RemoveItemAdicionalController().handle.bind(new RemoveItemAdicionalController))
+
 
 export { router };

@@ -4,7 +4,7 @@ interface CreateItemRequest {
   product_id: string;
   pedido_id: string;
   qtd: number;
-  removidos?: {id: string}[]
+  removidos?: { id: string }[];
 }
 
 class CreateItemService {
@@ -51,7 +51,9 @@ class CreateItemService {
     }
 
     if (comanda.status === "aguardando pagamento") {
-      throw new Error("A comanda está aguardando pagamento, não é possível adicionar mais itens");
+      throw new Error(
+        "A comanda está aguardando pagamento, não é possível adicionar mais itens"
+      );
     }
 
     // 🔎 garante que o produto existe
@@ -59,7 +61,8 @@ class CreateItemService {
       where: { id: product_id },
       select: {
         price: true,
-        points: true
+        points: true,
+        name: true,
       },
     });
 
@@ -69,9 +72,7 @@ class CreateItemService {
 
     // 💰 calcula preço do item
     const precoFinal = qtd * produto.price;
-    const pontosFinal = qtd * produto.points
-
-
+    const pontosFinal = qtd * produto.points;
 
     // 📝 cria o item
     const item = await PrismaClient.item.create({
@@ -81,7 +82,8 @@ class CreateItemService {
         qtd,
         price: precoFinal,
         points: pontosFinal,
-        removidos: Array.isArray(removidos) && removidos.length > 0 ? removidos : null
+        removidos:
+          Array.isArray(removidos) && removidos.length > 0 ? removidos : null,
       },
       select: {
         id: true,
@@ -89,7 +91,7 @@ class CreateItemService {
         qtd: true,
         price: true,
         pedido_id: true,
-        removidos: true
+        removidos: true,
       },
     });
 
@@ -99,7 +101,7 @@ class CreateItemService {
     });
 
     const totalPedido = itens.reduce((acc, i) => acc + i.price, 0);
-    const totalPedidoPonto = itens.reduce((acc, i) => acc + i.points, 0)
+    const totalPedidoPonto = itens.reduce((acc, i) => acc + i.points, 0);
 
     await PrismaClient.pedido.update({
       where: { id: pedido_id },
@@ -126,7 +128,25 @@ class CreateItemService {
       },
     });
 
-    return item;
+    // 🔎 monta a resposta customizada
+    let mensagem = `Nenhum ingrediente removido do produto ${produto.name}`;
+    if (item.removidos && Array.isArray(item.removidos) && item.removidos.length > 0) {
+      const idsRemovidos = item.removidos.map((r: any) => r.id);
+
+      // busca os nomes no banco
+      const ingredientes = await PrismaClient.ingrediente.findMany({
+        where: { id: { in: idsRemovidos } },
+        select: { nome: true },
+      });
+
+      const nomes = ingredientes.map((i) => i.nome).join(", ");
+      mensagem = `Ingredientes removidos do produto ${produto.name}: ${nomes}`;
+    }
+
+    return {
+      item,
+      mensagem
+    };
   }
 }
 
