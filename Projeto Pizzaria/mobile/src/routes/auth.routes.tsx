@@ -7,7 +7,7 @@ import SignUp from "../pages/SignUp";
 const Stack = createNativeStackNavigator();
 
 function AuthRoutes() {
-    return(
+    return (
         <Stack.Navigator>
             <Stack.Screen
                 name="SignUp"

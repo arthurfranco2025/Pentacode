@@ -21,6 +21,19 @@ class PagarComandaService{
             throw new Error('Essa comanda não existe')
         }
 
+        const comandaFechada = await PrismaClient.comanda.findFirst({
+            where:{
+                id: comanda_id
+            },
+            select:{
+                status: true
+            }
+        })
+
+        if(comandaFechada.status == 'fechada'){
+            throw new Error('Essa comanda está fechada')
+        }
+
         const pagarComanda = await PrismaClient.comanda.update({
             where:{
                 id: comanda_id

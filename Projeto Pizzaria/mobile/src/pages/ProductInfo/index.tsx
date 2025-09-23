@@ -15,8 +15,11 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
+import CustomizeProduct from "../CustomizeProduct";
+
 type RootStackParamList = {
     Home: undefined;
+    CustomizeProduct: undefined;
 };
 
 const CategoryCard = ({
@@ -64,6 +67,11 @@ export default function ProductInfo() {
         ]).start();
     };
 
+    function handleAddToCart() {
+        navigation.navigate("CustomizeProduct");
+    }
+
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scroll}>
@@ -81,7 +89,7 @@ export default function ProductInfo() {
                         />
                     </TouchableOpacity>
                     <Text style={styles.logoText}>
-                        Sujeito<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+                        Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                     </Text>
                     <View style={{ width: 24 }} />
                 </LinearGradient>
@@ -169,7 +177,7 @@ export default function ProductInfo() {
                         </View>
 
                         {/* Botões */}
-                        <TouchableOpacity style={styles.addButton}>
+                        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
                             <Text style={styles.addButtonText}>Adicionar ao pedido</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.payButton}>

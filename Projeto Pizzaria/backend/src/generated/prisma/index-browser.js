@@ -20,11 +20,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.1
+ * Prisma Client JS version: 6.16.2
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.1",
+  client: "6.16.2",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -204,6 +204,7 @@ exports.Prisma.ItemScalarFieldEnum = {
   id: 'id',
   qtd: 'qtd',
   price: 'price',
+  points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at',
   pedido_id: 'pedido_id',
@@ -231,6 +232,7 @@ exports.Prisma.AdicionalScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
   price: 'price',
+  points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };

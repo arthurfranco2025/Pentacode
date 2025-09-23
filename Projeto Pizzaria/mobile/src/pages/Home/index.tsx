@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 import {
 	View,
 	ScrollView,
@@ -8,6 +9,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	StyleSheet,
+	Button,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
@@ -30,47 +32,56 @@ type RootStackParamList = {
 interface Categories {
 	name: string;
 	id: string;
-	image: string;
+	image_url: string;
 }
 
 interface Product {
+	id: string;
 	name: string;
 	price: string;
-	image: string;
-	categoryId: string
+	description?: string;
+	image_url: string;
+	category_id: string
 }
 
 const ItemCard = ({ product }: { product: Product }) => (
 	<View style={styles.card}>
 		<Image
-			source={{ uri: product.image }}
-			// style={styles.image}
+			source={{ uri: product.image_url }}
+			style={styles.productImage}
 			resizeMode="cover"
 		/>
-		<Text style={styles.promoText}>{product.name}</Text>
-		<Text style={styles.priceText}>R$ {product.price}</Text>
-		<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
-			<Text style={styles.buttonText}>VER</Text>
-		</TouchableOpacity>
+		<View style={styles.productInfo}>
+			<Text style={styles.promoText} ellipsizeMode="tail">{product.name}</Text>
+			<Text style={styles.priceText}>R$ {product.price}</Text>
+			<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
+				<Text style={styles.buttonText} onPress={() => alert('Produto selecionado!')}>VER</Text>
+			</TouchableOpacity>
+		</View>
 	</View>
 );
 
 
 const CategoryCard = ({
-	image,
+	image_url,
 	label,
 }: {
-	image: string;
+	image_url: string;
 	label: string;
 }) => (
 	<View style={styles.categoryBg}>
-		<Image source={{ uri: image }} style={styles.categoryImage} />
+		<Image source={{ uri: image_url }} style={styles.categoryImage}
+			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
+			onLoad={() => console.log('Image loaded successfully')}
+		// Adicione um placeholder enquanto a imagem carrega
+		// defaultSource={require('../../assets/placeholder.png')}
+		/>
 		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
 	</View>
 );
 
 export default function Home() {
-
+	const { signOut } = useContext(AuthContext)
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const [showCategories, setShowCategories] = useState(true);
 	const [categories, setCategories] = useState<Categories[]>([])
@@ -81,7 +92,10 @@ export default function Home() {
 		async function loadCategories() {
 			try {
 				const dbaCategories = await api.get('/category/list');
-				console.log('sucesso em puxar as categorias')
+				console.log('Categorias carregadas:', dbaCategories.data)
+				dbaCategories.data.forEach((cat: Categories) => {
+					console.log('Image path:', cat.image_url)
+				});
 				setCategories(dbaCategories.data);
 			} catch (error) {
 				console.error('Error loading data:', error)
@@ -89,31 +103,58 @@ export default function Home() {
 		}
 
 		loadCategories()
+
 	}, [])
+
+	useEffect(() => {
+		async function LoadListProduct() {
+			try {
+				if (selectedCategory) {
+					const dbaListProductsByCategories = await api.get('category/products', {
+						params: {
+							category_id: selectedCategory
+						}
+					});
+					console.log('Produtos carregados:', dbaListProductsByCategories.data)
+					setProducts(dbaListProductsByCategories.data)
+				} else {
+					setProducts([]);
+				}
+			} catch (error) {
+				if (typeof error === 'object' && error !== null && 'response' in error) {
+					console.error('Error loading products:', (error as any).response?.data || error);
+				} else {
+					console.error('Error loading products:', error);
+				}
+				setProducts([]);
+			}
+		}
+
+		LoadListProduct();
+	}, [selectedCategory])
 
 
 	return (
 		<View style={styles.container}>
-				{/* Header */}
-				<LinearGradient
-					start={{ x: 0, y: 0 }}
-					end={{ x: 0, y: 1 }}
-					colors={["#391D8A", "#261B47"]}
-					style={styles.header}
-				>
-					<TouchableOpacity>
-						<Image
-							source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-							style={{ width: 24, height: 24 }}
-						/>
-					</TouchableOpacity>
-					<Text style={styles.logoText}>
-						Sujeito<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-					</Text>
-					<View style={{ width: 24 }} />
-				</LinearGradient>
+			{/* Header */}
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0, y: 1 }}
+				colors={["#391D8A", "#261B47"]}
+				style={styles.header}
+			>
+				<TouchableOpacity>
+					<Image
+						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+						style={{ width: 24, height: 24 }}
+					/>
+				</TouchableOpacity>
+				<Text style={styles.logoText}>
+					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+				</Text>
+				<View style={{ width: 24 }} />
+			</LinearGradient>
 
-			<ScrollView style={styles.scroll}>
 				{/* Categorias */}
 				<View style={styles.menuSearchRow}>
 					<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
@@ -140,13 +181,14 @@ export default function Home() {
 					</View>
 				</View>
 
+			<ScrollView style={styles.scroll}>
 				<View style={styles.mainRow}>
 					{showCategories && (
 						<ScrollView
 							style={styles.leftColumn}
 							showsVerticalScrollIndicator={false}
 						>
-							{categories.map((category, idx) => (
+							{categories.map((category) => (
 								<TouchableOpacity
 									key={category.id}
 									onPress={() => setSelectedCategory(category.id)}
@@ -156,7 +198,7 @@ export default function Home() {
 									]}
 								>
 									<CategoryCard
-										image={category.image}
+										image_url={category.image_url}
 										label={category.name}
 									/>
 								</TouchableOpacity>
@@ -165,12 +207,23 @@ export default function Home() {
 					)}
 
 					<View style={styles.rightColumn}>
-						<Text>Destaques</Text>
-
 						<View style={styles.row}>
-							{/* PRODUTOS AQUI */}
-
-							{/* <ItemCard image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png" title="2 por 1" price="R$50,00" />  É POSSÍVEL ADICIONAR MAIS CARDS AQUI */}
+							{products.length > 0 ? (
+								<ScrollView>
+									<View style={styles.productsGrid}>
+										{products.map((product) => (
+											<ItemCard 
+											key={product.id} 
+											product={product} 
+											/>
+										))}
+									</View>
+								</ScrollView>
+							) : (
+								<Text style={styles.emptyText}>
+									{selectedCategory ? "Nenhum produto nesta categoria" : "Selecione uma categoria"}
+								</Text>
+							)}
 						</View>
 					</View>
 
@@ -205,12 +258,47 @@ export default function Home() {
 				<TouchableOpacity style={styles.orderButton} onPress={() => alert("Pressed!")}>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
+
+				<Button
+					title='Sair do App'
+					onPress={signOut}
+				/>
 			</LinearGradient>
 		</View >
 	);
 }
 
 const styles = StyleSheet.create({
+	productsGrid: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		justifyContent: 'space-between',
+		// paddingHorizontal: 5,
+		gap: 2,
+	},
+
+	emptyText: {
+		textAlign: 'center',
+		fontSize: 16,
+		color: '#666',
+		marginTop: 20,
+	},
+
+	card: {
+		width: '48%',
+		// marginBottom: 15,
+		alignItems: "center",
+		backgroundColor: "#fff",
+		borderColor: "#ECECEC75",
+		borderRadius: 10,
+		borderWidth: 1,
+		padding: 10,
+		shadowColor: "#000",
+		shadowOpacity: 0.3,
+		shadowOffset: { width: 0, height: 2 },
+		shadowRadius: 3,
+		elevation: 3,
+	},
 	container: { flex: 1, backgroundColor: "#fff" },
 	scroll: { flex: 1 },
 	header: {
@@ -248,12 +336,23 @@ const styles = StyleSheet.create({
 		height: 20,
 		marginRight: 8,
 	},
-	mainRow: { flexDirection: "row" },
+	mainRow: { 
+		flexDirection: "row",
+		width: '100%',
+		alignItems: 'flex-start',
+	},
+	rightColumn: {
+		flex: 0.70,
+		paddingHorizontal: 8,
+		alignItems: 'center'
+	},
 	leftColumn: {
-		width: 100, 
-		backgroundColor: '#fff',
+		flex: 0.30,
+		backgroundColor: "#fff",
 		borderRightWidth: 1,
-		borderRightColor: '#ECECEC',
+		borderRightColor: "#ECECEC",
+		paddingVertical: 6,
+		paddingHorizontal: 6,
 		height: '100%',
 		shadowColor: "#00000040",
 		shadowOpacity: 0.3,
@@ -261,58 +360,61 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		elevation: 4,
 	},
-	rightColumn: {
-		flex: 1,
-		marginVertical: 5,
-		marginLeft: 10,
-		paddingHorizontal: 10,
-	},
 	row: { flexDirection: "row", marginBottom: 32 },
-	card: {
-		alignItems: "center",
-		backgroundColor: "#fff",
-		borderColor: "#ECECEC75",
-		borderRadius: 20,
-		borderWidth: 1,
-		paddingTop: 128,
-		paddingBottom: 14,
-		paddingHorizontal: 9,
-		marginRight: 13,
-		shadowColor: "#00000040",
-		shadowOpacity: 0.3,
-		shadowOffset: { width: 0, height: 4 },
-		shadowRadius: 3,
-		elevation: 3,
-	},
-	promoText: { color: "#FF3F4B", fontSize: 24, marginBottom: 9 },
-	priceText: { color: "#000", fontSize: 24, marginBottom: 7 },
+	// card: {
+	// 	alignItems: "center",
+	// 	backgroundColor: "#fff",
+	// 	borderColor: "#ECECEC75",
+	// 	borderRadius: 20,
+	// 	borderWidth: 1,
+	// 	paddingTop: 128,
+	// 	paddingBottom: 14,
+	// 	paddingHorizontal: 9,
+	// 	marginRight: 13,
+	// 	shadowColor: "#00000040",
+	// 	shadowOpacity: 0.3,
+	// 	shadowOffset: { width: 0, height: 4 },
+	// 	shadowRadius: 3,
+	// 	elevation: 3,
+	// },
+	promoText: { color: "#FF3F4B", fontSize: 16, marginBottom: 9 },
+	priceText: { color: "#000", fontSize: 12, marginBottom: 7 },
 	button: {
 		backgroundColor: "#38207F",
-		borderRadius: 16,
-		paddingVertical: 10,
-		paddingHorizontal: 15,
+		borderRadius: 8,
+		paddingVertical: 8,
+		paddingHorizontal: 12,
 		shadowColor: "#00000033",
 		shadowOpacity: 0.2,
 		shadowOffset: { width: 0, height: 4 },
 		shadowRadius: 4,
 		elevation: 4,
+		alignItems: 'center',
 	},
-	buttonText: { color: "#fff", fontSize: 24 },
+	buttonText: { color: "#fff", fontSize: 12 },
 	categoryBg: {
 		alignItems: 'center',
 		paddingHorizontal: 5,
 		width: '100%',
 	},
-
+	productInfo: {
+		padding: 5
+	},
+	productImage: {
+		width: '100%',
+		height: 120,
+		borderTopLeftRadius: 15,
+		borderTopRightRadius: 15,
+	},
 	categoryItem: {
 		paddingVertical: 10,
 		borderBottomWidth: 1,
 		borderBottomColor: '#ECECEC',
 	},
 	categoryImage: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
+		width: 50,
+		height: 50,
+		borderRadius: 10,
 	},
 	selectedCategory: {
 		backgroundColor: '#f0f0f0',
@@ -321,10 +423,10 @@ const styles = StyleSheet.create({
 	},
 	categoryText: {
 		color: '#38207F',
-		fontSize: 24,
+		fontSize: 20,
 		marginTop: 5,
-		textAlign: 'left',
-		width:'100%',
+		textAlign: 'center',
+		width: '70%',
 	},
 	footer: {
 		// position: "absolute",

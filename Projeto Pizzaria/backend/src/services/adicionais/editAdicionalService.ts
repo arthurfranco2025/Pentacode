@@ -2,11 +2,12 @@ import PrismaClient from "../../prisma";
 
 interface EditRequest {
     adicional_id: string,
-    price: number
+    price: number,
+    points: number
 }
 
 class EditAdicionalService {
-    async execute({ adicional_id, price }: EditRequest) {
+    async execute({ adicional_id, price, points }: EditRequest) {
 
         const adicional = await PrismaClient.adicional.findFirst({
             where:{
@@ -27,11 +28,13 @@ class EditAdicionalService {
                 id: adicional_id
             },
             data: {
-                price: price
+                price: price,
+                points: points
             },
             select:{
                 id: true,
-                price: true
+                price: true,
+                points: true
             }
         })
 
