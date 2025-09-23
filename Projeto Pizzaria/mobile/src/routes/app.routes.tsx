@@ -32,12 +32,12 @@ function AppRoutes() {
                 component={ProductInfo}
             />
             
-            {/* <Stack.Screen 
-                name="ProductInfo" 
-                component={ProductInfo} 
+            <Stack.Screen 
+                name="CustomizeProduct" 
+                component={CustomizeProduct} 
             />
 
-            <Stack.Screen 
+            {/* <Stack.Screen 
                 name="SignUp" 
                 component={SignUp}
                 options={{ headerShown: false }}

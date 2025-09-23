@@ -1,116 +1,178 @@
 import React, { useState } from "react";
 import {
-    View,
-    Text,
-    Image,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    ScrollView
+    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
 
 type RootStackParamList = {
-    ProductInfo: undefined;
-    CustomizeProduct: undefined;
+    ProductInfo: {
+        product: Product;
+    }
+    CustomizeProduct: {
+        product: Product;
+    };
 };
 
-export default function CustomizeProduct() {
+interface Product {
+    id: string;
+    name: string;
+    price: string;
+    description?: string;
+    image_url: string;
+    category_id: string
+}
 
+interface Ingredients {
+    id: string;
+    name: string;
+    price: string;
+}
+
+interface Ingredients_Products {
+    id: string;
+    product_id: string;
+    ingredients_id: string;
+    qtd: string;
+}
+
+interface Extras {
+    id: string;
+    name: string;
+    price: string;
+}
+
+interface Extras_Items {
+    id: string;
+    item_id: string;
+    extras_id: string;
+    qtd: string;
+}
+
+export default function CustomizeProduct() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const route = useRoute<RouteProp<RootStackParamList, 'CustomizeProduct'>>();
+    const { product } = route.params;
 
     const [quantity, setQuantity] = useState(1);
-    const [options, setOptions] = useState({
-        option1: false,
-        option2: false,
-        option3: false,
-        option4: false
-    });
+    const [observation, setObservation] = useState('');
+    const [totalPrice, setTotalPrice] = useState(Number(product.price));
+    const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+
+    // Mock data for extras (replace with your API data)
+    const extras = [
+        { id: '1', name: 'Borda Recheada', price: '5.00' },
+        { id: '2', name: 'Queijo Extra', price: '4.00' },
+        { id: '3', name: 'Bacon', price: '3.00' },
+        { id: '4', name: 'Cebola Caramelizada', price: '2.00' },
+    ];
+
+    const handleQuantityChange = (newQuantity: number) => {
+        if (newQuantity > 0) {
+            setQuantity(newQuantity);
+            updateTotalPrice(newQuantity, selectedExtras);
+        }
+    };
+
+    const toggleExtra = (extraId: string) => {
+        const updatedExtras = selectedExtras.includes(extraId)
+            ? selectedExtras.filter(id => id !== extraId)
+            : [...selectedExtras, extraId];
+        
+        setSelectedExtras(updatedExtras);
+        updateTotalPrice(quantity, updatedExtras);
+    };
+
+    const updateTotalPrice = (qty: number, selected: string[]) => {
+        const basePrice = Number(product.price);
+        const extrasPrice = selected.reduce((total, extraId) => {
+            const extra = extras.find(e => e.id === extraId);
+            return total + (extra ? Number(extra.price) : 0);
+        }, 0);
+        
+        setTotalPrice((basePrice + extrasPrice) * qty);
+    };
 
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scroll}>
-                {/* Header */}
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
                     colors={["#391D8A", "#261B47"]}
                     style={styles.header}
                 >
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image
                             source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
                             style={{ width: 24, height: 24 }}
                         />
                     </TouchableOpacity>
                     <Text style={styles.logoText}>
-                        Sujeito<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+                        Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                     </Text>
                     <View style={{ width: 24 }} />
                 </LinearGradient>
 
-                {/* Conteúdo Principal */}
-                <Text style={styles.title}>ITEM</Text>
+                <View style={styles.content}>
+                    <Text style={styles.title}>Personalizar Pedido</Text>
 
-                <View style={styles.card}>
-                    <Image
-                        source={{ uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/92yaqjg3_expires_30_days.png" }}
-                        style={styles.image}
-                    />
-                    <View style={styles.info}>
-                        <Text style={styles.productName}>NOME DO PRODUTO</Text>
-                        <Text style={styles.price}>R$0.00</Text>
-                        <View style={styles.quantityContainer}>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => setQuantity(q => Math.max(0, q - 1))}
-                            >
-                                <Text style={styles.buttonText}>-</Text>
-                            </TouchableOpacity>
-                            <Text style={styles.quantity}>{quantity}</Text>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => setQuantity(q => q + 1)}
-                            >
-                                <Text style={styles.buttonText}>+</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.deleteButton}>
-                                <Ionicons name="trash-outline" size={24} color="white" />
-                            </TouchableOpacity>
+                    <View style={styles.card}>
+                        <Image
+                            source={{ uri: product.image_url }}
+                            style={styles.image}
+                        />
+                        <View style={styles.info}>
+                            <Text style={styles.productName}>{product.name}</Text>
+                            <Text style={styles.price}>R$ {product.price}</Text>
+                            <View style={styles.quantityContainer}>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => handleQuantityChange(quantity - 1)}
+                                >
+                                    <Text style={styles.buttonText}>-</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.quantity}>{quantity}</Text>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => handleQuantityChange(quantity + 1)}
+                                >
+                                    <Text style={styles.buttonText}>+</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
 
-                <Text style={styles.subTitle}>PERSONALIZAR PRODUTO</Text>
+                    <Text style={styles.subTitle}>Adicionais</Text>
 
-                {Object.keys(options).map((key, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={styles.option}
-                    >
-                        <View
-                            style={[
+                    {extras.map((extra) => (
+                        <TouchableOpacity
+                            key={extra.id}
+                            style={styles.option}
+                            onPress={() => toggleExtra(extra.id)}
+                        >
+                            <View style={[
                                 styles.checkbox,
-                                options[key as keyof typeof options] && styles.checked
-                            ]}
-                        />
-                        <Text style={styles.optionText}>Opção {index + 1}</Text>
-                    </TouchableOpacity>
-                ))}
+                                selectedExtras.includes(extra.id) && styles.checked
+                            ]} />
+                            <Text style={styles.optionText}>{extra.name}</Text>
+                            <Text style={styles.extraPrice}>+ R$ {extra.price}</Text>
+                        </TouchableOpacity>
+                    ))}
 
-                <TextInput
-                    style={styles.textArea}
-                    placeholder="Observações..."
-                    multiline
-                    maxLength={250}
-                />
+                    <Text style={styles.subTitle}>Observações</Text>
+                    <TextInput
+                        style={styles.textArea}
+                        placeholder="Alguma observação?"
+                        multiline
+                        maxLength={250}
+                        value={observation}
+                        onChangeText={setObservation}
+                    />
+                </View>
             </ScrollView>
 
-            {/* Rodapé */}
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -118,17 +180,17 @@ export default function CustomizeProduct() {
                 style={styles.footer}
             >
                 <View style={styles.footerRow}>
-                    <Image
-                        source={{
-                            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/e6jpmght_expires_30_days.png",
-                        }}
-                        resizeMode="stretch"
-                        style={styles.cartIcon}
-                    />
-                    <Text style={styles.cartText}>: 0.00</Text>
+                    <Text style={styles.totalLabel}>Total:</Text>
+                    <Text style={styles.totalPrice}>R$ {totalPrice.toFixed(2)}</Text>
                 </View>
-                <TouchableOpacity style={styles.confirmButton}>
-                    <Text style={styles.confirmText}>Confirmar</Text>
+                <TouchableOpacity 
+                    style={styles.confirmButton}
+                    onPress={() => {
+                        // Implement add to cart logic here
+                        navigation.goBack();
+                    }}
+                >
+                    <Text style={styles.confirmText}>Adicionar ao Carrinho</Text>
                 </TouchableOpacity>
             </LinearGradient>
         </View>
@@ -265,4 +327,26 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     confirmText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+    totalLabel: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "600"
+    },
+    totalPrice: {
+        color: "#FF3F4B",
+        fontSize: 16,
+        fontWeight: "bold"
+    },
+    extraPrice: {
+        marginLeft: "auto",
+        color: "#4B3D9A",
+        fontWeight: "bold"
+    },
+    content: {
+        padding: 10,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        backgroundColor: "#fff",
+        flex: 1
+    },
 });

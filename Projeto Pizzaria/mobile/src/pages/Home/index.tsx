@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-
+import { formatarPreco } from "../../components/utils/formatPrice"
 
 type RootStackParamList = {
 	Home: undefined;
@@ -73,20 +73,6 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([])
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
-	
-	function formatarPreco(preco: string | number) {
-		const precoNum =
-			typeof preco === "string"
-				? parseFloat(preco.replace(",", ".").trim())
-				: preco;
-	
-		if (isNaN(precoNum)) return "R$ 0,00";
-	
-		return new Intl.NumberFormat("pt-BR", {
-			style: "currency",
-			currency: "BRL",
-		}).format(precoNum);
-	}
 	
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>

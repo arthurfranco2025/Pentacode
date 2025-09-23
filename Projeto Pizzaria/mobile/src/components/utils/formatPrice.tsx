@@ -1,4 +1,4 @@
-export default function formatarPreco(preco: string | number) {
+export function formatarPreco(preco: string | number) {
     const precoNum =
         typeof preco === "string"
             ? parseFloat(preco.replace(",", ".").trim())
