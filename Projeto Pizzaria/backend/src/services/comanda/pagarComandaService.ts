@@ -13,12 +13,17 @@ class PagarComandaService{
 
         const comanda = await PrismaClient.comanda.findFirst({
             where:{
-                id: comanda_id
+                id: comanda_id,
+                status: "aguardando pagamento"
             }
         })
 
         if(!comanda){
             throw new Error('Essa comanda não existe')
+        }
+
+        if(comanda.status === "aguardando pagamento"){
+            throw new Error ('Pagamento já solicitado')
         }
 
         const comandaFechada = await PrismaClient.comanda.findFirst({
@@ -44,6 +49,8 @@ class PagarComandaService{
             select:{
                 id: true,
                 cliente_id: true,
+                price: true,
+                points: true,
                 status: true
             }
         })

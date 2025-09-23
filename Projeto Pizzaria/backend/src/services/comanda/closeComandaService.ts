@@ -36,8 +36,7 @@ class CloseComandaService {
         // Find the comanda by cliente_id to get its unique id
         const comandaToUpdate = await PrismaClient.comanda.findFirst({
             where: {
-                id: comanda_id,
-                status: "aberta"
+                id: comanda_id 
             }
         });
 
