@@ -9,8 +9,6 @@ export type StackParamsList ={
     Home: undefined;
     ProductInfo: undefined;
     CustomizeProduct: undefined;
-    SignIn: undefined;
-    SignUp: undefined;
 };
 
 const Stack = createNativeStackNavigator();
