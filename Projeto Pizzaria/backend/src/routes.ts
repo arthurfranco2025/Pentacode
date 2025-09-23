@@ -63,6 +63,8 @@ import { CreateItemAdicionalController } from './controllers/item_adicionais/add
 import { RemoveItemAdicionalController } from './controllers/item_adicionais/removeItemAdicionalController';
 import { SearchProductController } from './controllers/product/searchProductController';
 
+import { CreateMesaController } from './controllers/mesa/createMesaController';
+
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
@@ -128,5 +130,7 @@ router.delete('/adicionais/delete', isAuthenticated, new DeleteAdicionalControll
 //ITEM_ADICIONAL ROUTE
 router.post('/itemAdicional', isAuthenticated, new CreateItemAdicionalController().handle.bind(new CreateItemAdicionalController()))
 router.delete('/itemAdicional/delete', isAuthenticated, new RemoveItemAdicionalController().handle.bind(new RemoveItemAdicionalController))
+
+router.post('/mesa' , isAuthenticated, new CreateMesaController().handle.bind(new CreateMesaController()))
 
 export { router };
