@@ -15,10 +15,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
+
 type RootStackParamList = {
 	Home: undefined;
-	ProductInfo: undefined;
+	ProductInfo: {
+		product: Product;
+	};
 };
+
 
 // const PromoCard = ({ title, price }: { title: string; price: string }) => (
 // 	<View style={styles.card}>
@@ -44,21 +48,6 @@ interface Product {
 	category_id: string
 }
 
-function formatarPreco(preco: string | number) {
-    const precoNum =
-        typeof preco === "string"
-            ? parseFloat(preco.replace(",", ".").trim())
-            : preco;
-
-    if (isNaN(precoNum)) return "R$ 0,00";
-
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    }).format(precoNum);
-}
-
-
 const CategoryCard = ({
 	image_url,
 	label,
@@ -70,9 +59,9 @@ const CategoryCard = ({
 		<Image source={{ uri: image_url }} style={styles.categoryImage}
 			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
 			onLoad={() => console.log('Image loaded successfully')}
-		// Adicione um placeholder enquanto a imagem carrega
-		// defaultSource={require('../../assets/placeholder.png')}
-		/>
+			// Adicione um placeholder enquanto a imagem carrega
+			// defaultSource={require('../../assets/placeholder.png')}
+			/>
 		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
 	</View>
 );
@@ -85,6 +74,20 @@ export default function Home() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
 	
+	function formatarPreco(preco: string | number) {
+		const precoNum =
+			typeof preco === "string"
+				? parseFloat(preco.replace(",", ".").trim())
+				: preco;
+	
+		if (isNaN(precoNum)) return "R$ 0,00";
+	
+		return new Intl.NumberFormat("pt-BR", {
+			style: "currency",
+			currency: "BRL",
+		}).format(precoNum);
+	}
+	
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image
@@ -93,14 +96,17 @@ export default function Home() {
 				resizeMode="cover"
 			/>
 			<View style={styles.productInfo}>
-				<Text style={styles.promoText} ellipsizeMode="tail">{product.name}</Text>
+				<Text style={styles.promoText} ellipsizeMode="tail" numberOfLines={2}>{product.name}</Text>
 				<Text style={styles.priceText}>{formatarPreco(product.price)}</Text>
-				<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
-					<Text style={styles.buttonText} onPress={() => alert('Produto selecionado!')}>VER</Text>
+				<TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProductInfo', { product })}>
+					<Text style={styles.buttonText}>VER</Text>
 				</TouchableOpacity>
 			</View>
 		</View>
 	);
+
+
+
 	useEffect(() => {
 		async function loadCategories() {
 			try {
@@ -395,6 +401,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 9,
 		textAlign: 'left',
+		minHeight: 40,
 	},
 	priceText: { color: "#000", fontSize: 12, marginBottom: 7 },
 	button: {

@@ -12,41 +12,58 @@ import {
     Easing,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { RouteProp, useRoute } from '@react-navigation/native';
+import Home from "../Home";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import CustomizeProduct from "../CustomizeProduct";
 
 type RootStackParamList = {
     Home: undefined;
+    ProductInfo: {
+        product: Product;
+    }
     CustomizeProduct: undefined;
 };
 
-const CategoryCard = ({
-    image,
-    label,
-    bgImage,
-}: {
-    image: string;
-    label: string;
-    bgImage: string;
-}) => (
-    <ImageBackground source={{ uri: bgImage }} resizeMode="stretch" style={styles.categoryBg}>
-        <Image source={{ uri: image }} resizeMode="stretch" style={styles.categoryImage} />
-        <Text style={styles.categoryText}>{label}</Text>
-    </ImageBackground>
-);
+type RouteParams = RouteProp<RootStackParamList, 'ProductInfo'>;
+
+interface Product {
+    id: string;
+    name: string;
+    price: string;
+    description?: string;
+    image_url: string;
+    category_id: string
+}
 
 export default function ProductInfo() {
 
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-    // Mostrar/ocultar categorias
-    const [showCategories, setShowCategories] = useState(true);
-
     // Setar como favorito
     const [isFavorite, setIsFavorite] = useState(false);
     const favoriteAnim = useRef(new Animated.Value(1)).current;
+
+    // Recebendo produto da página anterior
+    const route = useRoute<RouteParams>();
+    const { product } = route.params;
+    const InfoProduct = ({ product }: { product: Product }) => (
+        <View>
+            <Image
+                source={{ uri: product.image_url }}
+                // style={styles.productImage}
+                resizeMode="cover"
+            />
+            <View>
+                <Text>{product.name}</Text>
+                {/* <Text>{formatarPreco(product.price)}</Text> */}
+                {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProductInfo', { product })}>
+                    <Text style={styles.buttonText}>VER</Text> */}
+                {/* </TouchableOpacity> */}
+            </View>
+        </View>
+    )
 
     const handleFavoritePress = () => {
         setIsFavorite(prev => !prev);
@@ -94,39 +111,10 @@ export default function ProductInfo() {
                     <View style={{ width: 24 }} />
                 </LinearGradient>
 
-                {/* Categorias */}
-                <View style={styles.menuSearchRow}>
-                    <TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
-                        <Image
-                            source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
-                            style={styles.sideIcon}
-                        />
-                    </TouchableOpacity>
-
-                    {/* Barra de busca */}
-                    <View style={styles.searchBox}>
-                        <Image
-                            source={{ uri: "https://img.icons8.com/ios-glyphs/30/000000/search--v1.png" }}
-                            style={styles.searchIcon}
-                        />
-                        <TextInput
-                            placeholder="Buscar"
-                            placeholderTextColor="#8A8A8A"
-                            style={styles.input}
-                        />
-                    </View>
-                </View>
-
                 <View style={styles.mainRow}>
-                    {showCategories && (
-                        <View style={styles.leftColumn}>
-                            <CategoryCard
-                                image="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/byxk8i28_expires_30_days.png"
-                                bgImage="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8p1f6qnp_expires_30_days.png"
-                                label="Pizzas"
-                            />
-                        </View>
-                    )}
+                    <View style={styles.leftColumn}>
+
+                    </View>
 
                     {/* Conteúdo principal */}
                     <View style={styles.mainContent}>

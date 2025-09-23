@@ -27,6 +27,11 @@ function AppRoutes() {
                 component={Dashboard}
             />
 
+            <Stack.Screen 
+                name="ProductInfo" 
+                component={ProductInfo}
+            />
+            
             {/* <Stack.Screen 
                 name="ProductInfo" 
                 component={ProductInfo} 
