@@ -214,7 +214,7 @@ export default function SignUp() {
 
             {/* /* <TouchableOpacity onPress={handleHasLogin}>
               <Text style={styles.loginText}>Entrar como convidado</Text>''
-            </TouchableOpacity> FUTURA FUNCAO DE ENTRAR COMO CONVIDADO */ }
+            </TouchableOpacity> FUTURA FUNCAO DE ENTRAR COMO CONVIDADO - poc */ }
 
         </ScrollView>
       </KeyboardAvoidingView>
