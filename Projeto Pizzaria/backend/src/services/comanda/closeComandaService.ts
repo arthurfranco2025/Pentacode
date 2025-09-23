@@ -1,26 +1,26 @@
 import PrismaClient from "../../prisma";
 
 interface ComandaRequest {
-    cliente_id: string;
+    comanda_id: string;
 }
 
 class CloseComandaService {
-    async execute({ cliente_id }: ComandaRequest) {
+    async execute({ comanda_id }: ComandaRequest) {
 
-        if (cliente_id) {
-            const clienteExists = await PrismaClient.cliente.findFirst({
+        if (comanda_id) {
+            const comandaExists = await PrismaClient.comanda.findFirst({
                 where: {
-                    id: cliente_id
+                    id: comanda_id
                 }
             });
-            if (!clienteExists) {
-                throw new Error("Cliente não encontrado");
+            if (!comandaExists) {
+                throw new Error("Comanda não encontrado");
             }
         }
 
         const comandaFechada = await PrismaClient.comanda.findFirst({
             where:{
-                cliente_id: cliente_id,
+                id: comanda_id,
                 status: "fechada"
             }
         })
@@ -29,20 +29,20 @@ class CloseComandaService {
             throw new Error('Essa comanda já está fechada')
         }
 
-        if (!cliente_id) {
-            throw new Error('Id do cliente é obrigatório')
+        if (!comanda_id) {
+            throw new Error('Id da comanda é obrigatório')
         }
 
         // Find the comanda by cliente_id to get its unique id
         const comandaToUpdate = await PrismaClient.comanda.findFirst({
             where: {
-                cliente_id: cliente_id,
+                id: comanda_id,
                 status: "aberta"
             }
         });
 
         if (!comandaToUpdate) {
-            throw new Error("Comanda não encontrada para este cliente");
+            throw new Error("Comanda não encontrada ");
         }
 
         const comanda = await PrismaClient.comanda.update({
@@ -52,7 +52,7 @@ class CloseComandaService {
             data: {
                 status: "fechada",
                 pedido: {},
-                cliente: { connect: { id: cliente_id } }
+                cliente: { connect: { id: comandaToUpdate.cliente_id } }
             },
             select: {
                 id: true,

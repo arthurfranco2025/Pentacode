@@ -3,7 +3,7 @@ import { cloudinary } from "../../config/cloudinary";
 
 interface EditCategoryRequest {
     category_id: string;
-    name: string;
+    name?: string;
     image?: Express.Multer.File | string; // pode ser multer file ou string
 }
 
@@ -21,10 +21,6 @@ class EditCategoryService {
 
         if (!categoriaExiste) {
             throw new Error('Essa categoria não existe');
-        }
-
-        if (!name) {
-            throw new Error('Insira o nome novo da categoria');
         }
 
         let imageUrl: string | undefined;

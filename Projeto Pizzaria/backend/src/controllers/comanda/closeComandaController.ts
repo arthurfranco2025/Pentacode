@@ -3,12 +3,12 @@ import { CloseComandaService } from '../../services/comanda/closeComandaService'
 
 class CloseComandaController{
     async handle(req: Request, res: Response){
-        const {cliente_id} = req.body;
+        const {comanda_id} = req.body;
 
         const closeComandaService = new CloseComandaService();
 
         const comanda = await closeComandaService.execute({
-            cliente_id
+            comanda_id
         });
 
         res.json(comanda)

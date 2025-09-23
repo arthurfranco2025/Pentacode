@@ -17,7 +17,7 @@ class ForgotPasswordClienteController {
                 confirmPassword,
             });
 
-            return res.status(200).json(senhaAtualizada);
+            return res.status(200).json( senhaAtualizada);
         } catch (err: any) {
             return res.status(400).json({ message: err.message });
         }
