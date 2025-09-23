@@ -188,7 +188,8 @@ exports.Prisma.ComandaScalarFieldEnum = {
   points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  cliente_id: 'cliente_id'
+  cliente_id: 'cliente_id',
+  mesa_id: 'mesa_id'
 };
 
 exports.Prisma.AvaliacaoScalarFieldEnum = {
@@ -245,6 +246,13 @@ exports.Prisma.Item_adicionalScalarFieldEnum = {
   adicional_id: 'adicional_id'
 };
 
+exports.Prisma.MesaScalarFieldEnum = {
+  id: 'id',
+  numero_mesa: 'numero_mesa',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -285,7 +293,8 @@ exports.Prisma.ModelName = {
   Ingrediente: 'Ingrediente',
   Product_ingrediente: 'Product_ingrediente',
   Adicional: 'Adicional',
-  Item_adicional: 'Item_adicional'
+  Item_adicional: 'Item_adicional',
+  Mesa: 'Mesa'
 };
 
 /**

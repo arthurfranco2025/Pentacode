@@ -29,6 +29,7 @@
     "express-fileupload": "^1.5.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "prisma": "^6.16.2"
+    "prisma": "^6.16.2",
+    "qrcode": "^1.5.4"
   }
 }

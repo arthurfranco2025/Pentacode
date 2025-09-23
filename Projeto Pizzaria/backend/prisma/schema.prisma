@@ -114,6 +114,9 @@ model Comanda {
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
+  mesa    Mesa?   @relation(fields: [mesa_id], references: [id])
+  mesa_id String?
+
   avaliacao Avaliacao[]
   pedido    Pedido[]
 
@@ -205,4 +208,16 @@ model Item_adicional {
   adicional_id String
 
   @@map("item_adicional")
+}
+
+model Mesa {
+  id          String @id @default(uuid())
+  numero_mesa Int @unique
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  Comanda Comanda[]
+
+  @@map("mesas")
 }

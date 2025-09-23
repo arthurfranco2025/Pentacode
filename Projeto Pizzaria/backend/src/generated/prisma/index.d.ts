@@ -78,6 +78,11 @@ export type Adicional = $Result.DefaultSelection<Prisma.$AdicionalPayload>
  * 
  */
 export type Item_adicional = $Result.DefaultSelection<Prisma.$Item_adicionalPayload>
+/**
+ * Model Mesa
+ * 
+ */
+export type Mesa = $Result.DefaultSelection<Prisma.$MesaPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -326,6 +331,16 @@ export class PrismaClient<
     * ```
     */
   get item_adicional(): Prisma.Item_adicionalDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.mesa`: Exposes CRUD operations for the **Mesa** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Mesas
+    * const mesas = await prisma.mesa.findMany()
+    * ```
+    */
+  get mesa(): Prisma.MesaDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -778,7 +793,8 @@ export namespace Prisma {
     Ingrediente: 'Ingrediente',
     Product_ingrediente: 'Product_ingrediente',
     Adicional: 'Adicional',
-    Item_adicional: 'Item_adicional'
+    Item_adicional: 'Item_adicional',
+    Mesa: 'Mesa'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -797,7 +813,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "funcionario" | "cliente" | "favorito" | "category" | "product" | "pedido" | "comanda" | "avaliacao" | "item" | "ingrediente" | "product_ingrediente" | "adicional" | "item_adicional"
+      modelProps: "funcionario" | "cliente" | "favorito" | "category" | "product" | "pedido" | "comanda" | "avaliacao" | "item" | "ingrediente" | "product_ingrediente" | "adicional" | "item_adicional" | "mesa"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1763,6 +1779,80 @@ export namespace Prisma {
           }
         }
       }
+      Mesa: {
+        payload: Prisma.$MesaPayload<ExtArgs>
+        fields: Prisma.MesaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MesaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MesaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          findFirst: {
+            args: Prisma.MesaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MesaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          findMany: {
+            args: Prisma.MesaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>[]
+          }
+          create: {
+            args: Prisma.MesaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          createMany: {
+            args: Prisma.MesaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MesaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>[]
+          }
+          delete: {
+            args: Prisma.MesaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          update: {
+            args: Prisma.MesaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          deleteMany: {
+            args: Prisma.MesaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MesaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MesaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>[]
+          }
+          upsert: {
+            args: Prisma.MesaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MesaPayload>
+          }
+          aggregate: {
+            args: Prisma.MesaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMesa>
+          }
+          groupBy: {
+            args: Prisma.MesaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MesaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MesaCountArgs<ExtArgs>
+            result: $Utils.Optional<MesaCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1872,6 +1962,7 @@ export namespace Prisma {
     product_ingrediente?: Product_ingredienteOmit
     adicional?: AdicionalOmit
     item_adicional?: Item_adicionalOmit
+    mesa?: MesaOmit
   }
 
   /* Types for Logging */
@@ -2246,6 +2337,37 @@ export namespace Prisma {
    */
   export type AdicionalCountOutputTypeCountItem_adicionalArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: Item_adicionalWhereInput
+  }
+
+
+  /**
+   * Count Type MesaCountOutputType
+   */
+
+  export type MesaCountOutputType = {
+    Comanda: number
+  }
+
+  export type MesaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Comanda?: boolean | MesaCountOutputTypeCountComandaArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MesaCountOutputType without action
+   */
+  export type MesaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MesaCountOutputType
+     */
+    select?: MesaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MesaCountOutputType without action
+   */
+  export type MesaCountOutputTypeCountComandaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComandaWhereInput
   }
 
 
@@ -9053,6 +9175,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string | null
+    mesa_id: string | null
   }
 
   export type ComandaMaxAggregateOutputType = {
@@ -9063,6 +9186,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string | null
+    mesa_id: string | null
   }
 
   export type ComandaCountAggregateOutputType = {
@@ -9073,6 +9197,7 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     cliente_id: number
+    mesa_id: number
     _all: number
   }
 
@@ -9095,6 +9220,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     cliente_id?: true
+    mesa_id?: true
   }
 
   export type ComandaMaxAggregateInputType = {
@@ -9105,6 +9231,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     cliente_id?: true
+    mesa_id?: true
   }
 
   export type ComandaCountAggregateInputType = {
@@ -9115,6 +9242,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     cliente_id?: true
+    mesa_id?: true
     _all?: true
   }
 
@@ -9212,6 +9340,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string
+    mesa_id: string | null
     _count: ComandaCountAggregateOutputType | null
     _avg: ComandaAvgAggregateOutputType | null
     _sum: ComandaSumAggregateOutputType | null
@@ -9241,7 +9370,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
+    mesa_id?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
     avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     pedido?: boolean | Comanda$pedidoArgs<ExtArgs>
     _count?: boolean | ComandaCountOutputTypeDefaultArgs<ExtArgs>
@@ -9255,7 +9386,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
+    mesa_id?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }, ExtArgs["result"]["comanda"]>
 
   export type ComandaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9266,7 +9399,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
+    mesa_id?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }, ExtArgs["result"]["comanda"]>
 
   export type ComandaSelectScalar = {
@@ -9277,26 +9412,31 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
+    mesa_id?: boolean
   }
 
-  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id", ExtArgs["result"]["comanda"]>
+  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id" | "mesa_id", ExtArgs["result"]["comanda"]>
   export type ComandaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
     avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     pedido?: boolean | Comanda$pedidoArgs<ExtArgs>
     _count?: boolean | ComandaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ComandaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }
   export type ComandaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
+    mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }
 
   export type $ComandaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Comanda"
     objects: {
       cliente: Prisma.$ClientePayload<ExtArgs>
+      mesa: Prisma.$MesaPayload<ExtArgs> | null
       avaliacao: Prisma.$AvaliacaoPayload<ExtArgs>[]
       pedido: Prisma.$PedidoPayload<ExtArgs>[]
     }
@@ -9308,6 +9448,7 @@ export namespace Prisma {
       created_at: Date | null
       updated_at: Date | null
       cliente_id: string
+      mesa_id: string | null
     }, ExtArgs["result"]["comanda"]>
     composites: {}
   }
@@ -9703,6 +9844,7 @@ export namespace Prisma {
   export interface Prisma__ComandaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     cliente<T extends ClienteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClienteDefaultArgs<ExtArgs>>): Prisma__ClienteClient<$Result.GetResult<Prisma.$ClientePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mesa<T extends Comanda$mesaArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$mesaArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     avaliacao<T extends Comanda$avaliacaoArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$avaliacaoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvaliacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pedido<T extends Comanda$pedidoArgs<ExtArgs> = {}>(args?: Subset<T, Comanda$pedidoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PedidoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -9741,6 +9883,7 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Comanda", 'DateTime'>
     readonly updated_at: FieldRef<"Comanda", 'DateTime'>
     readonly cliente_id: FieldRef<"Comanda", 'String'>
+    readonly mesa_id: FieldRef<"Comanda", 'String'>
   }
     
 
@@ -10134,6 +10277,25 @@ export namespace Prisma {
      * Limit how many Comandas to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Comanda.mesa
+   */
+  export type Comanda$mesaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    where?: MesaWhereInput
   }
 
   /**
@@ -16928,6 +17090,1097 @@ export namespace Prisma {
 
 
   /**
+   * Model Mesa
+   */
+
+  export type AggregateMesa = {
+    _count: MesaCountAggregateOutputType | null
+    _avg: MesaAvgAggregateOutputType | null
+    _sum: MesaSumAggregateOutputType | null
+    _min: MesaMinAggregateOutputType | null
+    _max: MesaMaxAggregateOutputType | null
+  }
+
+  export type MesaAvgAggregateOutputType = {
+    numero_mesa: number | null
+  }
+
+  export type MesaSumAggregateOutputType = {
+    numero_mesa: number | null
+  }
+
+  export type MesaMinAggregateOutputType = {
+    id: string | null
+    numero_mesa: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type MesaMaxAggregateOutputType = {
+    id: string | null
+    numero_mesa: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type MesaCountAggregateOutputType = {
+    id: number
+    numero_mesa: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type MesaAvgAggregateInputType = {
+    numero_mesa?: true
+  }
+
+  export type MesaSumAggregateInputType = {
+    numero_mesa?: true
+  }
+
+  export type MesaMinAggregateInputType = {
+    id?: true
+    numero_mesa?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type MesaMaxAggregateInputType = {
+    id?: true
+    numero_mesa?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type MesaCountAggregateInputType = {
+    id?: true
+    numero_mesa?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type MesaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Mesa to aggregate.
+     */
+    where?: MesaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Mesas to fetch.
+     */
+    orderBy?: MesaOrderByWithRelationInput | MesaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MesaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Mesas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Mesas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Mesas
+    **/
+    _count?: true | MesaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MesaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MesaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MesaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MesaMaxAggregateInputType
+  }
+
+  export type GetMesaAggregateType<T extends MesaAggregateArgs> = {
+        [P in keyof T & keyof AggregateMesa]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMesa[P]>
+      : GetScalarType<T[P], AggregateMesa[P]>
+  }
+
+
+
+
+  export type MesaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MesaWhereInput
+    orderBy?: MesaOrderByWithAggregationInput | MesaOrderByWithAggregationInput[]
+    by: MesaScalarFieldEnum[] | MesaScalarFieldEnum
+    having?: MesaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MesaCountAggregateInputType | true
+    _avg?: MesaAvgAggregateInputType
+    _sum?: MesaSumAggregateInputType
+    _min?: MesaMinAggregateInputType
+    _max?: MesaMaxAggregateInputType
+  }
+
+  export type MesaGroupByOutputType = {
+    id: string
+    numero_mesa: number
+    created_at: Date | null
+    updated_at: Date | null
+    _count: MesaCountAggregateOutputType | null
+    _avg: MesaAvgAggregateOutputType | null
+    _sum: MesaSumAggregateOutputType | null
+    _min: MesaMinAggregateOutputType | null
+    _max: MesaMaxAggregateOutputType | null
+  }
+
+  type GetMesaGroupByPayload<T extends MesaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MesaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MesaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MesaGroupByOutputType[P]>
+            : GetScalarType<T[P], MesaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MesaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero_mesa?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    Comanda?: boolean | Mesa$ComandaArgs<ExtArgs>
+    _count?: boolean | MesaCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mesa"]>
+
+  export type MesaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero_mesa?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["mesa"]>
+
+  export type MesaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero_mesa?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["mesa"]>
+
+  export type MesaSelectScalar = {
+    id?: boolean
+    numero_mesa?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type MesaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "numero_mesa" | "created_at" | "updated_at", ExtArgs["result"]["mesa"]>
+  export type MesaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Comanda?: boolean | Mesa$ComandaArgs<ExtArgs>
+    _count?: boolean | MesaCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type MesaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type MesaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $MesaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Mesa"
+    objects: {
+      Comanda: Prisma.$ComandaPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      numero_mesa: number
+      created_at: Date | null
+      updated_at: Date | null
+    }, ExtArgs["result"]["mesa"]>
+    composites: {}
+  }
+
+  type MesaGetPayload<S extends boolean | null | undefined | MesaDefaultArgs> = $Result.GetResult<Prisma.$MesaPayload, S>
+
+  type MesaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MesaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MesaCountAggregateInputType | true
+    }
+
+  export interface MesaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Mesa'], meta: { name: 'Mesa' } }
+    /**
+     * Find zero or one Mesa that matches the filter.
+     * @param {MesaFindUniqueArgs} args - Arguments to find a Mesa
+     * @example
+     * // Get one Mesa
+     * const mesa = await prisma.mesa.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MesaFindUniqueArgs>(args: SelectSubset<T, MesaFindUniqueArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Mesa that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MesaFindUniqueOrThrowArgs} args - Arguments to find a Mesa
+     * @example
+     * // Get one Mesa
+     * const mesa = await prisma.mesa.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MesaFindUniqueOrThrowArgs>(args: SelectSubset<T, MesaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Mesa that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaFindFirstArgs} args - Arguments to find a Mesa
+     * @example
+     * // Get one Mesa
+     * const mesa = await prisma.mesa.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MesaFindFirstArgs>(args?: SelectSubset<T, MesaFindFirstArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Mesa that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaFindFirstOrThrowArgs} args - Arguments to find a Mesa
+     * @example
+     * // Get one Mesa
+     * const mesa = await prisma.mesa.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MesaFindFirstOrThrowArgs>(args?: SelectSubset<T, MesaFindFirstOrThrowArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Mesas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Mesas
+     * const mesas = await prisma.mesa.findMany()
+     * 
+     * // Get first 10 Mesas
+     * const mesas = await prisma.mesa.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mesaWithIdOnly = await prisma.mesa.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MesaFindManyArgs>(args?: SelectSubset<T, MesaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Mesa.
+     * @param {MesaCreateArgs} args - Arguments to create a Mesa.
+     * @example
+     * // Create one Mesa
+     * const Mesa = await prisma.mesa.create({
+     *   data: {
+     *     // ... data to create a Mesa
+     *   }
+     * })
+     * 
+     */
+    create<T extends MesaCreateArgs>(args: SelectSubset<T, MesaCreateArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Mesas.
+     * @param {MesaCreateManyArgs} args - Arguments to create many Mesas.
+     * @example
+     * // Create many Mesas
+     * const mesa = await prisma.mesa.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MesaCreateManyArgs>(args?: SelectSubset<T, MesaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Mesas and returns the data saved in the database.
+     * @param {MesaCreateManyAndReturnArgs} args - Arguments to create many Mesas.
+     * @example
+     * // Create many Mesas
+     * const mesa = await prisma.mesa.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Mesas and only return the `id`
+     * const mesaWithIdOnly = await prisma.mesa.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MesaCreateManyAndReturnArgs>(args?: SelectSubset<T, MesaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Mesa.
+     * @param {MesaDeleteArgs} args - Arguments to delete one Mesa.
+     * @example
+     * // Delete one Mesa
+     * const Mesa = await prisma.mesa.delete({
+     *   where: {
+     *     // ... filter to delete one Mesa
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MesaDeleteArgs>(args: SelectSubset<T, MesaDeleteArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Mesa.
+     * @param {MesaUpdateArgs} args - Arguments to update one Mesa.
+     * @example
+     * // Update one Mesa
+     * const mesa = await prisma.mesa.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MesaUpdateArgs>(args: SelectSubset<T, MesaUpdateArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Mesas.
+     * @param {MesaDeleteManyArgs} args - Arguments to filter Mesas to delete.
+     * @example
+     * // Delete a few Mesas
+     * const { count } = await prisma.mesa.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MesaDeleteManyArgs>(args?: SelectSubset<T, MesaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Mesas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Mesas
+     * const mesa = await prisma.mesa.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MesaUpdateManyArgs>(args: SelectSubset<T, MesaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Mesas and returns the data updated in the database.
+     * @param {MesaUpdateManyAndReturnArgs} args - Arguments to update many Mesas.
+     * @example
+     * // Update many Mesas
+     * const mesa = await prisma.mesa.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Mesas and only return the `id`
+     * const mesaWithIdOnly = await prisma.mesa.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MesaUpdateManyAndReturnArgs>(args: SelectSubset<T, MesaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Mesa.
+     * @param {MesaUpsertArgs} args - Arguments to update or create a Mesa.
+     * @example
+     * // Update or create a Mesa
+     * const mesa = await prisma.mesa.upsert({
+     *   create: {
+     *     // ... data to create a Mesa
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Mesa we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MesaUpsertArgs>(args: SelectSubset<T, MesaUpsertArgs<ExtArgs>>): Prisma__MesaClient<$Result.GetResult<Prisma.$MesaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Mesas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaCountArgs} args - Arguments to filter Mesas to count.
+     * @example
+     * // Count the number of Mesas
+     * const count = await prisma.mesa.count({
+     *   where: {
+     *     // ... the filter for the Mesas we want to count
+     *   }
+     * })
+    **/
+    count<T extends MesaCountArgs>(
+      args?: Subset<T, MesaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MesaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Mesa.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MesaAggregateArgs>(args: Subset<T, MesaAggregateArgs>): Prisma.PrismaPromise<GetMesaAggregateType<T>>
+
+    /**
+     * Group by Mesa.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MesaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MesaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MesaGroupByArgs['orderBy'] }
+        : { orderBy?: MesaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MesaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMesaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Mesa model
+   */
+  readonly fields: MesaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Mesa.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MesaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    Comanda<T extends Mesa$ComandaArgs<ExtArgs> = {}>(args?: Subset<T, Mesa$ComandaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComandaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Mesa model
+   */
+  interface MesaFieldRefs {
+    readonly id: FieldRef<"Mesa", 'String'>
+    readonly numero_mesa: FieldRef<"Mesa", 'Int'>
+    readonly created_at: FieldRef<"Mesa", 'DateTime'>
+    readonly updated_at: FieldRef<"Mesa", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Mesa findUnique
+   */
+  export type MesaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter, which Mesa to fetch.
+     */
+    where: MesaWhereUniqueInput
+  }
+
+  /**
+   * Mesa findUniqueOrThrow
+   */
+  export type MesaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter, which Mesa to fetch.
+     */
+    where: MesaWhereUniqueInput
+  }
+
+  /**
+   * Mesa findFirst
+   */
+  export type MesaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter, which Mesa to fetch.
+     */
+    where?: MesaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Mesas to fetch.
+     */
+    orderBy?: MesaOrderByWithRelationInput | MesaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Mesas.
+     */
+    cursor?: MesaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Mesas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Mesas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Mesas.
+     */
+    distinct?: MesaScalarFieldEnum | MesaScalarFieldEnum[]
+  }
+
+  /**
+   * Mesa findFirstOrThrow
+   */
+  export type MesaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter, which Mesa to fetch.
+     */
+    where?: MesaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Mesas to fetch.
+     */
+    orderBy?: MesaOrderByWithRelationInput | MesaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Mesas.
+     */
+    cursor?: MesaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Mesas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Mesas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Mesas.
+     */
+    distinct?: MesaScalarFieldEnum | MesaScalarFieldEnum[]
+  }
+
+  /**
+   * Mesa findMany
+   */
+  export type MesaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter, which Mesas to fetch.
+     */
+    where?: MesaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Mesas to fetch.
+     */
+    orderBy?: MesaOrderByWithRelationInput | MesaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Mesas.
+     */
+    cursor?: MesaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Mesas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Mesas.
+     */
+    skip?: number
+    distinct?: MesaScalarFieldEnum | MesaScalarFieldEnum[]
+  }
+
+  /**
+   * Mesa create
+   */
+  export type MesaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Mesa.
+     */
+    data: XOR<MesaCreateInput, MesaUncheckedCreateInput>
+  }
+
+  /**
+   * Mesa createMany
+   */
+  export type MesaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Mesas.
+     */
+    data: MesaCreateManyInput | MesaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Mesa createManyAndReturn
+   */
+  export type MesaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * The data used to create many Mesas.
+     */
+    data: MesaCreateManyInput | MesaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Mesa update
+   */
+  export type MesaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Mesa.
+     */
+    data: XOR<MesaUpdateInput, MesaUncheckedUpdateInput>
+    /**
+     * Choose, which Mesa to update.
+     */
+    where: MesaWhereUniqueInput
+  }
+
+  /**
+   * Mesa updateMany
+   */
+  export type MesaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Mesas.
+     */
+    data: XOR<MesaUpdateManyMutationInput, MesaUncheckedUpdateManyInput>
+    /**
+     * Filter which Mesas to update
+     */
+    where?: MesaWhereInput
+    /**
+     * Limit how many Mesas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Mesa updateManyAndReturn
+   */
+  export type MesaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * The data used to update Mesas.
+     */
+    data: XOR<MesaUpdateManyMutationInput, MesaUncheckedUpdateManyInput>
+    /**
+     * Filter which Mesas to update
+     */
+    where?: MesaWhereInput
+    /**
+     * Limit how many Mesas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Mesa upsert
+   */
+  export type MesaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Mesa to update in case it exists.
+     */
+    where: MesaWhereUniqueInput
+    /**
+     * In case the Mesa found by the `where` argument doesn't exist, create a new Mesa with this data.
+     */
+    create: XOR<MesaCreateInput, MesaUncheckedCreateInput>
+    /**
+     * In case the Mesa was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MesaUpdateInput, MesaUncheckedUpdateInput>
+  }
+
+  /**
+   * Mesa delete
+   */
+  export type MesaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+    /**
+     * Filter which Mesa to delete.
+     */
+    where: MesaWhereUniqueInput
+  }
+
+  /**
+   * Mesa deleteMany
+   */
+  export type MesaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Mesas to delete
+     */
+    where?: MesaWhereInput
+    /**
+     * Limit how many Mesas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Mesa.Comanda
+   */
+  export type Mesa$ComandaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comanda
+     */
+    select?: ComandaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comanda
+     */
+    omit?: ComandaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComandaInclude<ExtArgs> | null
+    where?: ComandaWhereInput
+    orderBy?: ComandaOrderByWithRelationInput | ComandaOrderByWithRelationInput[]
+    cursor?: ComandaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ComandaScalarFieldEnum | ComandaScalarFieldEnum[]
+  }
+
+  /**
+   * Mesa without action
+   */
+  export type MesaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mesa
+     */
+    select?: MesaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mesa
+     */
+    omit?: MesaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MesaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -17027,7 +18280,8 @@ export namespace Prisma {
     points: 'points',
     created_at: 'created_at',
     updated_at: 'updated_at',
-    cliente_id: 'cliente_id'
+    cliente_id: 'cliente_id',
+    mesa_id: 'mesa_id'
   };
 
   export type ComandaScalarFieldEnum = (typeof ComandaScalarFieldEnum)[keyof typeof ComandaScalarFieldEnum]
@@ -17103,6 +18357,16 @@ export namespace Prisma {
   };
 
   export type Item_adicionalScalarFieldEnum = (typeof Item_adicionalScalarFieldEnum)[keyof typeof Item_adicionalScalarFieldEnum]
+
+
+  export const MesaScalarFieldEnum: {
+    id: 'id',
+    numero_mesa: 'numero_mesa',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type MesaScalarFieldEnum = (typeof MesaScalarFieldEnum)[keyof typeof MesaScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -17665,7 +18929,9 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
+    mesa_id?: StringNullableFilter<"Comanda"> | string | null
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
+    mesa?: XOR<MesaNullableScalarRelationFilter, MesaWhereInput> | null
     avaliacao?: AvaliacaoListRelationFilter
     pedido?: PedidoListRelationFilter
   }
@@ -17678,7 +18944,9 @@ export namespace Prisma {
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     cliente_id?: SortOrder
+    mesa_id?: SortOrderInput | SortOrder
     cliente?: ClienteOrderByWithRelationInput
+    mesa?: MesaOrderByWithRelationInput
     avaliacao?: AvaliacaoOrderByRelationAggregateInput
     pedido?: PedidoOrderByRelationAggregateInput
   }
@@ -17694,7 +18962,9 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
+    mesa_id?: StringNullableFilter<"Comanda"> | string | null
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
+    mesa?: XOR<MesaNullableScalarRelationFilter, MesaWhereInput> | null
     avaliacao?: AvaliacaoListRelationFilter
     pedido?: PedidoListRelationFilter
   }, "id">
@@ -17707,6 +18977,7 @@ export namespace Prisma {
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     cliente_id?: SortOrder
+    mesa_id?: SortOrderInput | SortOrder
     _count?: ComandaCountOrderByAggregateInput
     _avg?: ComandaAvgOrderByAggregateInput
     _max?: ComandaMaxOrderByAggregateInput
@@ -17725,6 +18996,7 @@ export namespace Prisma {
     created_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     cliente_id?: StringWithAggregatesFilter<"Comanda"> | string
+    mesa_id?: StringNullableWithAggregatesFilter<"Comanda"> | string | null
   }
 
   export type AvaliacaoWhereInput = {
@@ -18112,6 +19384,58 @@ export namespace Prisma {
     qtd?: IntWithAggregatesFilter<"Item_adicional"> | number
     item_id?: StringWithAggregatesFilter<"Item_adicional"> | string
     adicional_id?: StringWithAggregatesFilter<"Item_adicional"> | string
+  }
+
+  export type MesaWhereInput = {
+    AND?: MesaWhereInput | MesaWhereInput[]
+    OR?: MesaWhereInput[]
+    NOT?: MesaWhereInput | MesaWhereInput[]
+    id?: StringFilter<"Mesa"> | string
+    numero_mesa?: IntFilter<"Mesa"> | number
+    created_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
+    updated_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
+    Comanda?: ComandaListRelationFilter
+  }
+
+  export type MesaOrderByWithRelationInput = {
+    id?: SortOrder
+    numero_mesa?: SortOrder
+    created_at?: SortOrderInput | SortOrder
+    updated_at?: SortOrderInput | SortOrder
+    Comanda?: ComandaOrderByRelationAggregateInput
+  }
+
+  export type MesaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    numero_mesa?: number
+    AND?: MesaWhereInput | MesaWhereInput[]
+    OR?: MesaWhereInput[]
+    NOT?: MesaWhereInput | MesaWhereInput[]
+    created_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
+    updated_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
+    Comanda?: ComandaListRelationFilter
+  }, "id" | "numero_mesa">
+
+  export type MesaOrderByWithAggregationInput = {
+    id?: SortOrder
+    numero_mesa?: SortOrder
+    created_at?: SortOrderInput | SortOrder
+    updated_at?: SortOrderInput | SortOrder
+    _count?: MesaCountOrderByAggregateInput
+    _avg?: MesaAvgOrderByAggregateInput
+    _max?: MesaMaxOrderByAggregateInput
+    _min?: MesaMinOrderByAggregateInput
+    _sum?: MesaSumOrderByAggregateInput
+  }
+
+  export type MesaScalarWhereWithAggregatesInput = {
+    AND?: MesaScalarWhereWithAggregatesInput | MesaScalarWhereWithAggregatesInput[]
+    OR?: MesaScalarWhereWithAggregatesInput[]
+    NOT?: MesaScalarWhereWithAggregatesInput | MesaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Mesa"> | string
+    numero_mesa?: IntWithAggregatesFilter<"Mesa"> | number
+    created_at?: DateTimeNullableWithAggregatesFilter<"Mesa"> | Date | string | null
+    updated_at?: DateTimeNullableWithAggregatesFilter<"Mesa"> | Date | string | null
   }
 
   export type FuncionarioCreateInput = {
@@ -18580,6 +19904,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
+    mesa?: MesaCreateNestedOneWithoutComandaInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
   }
@@ -18592,6 +19917,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
+    mesa_id?: string | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -18604,6 +19930,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
+    mesa?: MesaUpdateOneWithoutComandaNestedInput
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
   }
@@ -18616,6 +19943,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
@@ -18628,6 +19956,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
+    mesa_id?: string | null
   }
 
   export type ComandaUpdateManyMutationInput = {
@@ -18647,6 +19976,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AvaliacaoCreateInput = {
@@ -19029,6 +20359,59 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     item_id?: StringFieldUpdateOperationsInput | string
     adicional_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type MesaCreateInput = {
+    id?: string
+    numero_mesa: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    Comanda?: ComandaCreateNestedManyWithoutMesaInput
+  }
+
+  export type MesaUncheckedCreateInput = {
+    id?: string
+    numero_mesa: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    Comanda?: ComandaUncheckedCreateNestedManyWithoutMesaInput
+  }
+
+  export type MesaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Comanda?: ComandaUpdateManyWithoutMesaNestedInput
+  }
+
+  export type MesaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Comanda?: ComandaUncheckedUpdateManyWithoutMesaNestedInput
+  }
+
+  export type MesaCreateManyInput = {
+    id?: string
+    numero_mesa: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+  }
+
+  export type MesaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MesaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -19460,6 +20843,11 @@ export namespace Prisma {
     points?: SortOrder
   }
 
+  export type MesaNullableScalarRelationFilter = {
+    is?: MesaWhereInput | null
+    isNot?: MesaWhereInput | null
+  }
+
   export type ComandaCountOrderByAggregateInput = {
     id?: SortOrder
     status?: SortOrder
@@ -19468,6 +20856,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
+    mesa_id?: SortOrder
   }
 
   export type ComandaAvgOrderByAggregateInput = {
@@ -19483,6 +20872,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
+    mesa_id?: SortOrder
   }
 
   export type ComandaMinOrderByAggregateInput = {
@@ -19493,6 +20883,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
+    mesa_id?: SortOrder
   }
 
   export type ComandaSumOrderByAggregateInput = {
@@ -19818,6 +21209,35 @@ export namespace Prisma {
 
   export type Item_adicionalSumOrderByAggregateInput = {
     qtd?: SortOrder
+  }
+
+  export type MesaCountOrderByAggregateInput = {
+    id?: SortOrder
+    numero_mesa?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type MesaAvgOrderByAggregateInput = {
+    numero_mesa?: SortOrder
+  }
+
+  export type MesaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    numero_mesa?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type MesaMinOrderByAggregateInput = {
+    id?: SortOrder
+    numero_mesa?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type MesaSumOrderByAggregateInput = {
+    numero_mesa?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -20298,6 +21718,12 @@ export namespace Prisma {
     connect?: ClienteWhereUniqueInput
   }
 
+  export type MesaCreateNestedOneWithoutComandaInput = {
+    create?: XOR<MesaCreateWithoutComandaInput, MesaUncheckedCreateWithoutComandaInput>
+    connectOrCreate?: MesaCreateOrConnectWithoutComandaInput
+    connect?: MesaWhereUniqueInput
+  }
+
   export type AvaliacaoCreateNestedManyWithoutComandaInput = {
     create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
@@ -20332,6 +21758,16 @@ export namespace Prisma {
     upsert?: ClienteUpsertWithoutComandasInput
     connect?: ClienteWhereUniqueInput
     update?: XOR<XOR<ClienteUpdateToOneWithWhereWithoutComandasInput, ClienteUpdateWithoutComandasInput>, ClienteUncheckedUpdateWithoutComandasInput>
+  }
+
+  export type MesaUpdateOneWithoutComandaNestedInput = {
+    create?: XOR<MesaCreateWithoutComandaInput, MesaUncheckedCreateWithoutComandaInput>
+    connectOrCreate?: MesaCreateOrConnectWithoutComandaInput
+    upsert?: MesaUpsertWithoutComandaInput
+    disconnect?: MesaWhereInput | boolean
+    delete?: MesaWhereInput | boolean
+    connect?: MesaWhereUniqueInput
+    update?: XOR<XOR<MesaUpdateToOneWithWhereWithoutComandaInput, MesaUpdateWithoutComandaInput>, MesaUncheckedUpdateWithoutComandaInput>
   }
 
   export type AvaliacaoUpdateManyWithoutComandaNestedInput = {
@@ -20636,6 +22072,48 @@ export namespace Prisma {
     update?: XOR<XOR<AdicionalUpdateToOneWithWhereWithoutItem_adicionalInput, AdicionalUpdateWithoutItem_adicionalInput>, AdicionalUncheckedUpdateWithoutItem_adicionalInput>
   }
 
+  export type ComandaCreateNestedManyWithoutMesaInput = {
+    create?: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput> | ComandaCreateWithoutMesaInput[] | ComandaUncheckedCreateWithoutMesaInput[]
+    connectOrCreate?: ComandaCreateOrConnectWithoutMesaInput | ComandaCreateOrConnectWithoutMesaInput[]
+    createMany?: ComandaCreateManyMesaInputEnvelope
+    connect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+  }
+
+  export type ComandaUncheckedCreateNestedManyWithoutMesaInput = {
+    create?: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput> | ComandaCreateWithoutMesaInput[] | ComandaUncheckedCreateWithoutMesaInput[]
+    connectOrCreate?: ComandaCreateOrConnectWithoutMesaInput | ComandaCreateOrConnectWithoutMesaInput[]
+    createMany?: ComandaCreateManyMesaInputEnvelope
+    connect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+  }
+
+  export type ComandaUpdateManyWithoutMesaNestedInput = {
+    create?: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput> | ComandaCreateWithoutMesaInput[] | ComandaUncheckedCreateWithoutMesaInput[]
+    connectOrCreate?: ComandaCreateOrConnectWithoutMesaInput | ComandaCreateOrConnectWithoutMesaInput[]
+    upsert?: ComandaUpsertWithWhereUniqueWithoutMesaInput | ComandaUpsertWithWhereUniqueWithoutMesaInput[]
+    createMany?: ComandaCreateManyMesaInputEnvelope
+    set?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    disconnect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    delete?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    connect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    update?: ComandaUpdateWithWhereUniqueWithoutMesaInput | ComandaUpdateWithWhereUniqueWithoutMesaInput[]
+    updateMany?: ComandaUpdateManyWithWhereWithoutMesaInput | ComandaUpdateManyWithWhereWithoutMesaInput[]
+    deleteMany?: ComandaScalarWhereInput | ComandaScalarWhereInput[]
+  }
+
+  export type ComandaUncheckedUpdateManyWithoutMesaNestedInput = {
+    create?: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput> | ComandaCreateWithoutMesaInput[] | ComandaUncheckedCreateWithoutMesaInput[]
+    connectOrCreate?: ComandaCreateOrConnectWithoutMesaInput | ComandaCreateOrConnectWithoutMesaInput[]
+    upsert?: ComandaUpsertWithWhereUniqueWithoutMesaInput | ComandaUpsertWithWhereUniqueWithoutMesaInput[]
+    createMany?: ComandaCreateManyMesaInputEnvelope
+    set?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    disconnect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    delete?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    connect?: ComandaWhereUniqueInput | ComandaWhereUniqueInput[]
+    update?: ComandaUpdateWithWhereUniqueWithoutMesaInput | ComandaUpdateWithWhereUniqueWithoutMesaInput[]
+    updateMany?: ComandaUpdateManyWithWhereWithoutMesaInput | ComandaUpdateManyWithWhereWithoutMesaInput[]
+    deleteMany?: ComandaScalarWhereInput | ComandaScalarWhereInput[]
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -20881,6 +22359,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
+    mesa?: MesaCreateNestedOneWithoutComandaInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
   }
@@ -20892,6 +22371,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
+    mesa_id?: string | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -21020,6 +22500,7 @@ export namespace Prisma {
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
+    mesa_id?: StringNullableFilter<"Comanda"> | string | null
   }
 
   export type PedidoUpsertWithWhereUniqueWithoutClienteInput = {
@@ -21520,6 +23001,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
+    mesa?: MesaCreateNestedOneWithoutComandaInput
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
   }
 
@@ -21531,6 +23013,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
+    mesa_id?: string | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -21631,6 +23114,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
+    mesa?: MesaUpdateOneWithoutComandaNestedInput
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
   }
 
@@ -21642,6 +23126,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
@@ -21692,6 +23177,25 @@ export namespace Prisma {
   export type ClienteCreateOrConnectWithoutComandasInput = {
     where: ClienteWhereUniqueInput
     create: XOR<ClienteCreateWithoutComandasInput, ClienteUncheckedCreateWithoutComandasInput>
+  }
+
+  export type MesaCreateWithoutComandaInput = {
+    id?: string
+    numero_mesa: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+  }
+
+  export type MesaUncheckedCreateWithoutComandaInput = {
+    id?: string
+    numero_mesa: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+  }
+
+  export type MesaCreateOrConnectWithoutComandaInput = {
+    where: MesaWhereUniqueInput
+    create: XOR<MesaCreateWithoutComandaInput, MesaUncheckedCreateWithoutComandaInput>
   }
 
   export type AvaliacaoCreateWithoutComandaInput = {
@@ -21791,6 +23295,31 @@ export namespace Prisma {
     pedidos?: PedidoUncheckedUpdateManyWithoutClienteNestedInput
   }
 
+  export type MesaUpsertWithoutComandaInput = {
+    update: XOR<MesaUpdateWithoutComandaInput, MesaUncheckedUpdateWithoutComandaInput>
+    create: XOR<MesaCreateWithoutComandaInput, MesaUncheckedCreateWithoutComandaInput>
+    where?: MesaWhereInput
+  }
+
+  export type MesaUpdateToOneWithWhereWithoutComandaInput = {
+    where?: MesaWhereInput
+    data: XOR<MesaUpdateWithoutComandaInput, MesaUncheckedUpdateWithoutComandaInput>
+  }
+
+  export type MesaUpdateWithoutComandaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MesaUncheckedUpdateWithoutComandaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero_mesa?: IntFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type AvaliacaoUpsertWithWhereUniqueWithoutComandaInput = {
     where: AvaliacaoWhereUniqueInput
     update: XOR<AvaliacaoUpdateWithoutComandaInput, AvaliacaoUncheckedUpdateWithoutComandaInput>
@@ -21864,6 +23393,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
+    mesa?: MesaCreateNestedOneWithoutComandaInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
   }
 
@@ -21875,6 +23405,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
+    mesa_id?: string | null
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -21941,6 +23472,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
+    mesa?: MesaUpdateOneWithoutComandaNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
   }
 
@@ -21952,6 +23484,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
@@ -22459,6 +23992,56 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type ComandaCreateWithoutMesaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente: ClienteCreateNestedOneWithoutComandasInput
+    avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
+    pedido?: PedidoCreateNestedManyWithoutComandaInput
+  }
+
+  export type ComandaUncheckedCreateWithoutMesaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente_id: string
+    avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
+    pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
+  }
+
+  export type ComandaCreateOrConnectWithoutMesaInput = {
+    where: ComandaWhereUniqueInput
+    create: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput>
+  }
+
+  export type ComandaCreateManyMesaInputEnvelope = {
+    data: ComandaCreateManyMesaInput | ComandaCreateManyMesaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ComandaUpsertWithWhereUniqueWithoutMesaInput = {
+    where: ComandaWhereUniqueInput
+    update: XOR<ComandaUpdateWithoutMesaInput, ComandaUncheckedUpdateWithoutMesaInput>
+    create: XOR<ComandaCreateWithoutMesaInput, ComandaUncheckedCreateWithoutMesaInput>
+  }
+
+  export type ComandaUpdateWithWhereUniqueWithoutMesaInput = {
+    where: ComandaWhereUniqueInput
+    data: XOR<ComandaUpdateWithoutMesaInput, ComandaUncheckedUpdateWithoutMesaInput>
+  }
+
+  export type ComandaUpdateManyWithWhereWithoutMesaInput = {
+    where: ComandaScalarWhereInput
+    data: XOR<ComandaUpdateManyMutationInput, ComandaUncheckedUpdateManyWithoutMesaInput>
+  }
+
   export type AvaliacaoCreateManyClienteInput = {
     id?: string
     nota: number
@@ -22481,6 +24064,7 @@ export namespace Prisma {
     points: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
+    mesa_id?: string | null
   }
 
   export type PedidoCreateManyClienteInput = {
@@ -22545,6 +24129,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mesa?: MesaUpdateOneWithoutComandaNestedInput
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
   }
@@ -22556,6 +24141,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
@@ -22567,6 +24153,7 @@ export namespace Prisma {
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PedidoUpdateWithoutClienteInput = {
@@ -22959,6 +24546,50 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     item_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComandaCreateManyMesaInput = {
+    id?: string
+    status: string
+    price: number
+    points: number
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    cliente_id: string
+  }
+
+  export type ComandaUpdateWithoutMesaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
+    avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
+    pedido?: PedidoUpdateManyWithoutComandaNestedInput
+  }
+
+  export type ComandaUncheckedUpdateWithoutMesaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
+    avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
+    pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
+  }
+
+  export type ComandaUncheckedUpdateManyWithoutMesaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cliente_id?: StringFieldUpdateOperationsInput | string
   }
 
 
