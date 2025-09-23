@@ -66,6 +66,7 @@ import { SearchProductController } from './controllers/product/searchProductCont
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
 router.put('/category/editar', isAuthenticated, upload.single('image'), new EditCategoryController().handle.bind(new EditCategoryController()))
+router.delete("/category/delete"), isAuthenticated
 
 //CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)

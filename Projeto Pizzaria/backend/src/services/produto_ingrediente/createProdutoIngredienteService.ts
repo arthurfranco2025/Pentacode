@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import prismaClient from "../../prisma";
 
 interface createProdutoIngredienteRequest {
@@ -14,6 +15,18 @@ class CreateProductIngredienteService {
                 ingrediente_id: ingrediente_id
             }
         })
+
+        const JaExiste = await PrismaClient.product_ingrediente.findFirst({
+            where:{
+                ingrediente_id,
+                product_id,
+            },
+        }
+        )
+
+        if(JaExiste) {
+            throw new Error("Esse produto já tem este ingrediente")
+        }
 
         if (produto_ingredienteAlreadyExists) {
             throw new Error("Esse ingrediente já foi adicionado a esse produto")
