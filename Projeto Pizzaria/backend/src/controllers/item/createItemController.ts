@@ -3,7 +3,7 @@ import { CreateItemService } from "../../services/item/createItemService";
 
 class CreateItemController {
     async handle(req: Request, res: Response) {
-        const { product_id, pedido_id, qtd } = req.body;
+        const { product_id, pedido_id, qtd, removidos } = req.body;
 
         const createItemService = new CreateItemService();
 
@@ -12,6 +12,7 @@ class CreateItemController {
                 product_id,
                 pedido_id,
                 qtd,
+                removidos
             });
 
             return res.status(201).json(item);

@@ -11367,6 +11367,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points: number
+    removidos: number
     created_at: number
     updated_at: number
     pedido_id: number
@@ -11414,6 +11415,7 @@ export namespace Prisma {
     qtd?: true
     price?: true
     points?: true
+    removidos?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11512,6 +11514,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points: number
+    removidos: JsonValue | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string
@@ -11542,6 +11545,7 @@ export namespace Prisma {
     qtd?: boolean
     price?: boolean
     points?: boolean
+    removidos?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11557,6 +11561,7 @@ export namespace Prisma {
     qtd?: boolean
     price?: boolean
     points?: boolean
+    removidos?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11570,6 +11575,7 @@ export namespace Prisma {
     qtd?: boolean
     price?: boolean
     points?: boolean
+    removidos?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11583,13 +11589,14 @@ export namespace Prisma {
     qtd?: boolean
     price?: boolean
     points?: boolean
+    removidos?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
   }
 
-  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
+  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "removidos" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
   export type ItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -11617,6 +11624,7 @@ export namespace Prisma {
       qtd: number
       price: number
       points: number
+      removidos: Prisma.JsonValue | null
       created_at: Date | null
       updated_at: Date | null
       pedido_id: string
@@ -12051,6 +12059,7 @@ export namespace Prisma {
     readonly qtd: FieldRef<"Item", 'Int'>
     readonly price: FieldRef<"Item", 'Float'>
     readonly points: FieldRef<"Item", 'Float'>
+    readonly removidos: FieldRef<"Item", 'Json'>
     readonly created_at: FieldRef<"Item", 'DateTime'>
     readonly updated_at: FieldRef<"Item", 'DateTime'>
     readonly pedido_id: FieldRef<"Item", 'String'>
@@ -17041,6 +17050,7 @@ export namespace Prisma {
     qtd: 'qtd',
     price: 'price',
     points: 'points',
+    removidos: 'removidos',
     created_at: 'created_at',
     updated_at: 'updated_at',
     pedido_id: 'pedido_id',
@@ -17103,6 +17113,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -17117,6 +17135,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -17184,6 +17211,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
   /**
    * Deep Input Types
@@ -17759,6 +17800,7 @@ export namespace Prisma {
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
+    removidos?: JsonNullableFilter<"Item">
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -17773,6 +17815,7 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    removidos?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -17790,6 +17833,7 @@ export namespace Prisma {
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
+    removidos?: JsonNullableFilter<"Item">
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -17804,6 +17848,7 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    removidos?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -17823,6 +17868,7 @@ export namespace Prisma {
     qtd?: IntWithAggregatesFilter<"Item"> | number
     price?: FloatWithAggregatesFilter<"Item"> | number
     points?: FloatWithAggregatesFilter<"Item"> | number
+    removidos?: JsonNullableWithAggregatesFilter<"Item">
     created_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     pedido_id?: StringWithAggregatesFilter<"Item"> | string
@@ -18669,6 +18715,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -18681,6 +18728,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -18693,6 +18741,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -18705,6 +18754,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -18717,6 +18767,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -18728,6 +18779,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -18737,6 +18789,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -19508,6 +19561,29 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type PedidoScalarRelationFilter = {
     is?: PedidoWhereInput
@@ -19529,6 +19605,7 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    removidos?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -19567,6 +19644,32 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type IngredienteCountOrderByAggregateInput = {
@@ -20697,6 +20800,29 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type AvaliacaoCreateWithoutClienteInput = {
     id?: string
@@ -21172,6 +21298,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -21183,6 +21310,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -21300,6 +21428,7 @@ export namespace Prisma {
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
+    removidos?: JsonNullableFilter<"Item">
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -21415,6 +21544,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product: ProductCreateNestedOneWithoutItemsInput
@@ -21426,6 +21556,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -22217,6 +22348,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -22228,6 +22360,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -22278,6 +22411,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -22289,6 +22423,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22525,6 +22660,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -22550,6 +22686,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -22561,6 +22698,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22572,6 +22710,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22627,6 +22766,7 @@ export namespace Prisma {
     qtd: number
     price: number
     points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -22637,6 +22777,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutItemsNestedInput
@@ -22648,6 +22789,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -22659,6 +22801,7 @@ export namespace Prisma {
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string

@@ -4,10 +4,11 @@ interface CreateItemRequest {
   product_id: string;
   pedido_id: string;
   qtd: number;
+  removidos?: {id: string}[]
 }
 
 class CreateItemService {
-  async execute({ product_id, pedido_id, qtd }: CreateItemRequest) {
+  async execute({ product_id, pedido_id, qtd, removidos }: CreateItemRequest) {
     // 🔎 validações iniciais
     if (!pedido_id) {
       throw new Error("É preciso ter um pedido para criar um item");
@@ -70,6 +71,8 @@ class CreateItemService {
     const precoFinal = qtd * produto.price;
     const pontosFinal = qtd * produto.points
 
+
+
     // 📝 cria o item
     const item = await PrismaClient.item.create({
       data: {
@@ -77,7 +80,8 @@ class CreateItemService {
         product: { connect: { id: product_id } },
         qtd,
         price: precoFinal,
-        points: pontosFinal
+        points: pontosFinal,
+        removidos: Array.isArray(removidos) && removidos.length > 0 ? removidos : null
       },
       select: {
         id: true,
@@ -85,6 +89,7 @@ class CreateItemService {
         qtd: true,
         price: true,
         pedido_id: true,
+        removidos: true
       },
     });
 
