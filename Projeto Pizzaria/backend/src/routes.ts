@@ -9,6 +9,7 @@ const upload = multer(uploadConfig);
 import { CreateCategoryController } from './controllers/category/CreateCategoryController'
 import { ListCategoryController } from './controllers/category/ListCategoryController'
 import { EditCategoryController } from './controllers/category/editCategoryController';
+import { DeleteCategoryController } from './controllers/category/deleteCategoryController';
 
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
@@ -66,7 +67,7 @@ import { SearchProductController } from './controllers/product/searchProductCont
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
 router.put('/category/editar', isAuthenticated, upload.single('image'), new EditCategoryController().handle.bind(new EditCategoryController()))
-router.delete("/category/delete"), isAuthenticated
+router.delete("/category/delete", isAuthenticated, new DeleteCategoryController().handle)
 
 //CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)
