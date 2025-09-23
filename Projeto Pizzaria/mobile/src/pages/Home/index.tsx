@@ -44,22 +44,19 @@ interface Product {
 	category_id: string
 }
 
-const ItemCard = ({ product }: { product: Product }) => (
-	<View style={styles.card}>
-		<Image
-			source={{ uri: product.image_url }}
-			style={styles.productImage}
-			resizeMode="cover"
-		/>
-		<View style={styles.productInfo}>
-			<Text style={styles.promoText} ellipsizeMode="tail">{product.name}</Text>
-			<Text style={styles.priceText}>R$ {product.price}</Text>
-			<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
-				<Text style={styles.buttonText} onPress={() => alert('Produto selecionado!')}>VER</Text>
-			</TouchableOpacity>
-		</View>
-	</View>
-);
+function formatarPreco(preco: string | number) {
+    const precoNum =
+        typeof preco === "string"
+            ? parseFloat(preco.replace(",", ".").trim())
+            : preco;
+
+    if (isNaN(precoNum)) return "R$ 0,00";
+
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    }).format(precoNum);
+}
 
 
 const CategoryCard = ({
@@ -87,7 +84,23 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([])
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
-
+	
+	const ItemCard = ({ product }: { product: Product }) => (
+		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
+			<Image
+				source={{ uri: product.image_url }}
+				style={styles.productImage}
+				resizeMode="cover"
+			/>
+			<View style={styles.productInfo}>
+				<Text style={styles.promoText} ellipsizeMode="tail">{product.name}</Text>
+				<Text style={styles.priceText}>{formatarPreco(product.price)}</Text>
+				<TouchableOpacity style={styles.button} onPress={() => alert("Teste!")}>
+					<Text style={styles.buttonText} onPress={() => alert('Produto selecionado!')}>VER</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
 	useEffect(() => {
 		async function loadCategories() {
 			try {
@@ -181,12 +194,14 @@ export default function Home() {
 				</View>
 			</View>
 
-			<ScrollView style={styles.scroll}>
+			<View style={styles.content}>
+
 				<View style={styles.mainRow}>
 					{showCategories && (
 						<ScrollView
 							style={styles.leftColumn}
 							showsVerticalScrollIndicator={false}
+							contentContainerStyle={styles.categoriesContainer}
 						>
 							{categories.map((category) => (
 								<TouchableOpacity
@@ -206,10 +221,12 @@ export default function Home() {
 						</ScrollView>
 					)}
 
-					<View style={styles.rightColumn}>
+					<View style={[styles.rightColumn, !showCategories && styles.rightColumnFull]}>
 						<View style={styles.row}>
 							{products.length > 0 ? (
-								<ScrollView>
+								<ScrollView
+									showsVerticalScrollIndicator={false}
+									contentContainerStyle={styles.productsContainer}>
 									<View style={styles.productsGrid}>
 										{products.map((product) => (
 											<ItemCard
@@ -236,7 +253,7 @@ export default function Home() {
 						style={styles.decoration}
 					/> */}
 				</View>
-			</ScrollView>
+			</View>
 
 			{/* Rodapé */}
 			<LinearGradient
@@ -269,12 +286,25 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+	content: {
+		flex: 1,
+	},
+
+	categoriesContainer: {
+		paddingVertical: 10,
+	},
+
+	productsContainer: {
+		paddingVertical: 10,
+		flexGrow: 1,
+	},
+
 	productsGrid: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		justifyContent: 'space-between',
+		justifyContent: 'flex-start',
 		// padding: 5,
-		gap: 2,
+		gap: 7,
 	},
 
 	emptyText: {
@@ -287,13 +317,17 @@ const styles = StyleSheet.create({
 	card: {
 		width: '48%',
 		// marginBottom: 15,
-		alignItems: "center",
+		alignItems: "stretch",
 		backgroundColor: "#fff",
 		borderColor: "#ECECEC75",
 		borderRadius: 10,
 		borderWidth: 1,
 		padding: 1,
 		elevation: 3,
+		justifyContent: 'space-between'
+	},
+	ThreeCards: {
+		width: '32%',
 	},
 	container: { flex: 1, backgroundColor: "#fff" },
 	scroll: { flex: 1 },
@@ -341,8 +375,11 @@ const styles = StyleSheet.create({
 	rightColumn: {
 		width: '65%', // Aumenta o espaço para produtos
 		paddingHorizontal: 8,
+		justifyContent: 'space-between'
 	},
-
+	rightColumnFull: {
+		width: '100%'
+	},
 	leftColumn: {
 		width: '35%', // Diminui a sidebar
 		backgroundColor: "#fff",
@@ -353,7 +390,12 @@ const styles = StyleSheet.create({
 		elevation: 4,
 	},
 	row: { flexDirection: "row", marginBottom: 32 },
-	promoText: { color: "#FF3F4B", fontSize: 16, marginBottom: 9 },
+	promoText: {
+		color: "#FF3F4B",
+		fontSize: 16,
+		marginBottom: 9,
+		textAlign: 'left',
+	},
 	priceText: { color: "#000", fontSize: 12, marginBottom: 7 },
 	button: {
 		backgroundColor: "#38207F",
@@ -384,8 +426,8 @@ const styles = StyleSheet.create({
 		borderBottomColor: '#ECECEC',
 	},
 	categoryImage: {
-		width: 50,
-		height: 50,
+		width: 65,
+		height: 65,
 		borderRadius: 10,
 	},
 	selectedCategory: {

@@ -18,11 +18,12 @@ class EditCategoryService {
         const categoriaExiste = await PrismaClient.category.findFirst({
             where: { id: category_id }
         });
+        
 
         if (!categoriaExiste) {
             throw new Error('Essa categoria não existe');
         }
-
+        
         let imageUrl: string | undefined;
 
         // Se a imagem for um arquivo do multer, faz upload no Cloudinary
