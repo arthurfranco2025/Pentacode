@@ -4,7 +4,8 @@ interface EditItemRequest {
     id: string,
     product_id?: string,
     qtd?: number,
-    price: number
+    price: number,
+    points: number
 }
 
 //se for editar separadamente o front ve dps
@@ -54,6 +55,7 @@ class EditItemService {
         })
 
         const precoAtualizado = qtd * Produto.price
+        const poinstAtualizado = qtd * Produto.points
 
 
         const item = await PrismaClient.item.update({
@@ -63,7 +65,8 @@ class EditItemService {
             data: {
                 product_id: product_id,
                 qtd: qtd,
-                price: precoAtualizado
+                price: precoAtualizado,
+                points: poinstAtualizado
             }
         })
 

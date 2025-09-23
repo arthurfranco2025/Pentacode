@@ -138,6 +138,7 @@ model Item {
   id         String    @id @default(uuid())
   qtd        Int
   price      Float
+  points     Float     @default(0)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
@@ -183,6 +184,7 @@ model Adicional {
   id         String    @id @default(uuid())
   nome       String
   price      Float
+  points     Float     @default(0)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
