@@ -56,7 +56,10 @@ class CreateItemService {
     // 🔎 garante que o produto existe
     const produto = await PrismaClient.product.findUnique({
       where: { id: product_id },
-      select: { price: true },
+      select: {
+        price: true,
+        points: true
+      },
     });
 
     if (!produto) {
@@ -65,6 +68,7 @@ class CreateItemService {
 
     // 💰 calcula preço do item
     const precoFinal = qtd * produto.price;
+    const pontosFinal = qtd * produto.points
 
     // 📝 cria o item
     const item = await PrismaClient.item.create({
@@ -73,6 +77,7 @@ class CreateItemService {
         product: { connect: { id: product_id } },
         qtd,
         price: precoFinal,
+        points: pontosFinal
       },
       select: {
         id: true,

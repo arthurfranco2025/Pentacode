@@ -3,12 +3,12 @@ import { EditAdicionalService } from "../../services/adicionais/editAdicionalSer
 
 class EditAdicionalController {
     async handle(req: Request, res: Response) {
-        const { adicional_id, price } = req.body;
+        const { adicional_id, price, points } = req.body;
 
         const editAdicionalService = new EditAdicionalService();
 
         try {
-            const editAdicional = await editAdicionalService.execute({ adicional_id, price });
+            const editAdicional = await editAdicionalService.execute({ adicional_id, price, points });
             return res.json(editAdicional);
         } catch (error) {
             return res.status(400).json({ error: error.message });

@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Funcionario {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
   funcao     String
   email      String
@@ -26,46 +26,46 @@ model Cliente {
   email      String
   password   String
   cpf        String
-  data_nasc  DateTime? 
+  data_nasc  DateTime?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  avaliacao  Avaliacao[]
-  favoritos  Favorito[]
-  comandas   Comanda[]
-  pedidos    Pedido[]
+  avaliacao Avaliacao[]
+  favoritos Favorito[]
+  comandas  Comanda[]
+  pedidos   Pedido[]
 
   @@map("clientes")
 }
 
 model Favorito {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
   product    Product @relation(fields: [product_id], references: [id])
   product_id String
-  
+
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
-  
+
   @@map("favorites")
 }
 
 model Category {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
   image_url  String?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  products   Product[]
+  products Product[]
 
   @@map("categories")
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   price       Float
   points      Float
@@ -78,15 +78,15 @@ model Product {
   category    Category @relation(fields: [category_id], references: [id])
   category_id String
 
-  items       Item[]
-  favoritos   Favorito[]
+  items               Item[]
+  favoritos           Favorito[]
   product_ingrediente Product_ingrediente[]
 
   @@map("products")
 }
 
 model Pedido {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   status     String
   price      Float
   points     Float
@@ -95,16 +95,16 @@ model Pedido {
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
-  comanda   Comanda @relation(fields: [comanda_id], references: [id])
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
   comanda_id String
 
-  items      Item[]
+  items Item[]
 
   @@map("pedidos")
 }
 
 model Comanda {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   status     String
   price      Float
   points     Float
@@ -114,34 +114,36 @@ model Comanda {
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
 
-  avaliacao  Avaliacao[]
-  pedido     Pedido[]
+  avaliacao Avaliacao[]
+  pedido    Pedido[]
+
   @@map("comandas")
 }
 
 model Avaliacao {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   nota       Int
   descricao  String
   created_at DateTime? @default(now())
 
-  cliente     Cliente @relation(fields: [cliente_id], references: [id])
-  comanda     Comanda  @relation(fields: [comanda_id], references: [id])
-  cliente_id  String
-  comanda_id   String
+  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  cliente_id String
+  comanda_id String
 
   @@map("avaliacoes")
 }
 
 model Item {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   qtd        Int
   price      Float
+  points     Float     @default(0)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  pedido     Pedido  @relation(fields: [pedido_id], references: [id])
-  product    Product @relation(fields: [product_id], references: [id])
+  pedido  Pedido  @relation(fields: [pedido_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
 
   pedido_id  String
   product_id String
@@ -152,7 +154,7 @@ model Item {
 }
 
 model Ingrediente {
-  id         String @id @default(uuid())
+  id         String    @id @default(uuid())
   nome       String
   price      Float
   created_at DateTime? @default(now())
@@ -163,25 +165,26 @@ model Ingrediente {
   @@map("ingredientes")
 }
 
-model Product_ingrediente{
-  id         String @id @default(uuid())
-  qtd        Int        @default(1)
+model Product_ingrediente {
+  id         String    @id @default(uuid())
+  qtd        Int       @default(1)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
   product    Product @relation(fields: [product_id], references: [id])
-  product_id  String
+  product_id String
 
-  ingrediente Ingrediente @relation(fields: [ingrediente_id], references: [id])
+  ingrediente    Ingrediente @relation(fields: [ingrediente_id], references: [id])
   ingrediente_id String
 
   @@map("product_ingrediente")
 }
 
-model Adicional{
-  id         String @id @default(uuid())
-  nome String
-  price Float
+model Adicional {
+  id         String    @id @default(uuid())
+  nome       String
+  price      Float
+  points     Float     @default(0)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
@@ -190,15 +193,15 @@ model Adicional{
   @@map("adicionais")
 }
 
-model Item_adicional{
-  id         String @id @default(uuid())
-  qtd        Int        @default(1)
+model Item_adicional {
+  id  String @id @default(uuid())
+  qtd Int    @default(1)
 
-  item    Item @relation(fields: [item_id], references: [id])
-  item_id  String
+  item    Item   @relation(fields: [item_id], references: [id])
+  item_id String
 
   adicional    Adicional @relation(fields: [adicional_id], references: [id])
-  adicional_id  String
+  adicional_id String
 
   @@map("item_adicional")
 }

@@ -384,7 +384,7 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.16.1
+   * Prisma Client JS version: 6.16.2
    * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
    */
   export type PrismaVersion = {
@@ -11331,17 +11331,20 @@ export namespace Prisma {
   export type ItemAvgAggregateOutputType = {
     qtd: number | null
     price: number | null
+    points: number | null
   }
 
   export type ItemSumAggregateOutputType = {
     qtd: number | null
     price: number | null
+    points: number | null
   }
 
   export type ItemMinAggregateOutputType = {
     id: string | null
     qtd: number | null
     price: number | null
+    points: number | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
@@ -11352,6 +11355,7 @@ export namespace Prisma {
     id: string | null
     qtd: number | null
     price: number | null
+    points: number | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
@@ -11362,6 +11366,7 @@ export namespace Prisma {
     id: number
     qtd: number
     price: number
+    points: number
     created_at: number
     updated_at: number
     pedido_id: number
@@ -11373,17 +11378,20 @@ export namespace Prisma {
   export type ItemAvgAggregateInputType = {
     qtd?: true
     price?: true
+    points?: true
   }
 
   export type ItemSumAggregateInputType = {
     qtd?: true
     price?: true
+    points?: true
   }
 
   export type ItemMinAggregateInputType = {
     id?: true
     qtd?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11394,6 +11402,7 @@ export namespace Prisma {
     id?: true
     qtd?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11404,6 +11413,7 @@ export namespace Prisma {
     id?: true
     qtd?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11501,6 +11511,7 @@ export namespace Prisma {
     id: string
     qtd: number
     price: number
+    points: number
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string
@@ -11530,6 +11541,7 @@ export namespace Prisma {
     id?: boolean
     qtd?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11544,6 +11556,7 @@ export namespace Prisma {
     id?: boolean
     qtd?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11556,6 +11569,7 @@ export namespace Prisma {
     id?: boolean
     qtd?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11568,13 +11582,14 @@ export namespace Prisma {
     id?: boolean
     qtd?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
   }
 
-  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
+  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
   export type ItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -11601,6 +11616,7 @@ export namespace Prisma {
       id: string
       qtd: number
       price: number
+      points: number
       created_at: Date | null
       updated_at: Date | null
       pedido_id: string
@@ -12034,6 +12050,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Item", 'String'>
     readonly qtd: FieldRef<"Item", 'Int'>
     readonly price: FieldRef<"Item", 'Float'>
+    readonly points: FieldRef<"Item", 'Float'>
     readonly created_at: FieldRef<"Item", 'DateTime'>
     readonly updated_at: FieldRef<"Item", 'DateTime'>
     readonly pedido_id: FieldRef<"Item", 'String'>
@@ -14707,16 +14724,19 @@ export namespace Prisma {
 
   export type AdicionalAvgAggregateOutputType = {
     price: number | null
+    points: number | null
   }
 
   export type AdicionalSumAggregateOutputType = {
     price: number | null
+    points: number | null
   }
 
   export type AdicionalMinAggregateOutputType = {
     id: string | null
     nome: string | null
     price: number | null
+    points: number | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -14725,6 +14745,7 @@ export namespace Prisma {
     id: string | null
     nome: string | null
     price: number | null
+    points: number | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -14733,6 +14754,7 @@ export namespace Prisma {
     id: number
     nome: number
     price: number
+    points: number
     created_at: number
     updated_at: number
     _all: number
@@ -14741,16 +14763,19 @@ export namespace Prisma {
 
   export type AdicionalAvgAggregateInputType = {
     price?: true
+    points?: true
   }
 
   export type AdicionalSumAggregateInputType = {
     price?: true
+    points?: true
   }
 
   export type AdicionalMinAggregateInputType = {
     id?: true
     nome?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
   }
@@ -14759,6 +14784,7 @@ export namespace Prisma {
     id?: true
     nome?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
   }
@@ -14767,6 +14793,7 @@ export namespace Prisma {
     id?: true
     nome?: true
     price?: true
+    points?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -14862,6 +14889,7 @@ export namespace Prisma {
     id: string
     nome: string
     price: number
+    points: number
     created_at: Date | null
     updated_at: Date | null
     _count: AdicionalCountAggregateOutputType | null
@@ -14889,6 +14917,7 @@ export namespace Prisma {
     id?: boolean
     nome?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
     Item_adicional?: boolean | Adicional$Item_adicionalArgs<ExtArgs>
@@ -14899,6 +14928,7 @@ export namespace Prisma {
     id?: boolean
     nome?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["adicional"]>
@@ -14907,6 +14937,7 @@ export namespace Prisma {
     id?: boolean
     nome?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["adicional"]>
@@ -14915,11 +14946,12 @@ export namespace Prisma {
     id?: boolean
     nome?: boolean
     price?: boolean
+    points?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type AdicionalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "price" | "created_at" | "updated_at", ExtArgs["result"]["adicional"]>
+  export type AdicionalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "price" | "points" | "created_at" | "updated_at", ExtArgs["result"]["adicional"]>
   export type AdicionalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Item_adicional?: boolean | Adicional$Item_adicionalArgs<ExtArgs>
     _count?: boolean | AdicionalCountOutputTypeDefaultArgs<ExtArgs>
@@ -14936,6 +14968,7 @@ export namespace Prisma {
       id: string
       nome: string
       price: number
+      points: number
       created_at: Date | null
       updated_at: Date | null
     }, ExtArgs["result"]["adicional"]>
@@ -15365,6 +15398,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Adicional", 'String'>
     readonly nome: FieldRef<"Adicional", 'String'>
     readonly price: FieldRef<"Adicional", 'Float'>
+    readonly points: FieldRef<"Adicional", 'Float'>
     readonly created_at: FieldRef<"Adicional", 'DateTime'>
     readonly updated_at: FieldRef<"Adicional", 'DateTime'>
   }
@@ -17006,6 +17040,7 @@ export namespace Prisma {
     id: 'id',
     qtd: 'qtd',
     price: 'price',
+    points: 'points',
     created_at: 'created_at',
     updated_at: 'updated_at',
     pedido_id: 'pedido_id',
@@ -17042,6 +17077,7 @@ export namespace Prisma {
     id: 'id',
     nome: 'nome',
     price: 'price',
+    points: 'points',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -17722,6 +17758,7 @@ export namespace Prisma {
     id?: StringFilter<"Item"> | string
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
+    points?: FloatFilter<"Item"> | number
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -17735,6 +17772,7 @@ export namespace Prisma {
     id?: SortOrder
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -17751,6 +17789,7 @@ export namespace Prisma {
     NOT?: ItemWhereInput | ItemWhereInput[]
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
+    points?: FloatFilter<"Item"> | number
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -17764,6 +17803,7 @@ export namespace Prisma {
     id?: SortOrder
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -17782,6 +17822,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Item"> | string
     qtd?: IntWithAggregatesFilter<"Item"> | number
     price?: FloatWithAggregatesFilter<"Item"> | number
+    points?: FloatWithAggregatesFilter<"Item"> | number
     created_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     pedido_id?: StringWithAggregatesFilter<"Item"> | string
@@ -17917,6 +17958,7 @@ export namespace Prisma {
     id?: StringFilter<"Adicional"> | string
     nome?: StringFilter<"Adicional"> | string
     price?: FloatFilter<"Adicional"> | number
+    points?: FloatFilter<"Adicional"> | number
     created_at?: DateTimeNullableFilter<"Adicional"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Adicional"> | Date | string | null
     Item_adicional?: Item_adicionalListRelationFilter
@@ -17926,6 +17968,7 @@ export namespace Prisma {
     id?: SortOrder
     nome?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     Item_adicional?: Item_adicionalOrderByRelationAggregateInput
@@ -17938,6 +17981,7 @@ export namespace Prisma {
     NOT?: AdicionalWhereInput | AdicionalWhereInput[]
     nome?: StringFilter<"Adicional"> | string
     price?: FloatFilter<"Adicional"> | number
+    points?: FloatFilter<"Adicional"> | number
     created_at?: DateTimeNullableFilter<"Adicional"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Adicional"> | Date | string | null
     Item_adicional?: Item_adicionalListRelationFilter
@@ -17947,6 +17991,7 @@ export namespace Prisma {
     id?: SortOrder
     nome?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     _count?: AdicionalCountOrderByAggregateInput
@@ -17963,6 +18008,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Adicional"> | string
     nome?: StringWithAggregatesFilter<"Adicional"> | string
     price?: FloatWithAggregatesFilter<"Adicional"> | number
+    points?: FloatWithAggregatesFilter<"Adicional"> | number
     created_at?: DateTimeNullableWithAggregatesFilter<"Adicional"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Adicional"> | Date | string | null
   }
@@ -18622,6 +18668,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -18633,6 +18680,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -18644,6 +18692,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -18655,6 +18704,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -18666,6 +18716,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -18676,6 +18727,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -18684,6 +18736,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -18815,6 +18868,7 @@ export namespace Prisma {
     id?: string
     nome: string
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     Item_adicional?: Item_adicionalCreateNestedManyWithoutAdicionalInput
@@ -18824,6 +18878,7 @@ export namespace Prisma {
     id?: string
     nome: string
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutAdicionalInput
@@ -18833,6 +18888,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Item_adicional?: Item_adicionalUpdateManyWithoutAdicionalNestedInput
@@ -18842,6 +18898,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutAdicionalNestedInput
@@ -18851,6 +18908,7 @@ export namespace Prisma {
     id?: string
     nome: string
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -18859,6 +18917,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -18867,6 +18926,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19468,6 +19528,7 @@ export namespace Prisma {
     id?: SortOrder
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -19477,12 +19538,14 @@ export namespace Prisma {
   export type ItemAvgOrderByAggregateInput = {
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
   }
 
   export type ItemMaxOrderByAggregateInput = {
     id?: SortOrder
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -19493,6 +19556,7 @@ export namespace Prisma {
     id?: SortOrder
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -19502,6 +19566,7 @@ export namespace Prisma {
   export type ItemSumOrderByAggregateInput = {
     qtd?: SortOrder
     price?: SortOrder
+    points?: SortOrder
   }
 
   export type IngredienteCountOrderByAggregateInput = {
@@ -19580,18 +19645,21 @@ export namespace Prisma {
     id?: SortOrder
     nome?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
 
   export type AdicionalAvgOrderByAggregateInput = {
     price?: SortOrder
+    points?: SortOrder
   }
 
   export type AdicionalMaxOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -19600,12 +19668,14 @@ export namespace Prisma {
     id?: SortOrder
     nome?: SortOrder
     price?: SortOrder
+    points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
 
   export type AdicionalSumOrderByAggregateInput = {
     price?: SortOrder
+    points?: SortOrder
   }
 
   export type ItemScalarRelationFilter = {
@@ -21101,6 +21171,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -21111,6 +21182,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -21227,6 +21299,7 @@ export namespace Prisma {
     id?: StringFilter<"Item"> | string
     qtd?: IntFilter<"Item"> | number
     price?: FloatFilter<"Item"> | number
+    points?: FloatFilter<"Item"> | number
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -21341,6 +21414,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product: ProductCreateNestedOneWithoutItemsInput
@@ -21351,6 +21425,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -22141,6 +22216,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -22151,6 +22227,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -22166,6 +22243,7 @@ export namespace Prisma {
     id?: string
     nome: string
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -22174,6 +22252,7 @@ export namespace Prisma {
     id?: string
     nome: string
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -22198,6 +22277,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -22208,6 +22288,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22229,6 +22310,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -22237,6 +22319,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -22441,6 +22524,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -22465,6 +22549,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -22475,6 +22560,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22485,6 +22571,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -22539,6 +22626,7 @@ export namespace Prisma {
     id?: string
     qtd: number
     price: number
+    points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -22548,6 +22636,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutItemsNestedInput
@@ -22558,6 +22647,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -22568,6 +22658,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     qtd?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
