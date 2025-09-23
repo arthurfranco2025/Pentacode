@@ -155,31 +155,31 @@ export default function Home() {
 				<View style={{ width: 24 }} />
 			</LinearGradient>
 
-				{/* Categorias */}
-				<View style={styles.menuSearchRow}>
-					<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
-						<Image
-							source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
-							style={styles.sideIcon}
-						/>
-					</TouchableOpacity>
+			{/* Categorias */}
+			<View style={styles.menuSearchRow}>
+				<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
+					<Image
+						source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
+						style={styles.sideIcon}
+					/>
+				</TouchableOpacity>
 
-					{/* Barra de busca */}
-					<View style={styles.searchBox}>
-						<Image
-							source={{
-								uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/52m18ks0_expires_30_days.png",
-							}}
-							resizeMode="stretch"
-							style={styles.searchIcon}
-						/>
-						<TextInput
-							placeholder="Buscar"
-							placeholderTextColor="#8A8A8A"
-							style={styles.input}
-						/>
-					</View>
+				{/* Barra de busca */}
+				<View style={styles.searchBox}>
+					<Image
+						source={{
+							uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/52m18ks0_expires_30_days.png",
+						}}
+						resizeMode="stretch"
+						style={styles.searchIcon}
+					/>
+					<TextInput
+						placeholder="Buscar"
+						placeholderTextColor="#8A8A8A"
+						style={styles.input}
+					/>
 				</View>
+			</View>
 
 			<ScrollView style={styles.scroll}>
 				<View style={styles.mainRow}>
@@ -212,9 +212,9 @@ export default function Home() {
 								<ScrollView>
 									<View style={styles.productsGrid}>
 										{products.map((product) => (
-											<ItemCard 
-											key={product.id} 
-											product={product} 
+											<ItemCard
+												key={product.id}
+												product={product}
 											/>
 										))}
 									</View>
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		justifyContent: 'space-between',
-		// paddingHorizontal: 5,
+		// padding: 5,
 		gap: 2,
 	},
 
@@ -292,11 +292,7 @@ const styles = StyleSheet.create({
 		borderColor: "#ECECEC75",
 		borderRadius: 10,
 		borderWidth: 1,
-		padding: 10,
-		shadowColor: "#000",
-		shadowOpacity: 0.3,
-		shadowOffset: { width: 0, height: 2 },
-		shadowRadius: 3,
+		padding: 1,
 		elevation: 3,
 	},
 	container: { flex: 1, backgroundColor: "#fff" },
@@ -336,47 +332,27 @@ const styles = StyleSheet.create({
 		height: 20,
 		marginRight: 8,
 	},
-	mainRow: { 
+	mainRow: {
 		flexDirection: "row",
 		width: '100%',
-		alignItems: 'flex-start',
+		height: '100%',
 	},
+
 	rightColumn: {
-		flex: 0.70,
+		width: '65%', // Aumenta o espaço para produtos
 		paddingHorizontal: 8,
-		alignItems: 'center'
 	},
+
 	leftColumn: {
-		flex: 0.30,
+		width: '35%', // Diminui a sidebar
 		backgroundColor: "#fff",
 		borderRightWidth: 1,
 		borderRightColor: "#ECECEC",
 		paddingVertical: 6,
-		paddingHorizontal: 6,
-		height: '100%',
-		shadowColor: "#00000040",
-		shadowOpacity: 0.3,
-		shadowOffset: { width: 0, height: 4 },
-		shadowRadius: 4,
+		paddingHorizontal: 4,
 		elevation: 4,
 	},
 	row: { flexDirection: "row", marginBottom: 32 },
-	// card: {
-	// 	alignItems: "center",
-	// 	backgroundColor: "#fff",
-	// 	borderColor: "#ECECEC75",
-	// 	borderRadius: 20,
-	// 	borderWidth: 1,
-	// 	paddingTop: 128,
-	// 	paddingBottom: 14,
-	// 	paddingHorizontal: 9,
-	// 	marginRight: 13,
-	// 	shadowColor: "#00000040",
-	// 	shadowOpacity: 0.3,
-	// 	shadowOffset: { width: 0, height: 4 },
-	// 	shadowRadius: 3,
-	// 	elevation: 3,
-	// },
 	promoText: { color: "#FF3F4B", fontSize: 16, marginBottom: 9 },
 	priceText: { color: "#000", fontSize: 12, marginBottom: 7 },
 	button: {
@@ -384,10 +360,6 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		paddingVertical: 8,
 		paddingHorizontal: 12,
-		shadowColor: "#00000033",
-		shadowOpacity: 0.2,
-		shadowOffset: { width: 0, height: 4 },
-		shadowRadius: 4,
 		elevation: 4,
 		alignItems: 'center',
 	},
@@ -426,7 +398,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		marginTop: 5,
 		textAlign: 'center',
-		width: '70%',
+		width: '100%',
 	},
 	footer: {
 		// position: "absolute",
