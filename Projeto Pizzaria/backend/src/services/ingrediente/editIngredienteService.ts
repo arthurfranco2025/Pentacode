@@ -10,7 +10,7 @@ class EditIngredienteService {
 
         const ingrediente = await PrismaClient.ingrediente.findFirst({
             where:{
-                id: ingrediente_id
+                id: ingrediente_id,
             }
         })
 
@@ -20,6 +20,14 @@ class EditIngredienteService {
 
         if(!ingrediente_id){
             throw new Error('Precisa de um Ingrediente')
+        }
+
+        if(!price){
+            throw new Error('Adicione o novo preço')
+        }
+
+        if(ingrediente.price == price){
+            throw new Error("O novo preço deve ser diferente do antigo preço")
         }
 
         const novoPreco = await PrismaClient.ingrediente.update({

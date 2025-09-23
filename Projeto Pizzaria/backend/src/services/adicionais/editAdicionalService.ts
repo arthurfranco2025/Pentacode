@@ -11,7 +11,7 @@ class EditAdicionalService {
 
         const adicional = await PrismaClient.adicional.findFirst({
             where:{
-                id: adicional_id
+                id: adicional_id,
             }
         })
 
@@ -23,9 +23,16 @@ class EditAdicionalService {
             throw new Error('Precisa de um Adicional')
         }
 
+        if(adicional.price == price) {
+            throw new Error("O novo preço deve ser diferente do antigo preço")
+        }
+
+        if(!price){
+            throw new Error ("Insira um preço novo")
+    }
         const novoPreco = await PrismaClient.adicional.update({
             where: {
-                id: adicional_id
+                id: adicional_id,
             },
             data: {
                 price: price,

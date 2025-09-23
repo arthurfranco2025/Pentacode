@@ -1,35 +1,26 @@
-import { Request, Response } from 'express/'
+import { Request, Response } from 'express'
 import { ListProductByCategory } from '../../services/product/listProductService'
-// import { v2 as cloudinary } from 'cloudinary'
 
-class ListProductByCategoryController{
-    async handle(req: Request, res: Response){
-        try{
+class ListProductByCategoryController {
+    async handle(req: Request, res: Response) {
+        try {
+            // tenta pegar de query, se não vier, pega do body
+            const category_id = (req.query.category_id as string) || req.body.category_id
 
-            const { category_id } = req.body
+            if (!category_id) {
+                return res.status(400).json({ error: "Insira uma categoria." })
+            }
 
             const listProductService = new ListProductByCategory()
-             
-            // if (!req.file) {
-            //     throw new Error("Erro no upload da imagem");
-            // }
-
-            // const file = req.file;
-
-            // const resultFile = await cloudinary.uploader.upload(file.path, {
-            //     folder: "produtos",
-            //     resource_type: "image",
-            // })
 
             const produtosPorCategoria = await listProductService.execute({
-                category_id,
-                // image_url: resultFile.secure_url
-            });
+                category_id
+            })
 
             return res.json(produtosPorCategoria)
 
-        }catch (error: any){
-            return res.status(400).json({ error: error.message });
+        } catch (error: any) {
+            return res.status(400).json({ error: error.message })
         }
     }
 }
