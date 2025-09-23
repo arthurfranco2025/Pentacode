@@ -42,6 +42,7 @@ import { ListPedidoPorComandaController } from './controllers/pedido/listPedidos
 import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoController';
 import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoController';
 import { EditPedidoStatusController } from './controllers/pedido/editPedidoStatusController';
+import { ListPedidoGarcomController } from './controllers/pedido/listPedidoGarcomController';
 
 import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
@@ -55,10 +56,12 @@ import { EditIngredienteController } from './controllers/ingrediente/editIngredi
 
 import { CreateProductIngredienteController } from './controllers/product_ingrediente/createProdutoIngredienteController'
 import { DeleteProductIngredienteController } from './controllers/product_ingrediente/deleteProdutoIngredienteController';
+import { ListIngredientePorProdutoController } from './controllers/product_ingrediente/listIngredienteProdutoController';
 
 import { CreateAdicionalController } from './controllers/adicionais/createAdicionaisController';
 import { EditAdicionalController } from './controllers/adicionais/editAdicionalController';
 import { DeleteAdicionalController } from './controllers/adicionais/deleteAdicionalController';
+import { ListAdicionaisController } from './controllers/adicionais/listAdicionaisController';
 
 import { CreateItemAdicionalController } from './controllers/item_adicionais/addItemAdicionalController';
 import { RemoveItemAdicionalController } from './controllers/item_adicionais/removeItemAdicionalController';
@@ -107,6 +110,7 @@ router.get('/pedido/listaPorComanda', isAuthenticated, new ListPedidoPorComandaC
 router.put('/pedido/pagar', isAuthenticated, new PagarPedidoController().handle)
 router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().handle)
 router.put('/pedido/editarStatus', isAuthenticated, new EditPedidoStatusController().handle)
+router.get('/pedido/listaProGarcom', isAuthenticated, new ListPedidoGarcomController().handle)
 
 //ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
@@ -122,11 +126,13 @@ router.put('/ingrediente/edit', isAuthenticated, new EditIngredienteController()
 //PRODUTO_INGREDIENTE ROUTE
 router.post('/produto_ingrediente', isAuthenticated, new CreateProductIngredienteController().handle.bind(new CreateProductIngredienteController()))
 router.delete('/produto_ingrediente/delete', isAuthenticated, new DeleteProductIngredienteController().handle.bind(new DeleteProductIngredienteController()))
+router.get('/produto_ingrediente/lista', isAuthenticated, new ListIngredientePorProdutoController().handle)
 
 //ADICIONAIS ROUTE
 router.post('/adicionais', isAuthenticated, new CreateAdicionalController().handle.bind(new CreateAdicionalController))
 router.put('/adicionais/edit', isAuthenticated, new EditAdicionalController().handle.bind(new EditAdicionalController()))
 router.delete('/adicionais/delete', isAuthenticated, new DeleteAdicionalController().handle.bind(new DeleteAdicionalController))
+router.get('/adicionais/lista', isAuthenticated, new ListAdicionaisController().handle)
 
 //ITEM_ADICIONAL ROUTE
 router.post('/itemAdicional', isAuthenticated, new CreateItemAdicionalController().handle.bind(new CreateItemAdicionalController()))

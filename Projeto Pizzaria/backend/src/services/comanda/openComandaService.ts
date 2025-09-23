@@ -2,11 +2,15 @@ import PrismaClient from "../../prisma";
 
 interface ComandaRequest {
     cliente_id: string;
-    mesa_id?: string; // mesa opcional
+    mesa_id: string; // mesa opcional
 }
 
 class OpenComandaService {
     async execute({ cliente_id, mesa_id }: ComandaRequest) {
+
+        if(!mesa_id){
+            throw new Error('Insira uma mesa')
+        }
 
         if (!cliente_id) {
             throw new Error('Id do cliente é obrigatório');

@@ -6,6 +6,7 @@ interface DeleteItemRequest {
 
 class DeleteItemService {
   async execute({ id }: DeleteItemRequest) {
+
     const itemExiste = await PrismaClient.item.findUnique({
       where: { id },
       include: {
@@ -15,6 +16,19 @@ class DeleteItemService {
         pedido: true, // 🔹 já traz o pedido associado
       }
     });
+
+    const pedido = await PrismaClient.pedido.findFirst({
+      where:{
+        id: itemExiste.pedido_id
+      }, 
+      select:{
+        status: true
+      }
+    })
+
+    if(pedido.status !== 'pedido realizado'){
+      throw new Error('Não é possível excluir esse item, ele já entrou em produção')
+    }
 
     if (!itemExiste) {
       throw new Error("O item não existe");
