@@ -2,7 +2,6 @@ import PrismaClient from "../../prisma";
 
 interface ListProductRequest{
     category_id: string
-    
 }
 
 class ListProductByCategory{
@@ -32,7 +31,7 @@ class ListProductByCategory{
         })
 
         return lista
-    }   
+    }
 }
 
 export { ListProductByCategory }
