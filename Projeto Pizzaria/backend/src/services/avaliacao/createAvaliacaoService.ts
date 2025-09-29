@@ -13,8 +13,12 @@ class CreateAvalicaoService{
             throw new Error('Insira a comanda para a avaliação')
         }
 
-        if(nota){
+        if(!nota){
             throw new Error('De uma nota para a comanda')
+        }
+
+        if(nota > 5 || nota < 1){
+            throw new Error('A nota vai de 1 a 5')
         }
 
         const comanda = await PrismaCliente.comanda.findFirst({
@@ -22,6 +26,16 @@ class CreateAvalicaoService{
                 id: comanda_id
             }
         })
+
+        const avaliacaoExiste = await PrismaCliente.avaliacao.findFirst({
+            where:{
+                comanda_id: comanda_id
+            }
+        })
+
+        if(avaliacaoExiste){
+            throw new Error('Já existe uma avaliação pra essa comanda')
+        }
 
         if(!comanda){
             throw new Error('Essa comanda não existe')
