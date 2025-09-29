@@ -4,7 +4,8 @@ import { ListIngredientePorProdutoService } from '../../services/produto_ingredi
 class ListIngredientePorProdutoController{
     async handle(req: Request, res: Response){
 
-        const {product_id} = req.body
+        // tenta pegar do query, se não vier, pega do body
+        const product_id = (req.query.product_id as string) || req.body.product_id
         const listIngredienteProdutoService = new ListIngredientePorProdutoService()
 
         const listaDeIngredientes = await listIngredienteProdutoService.execute({
