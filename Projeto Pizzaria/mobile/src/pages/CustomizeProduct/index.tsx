@@ -6,7 +6,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
-
+import { formatarPreco } from "../../components/utils/formatPrice";
 
 type RootStackParamList = {
     ProductInfo: {
@@ -28,9 +28,9 @@ interface Product {
 
 interface ingrediente_produto {
     id: string;
-    name: string;
+    nome: string;
     price: string;
-    qtd: string;
+    qtd: boolean;
 }
 
 export default function CustomizeProduct() {
@@ -46,7 +46,7 @@ export default function CustomizeProduct() {
     const [ingredients, setIngredients] = useState<ingrediente_produto[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect (() => {
+    useEffect(() => {
         async function loadIngredients() {
             try {
                 const response = await api.get('produto_ingrediente/lista', {
@@ -54,19 +54,39 @@ export default function CustomizeProduct() {
                         product_id: product.id
                     }
                 });
-                
+
+
                 // Ver a resposta da API
-                console.log('API Response:', response.data) 
-                setIngredients(response.data);
+                // console.log('API Response:', response.data)
+
+                const formatted = response.data.map((item: any) => ({
+                    ...item,
+                    qtd: true, // para que todos os ingredientes comecem habilitados
+
+                }));
+
+                setIngredients(formatted);
                 setLoading(false);
-            } catch(error) {
-                console.error('Erro ao carregar ingredientes:', error );
+            } catch (error) {
+                console.error('Erro ao carregar ingredientes:', error);
                 setLoading(false)
             }
         }
 
         loadIngredients();
     }, [product.id]);
+
+
+    const toggleIngredient = (id: string) => {
+        setIngredients(prev =>
+            prev.map(ing =>
+                ing.id === id ? { ...ing, selected: !ing.qtd } : ing
+            )
+        );
+    };
+
+
+
 
     // Mock data for extras
     const extras = [
@@ -87,7 +107,7 @@ export default function CustomizeProduct() {
         const updatedExtras = selectedExtras.includes(extraId)
             ? selectedExtras.filter(id => id !== extraId)
             : [...selectedExtras, extraId];
-        
+
         setSelectedExtras(updatedExtras);
         updateTotalPrice(quantity, updatedExtras);
     };
@@ -98,7 +118,7 @@ export default function CustomizeProduct() {
             const extra = extras.find(e => e.id === extraId);
             return total + (extra ? Number(extra.price) : 0);
         }, 0);
-        
+
         setTotalPrice((basePrice + extrasPrice) * qty);
     };
 
@@ -158,14 +178,25 @@ export default function CustomizeProduct() {
                     ) : (
                         <View style={styles.ingredientsContainer}>
                             {ingredients.map((ingredient) => (
-                                <View key={ingredient.id} style={styles.ingredientItem}>
+                                <TouchableOpacity
+                                    key={`${ingredient.id}-${ingredient.nome}`} style={[styles.ingredientItem, !ingredient.qtd && { opacity: 0.5 }]}
+                                    onPress={() => toggleIngredient(ingredient.id)}
+                                >
+
                                     <Text style={styles.ingredientName}>
-                                        {ingredient.name}
+                                        {ingredient.nome}
                                     </Text>
                                     <Text style={styles.ingredientQtd}>
                                         {ingredient.qtd}
                                     </Text>
-                                </View>
+
+                                    <View
+                                        style={[
+                                            styles.checkbox,
+                                            ingredient.qtd && styles.checked
+                                        ]}
+                                    />
+                                </TouchableOpacity>
                             ))}
                         </View>
                     )}
@@ -193,7 +224,7 @@ export default function CustomizeProduct() {
                     <Text style={styles.totalLabel}>Total:</Text>
                     <Text style={styles.totalPrice}>R$ {totalPrice.toFixed(2)}</Text>
                 </View>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.confirmButton}
                     onPress={() => {
                         // Implement add to cart logic here
@@ -363,7 +394,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginBottom: 20,
     },
-    
+
     ingredientItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -373,12 +404,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ECECEC',
     },
-    
+
     ingredientName: {
         fontSize: 14,
         color: '#000',
     },
-    
+
     ingredientQtd: {
         fontSize: 14,
         color: '#000',
