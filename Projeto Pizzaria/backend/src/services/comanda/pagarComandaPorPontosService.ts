@@ -51,7 +51,7 @@ class PagarComandaPorPontosService{
                     id: comanda_id
                 },
                 data:{
-                    status: 'comanda paga por pontos'
+                    status: 'fechada'
                 }
             })
 

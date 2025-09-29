@@ -71,6 +71,8 @@ import { SearchProductController } from './controllers/product/searchProductCont
 
 import { CreateMesaController } from './controllers/mesa/createMesaController';
 
+import { CreateAvalicaoController } from './controllers/avaliacao/createAvaliacaoController';
+
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
 router.get('/category/list', isAuthenticated, new ListCategoryController().handle)
@@ -144,6 +146,6 @@ router.delete('/itemAdicional/delete', isAuthenticated, new RemoveItemAdicionalC
 
 router.post('/mesa' , isAuthenticated, new CreateMesaController().handle.bind(new CreateMesaController()))
 
-
+router.post('/avaliacao', isAuthenticated, new CreateAvalicaoController().handle.bind(new CreateAvalicaoController))
 
 export { router };

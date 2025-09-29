@@ -13821,23 +13821,13 @@ export namespace Prisma {
 
   export type AggregateProduct_ingrediente = {
     _count: Product_ingredienteCountAggregateOutputType | null
-    _avg: Product_ingredienteAvgAggregateOutputType | null
-    _sum: Product_ingredienteSumAggregateOutputType | null
     _min: Product_ingredienteMinAggregateOutputType | null
     _max: Product_ingredienteMaxAggregateOutputType | null
   }
 
-  export type Product_ingredienteAvgAggregateOutputType = {
-    qtd: number | null
-  }
-
-  export type Product_ingredienteSumAggregateOutputType = {
-    qtd: number | null
-  }
-
   export type Product_ingredienteMinAggregateOutputType = {
     id: string | null
-    qtd: number | null
+    qtd: boolean | null
     created_at: Date | null
     updated_at: Date | null
     product_id: string | null
@@ -13846,7 +13836,7 @@ export namespace Prisma {
 
   export type Product_ingredienteMaxAggregateOutputType = {
     id: string | null
-    qtd: number | null
+    qtd: boolean | null
     created_at: Date | null
     updated_at: Date | null
     product_id: string | null
@@ -13863,14 +13853,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type Product_ingredienteAvgAggregateInputType = {
-    qtd?: true
-  }
-
-  export type Product_ingredienteSumAggregateInputType = {
-    qtd?: true
-  }
 
   export type Product_ingredienteMinAggregateInputType = {
     id?: true
@@ -13938,18 +13920,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: Product_ingredienteAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: Product_ingredienteSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: Product_ingredienteMinAggregateInputType
@@ -13980,22 +13950,18 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: Product_ingredienteCountAggregateInputType | true
-    _avg?: Product_ingredienteAvgAggregateInputType
-    _sum?: Product_ingredienteSumAggregateInputType
     _min?: Product_ingredienteMinAggregateInputType
     _max?: Product_ingredienteMaxAggregateInputType
   }
 
   export type Product_ingredienteGroupByOutputType = {
     id: string
-    qtd: number
+    qtd: boolean
     created_at: Date | null
     updated_at: Date | null
     product_id: string
     ingrediente_id: string
     _count: Product_ingredienteCountAggregateOutputType | null
-    _avg: Product_ingredienteAvgAggregateOutputType | null
-    _sum: Product_ingredienteSumAggregateOutputType | null
     _min: Product_ingredienteMinAggregateOutputType | null
     _max: Product_ingredienteMaxAggregateOutputType | null
   }
@@ -14078,7 +14044,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      qtd: number
+      qtd: boolean
       created_at: Date | null
       updated_at: Date | null
       product_id: string
@@ -14509,7 +14475,7 @@ export namespace Prisma {
    */
   interface Product_ingredienteFieldRefs {
     readonly id: FieldRef<"Product_ingrediente", 'String'>
-    readonly qtd: FieldRef<"Product_ingrediente", 'Int'>
+    readonly qtd: FieldRef<"Product_ingrediente", 'Boolean'>
     readonly created_at: FieldRef<"Product_ingrediente", 'DateTime'>
     readonly updated_at: FieldRef<"Product_ingrediente", 'DateTime'>
     readonly product_id: FieldRef<"Product_ingrediente", 'String'>
@@ -19264,7 +19230,7 @@ export namespace Prisma {
     OR?: Product_ingredienteWhereInput[]
     NOT?: Product_ingredienteWhereInput | Product_ingredienteWhereInput[]
     id?: StringFilter<"Product_ingrediente"> | string
-    qtd?: IntFilter<"Product_ingrediente"> | number
+    qtd?: BoolFilter<"Product_ingrediente"> | boolean
     created_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     product_id?: StringFilter<"Product_ingrediente"> | string
@@ -19289,7 +19255,7 @@ export namespace Prisma {
     AND?: Product_ingredienteWhereInput | Product_ingredienteWhereInput[]
     OR?: Product_ingredienteWhereInput[]
     NOT?: Product_ingredienteWhereInput | Product_ingredienteWhereInput[]
-    qtd?: IntFilter<"Product_ingrediente"> | number
+    qtd?: BoolFilter<"Product_ingrediente"> | boolean
     created_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     product_id?: StringFilter<"Product_ingrediente"> | string
@@ -19306,10 +19272,8 @@ export namespace Prisma {
     product_id?: SortOrder
     ingrediente_id?: SortOrder
     _count?: Product_ingredienteCountOrderByAggregateInput
-    _avg?: Product_ingredienteAvgOrderByAggregateInput
     _max?: Product_ingredienteMaxOrderByAggregateInput
     _min?: Product_ingredienteMinOrderByAggregateInput
-    _sum?: Product_ingredienteSumOrderByAggregateInput
   }
 
   export type Product_ingredienteScalarWhereWithAggregatesInput = {
@@ -19317,7 +19281,7 @@ export namespace Prisma {
     OR?: Product_ingredienteScalarWhereWithAggregatesInput[]
     NOT?: Product_ingredienteScalarWhereWithAggregatesInput | Product_ingredienteScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Product_ingrediente"> | string
-    qtd?: IntWithAggregatesFilter<"Product_ingrediente"> | number
+    qtd?: BoolWithAggregatesFilter<"Product_ingrediente"> | boolean
     created_at?: DateTimeNullableWithAggregatesFilter<"Product_ingrediente"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Product_ingrediente"> | Date | string | null
     product_id?: StringWithAggregatesFilter<"Product_ingrediente"> | string
@@ -20250,7 +20214,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product: ProductCreateNestedOneWithoutProduct_ingredienteInput
@@ -20259,7 +20223,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedCreateInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -20268,7 +20232,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutProduct_ingredienteNestedInput
@@ -20277,7 +20241,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -20286,7 +20250,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateManyInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -20295,14 +20259,14 @@ export namespace Prisma {
 
   export type Product_ingredienteUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type Product_ingredienteUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -21182,10 +21146,6 @@ export namespace Prisma {
     ingrediente_id?: SortOrder
   }
 
-  export type Product_ingredienteAvgOrderByAggregateInput = {
-    qtd?: SortOrder
-  }
-
   export type Product_ingredienteMaxOrderByAggregateInput = {
     id?: SortOrder
     qtd?: SortOrder
@@ -21202,10 +21162,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     product_id?: SortOrder
     ingrediente_id?: SortOrder
-  }
-
-  export type Product_ingredienteSumOrderByAggregateInput = {
-    qtd?: SortOrder
   }
 
   export type AdicionalCountOrderByAggregateInput = {
@@ -22911,7 +22867,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateWithoutProductInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     ingrediente: IngredienteCreateNestedOneWithoutProduct_ingredienteInput
@@ -22919,7 +22875,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedCreateWithoutProductInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     ingrediente_id: string
@@ -23030,7 +22986,7 @@ export namespace Prisma {
     OR?: Product_ingredienteScalarWhereInput[]
     NOT?: Product_ingredienteScalarWhereInput | Product_ingredienteScalarWhereInput[]
     id?: StringFilter<"Product_ingrediente"> | string
-    qtd?: IntFilter<"Product_ingrediente"> | number
+    qtd?: BoolFilter<"Product_ingrediente"> | boolean
     created_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Product_ingrediente"> | Date | string | null
     product_id?: StringFilter<"Product_ingrediente"> | string
@@ -23763,7 +23719,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateWithoutIngredienteInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product: ProductCreateNestedOneWithoutProduct_ingredienteInput
@@ -23771,7 +23727,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedCreateWithoutIngredienteInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -24351,7 +24307,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateManyProductInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     ingrediente_id: string
@@ -24415,7 +24371,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ingrediente?: IngredienteUpdateOneRequiredWithoutProduct_ingredienteNestedInput
@@ -24423,7 +24379,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ingrediente_id?: StringFieldUpdateOperationsInput | string
@@ -24431,7 +24387,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ingrediente_id?: StringFieldUpdateOperationsInput | string
@@ -24583,7 +24539,7 @@ export namespace Prisma {
 
   export type Product_ingredienteCreateManyIngredienteInput = {
     id?: string
-    qtd?: number
+    qtd?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -24591,7 +24547,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUpdateWithoutIngredienteInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutProduct_ingredienteNestedInput
@@ -24599,7 +24555,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedUpdateWithoutIngredienteInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -24607,7 +24563,7 @@ export namespace Prisma {
 
   export type Product_ingredienteUncheckedUpdateManyWithoutIngredienteInput = {
     id?: StringFieldUpdateOperationsInput | string
-    qtd?: IntFieldUpdateOperationsInput | number
+    qtd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
