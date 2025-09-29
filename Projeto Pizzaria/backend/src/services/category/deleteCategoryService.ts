@@ -27,7 +27,7 @@ class DeleteCategoryService{
             }
         })
 
-        return deletedCategory
+         return { message: `Categoria deletado: ${category.name}` }
     }
 }
 

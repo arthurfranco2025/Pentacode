@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import prismaClient from "../../prisma"; // ajuste o caminho conforme necessário
 
 // Agendamento: todo dia à meia-noite
-cron.schedule('0 0 * * *', async () => {
+cron.schedule(' 0 * * * * ', async () => {
     try {
         const deleted = await prismaClient.cliente.deleteMany({
             where: {

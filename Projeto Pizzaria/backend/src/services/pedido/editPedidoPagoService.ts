@@ -26,7 +26,7 @@ class EditarPedidoPagoService {
                 id: pedido_id
             },
             data: {
-                status: 'Pedido pago separadamente',
+                status: 'pedido pago separadamente',
                 price: 0,
                 points: 0
             }
