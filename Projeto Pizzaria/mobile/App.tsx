@@ -2,18 +2,18 @@ import { View, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/routes';
 
-// import { AuthProvider } from './src/contexts/AuthContext';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 import Payment from './src/pages/Payment';
 
 export default function App() {
   return (
     <NavigationContainer>
-      {/* <AuthProvider> */}
-      <Payment />
+      <AuthProvider>
+      {/* <Payment /> */}
         <StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false} />
-        {/* <Routes /> */}
-      {/* </AuthProvider> */}
+        <Routes />
+      </AuthProvider>
     </NavigationContainer>
   );
 }

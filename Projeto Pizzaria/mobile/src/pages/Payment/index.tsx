@@ -15,7 +15,8 @@ export default function Payment() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
-    const [paymentConfirmed, setPaymentConfirmed] = useState(false); // novo estado
+    const [finalConfirmVisible, setFinalConfirmVisible] = useState(false); // novo modal de confirmação
+    const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
     const cardOptions = [
         { label: "Crédito", value: "credito" },
@@ -23,16 +24,21 @@ export default function Payment() {
     ];
 
     const handleConfirmPayment = () => {
-        if (!selectedOption) return; // não faz nada se nada selecionado
-        setConfirmModalVisible(true); // abre modal de confirmação
-        setPaymentConfirmed(true); // marca pagamento como confirmado
+        if (!selectedOption) return;
+        setFinalConfirmVisible(true); // abre modal de confirmação
+    };
+
+    const handleFinalConfirm = () => {
+        setFinalConfirmVisible(false);
+        setConfirmModalVisible(true);
+        setPaymentConfirmed(true);
     };
 
     return (
         <View style={styles.container}>
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={{ paddingBottom: 40 }}
+                contentContainerStyle={ styles.scrollContent} 
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
@@ -52,68 +58,82 @@ export default function Payment() {
                 <Text style={styles.sectionTitle}>Formas de Pagamento</Text>
 
                 {/* Opções de pagamento */}
-                <TouchableOpacity
-                    style={[styles.optionButton, selectedOption === "Vale Refeição" && styles.optionSelected]}
-                    onPress={() => setSelectedOption("Vale Refeição")}
-                    disabled={paymentConfirmed} // desabilita se já confirmado
-                >
-                    <Image
-                        source={{ uri: "https://www.cidademarketing.com.br/marketing/wp-content/uploads/2019/02/valealimentacao_pesquisa.jpg" }}
-                        style={styles.optionImage}
-                    />
-                    <Text style={styles.optionText}>Vale Refeição</Text>
-                    {selectedOption === "Vale Refeição" && <Text style={styles.checkIcon}>✔️</Text>}
-                </TouchableOpacity>
+                <View style={styles.optionsWrapper}>
+                    <TouchableOpacity
+                        style={[styles.optionButton, selectedOption === "Vale Refeição" && styles.optionSelected]}
+                        onPress={() => setSelectedOption("Vale Refeição")}
+                        disabled={paymentConfirmed}
+                    >
+                        <Image
+                            source={{ uri: "https://www.cidademarketing.com.br/marketing/wp-content/uploads/2019/02/valealimentacao_pesquisa.jpg" }}
+                            style={styles.optionImage}
+                        />
+                        <Text style={styles.optionText}>Vale Refeição</Text>
+                        {selectedOption === "Vale Refeição" && <Text style={styles.checkIcon}>✔️</Text>}
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.optionButton, selectedOption === "PIX" && styles.optionSelected]}
-                    onPress={() => setSelectedOption("PIX")}
-                    disabled={paymentConfirmed}
-                >
-                    <Image
-                        source={{ uri: "https://img.icons8.com/color/512/pix.png" }}
-                        style={styles.optionImage}
-                    />
-                    <Text style={styles.optionText}>Pix QR Code</Text>
-                    {selectedOption === "PIX" && <Text style={styles.checkIcon}>✔️</Text>}
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.optionButton, selectedOption === "PIX" && styles.optionSelected]}
+                        onPress={() => setSelectedOption("PIX")}
+                        disabled={paymentConfirmed}
+                    >
+                        <Image
+                            source={{ uri: "https://img.icons8.com/color/512/pix.png" }}
+                            style={styles.optionImage}
+                        />
+                        <Text style={styles.optionText}>Pix QR Code</Text>
+                        {selectedOption === "PIX" && <Text style={styles.checkIcon}>✔️</Text>}
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.optionButton, selectedOption === "cartao" && styles.optionSelected]}
-                    onPress={() => setModalVisible(true)}
-                    disabled={paymentConfirmed}
-                >
-                    <Image
-                        source={{ uri: "https://images.vexels.com/media/users/3/261853/isolated/preview/71bdb0b66f426075b049dc89581d8178-icone-de-cartoes-de-credito-de-dinheiro.png" }}
-                        style={styles.optionImage}
-                    />
-                    <Text style={styles.optionText}>
-                        {selectedCard ? cardOptions.find((o) => o.value === selectedCard)?.label : "Selecionar Cartão"}
-                    </Text>
-                    {selectedOption === "cartao" && <Text style={styles.checkIcon}>✔️</Text>}
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.optionButton, selectedOption === "cartao" && styles.optionSelected]}
+                        onPress={() => setModalVisible(true)}
+                        disabled={paymentConfirmed}
+                    >
+                        <Image
+                            source={{ uri: "https://images.vexels.com/media/users/3/261853/isolated/preview/71bdb0b66f426075b049dc89581d8178-icone-de-cartoes-de-credito-de-dinheiro.png" }}
+                            style={styles.optionImage}
+                        />
+                        <Text style={styles.optionText}>
+                            {selectedCard ? cardOptions.find((o) => o.value === selectedCard)?.label : "Selecionar Cartão"}
+                        </Text>
+                        {selectedOption === "cartao" && <Text style={styles.checkIcon}>✔️</Text>}
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.optionButton, selectedOption === "Dinheiro" && styles.optionSelected]}
-                    onPress={() => setSelectedOption("Dinheiro")}
-                    disabled={paymentConfirmed}
-                >
-                    <Image
-                        source={{ uri: "https://cdn-icons-png.flaticon.com/512/5899/5899792.png" }}
-                        style={styles.optionImage}
-                    />
-                    <Text style={styles.optionText}>Dinheiro</Text>
-                    {selectedOption === "Dinheiro" && <Text style={styles.checkIcon}>✔️</Text>}
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.optionButton, selectedOption === "Dinheiro" && styles.optionSelected]}
+                        onPress={() => setSelectedOption("Dinheiro")}
+                        disabled={paymentConfirmed}
+                    >
+                        <Image
+                            source={{ uri: "https://cdn-icons-png.flaticon.com/512/5899/5899792.png" }}
+                            style={styles.optionImage}
+                        />
+                        <Text style={styles.optionText}>Dinheiro</Text>
+                        {selectedOption === "Dinheiro" && <Text style={styles.checkIcon}>✔️</Text>}
+                    </TouchableOpacity>
+                </View>
 
-                {/* Botão confirmar */}
-                <TouchableOpacity
-                    style={[styles.confirmButton, paymentConfirmed && styles.confirmButtonDisabled]}
-                    onPress={handleConfirmPayment}
-                    disabled={paymentConfirmed} // desabilita após confirmação
-                >
-                    <Text style={styles.confirmText}>Confirmar Forma de Pagamento</Text>
-                </TouchableOpacity>
+                {/* Botão confirmar / trocar */}
+                {!paymentConfirmed ? (
+                    <TouchableOpacity
+                        style={styles.confirmButton}
+                        onPress={handleConfirmPayment}
+                    >
+                        <Text style={styles.confirmText}>Confirmar Forma de Pagamento</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={styles.changeButton}
+                        onPress={() => {
+                            setPaymentConfirmed(false);
+                            setSelectedOption("");
+                            setSelectedCard("");
+                        }}
+                    >
+                        <Text style={styles.changeButtonText}>Trocar Forma de Pagamento</Text>
+                    </TouchableOpacity>
+                )}
 
                 {/* MODAL DE CARTÃO */}
                 <Modal
@@ -148,7 +168,40 @@ export default function Payment() {
                     </View>
                 </Modal>
 
-                {/* MODAL DE CONFIRMAÇÃO DE PAGAMENTO */}
+                {/* MODAL DE CONFIRMAÇÃO (pergunta antes de confirmar) */}
+                <Modal
+                    transparent={true}
+                    visible={finalConfirmVisible}
+                    animationType="fade"
+                    onRequestClose={() => setFinalConfirmVisible(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.confirmModalBox}>
+                            <Text style={styles.confirmModalTitle}>Deseja confirmar a forma de pagamento?</Text>
+                            <Text style={styles.confirmModalText}>
+                                {selectedOption === "cartao"
+                                    ? cardOptions.find((o) => o.value === selectedCard)?.label
+                                    : selectedOption}
+                            </Text>
+                            <View style={{ flexDirection: "row", gap: 10 }}>
+                                <TouchableOpacity
+                                    style={[styles.confirmModalButton, { backgroundColor: "#22BB33" }]}
+                                    onPress={handleFinalConfirm}
+                                >
+                                    <Text style={styles.confirmModalButtonText}>Sim</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.confirmModalButton, { backgroundColor: "#FF3F4B" }]}
+                                    onPress={() => setFinalConfirmVisible(false)}
+                                >
+                                    <Text style={styles.confirmModalButtonText}>Não</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* MODAL DE PAGAMENTO CONFIRMADO */}
                 <Modal
                     transparent={true}
                     visible={confirmModalVisible}
@@ -157,8 +210,8 @@ export default function Payment() {
                 >
                     <View style={styles.modalOverlay}>
                         <View style={styles.confirmModalBox}>
-                            <Text style={styles.confirmModalTitle}>✅ Pagamento Confirmado!</Text>
-                            <Text style={styles.confirmModalTitle}>O garçom está à caminho!</Text>
+                            <Text style={styles.confirmModalTitle}>✅ Forma de pagamento escolhida!</Text>
+                            <Text style={styles.confirmModalSubtitle}>O garçom está à caminho!</Text>
                             <Text style={styles.confirmModalText}>
                                 Você selecionou:{" "}
                                 {selectedOption === "cartao"
@@ -180,8 +233,8 @@ export default function Payment() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#FFF" },
-    scrollView: { flex: 1 },
+    container: { flex: 1, backgroundColor: "#FFF", alignItems: "center" },
+    scrollView: { flex: 1, width: "100%" },
 
     header: {
         flexDirection: "row",
@@ -194,7 +247,18 @@ const styles = StyleSheet.create({
     },
     logoText: { fontSize: 28, fontWeight: "bold", color: "#FFF" },
 
-    sectionTitle: { fontSize: 20, fontWeight: "bold", marginLeft: 25, marginBottom: 15, color: "#333" },
+    sectionTitle: { fontSize: 20, fontWeight: "bold", textAlign: "center", marginBottom: 20, color: "#333" },
+
+    optionsWrapper: {
+        gap: 20,
+        marginBottom: 30,
+    },
+    
+    scrollContent: {
+        flexGrow: 1,
+        alignItems: "stretch",
+        paddingBottom: 40,
+    },
 
     optionButton: {
         flexDirection: "row",
@@ -203,13 +267,12 @@ const styles = StyleSheet.create({
         padding: 14,
         borderRadius: 12,
         marginHorizontal: 25,
-        marginBottom: 15,
         elevation: 3,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
-    optionSelected: { borderWidth: 2, borderColor: "green" },
+    optionSelected: { borderWidth: 2, borderColor: "#391D8A" },
     optionImage: { width: 60, height: 60, marginRight: 20, borderRadius: 8 },
     optionText: { fontSize: 18, fontWeight: "600", color: "#222", flex: 1 },
     checkIcon: { fontSize: 20, color: "green", fontWeight: "bold" },
@@ -220,11 +283,26 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: "center",
-        marginBottom: 40,
+        marginBottom: 20,
         elevation: 4,
     },
-    confirmButtonDisabled: { backgroundColor: "#aaa" }, // estilo quando desabilitado
     confirmText: { color: "#FFF", fontSize: 18, fontWeight: "bold" },
+
+    changeButton: {
+        backgroundColor: "#FFF",
+        borderWidth: 2,
+        borderColor: "#391D8A",
+        marginHorizontal: 30,
+        paddingVertical: 16,
+        borderRadius: 12,
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    changeButtonText: {
+        color: "#391D8A",
+        fontSize: 18,
+        fontWeight: "bold",
+    },
 
     modalOverlay: {
         flex: 1,
@@ -258,12 +336,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     confirmModalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 10, color: "#22BB33", textAlign: "center" },
-    confirmModalText: { fontSize: 16, marginBottom: 20, textAlign: "center" },
+    confirmModalText: { fontSize: 14, marginBottom: 20, textAlign: "center" },
     confirmModalButton: {
         backgroundColor: "#FF3F4B",
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 12,
+        marginHorizontal: 5,
     },
     confirmModalButtonText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
+    confirmModalSubtitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#391D8A", textAlign: "center" }
 });

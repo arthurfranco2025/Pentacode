@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { api } from '../../services/api';
 import {
-    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView
+    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
+
 
 type RootStackParamList = {
     ProductInfo: {
@@ -32,21 +34,8 @@ interface Ingredients {
 
 interface Ingredients_Products {
     id: string;
-    product_id: string;
-    ingredients_id: string;
-    qtd: string;
-}
-
-interface Extras {
-    id: string;
     name: string;
     price: string;
-}
-
-interface Extras_Items {
-    id: string;
-    item_id: string;
-    extras_id: string;
     qtd: string;
 }
 
@@ -60,7 +49,32 @@ export default function CustomizeProduct() {
     const [totalPrice, setTotalPrice] = useState(Number(product.price));
     const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
 
-    // Mock data for extras (replace with your API data)
+    const [ingredients, setIngredients] = useState<Ingredients_Products[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect (() => {
+        async function loadIngredients() {
+            try {
+                const response = await api.get('produto_ingrediente/lista', {
+                    params: {
+                        product_id: product.id
+                    }
+                });
+                
+                // Ver a resposta da API
+                console.log('API Response:', response.data) 
+                setIngredients(response.data);
+                setLoading(false);
+            } catch(error) {
+                console.error('Erro ao carregar ingredientes:', error );
+                setLoading(false)
+            }
+        }
+
+        loadIngredients();
+    }, [product.id]);
+
+    // Mock data for extras
     const extras = [
         { id: '1', name: 'Borda Recheada', price: '5.00' },
         { id: '2', name: 'Queijo Extra', price: '4.00' },
@@ -144,22 +158,24 @@ export default function CustomizeProduct() {
                         </View>
                     </View>
 
-                    <Text style={styles.subTitle}>Adicionais</Text>
+                    <Text style={styles.subTitle}>Ingredientes</Text>
+                    {loading ? (
+                        <ActivityIndicator size="small" color="#4B3D9A" />
+                    ) : (
+                        <View style={styles.ingredientsContainer}>
+                            {ingredients.map((ingredient) => (
+                                <View key={ingredient.id} style={styles.ingredientItem}>
+                                    <Text style={styles.ingredientName}>
+                                        {ingredient.name}
+                                    </Text>
+                                    <Text style={styles.ingredientQtd}>
+                                        {ingredient.qtd}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                    )}
 
-                    {extras.map((extra) => (
-                        <TouchableOpacity
-                            key={extra.id}
-                            style={styles.option}
-                            onPress={() => toggleExtra(extra.id)}
-                        >
-                            <View style={[
-                                styles.checkbox,
-                                selectedExtras.includes(extra.id) && styles.checked
-                            ]} />
-                            <Text style={styles.optionText}>{extra.name}</Text>
-                            <Text style={styles.extraPrice}>+ R$ {extra.price}</Text>
-                        </TouchableOpacity>
-                    ))}
 
                     <Text style={styles.subTitle}>Observações</Text>
                     <TextInput
@@ -348,5 +364,29 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 12,
         backgroundColor: "#fff",
         flex: 1
+    },
+    ingredientsContainer: {
+        marginHorizontal: 10,
+        marginBottom: 20,
+    },
+    
+    ingredientItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ECECEC',
+    },
+    
+    ingredientName: {
+        fontSize: 14,
+        color: '#000',
+    },
+    
+    ingredientQtd: {
+        fontSize: 14,
+        color: '#000',
     },
 });

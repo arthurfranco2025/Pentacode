@@ -35,6 +35,7 @@ import { OpenComandaController } from './controllers/comanda/openComandaControll
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
 import { ListComandaController } from './controllers/comanda/listComandasController';
 import { PagarComandaController } from './controllers/comanda/pagarComandaController';
+import { PagarComandaPorPontosController } from './controllers/comanda/pagarComandaPorPontosController';
 
 
 import { OpenPedidoController } from './controllers/pedido/openPedidoController'
@@ -103,6 +104,7 @@ router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
 router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
+router.put('/comanda/pagarPorPontos', isAuthenticated, new PagarComandaPorPontosController().handle.bind(new PagarComandaPorPontosController))
 
 //PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
