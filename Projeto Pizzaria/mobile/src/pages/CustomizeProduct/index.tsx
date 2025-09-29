@@ -26,13 +26,7 @@ interface Product {
     category_id: string
 }
 
-interface Ingredients {
-    id: string;
-    name: string;
-    price: string;
-}
-
-interface Ingredients_Products {
+interface ingrediente_produto {
     id: string;
     name: string;
     price: string;
@@ -49,7 +43,7 @@ export default function CustomizeProduct() {
     const [totalPrice, setTotalPrice] = useState(Number(product.price));
     const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
 
-    const [ingredients, setIngredients] = useState<Ingredients_Products[]>([]);
+    const [ingredients, setIngredients] = useState<ingrediente_produto[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect (() => {
