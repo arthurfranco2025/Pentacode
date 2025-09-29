@@ -33,15 +33,6 @@ export default function SignUp() {
 
   const [error, setError] = useState("");
 
-  // function validateEmail(email: string) {
-  //   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   return re.test(email);
-  // }
-
-  // function validateCPF(cpf: string) {
-  //   return cpf.length === 11 && /^\d+$/.test(cpf);
-  // }
-
   function handleHasLogin(){
     navigation.navigate('SignIn')
   }

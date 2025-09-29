@@ -14,7 +14,7 @@ class AuthClienteService {
 
         let cliente;
 
-        if (guest) {
+        if (guest == true) {
             // Login como convidado: cria cliente com dados fake
             const randomId = Math.floor(Math.random() * 100000);
             const nome = `Convidado_${randomId}`;
@@ -58,9 +58,13 @@ class AuthClienteService {
             }
         }
 
-        if (!guest && (!email || !cpf || !password)) {
-            throw new Error("Insira os dados de login");
-        }
+        // if (!guest && (!email || !cpf || !password)) {
+            // throw new Error("Insira os dados de login");
+        // }
+
+        // if(!guest){
+        //     throw new Error("Insira o guest")
+        // }
 
 
         // Gera token JWT

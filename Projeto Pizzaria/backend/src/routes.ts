@@ -35,6 +35,7 @@ import { OpenComandaController } from './controllers/comanda/openComandaControll
 import { CloseComandaController } from './controllers/comanda/closeComandaController'
 import { ListComandaController } from './controllers/comanda/listComandasController';
 import { PagarComandaController } from './controllers/comanda/pagarComandaController';
+import { PagarComandaPorPontosController } from './controllers/comanda/pagarComandaPorPontosController';
 
 
 import { OpenPedidoController } from './controllers/pedido/openPedidoController'
@@ -43,6 +44,7 @@ import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoC
 import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoController';
 import { EditPedidoStatusController } from './controllers/pedido/editPedidoStatusController';
 import { ListPedidoGarcomController } from './controllers/pedido/listPedidoGarcomController';
+import { PagarPedidoPorPontosController } from './controllers/pedido/pagarPedidoPorPontosController'
 
 import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
@@ -68,6 +70,8 @@ import { RemoveItemAdicionalController } from './controllers/item_adicionais/rem
 import { SearchProductController } from './controllers/product/searchProductController';
 
 import { CreateMesaController } from './controllers/mesa/createMesaController';
+
+import { CreateAvalicaoController } from './controllers/avaliacao/createAvaliacaoController';
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
@@ -99,10 +103,11 @@ router.get('/category/products', isAuthenticated, new ListProductByCategoryContr
 router.get('/product/search', isAuthenticated, new SearchProductController().handle)
 
 //COMANDA ROUTE
-router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
+router.post('/comanda/:mesa_id', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
 router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
+router.put('/comanda/pagarPorPontos', isAuthenticated, new PagarComandaPorPontosController().handle.bind(new PagarComandaPorPontosController))
 
 //PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
@@ -111,6 +116,7 @@ router.put('/pedido/pagar', isAuthenticated, new PagarPedidoController().handle)
 router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().handle)
 router.put('/pedido/editarStatus', isAuthenticated, new EditPedidoStatusController().handle)
 router.get('/pedido/listaProGarcom', isAuthenticated, new ListPedidoGarcomController().handle)
+router.put('/pedido/pagarPorPontos', isAuthenticated, new PagarPedidoPorPontosController().handle.bind(new PagarPedidoPorPontosController()))
 
 //ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))
@@ -140,5 +146,6 @@ router.delete('/itemAdicional/delete', isAuthenticated, new RemoveItemAdicionalC
 
 router.post('/mesa' , isAuthenticated, new CreateMesaController().handle.bind(new CreateMesaController()))
 
+router.post('/avaliacao', isAuthenticated, new CreateAvalicaoController().handle.bind(new CreateAvalicaoController))
 
 export { router };

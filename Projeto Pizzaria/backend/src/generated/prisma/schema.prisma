@@ -27,6 +27,7 @@ model Cliente {
   password   String
   cpf        String
   data_nasc  DateTime?
+  points     Float     @default(0)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
@@ -171,7 +172,7 @@ model Ingrediente {
 
 model Product_ingrediente {
   id         String    @id @default(uuid())
-  qtd        Int       @default(1)
+  qtd        Boolean   @default(true)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
