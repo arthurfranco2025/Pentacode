@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { api } from '../../services/api';
 import {
-    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
+    View,
+    Text,
+    Image,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    ActivityIndicator,
+    LayoutAnimation,
+    Platform,
+    UIManager,
+    StyleSheet
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation, NavigationProp, RouteProp, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 
 type RootStackParamList = {
-    ProductInfo: {
-        product: Product;
-    }
-    CustomizeProduct: {
-        product: Product;
-    };
+    ProductInfo: { product: Product };
+    CustomizeProduct: { product: Product };
 };
 
 interface Product {
@@ -23,14 +31,18 @@ interface Product {
     price: string;
     description?: string;
     image_url: string;
-    category_id: string
+    category_id: string;
 }
 
 interface ingrediente_produto {
     id: string;
     nome: string;
     price: string;
-    qtd: boolean;
+    qtd: string;
+}
+
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export default function CustomizeProduct() {
@@ -45,50 +57,34 @@ export default function CustomizeProduct() {
 
     const [ingredients, setIngredients] = useState<ingrediente_produto[]>([]);
     const [loading, setLoading] = useState(true);
+    const [ingredientsExpanded, setIngredientsExpanded] = useState(false);
+
+    const [selectedIngredients, setSelectedIngredients] = useState<{ [key: string]: boolean }>({});
 
     useEffect(() => {
         async function loadIngredients() {
             try {
                 const response = await api.get('produto_ingrediente/lista', {
-                    params: {
-                        product_id: product.id
-                    }
+                    params: { product_id: product.id }
                 });
+                setIngredients(response.data);
 
+                const initialSelection: { [key: string]: boolean } = {};
+                response.data.forEach((ing: ingrediente_produto, index: number) => {
+                    // Garante que cada ingrediente tenha key única
+                    initialSelection[ing.id || `ingredient-${index}`] = true;
+                });
+                setSelectedIngredients(initialSelection);
 
-                // Ver a resposta da API
-                // console.log('API Response:', response.data)
-
-                const formatted = response.data.map((item: any) => ({
-                    ...item,
-                    qtd: true, // para que todos os ingredientes comecem habilitados
-
-                }));
-
-                setIngredients(formatted);
                 setLoading(false);
             } catch (error) {
                 console.error('Erro ao carregar ingredientes:', error);
-                setLoading(false)
+                setLoading(false);
             }
         }
-
         loadIngredients();
     }, [product.id]);
 
-
-    const toggleIngredient = (id: string) => {
-        setIngredients(prev =>
-            prev.map(ing =>
-                ing.id === id ? { ...ing, selected: !ing.qtd } : ing
-            )
-        );
-    };
-
-
-
-
-    // Mock data for extras
     const extras = [
         { id: '1', name: 'Borda Recheada', price: '5.00' },
         { id: '2', name: 'Queijo Extra', price: '4.00' },
@@ -107,7 +103,6 @@ export default function CustomizeProduct() {
         const updatedExtras = selectedExtras.includes(extraId)
             ? selectedExtras.filter(id => id !== extraId)
             : [...selectedExtras, extraId];
-
         setSelectedExtras(updatedExtras);
         updateTotalPrice(quantity, updatedExtras);
     };
@@ -118,300 +113,181 @@ export default function CustomizeProduct() {
             const extra = extras.find(e => e.id === extraId);
             return total + (extra ? Number(extra.price) : 0);
         }, 0);
-
         setTotalPrice((basePrice + extrasPrice) * qty);
+    };
+
+    const toggleIngredients = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIngredientsExpanded(prev => !prev);
+    };
+
+    const handleIngredientToggle = (id: string, index: number) => {
+        const key = id || `ingredient-${index}`;
+        setSelectedIngredients(prev => ({
+            ...prev,
+            [key]: !prev[key],
+        }));
     };
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scroll}>
-                <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    colors={["#391D8A", "#261B47"]}
-                    style={styles.header}
-                >
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image
-                            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-                            style={{ width: 24, height: 24 }}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.logoText}>
-                        Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-                    </Text>
-                    <View style={{ width: 24 }} />
-                </LinearGradient>
+            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={["#391D8A", "#261B47"]} style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+                        style={{ width: 24, height: 24 }} />
+                </TouchableOpacity>
+                <Text style={styles.logoText}>Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text></Text>
+                <View style={{ width: 24 }} />
+            </LinearGradient>
 
-                <View style={styles.content}>
-                    <Text style={styles.title}>Personalizar Pedido</Text>
-
-                    <View style={styles.card}>
-                        <Image
-                            source={{ uri: product.image_url }}
-                            style={styles.image}
-                        />
-                        <View style={styles.info}>
-                            <Text style={styles.productName}>{product.name}</Text>
-                            <Text style={styles.price}>R$ {product.price}</Text>
-                            <View style={styles.quantityContainer}>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => handleQuantityChange(quantity - 1)}
-                                >
-                                    <Text style={styles.buttonText}>-</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.quantity}>{quantity}</Text>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => handleQuantityChange(quantity + 1)}
-                                >
-                                    <Text style={styles.buttonText}>+</Text>
-                                </TouchableOpacity>
-                            </View>
+            <ScrollView contentContainerStyle={styles.scrollContent} style={styles.scrollView}>
+                <View style={styles.card}>
+                    <Image source={{ uri: product.image_url }} style={styles.image} />
+                    <View style={styles.info}>
+                        <Text style={styles.productName}>{product.name}</Text>
+                        <Text style={styles.price}>R$ {product.price}</Text>
+                        <View style={styles.quantityContainer}>
+                            <TouchableOpacity style={styles.button} onPress={() => handleQuantityChange(quantity - 1)}>
+                                <Text style={styles.buttonText}>-</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.quantity}>{quantity}</Text>
+                            <TouchableOpacity style={styles.button} onPress={() => handleQuantityChange(quantity + 1)}>
+                                <Text style={styles.buttonText}>+</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-
-                    <Text style={styles.subTitle}>Ingredientes</Text>
-                    {loading ? (
-                        <ActivityIndicator size="small" color="#4B3D9A" />
-                    ) : (
-                        <View style={styles.ingredientsContainer}>
-                            {ingredients.map((ingredient) => (
-                                <TouchableOpacity
-                                    key={`${ingredient.id}-${ingredient.nome}`} style={[styles.ingredientItem, !ingredient.qtd && { opacity: 0.5 }]}
-                                    onPress={() => toggleIngredient(ingredient.id)}
-                                >
-
-                                    <Text style={styles.ingredientName}>
-                                        {ingredient.nome}
-                                    </Text>
-                                    <Text style={styles.ingredientQtd}>
-                                        {ingredient.qtd}
-                                    </Text>
-
-                                    <View
-                                        style={[
-                                            styles.checkbox,
-                                            ingredient.qtd && styles.checked
-                                        ]}
-                                    />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-
-                    <Text style={styles.subTitle}>Observações</Text>
-                    <TextInput
-                        style={styles.textArea}
-                        placeholder="Alguma observação?"
-                        multiline
-                        maxLength={250}
-                        value={observation}
-                        onChangeText={setObservation}
-                    />
                 </View>
+
+                <TouchableOpacity style={styles.ingredientHeader} onPress={toggleIngredients} activeOpacity={0.7}>
+                    <Text style={styles.ingredientHeaderText}>Ingredientes</Text>
+                    <Ionicons name={ingredientsExpanded ? "chevron-up" : "chevron-down"} size={20} color="#391D8A" />
+                </TouchableOpacity>
+
+                {loading ? (
+                    <ActivityIndicator size="small" color="#4B3D9A" style={{ marginTop: 10 }} />
+                ) : (
+                    ingredientsExpanded && ingredients.map((ingredient, index) => {
+                        const key = ingredient.id || `ingredient-${index}`;
+                        return (
+                            <TouchableOpacity
+                                key={key}
+                                style={styles.ingredientItem}
+                                onPress={() => handleIngredientToggle(ingredient.id, index)}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={styles.ingredientName}>{ingredient.nome}</Text>
+                                {selectedIngredients[key] ? (
+                                    <Ionicons name="checkbox" size={24} color="#391D8A" />
+                                ) : (
+                                    <Ionicons name="square-outline" size={24} color="#391D8A" />
+                                )}
+                            </TouchableOpacity>
+                        );
+                    })
+                )}
+
+                <TextInput
+                    style={styles.textArea}
+                    placeholder="Alguma observação?"
+                    multiline
+                    maxLength={250}
+                    value={observation}
+                    onChangeText={setObservation}
+                />
             </ScrollView>
 
-            <LinearGradient
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                colors={["#391E8B", "#261B47"]}
-                style={styles.footer}
-            >
-                <View style={styles.footerRow}>
-                    <Text style={styles.totalLabel}>Total:</Text>
-                    <Text style={styles.totalPrice}>R$ {totalPrice.toFixed(2)}</Text>
+            <TouchableOpacity style={{ marginHorizontal: 20, marginBottom: 20 }}>
+                <View style={[styles.confirmButton, { backgroundColor: '#FF3B30' }]}>
+                    <Text style={styles.confirmText}>
+                    Adicionar ao Carrinho - R$ {totalPrice.toFixed(2)}
+                    </Text>
                 </View>
-                <TouchableOpacity
-                    style={styles.confirmButton}
-                    onPress={() => {
-                        // Implement add to cart logic here
-                        navigation.goBack();
-                    }}
-                >
-                    <Text style={styles.confirmText}>Adicionar ao Carrinho</Text>
-                </TouchableOpacity>
-            </LinearGradient>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
-    scroll: { flex: 1 },
+    container: { flex: 1, backgroundColor: "#FFF" },
+    scrollView: { flex: 1 },
+    scrollContent: { flexGrow: 1, paddingBottom: 40 },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 52,
-        paddingBottom: 12,
+        paddingVertical: 52,
         paddingHorizontal: 20,
     },
-    logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
-
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#4B3D9A",
-        margin: 10
-    },
+    logoText: { fontSize: 20, fontWeight: "700", color: "#FFF" },
     card: {
         flexDirection: "row",
         backgroundColor: "#fff",
         borderRadius: 12,
-        padding: 10,
+        padding: 12,
+        marginHorizontal: 20,
+        marginTop: 20,
         marginBottom: 20,
         alignItems: "center",
+        elevation: 3,
         shadowColor: "#000",
         shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3
+        shadowRadius: 4,
     },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 12
-    },
-    info: {
-        flex: 1,
-        marginLeft: 10
-    },
-    productName: {
-        fontWeight: "bold",
-        fontSize: 16
-    },
-    price: {
-        fontSize: 14,
-        marginVertical: 5
-    },
-    quantityContainer: {
+    image: { width: 100, height: 100, borderRadius: 12 },
+    info: { flex: 1, marginLeft: 12 },
+    productName: { fontSize: 18, fontWeight: "bold", color: "#222" },
+    price: { fontSize: 16, marginVertical: 5 },
+    quantityContainer: { flexDirection: "row", alignItems: "center", marginTop: 8 },
+    button: { width: 32, height: 32, borderRadius: 8, backgroundColor: "#FDEDED", justifyContent: "center", alignItems: "center" },
+    buttonText: { color: "#FF3B30", fontWeight: "bold", fontSize: 16 },
+    quantity: { marginHorizontal: 12, fontSize: 16 },
+    ingredientHeader: {
         flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 5
-    },
-    button: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: "#FDEDED",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    buttonText: {
-        color: "#FF3B30",
-        fontWeight: "bold",
-        fontSize: 16
-    },
-    quantity: {
-        marginHorizontal: 10,
-        fontSize: 16
-    },
-    deleteButton: {
-        marginLeft: "auto",
-        backgroundColor: "#FF3B30",
-        padding: 8,
-        borderRadius: 8
-    },
-    subTitle: {
-        fontWeight: "bold",
-        fontSize: 16,
+        backgroundColor: "#F5F5F5",
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginHorizontal: 20,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
         marginBottom: 10,
-        marginLeft: 10
     },
-    option: {
+    ingredientHeaderText: { fontSize: 18, fontWeight: "bold", color: "#222" },
+    ingredientItem: {
         flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        margin: 10
+        backgroundColor: "#FFF",
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginHorizontal: 20,
+        marginBottom: 8,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
     },
-    checkbox: {
-        width: 24,
-        height: 24,
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        marginRight: 10
-    },
-    checked: {
-        backgroundColor: "#4B3D9A",
-        borderColor: "#4B3D9A"
-    },
-    optionText: {
-        fontSize: 14
-    },
+    ingredientName: { fontSize: 16, fontWeight: "600", color: "#222" },
     textArea: {
         borderColor: "#ccc",
         borderWidth: 1,
         borderRadius: 12,
-        padding: 10,
-        margin: 20,
-        textAlignVertical: "top"
+        padding: 14,
+        marginHorizontal: 20,
+        marginTop: 20,
+        textAlignVertical: "top",
+        fontSize: 16,
     },
-    footer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-    },
-    footerRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-    cartIcon: { width: 28, height: 28 },
-    cartText: { color: "#fff", fontSize: 16, fontWeight: "600" },
     confirmButton: {
-        flex: 1,
+        paddingVertical: 16,
+        borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FF3F4B",
-        borderRadius: 12,
-        marginLeft: 16,
-        paddingVertical: 10,
     },
-    confirmText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-    totalLabel: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600"
-    },
-    totalPrice: {
-        color: "#FF3F4B",
-        fontSize: 16,
-        fontWeight: "bold"
-    },
-    extraPrice: {
-        marginLeft: "auto",
-        color: "#4B3D9A",
-        fontWeight: "bold"
-    },
-    content: {
-        padding: 10,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        backgroundColor: "#fff",
-        flex: 1
-    },
-    ingredientsContainer: {
-        marginHorizontal: 10,
-        marginBottom: 20,
-    },
-
-    ingredientItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ECECEC',
-    },
-
-    ingredientName: {
-        fontSize: 14,
-        color: '#000',
-    },
-
-    ingredientQtd: {
-        fontSize: 14,
-        color: '#000',
-    },
+    confirmText: { color: "#FFF", fontSize: 18, fontWeight: "bold" },
 });

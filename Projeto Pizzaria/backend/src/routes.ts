@@ -103,7 +103,7 @@ router.get('/category/products', isAuthenticated, new ListProductByCategoryContr
 router.get('/product/search', isAuthenticated, new SearchProductController().handle)
 
 //COMANDA ROUTE
-router.post('/comanda', isAuthenticated, new OpenComandaController().handle)
+router.post('/comanda/:mesa_id', isAuthenticated, new OpenComandaController().handle)
 router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().handle)
 router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
 router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
