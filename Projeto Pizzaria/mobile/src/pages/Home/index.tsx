@@ -4,7 +4,7 @@ import {
 	View,
 	ScrollView,
 	Image,
-	ImageBackground,
+	ActivityIndicator,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -75,6 +75,9 @@ export default function Home() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+	const [loadingCategories, setLoadingCategories] = useState(false);
+	const [loadingProducts, setLoadingProducts] = useState(false);
+
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image
@@ -97,14 +100,17 @@ export default function Home() {
 	useEffect(() => {
 		async function loadCategories() {
 			try {
+				setLoadingCategories(true)
 				const dbaCategories = await api.get('/category/list');
 				// console.log('Categorias carregadas:', dbaCategories.data)
-				dbaCategories.data.forEach((cat: Categories) => {
-					console.log('Image path:', cat.image_url)
-				});
+				// dbaCategories.data.forEach((cat: Categories) => {
+				// 	console.log('Image path:', cat.image_url)
+				// });
 				setCategories(dbaCategories.data);
 			} catch (error) {
 				console.error('Error loading data:', error)
+			} finally {
+				setLoadingCategories(false)
 			}
 		}
 
@@ -115,6 +121,7 @@ export default function Home() {
 	useEffect(() => {
 		async function LoadListProduct() {
 			try {
+				setLoadingProducts(true)
 				if (selectedCategory) {
 					const dbaListProductsByCategories = await api.get('category/products', {
 						params: {
@@ -133,6 +140,8 @@ export default function Home() {
 					console.error('Error loading products:', error);
 				}
 				setProducts([]);
+			} finally {
+				setLoadingProducts(false)
 			}
 		}
 
@@ -196,42 +205,46 @@ export default function Home() {
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={styles.categoriesContainer}
 						>
-							{categories.map((category) => (
-								<TouchableOpacity
-									key={category.id}
-									onPress={() => setSelectedCategory(category.id)}
-									style={[
-										styles.categoryItem,
-										selectedCategory === category.id && styles.selectedCategory
-									]}
-								>
-									<CategoryCard
-										image_url={category.image_url}
-										label={category.name}
-									/>
-								</TouchableOpacity>
-							))}
+
+							{loadingCategories ? (
+								<ActivityIndicator size="large" color="#391D8A" style={{ marginTop: 20 }} />
+							) : (
+								categories.map((category) => (
+									<TouchableOpacity
+										key={category.id}
+										onPress={() => setSelectedCategory(category.id)}
+										style={[
+											styles.categoryItem,
+											selectedCategory === category.id && styles.selectedCategory
+										]}
+									>
+										<CategoryCard image_url={category.image_url} label={category.name} />
+									</TouchableOpacity>
+								))
+							)}
 						</ScrollView>
 					)}
 
 					<View style={[styles.rightColumn, !showCategories && styles.rightColumnFull]}>
 						<View style={styles.row}>
-							{products.length > 0 ? (
+							{loadingProducts ? (
+								<ActivityIndicator size="large" color="#FF3F4B" style={{ marginTop: 20 }} />
+							) : products.length > 0 ? (
 								<ScrollView
 									showsVerticalScrollIndicator={false}
-									contentContainerStyle={styles.productsContainer}>
+									contentContainerStyle={styles.productsContainer}
+								>
 									<View style={styles.productsGrid}>
 										{products.map((product) => (
-											<ItemCard
-												key={product.id}
-												product={product}
-											/>
+											<ItemCard key={product.id} product={product} />
 										))}
 									</View>
 								</ScrollView>
 							) : (
 								<Text style={styles.emptyText}>
-									{selectedCategory ? "Nenhum produto nesta categoria" : "Selecione uma categoria"}
+									{selectedCategory
+										? "Nenhum produto nesta categoria"
+										: "Selecione uma categoria"}
 								</Text>
 							)}
 						</View>
