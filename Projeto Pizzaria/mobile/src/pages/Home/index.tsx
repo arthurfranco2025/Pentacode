@@ -4,7 +4,7 @@ import {
 	View,
 	ScrollView,
 	Image,
-	ImageBackground,
+	ActivityIndicator,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -15,9 +15,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice"
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { StackParamsList } from "../../routes/app.routes";
+
+
+
 
 type RootStackParamList = {
-	Home: undefined;
+	Home: {mesaId: string; mesaNumero: number};
 	ProductInfo: {
 		product: Product;
 	};
@@ -75,6 +80,15 @@ export default function Home() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+	const [loadingCategories, setLoadingCategories] = useState(false);
+	const [loadingProducts, setLoadingProducts] = useState(false);
+	const route = useRoute<RouteProp<StackParamsList, "Home">>();
+    const { mesaId, numero_mesa } = route.params;
+
+	console.log("Mesa ID:", mesaId);
+    console.log("Número da mesa:", numero_mesa);
+
+
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image
@@ -97,6 +111,7 @@ export default function Home() {
 	useEffect(() => {
 		async function loadCategories() {
 			try {
+				setLoadingCategories(true)
 				const dbaCategories = await api.get('/category/list');
 				// console.log('Categorias carregadas:', dbaCategories.data)
 				dbaCategories.data.forEach((cat: Categories) => {
@@ -105,6 +120,8 @@ export default function Home() {
 				setCategories(dbaCategories.data);
 			} catch (error) {
 				console.error('Error loading data:', error)
+			} finally {
+				setLoadingCategories(false)
 			}
 		}
 
@@ -115,6 +132,7 @@ export default function Home() {
 	useEffect(() => {
 		async function LoadListProduct() {
 			try {
+				setLoadingProducts(true)
 				if (selectedCategory) {
 					const dbaListProductsByCategories = await api.get('category/products', {
 						params: {
@@ -133,6 +151,8 @@ export default function Home() {
 					console.error('Error loading products:', error);
 				}
 				setProducts([]);
+			} finally {
+				setLoadingProducts(false)
 			}
 		}
 
@@ -151,15 +171,17 @@ export default function Home() {
 			>
 				<TouchableOpacity>
 					<Image
-						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }} //Alterar isso
 						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>
 				<Text style={styles.logoText}>
 					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 				</Text>
-				<View style={{ width: 24 }} />
-			</LinearGradient>
+				<Text style={{ color: "#fff", fontSize: 14, fontWeight: "600" }}>
+					Mesa {numero_mesa}
+				</Text>
+				</LinearGradient>
 
 			{/* Categorias */}
 			<View style={styles.menuSearchRow}>
@@ -196,42 +218,46 @@ export default function Home() {
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={styles.categoriesContainer}
 						>
-							{categories.map((category) => (
-								<TouchableOpacity
-									key={category.id}
-									onPress={() => setSelectedCategory(category.id)}
-									style={[
-										styles.categoryItem,
-										selectedCategory === category.id && styles.selectedCategory
-									]}
-								>
-									<CategoryCard
-										image_url={category.image_url}
-										label={category.name}
-									/>
-								</TouchableOpacity>
-							))}
+
+							{loadingCategories ? (
+								<ActivityIndicator size="large" color="#391D8A" style={{ marginTop: 20 }} />
+							) : (
+								categories.map((category) => (
+									<TouchableOpacity
+										key={category.id}
+										onPress={() => setSelectedCategory(category.id)}
+										style={[
+											styles.categoryItem,
+											selectedCategory === category.id && styles.selectedCategory
+										]}
+									>
+										<CategoryCard image_url={category.image_url} label={category.name} />
+									</TouchableOpacity>
+								))
+							)}
 						</ScrollView>
 					)}
 
 					<View style={[styles.rightColumn, !showCategories && styles.rightColumnFull]}>
 						<View style={styles.row}>
-							{products.length > 0 ? (
+							{loadingProducts ? (
+								<ActivityIndicator size="large" color="#FF3F4B" style={{ marginTop: 20 }} />
+							) : products.length > 0 ? (
 								<ScrollView
 									showsVerticalScrollIndicator={false}
-									contentContainerStyle={styles.productsContainer}>
+									contentContainerStyle={styles.productsContainer}
+								>
 									<View style={styles.productsGrid}>
 										{products.map((product) => (
-											<ItemCard
-												key={product.id}
-												product={product}
-											/>
+											<ItemCard key={product.id} product={product} />
 										))}
 									</View>
 								</ScrollView>
 							) : (
 								<Text style={styles.emptyText}>
-									{selectedCategory ? "Nenhum produto nesta categoria" : "Selecione uma categoria"}
+									{selectedCategory
+										? "Nenhum produto nesta categoria"
+										: "Selecione uma categoria"}
 								</Text>
 							)}
 						</View>

@@ -45,6 +45,7 @@ import { EditarPedidoPagoController } from './controllers/pedido/editPedidoPagoC
 import { EditPedidoStatusController } from './controllers/pedido/editPedidoStatusController';
 import { ListPedidoGarcomController } from './controllers/pedido/listPedidoGarcomController';
 import { PagarPedidoPorPontosController } from './controllers/pedido/pagarPedidoPorPontosController'
+import { RemovePedidoController } from './controllers/pedido/removePedidoController';
 
 import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
@@ -119,6 +120,7 @@ router.put('/pedido/editar', isAuthenticated, new EditarPedidoPagoController().h
 router.put('/pedido/editarStatus', isAuthenticated, new EditPedidoStatusController().handle)
 router.get('/pedido/listaProGarcom', isAuthenticated, new ListPedidoGarcomController().handle)
 router.put('/pedido/pagarPorPontos', isAuthenticated, new PagarPedidoPorPontosController().handle.bind(new PagarPedidoPorPontosController()))
+router.delete('/pedido/remove', isAuthenticated, new RemovePedidoController().handle.bind(new RemovePedidoController))
 
 //ITEM ROUTE
 router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new CreateItemController()))

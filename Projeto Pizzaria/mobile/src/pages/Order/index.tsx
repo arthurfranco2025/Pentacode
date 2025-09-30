@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     View,
     Text,
@@ -10,9 +10,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, NavigationProp, RouteProp } from "@react-navigation/native";
 
+import { formatarPreco } from "../../components/utils/formatPrice";
+
 type RootStackParamList = {
     CustomizeProduct: { product: Product };
     Order: { product: Product };
+    Home: undefined;
 };
 
 interface Product {
@@ -22,6 +25,18 @@ interface Product {
     description?: string;
     image_url: string;
     category_id: string;
+    quantity?: number;
+    removedIngredients?: string[];
+    selectedExtras?: Adicionais[];
+    observation?: string;
+    totalPrice?: number;
+}
+
+interface Adicionais {
+    id: string;
+    nome: string;
+    price: string;
+    qtd: boolean;
 }
 
 export default function Order({ route }: { route?: RouteProp<RootStackParamList, "Order"> }) {
@@ -30,21 +45,21 @@ export default function Order({ route }: { route?: RouteProp<RootStackParamList,
 
     if (!product) {
         return (
-            <View style={styles.container}>
-                <Text style={{ padding: 20, alignItems: "center" }}>To fazendo ainda, calma</Text>
+            <View style={styles.noProduct}>
+                <Image
+                    source={{ uri: 'https://images.vexels.com/media/users/3/141186/isolated/preview/431ad815c9a8402ebdf354c82923c2a5-carrinho-de-compras-6.png' }}
+                    style={styles.cart}
+                />
+                <Text>Nenhum produto no carrinho.</Text>
+                <TouchableOpacity
+                    style={styles.returnButton}
+                    onPress={() => navigation.navigate('Home')}
+                >
+                    <Text style={styles.returnButtonText}>Voltar ao cardápio</Text>
+                </TouchableOpacity>
             </View>
         );
     }
-
-    // Quantidade inicial
-    const [quantity, setQuantity] = useState(1);
-
-    // Função para alterar a quantidade
-    const handleQuantityChange = (newQuantity: number) => {
-        if (newQuantity > 0) {
-            setQuantity(newQuantity);
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -67,6 +82,8 @@ export default function Order({ route }: { route?: RouteProp<RootStackParamList,
                     <View style={{ width: 24 }} />
                 </LinearGradient>
 
+                <Text style={styles.title}>Pedido</Text>
+
                 <View style={styles.card}>
                     <Image
                         source={{ uri: product.image_url }}
@@ -74,32 +91,80 @@ export default function Order({ route }: { route?: RouteProp<RootStackParamList,
                     />
                     <View style={styles.info}>
                         <Text style={styles.productName}>{product.name}</Text>
-                        <Text style={styles.price}>R$ {product.price}</Text>
-                        <View style={styles.quantityContainer}>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => handleQuantityChange(quantity - 1)}
-                            >
-                                <Text style={styles.buttonText}>-</Text>
-                            </TouchableOpacity>
-                            <Text style={styles.quantity}>{quantity}</Text>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => handleQuantityChange(quantity + 1)}
-                            >
-                                <Text style={styles.buttonText}>+</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <Text style={styles.quantity}>Quantidade: {product.quantity}</Text>
+
+                        {product.removedIngredients && product.removedIngredients.length > 0 && (
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
+                                {product.removedIngredients.map((ing, index) => (
+                                    <Text key={index} style={styles.itemTextRemoved}>- {ing}</Text>
+                                ))}
+                            </View>
+                        )}
+
+                        {product.selectedExtras && product.selectedExtras.length > 0 && (
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Adicionais:</Text>
+                                {product.selectedExtras.map((extra, index) => (
+                                    <Text key={index} style={styles.itemTextSelected}>
+                                        - {extra.nome} (+R$ {extra.price})
+                                    </Text>
+                                ))}
+                            </View>
+                        )}
+
+                        {product.observation && (
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Observação:</Text>
+                                <Text style={styles.textObservation}>{product.observation}</Text>
+                            </View>
+                        )}
+
+                        <Text style={styles.totalValue}>
+                            Total: {formatarPreco(product.totalPrice ?? 0)}
+                        </Text>
                     </View>
                 </View>
             </ScrollView>
-        </View>
-    )
+            <TouchableOpacity style={styles.buttonMore}>
+                <Text style={styles.buttonText}>Pedir mais</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonFinish}>
+                <Text style={styles.buttonText}>Finalizar pedido</Text>
+            </TouchableOpacity >
+        </View >
+    );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
-    scroll: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: "#fff"
+    },
+    noProduct: {
+        alignItems: 'center',
+        gap: 10
+    },
+    cart: {
+        width: 100,
+        height: 100
+    },
+    returnButton: {
+        backgroundColor: "#FF3F4B",
+        borderRadius: 12,
+        paddingVertical: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    returnButtonText: {
+        color: "#fff",
+        fontWeight: "700",
+        padding: 8,
+    },
+    scroll: {
+        flex: 1
+    },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -108,8 +173,16 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 20,
     },
-    logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
-
+    logoText: {
+        color: "#fff",
+        fontSize: 20,
+        fontWeight: "700"
+    },
+    title: {
+        padding: 10,
+        fontSize: 25,
+        fontWeight: "700"
+    },
     card: {
         flexDirection: "row",
         backgroundColor: "#fff",
@@ -139,32 +212,63 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginVertical: 5
     },
-    quantityContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 5
+    section: {
+        marginTop: 10,
     },
-    button: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: "#FDEDED",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    buttonText: {
-        color: "#FF3B30",
+    sectionTitle: {
         fontWeight: "bold",
-        fontSize: 16
+        fontSize: 14,
+        marginBottom: 5,
+    },
+    itemTextRemoved: {
+        fontSize: 14,
+        color: "#666",
+    },
+    itemTextSelected: {
+        fontSize: 14,
+        color: "#666",
+    },
+    textObservation: {
+        fontSize: 14,
+        color: "#666",
     },
     quantity: {
-        marginHorizontal: 10,
-        fontSize: 16
+        fontSize: 14,
+        color: "#666",
+        marginVertical: 5,
     },
-    deleteButton: {
-        marginLeft: "auto",
-        backgroundColor: "#FF3B30",
-        padding: 8,
-        borderRadius: 8
+    totalValue: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginTop: 10,
+        color: "#FF3F4B",
     },
+    buttonMore: {
+        backgroundColor: '#008344ff',
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        alignItems: "center",
+        marginBottom: 15,
+        alignSelf: "center",
+        width: "80%",
+        maxWidth: 300
+    },
+    buttonText: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 16,
+        letterSpacing: 1
+    },
+    buttonFinish: {
+        backgroundColor: '#940B14',
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        alignItems: "center",
+        marginBottom: 15,
+        alignSelf: "center",
+        width: "80%",
+        maxWidth: 300
+    }
 });
