@@ -1,10 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import prismaClient from "../../prisma/index";
+import prismaClient from "../../prisma";
 import { compare, hash } from "bcryptjs";
+import { cloudinary } from "../../config/cloudinary";
+import type { Express } from "express";
 
-const prisma = prismaClient;
+type BannerUpload = Express.Multer.File;
 
 interface EditClienteRequest {
+  banner?: string | BannerUpload;
   userId: string; // ID vindo do token
   novoName?: string;
   novoEmail?: string;
@@ -16,6 +18,7 @@ interface EditClienteRequest {
 
 class EditClienteService {
   async execute({
+    banner,
     userId,
     novoName,
     novoEmail,
@@ -24,66 +27,92 @@ class EditClienteService {
     novoPassword,
     confirmPassword,
   }: EditClienteRequest) {
-    // Objeto para armazenar os dados que serão atualizados
-    const dataToUpdate: { name?: string; email?: string; password?: string } =
-      {};
+    const dataToUpdate: { name?: string; email?: string; password?: string; image_url?: string } = {};
 
-    const clienteAtual = await prisma.cliente.findUnique({
+    // Buscar cliente atual
+    const clienteAtual = await prismaClient.cliente.findUnique({
       where: { id: userId },
     });
 
-    // Validações e atribuições condicionais
-    if (novoName) {
-      const nomeAtual = clienteAtual?.name;
+    if (!clienteAtual) {
+      throw new Error("Cliente não encontrado.");
+    }
 
-      if (novoName === nomeAtual) {
-        throw new Error("O novo nome é igual ao atual.");
+    // ===== Upload de imagem =====
+    if (banner) {
+      if (typeof banner === "string") {
+        dataToUpdate.image_url = banner;
+      } else {
+        try {
+          let uploadResult;
+
+          if (banner.buffer) {
+            // memoryStorage
+            const bufferToBase64 = banner.buffer.toString("base64");
+            const dataUri = `data:${banner.mimetype};base64,${bufferToBase64}`;
+            uploadResult = await cloudinary.uploader.upload(dataUri, {
+              folder: "clientes",
+              resource_type: "image",
+            });
+          } else if ((banner as any).path) {
+            // diskStorage
+            uploadResult = await cloudinary.uploader.upload((banner as any).path, {
+              folder: "clientes",
+              resource_type: "image",
+            });
+          } else {
+            throw new Error("Arquivo inválido para upload.");
+          }
+
+          dataToUpdate.image_url = uploadResult.secure_url;
+        } catch (error) {
+          throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
+        }
       }
+    }
 
+    // ===== Atualizar nome =====
+    if (novoName && novoName !== clienteAtual.name) {
       dataToUpdate.name = novoName;
     }
 
-    if (novoName === clienteAtual?.name || novoEmail === clienteAtual?.email || novoPassword === clienteAtual?.password) {
-      throw new Error("Os novos dados são iguais aos atuais, caso queira manter os dados, deixe-os em branco.");
-    }
-
+    // ===== Atualizar email =====
     if (novoEmail) {
       if (novoEmail !== confirmEmail) {
         throw new Error("O email e a confirmação de email não são os mesmos.");
       }
 
-      const clienteComMesmoEmail = await prismaClient.cliente.findFirst({
-        where: {
-          email: novoEmail
-        },
-      });
-
-      if (clienteAtual.email === novoEmail) {
+      if (novoEmail === clienteAtual.email) {
         throw new Error("O novo email é igual ao atual.");
       }
+
+      const clienteComMesmoEmail = await prismaClient.cliente.findFirst({
+        where: { email: novoEmail },
+      });
 
       if (clienteComMesmoEmail) {
         throw new Error("Já existe um cliente com esse e-mail.");
       }
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novoEmail)) {
-        throw new Error("Email inválido");
+        throw new Error("Email inválido.");
       }
 
       dataToUpdate.email = novoEmail;
     }
 
+    // ===== Atualizar senha =====
     if (novoPassword) {
       if (!oldPassword) {
         throw new Error("A senha antiga é obrigatória para alterar a senha.");
       }
 
-      const senhaAtualCorreta = await compare(oldPassword, clienteAtual!.password);
+      const senhaAtualCorreta = await compare(oldPassword, clienteAtual.password);
       if (!senhaAtualCorreta) {
         throw new Error("A senha antiga está incorreta.");
       }
 
-      const senhaIgual = await compare(novoPassword, clienteAtual!.password);
+      const senhaIgual = await compare(novoPassword, clienteAtual.password);
       if (senhaIgual) {
         throw new Error("A nova senha não pode ser igual à senha antiga.");
       }
@@ -97,9 +126,15 @@ class EditClienteService {
         throw new Error("A nova senha deve ter pelo menos 8 caracteres, incluindo letras e números.");
       }
 
+      dataToUpdate.password = await hash(novoPassword, 8);
     }
 
-    // Atualiza o cliente usando o ID do token
+    // Se não houver mudanças
+    if (Object.keys(dataToUpdate).length === 0) {
+      throw new Error("Nenhuma alteração foi realizada. Informe novos dados.");
+    }
+
+    // Atualiza o cliente
     const clienteAtualizado = await prismaClient.cliente.update({
       where: { id: userId },
       data: dataToUpdate,
@@ -107,11 +142,11 @@ class EditClienteService {
         id: true,
         name: true,
         email: true,
+        image_url: true,
       },
     });
 
     return clienteAtualizado;
-
   }
 }
 

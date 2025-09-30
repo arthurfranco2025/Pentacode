@@ -1,74 +1,102 @@
-import prismaClient from "../../prisma";
+import { PrismaClient } from "@prisma/client";
+import prismaClient from "../../prisma/index";
+import { compare, hash } from "bcryptjs";
 import { cloudinary } from "../../config/cloudinary";
+import type { Express } from "express";
 
-interface BannerUpload {
-  buffer: Buffer;
-  mimeType: string;
+const prisma = prismaClient;
+
+type BannerUpload = Express.Multer.File;
+
+interface EditClienteRequest {
+  banner?: string | BannerUpload;
+  userId: string;
+  novoName?: string;
+  novoEmail?: string;
+  confirmEmail?: string;
+  oldPassword?: string;
+  novoPassword?: string;
+  confirmPassword?: string;
 }
 
-interface CreateRequest {
-  name: string;
-  price: number;
-  points: number;
-  description: string;
-  promocao?: boolean;
-  category_id: string;
-  banner?: string | BannerUpload; // Pode ser URL ou objeto de upload
-}
+class EditClienteService {
+  async execute({
+    banner,
+    userId,
+    novoName,
+    novoEmail,
+    confirmEmail,
+    oldPassword,
+    novoPassword,
+    confirmPassword,
+  }: EditClienteRequest) {
+    const dataToUpdate: {
+      name?: string;
+      email?: string;
+      password?: string;
+      image_url?: string;
+    } = {};
 
-class CreateProductService {
-  async execute({ name, price, points, description, promocao, category_id, banner }: CreateRequest) {
-    if (!name) throw new Error("Insira o nome do produto");
-    if (!price) throw new Error("Insira o preço do produto");
-    if (!points) throw new Error("Insira os pontos do produto");
+    const clienteAtual = await prisma.cliente.findUnique({ where: { id: userId } });
+    if (!clienteAtual) throw new Error("Cliente não encontrado");
 
-    const productAlreadyExists = await prismaClient.product.findFirst({
-      where: { name : name},
-    });
-
-    if(productAlreadyExists){
-      throw new Error('Esse produto já existe, caso queira muda-lo vá em EDIT PRODUTO')
-    }
-
+    // 1️⃣ Tratar banner
     let imageUrl: string | undefined;
-
     if (banner) {
       if (typeof banner === "string") {
-        // Se já for uma URL, apenas atribui
-        imageUrl = banner;
+        imageUrl = banner; // URL
       } else {
-        try {
-          // Convertemos o buffer para base64 antes de enviar
-          const bufferToBase64 = banner.buffer.toString("base64");
-          const dataUri = `data:${banner.mimeType};base64,${bufferToBase64}`;
-
-          const uploadResult = await cloudinary.uploader.upload(dataUri, {
-            folder: "produtos",
-            resource_type: "image",
-          });
-
-          imageUrl = uploadResult.secure_url;
-        } catch (error) {
-          throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
-        }
+        if (!banner.buffer) throw new Error("Arquivo de imagem inválido");
+        const bufferToBase64 = banner.buffer.toString("base64");
+        const dataUri = `data:${banner.mimetype};base64,${bufferToBase64}`;
+        const uploadResult = await cloudinary.uploader.upload(dataUri, {
+          folder: "produtos",
+          resource_type: "image",
+        });
+        imageUrl = uploadResult.secure_url;
       }
+      dataToUpdate.image_url = imageUrl;
     }
-    
 
-    const product = await prismaClient.product.create({
-      data: {
-        name,
-        price,
-        points,
-        description,
-        promocao,
-        category_id,
-        image_url: imageUrl,
-      },
+    // 2️⃣ Nome
+    if (novoName) {
+      if (novoName === clienteAtual.name) throw new Error("O novo nome é igual ao atual.");
+      dataToUpdate.name = novoName;
+    }
+
+    // 3️⃣ Email
+    if (novoEmail) {
+      if (novoEmail !== confirmEmail) throw new Error("Email e confirmação diferentes");
+      if (novoEmail === clienteAtual.email) throw new Error("O novo email é igual ao atual");
+      const clienteComMesmoEmail = await prisma.cliente.findFirst({ where: { email: novoEmail } });
+      if (clienteComMesmoEmail) throw new Error("Já existe um cliente com esse e-mail");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novoEmail)) throw new Error("Email inválido");
+      dataToUpdate.email = novoEmail;
+    }
+
+    // 4️⃣ Senha
+    if (novoPassword) {
+      if (!oldPassword) throw new Error("Senha antiga obrigatória");
+      const senhaAtualCorreta = await compare(oldPassword, clienteAtual.password);
+      if (!senhaAtualCorreta) throw new Error("Senha antiga incorreta");
+      const senhaIgual = await compare(novoPassword, clienteAtual.password);
+      if (senhaIgual) throw new Error("A nova senha não pode ser igual à antiga");
+      if (novoPassword !== confirmPassword) throw new Error("Nova senha e confirmação diferentes");
+      const senhaSegura = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#./+¨()]{8,}$/;
+      if (!senhaSegura.test(novoPassword)) throw new Error(
+        "A nova senha deve ter pelo menos 8 caracteres, incluindo letras e números"
+      );
+      dataToUpdate.password = await hash(novoPassword, 8);
+    }
+
+    const clienteAtualizado = await prisma.cliente.update({
+      where: { id: userId },
+      data: dataToUpdate,
+      select: { id: true, name: true, email: true, image_url: true },
     });
 
-    return product;
+    return clienteAtualizado;
   }
 }
 
-export { CreateProductService };
+export { EditClienteService };
