@@ -58,13 +58,8 @@ const CategoryCard = ({
 }) => (
 	<View style={styles.categoryBg}>
 		<Image source={{ uri: image_url }} style={styles.categoryImage}
-			// onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
-			// onLoad={() => console.log('Image loaded successfully')}
-			// Adicionar um placeholder enquanto a imagem carrega
-			// defaultSource={require('../../assets/placeholder.png')}
-			/>
-			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
-			onLoad={() => console.log('Image loaded successfully')}
+		// onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
+		// onLoad={() => console.log('Image loaded successfully')}
 		// Adicione um placeholder enquanto a imagem carrega
 		// defaultSource={require('../../assets/placeholder.png')}
 		/>
