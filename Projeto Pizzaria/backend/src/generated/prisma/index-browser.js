@@ -137,6 +137,7 @@ exports.Prisma.ClienteScalarFieldEnum = {
   password: 'password',
   cpf: 'cpf',
   data_nasc: 'data_nasc',
+  image_url: 'image_url',
   points: 'points',
   created_at: 'created_at',
   updated_at: 'updated_at'
