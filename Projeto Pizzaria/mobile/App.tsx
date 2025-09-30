@@ -4,10 +4,13 @@ import Routes from './src/routes';
 
 import { AuthProvider } from './src/contexts/AuthContext';
 
+import QRScanner from './src/pages/ScanQrCode';
+
 export default function App() {
   return (
     <NavigationContainer>
       <AuthProvider>
+        {/* <QRScanner /> */}
         <StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false} />
         <Routes />
       </AuthProvider>
