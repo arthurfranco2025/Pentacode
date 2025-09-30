@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function QRScanner() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -12,7 +13,7 @@ export default function QRScanner() {
   const [startCamera, setStartCamera] = useState(false);
 
   const navigation = useNavigation<NavigationProp<StackParamsList>>();
-  const { user } = useContext(AuthContext); // pega o usuário logado
+  const { user, signOut } = useContext(AuthContext);
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -20,42 +21,45 @@ export default function QRScanner() {
     }
   }, [permission]);
 
-  const handleBarCodeScanned = ({ data }: { data: string }) => {
+  const handleBarCodeScanned = async ({ data }: { data: string }) => {
+    if (scanned) return;
     setScanned(true);
 
-    Alert.alert("Código lido!", `Mesa: ${data}`, [
-      {
-        text: "OK",
-        onPress: async () => {
-          try {
-            if (!user?.id) {
-              Alert.alert("Erro", "Usuário não autenticado!");
-              return;
-            }
+    let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
 
-            // data vem do QR Code, assumindo que seja o ID da mesa
-            let mesa_id = data;
-            if (mesa_id.includes("/")) {
-                mesa_id = mesa_id.split("/").pop() || mesa_id;
-            }
-            const cliente_id = user.id;
+    if (!user?.id) {
+      Alert.alert("Erro", "Usuário não autenticado!");
+      setScanned(false);
+      return;
+    }
 
-            await api.post(`/comanda/${mesa_id}`, { cliente_id });
+    try {
+      const cliente_id = user.id;
+      const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
 
-            navigation.navigate("Home", { mesaId: mesa_id });
-            } catch (err: any) {
-                console.log(err.response?.data || err.message);
-                Alert.alert(
-                    "Erro",
-                    err.response?.data?.message || "Não foi possível abrir a comanda"
-            );
-            } finally {
+      const numeroMesa = response.data.mesa.numero_mesa;
+
+      Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("Home", {
+              mesaId: mesa_id,
+              numero_mesa: numeroMesa,
+            });
             setScanned(false);
-            }
+          },
         },
-        },
-    ]);
-};
+      ]);
+    } catch (err: any) {
+      console.log(err.response?.data || err.message);
+      Alert.alert(
+        "Erro",
+        err.response?.data?.message || "Não foi possível abrir a comanda"
+      );
+      setScanned(false);
+    }
+  };
 
   if (!permission) {
     return (
@@ -73,72 +77,82 @@ export default function QRScanner() {
     );
   }
 
-  // Tela inicial antes da câmera
-  if (!startCamera) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.title}>Escanear QR Code da Mesa</Text>
-        <Text style={styles.subtitle}>
-          Clique no botão abaixo para abrir a câmera
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setStartCamera(true)}
-        >
-          <Text style={styles.buttonText}>Abrir Câmera</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // Tela da câmera
   return (
     <View style={styles.container}>
-      <CameraView
-        style={StyleSheet.absoluteFillObject}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr", "ean13", "code128"],
-        }}
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-      />
-
-      {/* Botão de voltar */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => setStartCamera(false)}
+      {/* HEADER - agora sempre aparece */}
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        colors={["#391D8A", "#261B47"]}
+        style={[styles.header, startCamera && styles.headerCameraOpen]}
       >
-        <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
+        <View style={{ width: 24 }} />
+        <Text style={styles.logoText}>
+          Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+        </Text>
+        <View style={{ width: 24 }} />
+      </LinearGradient>
+
+      {/* Tela inicial antes de abrir a câmera */}
+      {!startCamera && (
+        <View style={styles.center}>
+          <Text style={styles.title}>Escanear QR Code da Mesa</Text>
+          <Text style={styles.subtitle}>
+            Clique no botão abaixo para abrir a câmera
+          </Text>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setStartCamera(true)}
+          >
+            <Text style={styles.buttonText}>Abrir Câmera</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.logoutButton]}
+            onPress={signOut}
+          >
+            <Text style={styles.buttonText}>Sair</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Tela da câmera */}
+      {startCamera && (
+        <View style={styles.cameraContainer}>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr", "ean13", "code128"],
+            }}
+            onBarcodeScanned={handleBarCodeScanned}
+          />
+
+          {/* Botão de voltar */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setStartCamera(false)}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: "#FFF" },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 30,
-    textAlign: "center",
-  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, color: "#333", textAlign: "center" },
+  subtitle: { fontSize: 16, color: "#666", marginBottom: 30, textAlign: "center" },
   button: {
-    backgroundColor: "#7B2FF7",
+    backgroundColor: "#391D8A",
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
@@ -147,23 +161,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    marginBottom: 15,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+  logoutButton: { backgroundColor: "#FF3F4B" },
+  buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "rgba(0,0,0,0.5)", padding: 10, borderRadius: 20 },
+  backButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    marginBottom: 30,
   },
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 10,
-    borderRadius: 20,
+  headerCameraOpen: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    marginBottom: 0,
   },
-  backButtonText: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
+  logoText: { fontSize: 28, fontWeight: "bold", color: "#FFF" },
+
+  cameraContainer: { flex: 1 },
 });
