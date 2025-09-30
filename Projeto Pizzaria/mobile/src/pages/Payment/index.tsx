@@ -9,14 +9,17 @@ import {
     StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 export default function Payment() {
     const [selectedCard, setSelectedCard] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
-    const [finalConfirmVisible, setFinalConfirmVisible] = useState(false); // novo modal de confirmação
+    const [finalConfirmVisible, setFinalConfirmVisible] = useState(false);
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const cardOptions = [
         { label: "Crédito", value: "credito" },
@@ -38,7 +41,7 @@ export default function Payment() {
         <View style={styles.container}>
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={ styles.scrollContent} 
+                contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
@@ -168,7 +171,7 @@ export default function Payment() {
                     </View>
                 </Modal>
 
-                {/* MODAL DE CONFIRMAÇÃO (pergunta antes de confirmar) */}
+                {/* MODAL DE CONFIRMAÇÃO */}
                 <Modal
                     transparent={true}
                     visible={finalConfirmVisible}
@@ -228,6 +231,19 @@ export default function Payment() {
                     </View>
                 </Modal>
             </ScrollView>
+
+            {/* BOTÃO LOGOUT */}
+            {paymentConfirmed && (
+                <View style={styles.logoutWrapper}>
+                    <Text style={styles.logoutText}>Já efetuou o pagamento?</Text>
+                    <TouchableOpacity
+                        style={styles.logoutButton}
+                        onPress={() => navigation.navigate("SignIn")}
+                    >
+                        <Text style={styles.logoutButtonText}>Logout</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </View>
     );
 }
@@ -345,5 +361,33 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     confirmModalButtonText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
-    confirmModalSubtitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#391D8A", textAlign: "center" }
+    confirmModalSubtitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#391D8A", textAlign: "center" },
+
+    // ESTILIZAÇÃO DO BOTÃO LOGOUT
+    logoutWrapper: {
+        position: "absolute",
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: "center",
+        zIndex: 10,
+    },
+    logoutText: {
+        marginBottom: 10,
+        fontSize: 16,
+        color: "#333",
+        fontWeight: "600",
+    },
+    logoutButton: {
+        backgroundColor: "#FF3F4B",
+        paddingVertical: 14,
+        paddingHorizontal: 40,
+        borderRadius: 12,
+        elevation: 4,
+    },
+    logoutButtonText: {
+        color: "#FFF",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
 });
