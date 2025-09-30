@@ -173,6 +173,29 @@ export default function CustomizeProduct() {
         }
     };
 
+    const customizedProduct = {
+        ...product,
+        quantity: quantity,
+        totalPrice: totalPrice,
+        removedIngredients: Object.entries(selectedIngredients)
+            .filter(([_, value]) => value === false)
+            .map(([id]) => {
+                const ingredient = ingredients.find(ing => ing.id === id);
+                return ingredient?.nome || id;
+            }),
+        selectedExtras: Object.entries(selectedExtras)
+            .filter(([_, value]) => value === true)
+            .map(([id]) => {
+                const extra = extras.find(e => e.id === id);
+                return {
+                    id: extra?.id,
+                    nome: extra?.nome,
+                    price: extra?.price
+                };
+            }),
+        observation: observation
+    };
+
     return (
         <View style={styles.container}>
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={["#391D8A", "#261B47"]} style={styles.header}>
@@ -308,7 +331,7 @@ export default function CustomizeProduct() {
 
             >
                 <View style={[styles.confirmButton, { backgroundColor: '#FF3B30' }]}>
-                    <Text style={styles.confirmText} onPress={() => navigation.navigate("Order", { product })}>
+                    <Text style={styles.confirmText} onPress={() => navigation.navigate("Order", { product: customizedProduct })}>
                         Adicionar ao Carrinho - {formatarPreco(totalPrice)}
                     </Text>
                 </View>
