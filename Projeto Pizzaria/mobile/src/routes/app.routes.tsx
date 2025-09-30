@@ -10,7 +10,10 @@ import ScanQrCode from "../pages/ScanQrCode";
 import { PedidoProvider } from "../contexts/pedidoContext";
 
 export type StackParamsList = {
-    Home: {mesaId: string} | undefined;
+    Home: {
+        mesaId: string;
+        numero_mesa: number;
+    };
     ProductInfo: undefined;
     CustomizeProduct: undefined;
     Order: undefined
@@ -56,7 +59,7 @@ function AppRoutes() {
                 options={{ headerShown: false }}
             />
 
-            
+
 
             {/* <Stack.Screen 
                 name="SignUp" 
