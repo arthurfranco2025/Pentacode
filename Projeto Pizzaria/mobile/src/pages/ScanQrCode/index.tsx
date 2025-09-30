@@ -13,7 +13,7 @@ export default function QRScanner() {
   const [startCamera, setStartCamera] = useState(false);
 
   const navigation = useNavigation<NavigationProp<StackParamsList>>();
-  const { user, signOut } = useContext(AuthContext); // usuário logado e logout
+  const { user, signOut } = useContext(AuthContext);
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -35,8 +35,8 @@ export default function QRScanner() {
 
     try {
       const cliente_id = user.id;
-
       const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
+
       const numeroMesa = response.data.mesa.numero_mesa;
 
       Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
@@ -79,12 +79,12 @@ export default function QRScanner() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
+      {/* HEADER - agora sempre aparece */}
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         colors={["#391D8A", "#261B47"]}
-        style={styles.header}
+        style={[styles.header, startCamera && styles.headerCameraOpen]}
       >
         <View style={{ width: 24 }} />
         <Text style={styles.logoText}>
@@ -101,7 +101,6 @@ export default function QRScanner() {
             Clique no botão abaixo para abrir a câmera
           </Text>
 
-          {/* Botão Abrir Câmera */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => setStartCamera(true)}
@@ -109,10 +108,9 @@ export default function QRScanner() {
             <Text style={styles.buttonText}>Abrir Câmera</Text>
           </TouchableOpacity>
 
-          {/* Botão Logout */}
           <TouchableOpacity
             style={[styles.button, styles.logoutButton]}
-            onPress={() => signOut()}
+            onPress={signOut}
           >
             <Text style={styles.buttonText}>Sair</Text>
           </TouchableOpacity>
@@ -144,27 +142,15 @@ export default function QRScanner() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  cameraContainer: { flex: 1 },
+  container: { flex: 1, backgroundColor: "#FFF" },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-  },
-  logoText: { fontSize: 28, fontWeight: "bold", color: "#fff" },
-
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, color: "#333", textAlign: "center" },
   subtitle: { fontSize: 16, color: "#666", marginBottom: 30, textAlign: "center" },
-
   button: {
     backgroundColor: "#391D8A",
     paddingVertical: 15,
@@ -175,18 +161,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
-    marginTop: 10,
+    marginBottom: 15,
   },
   logoutButton: { backgroundColor: "#FF3F4B" },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 10,
-    borderRadius: 20,
-  },
+  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "rgba(0,0,0,0.5)", padding: 10, borderRadius: 20 },
   backButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    marginBottom: 30,
+  },
+  headerCameraOpen: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    marginBottom: 0,
+  },
+  logoText: { fontSize: 28, fontWeight: "bold", color: "#FFF" },
+
+  cameraContainer: { flex: 1 },
 });
