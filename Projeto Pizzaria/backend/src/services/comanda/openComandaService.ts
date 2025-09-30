@@ -48,7 +48,8 @@ class OpenComandaService {
             select: {
                 id: true,
                 cliente_id: true,
-                mesa_id: true
+                mesa_id: true,
+                mesa: {select: {numero_mesa: true} }
             }
         });
 

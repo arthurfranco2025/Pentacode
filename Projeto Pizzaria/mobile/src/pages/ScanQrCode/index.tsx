@@ -12,7 +12,7 @@ export default function QRScanner() {
   const [startCamera, setStartCamera] = useState(false);
 
   const navigation = useNavigation<NavigationProp<StackParamsList>>();
-  const { user } = useContext(AuthContext); // pega o usuário logado
+  const { user } = useContext(AuthContext); // usuário logado
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -20,42 +20,50 @@ export default function QRScanner() {
     }
   }, [permission]);
 
-  const handleBarCodeScanned = ({ data }: { data: string }) => {
+  const handleBarCodeScanned = async ({ data }: { data: string }) => {
+    if (scanned) return;
     setScanned(true);
 
-    Alert.alert("Código lido!", `Mesa: ${data}`, [
-      {
-        text: "OK",
-        onPress: async () => {
-          try {
-            if (!user?.id) {
-              Alert.alert("Erro", "Usuário não autenticado!");
-              return;
-            }
+    // data vem do QR Code, assumindo que seja o ID da mesa
+    let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
 
-            // data vem do QR Code, assumindo que seja o ID da mesa
-            let mesa_id = data;
-            if (mesa_id.includes("/")) {
-                mesa_id = mesa_id.split("/").pop() || mesa_id;
-            }
-            const cliente_id = user.id;
+    if (!user?.id) {
+      Alert.alert("Erro", "Usuário não autenticado!");
+      setScanned(false);
+      return;
+    }
 
-            await api.post(`/comanda/${mesa_id}`, { cliente_id });
+    try {
+      const cliente_id = user.id;
 
-            navigation.navigate("Home", { mesaId: mesa_id });
-            } catch (err: any) {
-                console.log(err.response?.data || err.message);
-                Alert.alert(
-                    "Erro",
-                    err.response?.data?.message || "Não foi possível abrir a comanda"
-            );
-            } finally {
+      // Chamada ao backend para abrir a comanda
+      const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
+
+      const numeroMesa = response.data.mesa.numero_mesa;
+
+      // Mostra alert com número da mesa
+      Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
+        {
+          text: "OK",
+          onPress: () => {
+            // Navega para Home passando mesaId e numero_mesa
+            navigation.navigate("Home", {
+              mesaId: mesa_id,
+              numero_mesa: numeroMesa,
+            });
             setScanned(false);
-            }
+          },
         },
-        },
-    ]);
-};
+      ]);
+    } catch (err: any) {
+      console.log(err.response?.data || err.message);
+      Alert.alert(
+        "Erro",
+        err.response?.data?.message || "Não foi possível abrir a comanda"
+      );
+      setScanned(false);
+    }
+  };
 
   if (!permission) {
     return (
@@ -73,7 +81,7 @@ export default function QRScanner() {
     );
   }
 
-  // Tela inicial antes da câmera
+  // Tela inicial antes de abrir a câmera
   if (!startCamera) {
     return (
       <View style={styles.center}>
@@ -99,7 +107,7 @@ export default function QRScanner() {
         barcodeScannerSettings={{
           barcodeTypes: ["qr", "ean13", "code128"],
         }}
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        onBarcodeScanned={handleBarCodeScanned}
       />
 
       {/* Botão de voltar */}
@@ -114,9 +122,7 @@ export default function QRScanner() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   center: {
     flex: 1,
     justifyContent: "center",
@@ -124,21 +130,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#fff",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 30,
-    textAlign: "center",
-  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, color: "#333", textAlign: "center" },
+  subtitle: { fontSize: 16, color: "#666", marginBottom: 30, textAlign: "center" },
   button: {
-    backgroundColor: "#7B2FF7",
+    backgroundColor: "#391D8A",
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
@@ -148,22 +143,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 10,
-    borderRadius: 20,
-  },
-  backButtonText: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
+  buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "rgba(0,0,0,0.5)", padding: 10, borderRadius: 20 },
+  backButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
 });

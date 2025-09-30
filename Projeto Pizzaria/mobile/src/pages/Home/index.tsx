@@ -15,9 +15,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice"
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { StackParamsList } from "../../routes/app.routes";
+
+
+
 
 type RootStackParamList = {
-	Home: undefined;
+	Home: {mesaId: string; mesaNumero: number};
 	ProductInfo: {
 		product: Product;
 	};
@@ -77,6 +82,12 @@ export default function Home() {
 
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
+	const route = useRoute<RouteProp<StackParamsList, "Home">>();
+    const { mesaId, numero_mesa } = route.params;
+
+	console.log("Mesa ID:", mesaId);
+    console.log("Número da mesa:", numero_mesa);
+
 
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
@@ -167,8 +178,10 @@ export default function Home() {
 				<Text style={styles.logoText}>
 					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 				</Text>
-				<View style={{ width: 24 }} />
-			</LinearGradient>
+				<Text style={{ color: "#fff", fontSize: 14, fontWeight: "600" }}>
+					Mesa {numero_mesa}
+				</Text>
+				</LinearGradient>
 
 			{/* Categorias */}
 			<View style={styles.menuSearchRow}>

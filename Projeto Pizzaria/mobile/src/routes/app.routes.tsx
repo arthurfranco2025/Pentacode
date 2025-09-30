@@ -9,7 +9,10 @@ import Order from "../pages/Order"
 import ScanQrCode from "../pages/ScanQrCode";
 
 export type StackParamsList = {
-    Home: {mesaId: string} | undefined;
+    Home: {
+        mesaId: string;
+        numero_mesa: number;
+    };
     ProductInfo: undefined;
     CustomizeProduct: undefined;
     Order: undefined
