@@ -23,16 +23,6 @@ type RootStackParamList = {
 	};
 };
 
-
-// const PromoCard = ({ title, price }: { title: string; price: string }) => (
-// 	<View style={styles.card}>
-// 		<Text style={styles.promoText}>{title}</Text>
-// 		<Text style={styles.priceText}>{price}</Text>
-// 		<TouchableOpacity style={styles.button} onPress={() => alert("Pressed!")}>
-// 			<Text style={styles.buttonText}>VER</Text>
-// 		</TouchableOpacity>
-// 	</View>
-// );
 interface Categories {
 	name: string;
 	id: string;
@@ -57,9 +47,9 @@ const CategoryCard = ({
 }) => (
 	<View style={styles.categoryBg}>
 		<Image source={{ uri: image_url }} style={styles.categoryImage}
-			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
-			onLoad={() => console.log('Image loaded successfully')}
-			// Adicione um placeholder enquanto a imagem carrega
+			// onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
+			// onLoad={() => console.log('Image loaded successfully')}
+			// Adicionar um placeholder enquanto a imagem carrega
 			// defaultSource={require('../../assets/placeholder.png')}
 			/>
 		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
@@ -97,7 +87,7 @@ export default function Home() {
 		async function loadCategories() {
 			try {
 				const dbaCategories = await api.get('/category/list');
-				console.log('Categorias carregadas:', dbaCategories.data)
+				// console.log('Categorias carregadas:', dbaCategories.data)
 				dbaCategories.data.forEach((cat: Categories) => {
 					console.log('Image path:', cat.image_url)
 				});
@@ -120,7 +110,7 @@ export default function Home() {
 							category_id: selectedCategory
 						}
 					});
-					console.log('Produtos carregados:', dbaListProductsByCategories.data)
+					// console.log('Produtos carregados:', dbaListProductsByCategories.data)
 					setProducts(dbaListProductsByCategories.data)
 				} else {
 					setProducts([]);
