@@ -59,7 +59,7 @@ function AppRoutes() {
                 options={{ headerShown: false }}
             />
 
-            
+
 
             {/* <Stack.Screen 
                 name="SignUp" 
