@@ -31,9 +31,11 @@ class ListIngredientePorProdutoService{
 				id: { in: ingredienteIds }
 			},
 			select:{
-				nome: true
+				id: true,
+				nome: true,
+				}
 			}
-		})
+		)
 
         return ingredientes
     }
