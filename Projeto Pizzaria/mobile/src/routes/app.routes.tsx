@@ -6,12 +6,14 @@ import ProductInfo from "../pages/ProductInfo";
 import CustomizeProduct from "../pages/CustomizeProduct";
 import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
+import ScanQrCode from "../pages/ScanQrCode";
 
 export type StackParamsList = {
-    Home: undefined;
+    Home: {mesaId: string} | undefined;
     ProductInfo: undefined;
     CustomizeProduct: undefined;
     Order: undefined
+    ScanQrCode: undefined
 };
 
 const Stack = createNativeStackNavigator();
@@ -19,6 +21,11 @@ const Stack = createNativeStackNavigator();
 function AppRoutes() {
     return (
         <Stack.Navigator>
+            <Stack.Screen
+                name="ScanQrCode"
+                component={ScanQrCode}
+                options={{ headerShown: false }}
+            />
             <Stack.Screen
                 name="Home"
                 component={Home}
@@ -47,6 +54,8 @@ function AppRoutes() {
                 component={Order}
                 options={{ headerShown: false }}
             />
+
+            
 
             {/* <Stack.Screen 
                 name="SignUp" 
