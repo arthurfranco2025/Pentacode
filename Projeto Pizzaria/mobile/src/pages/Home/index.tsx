@@ -21,6 +21,7 @@ type RootStackParamList = {
 	ProductInfo: {
 		product: Product;
 	};
+	Order: undefined;
 };
 
 
@@ -59,9 +60,9 @@ const CategoryCard = ({
 		<Image source={{ uri: image_url }} style={styles.categoryImage}
 			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
 			onLoad={() => console.log('Image loaded successfully')}
-			// Adicione um placeholder enquanto a imagem carrega
-			// defaultSource={require('../../assets/placeholder.png')}
-			/>
+		// Adicione um placeholder enquanto a imagem carrega
+		// defaultSource={require('../../assets/placeholder.png')}
+		/>
 		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
 	</View>
 );
@@ -73,7 +74,7 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([])
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
-	
+
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image
@@ -264,7 +265,10 @@ export default function Home() {
 					/>
 					<Text style={styles.cartText}>: R$0.00</Text>
 				</View>
-				<TouchableOpacity style={styles.orderButton} onPress={() => alert("Pressed!")}>
+				<TouchableOpacity
+					style={styles.orderButton}
+					onPress={() => navigation.navigate('Order')}
+				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
 

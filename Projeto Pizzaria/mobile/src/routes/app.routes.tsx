@@ -5,36 +5,47 @@ import Home from "../pages/Home";
 import ProductInfo from "../pages/ProductInfo";
 import CustomizeProduct from "../pages/CustomizeProduct";
 import Dashboard from "../pages/Dashboard";
+import Order from "../pages/Order"
 
-export type StackParamsList ={
+export type StackParamsList = {
     Home: undefined;
     ProductInfo: undefined;
     CustomizeProduct: undefined;
+    Order: undefined
 };
 
 const Stack = createNativeStackNavigator();
 
 function AppRoutes() {
-    return(
+    return (
         <Stack.Navigator>
-            <Stack.Screen 
-                name="Home" 
+            <Stack.Screen
+                name="Home"
                 component={Home}
                 options={{ headerShown: false }}
             />
-            <Stack.Screen 
-                name="Dashboard" 
+            <Stack.Screen
+                name="Dashboard"
                 component={Dashboard}
+                options={{ headerShown: false }}
             />
 
-            <Stack.Screen 
-                name="ProductInfo" 
+            <Stack.Screen
+                name="ProductInfo"
                 component={ProductInfo}
+                options={{ headerShown: false }}
             />
-            
-            <Stack.Screen 
-                name="CustomizeProduct" 
-                component={CustomizeProduct} 
+
+            <Stack.Screen
+                name="CustomizeProduct"
+                component={CustomizeProduct}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="Order"
+                component={Order}
+                options={{ headerShown: false }}
             />
 
             {/* <Stack.Screen 
