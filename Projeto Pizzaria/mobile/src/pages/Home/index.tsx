@@ -151,7 +151,7 @@ export default function Home() {
 			>
 				<TouchableOpacity>
 					<Image
-						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }} //Alterar isso
 						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>

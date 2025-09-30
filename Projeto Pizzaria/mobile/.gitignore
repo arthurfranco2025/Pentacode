@@ -1,4 +1,4 @@
 # Ignorar dependências do Node
 node_modules/
 # Ignorar arquivos de build
-services/api.ts
+/mobile/src/services/api.ts

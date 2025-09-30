@@ -21,6 +21,7 @@ import { formatarPreco } from "../../components/utils/formatPrice";
 type RootStackParamList = {
     ProductInfo: { product: Product };
     CustomizeProduct: { product: Product };
+    Order: { product: Product }
 };
 
 interface Product {
@@ -307,7 +308,7 @@ export default function CustomizeProduct() {
 
             >
                 <View style={[styles.confirmButton, { backgroundColor: '#FF3B30' }]}>
-                    <Text style={styles.confirmText}>
+                    <Text style={styles.confirmText} onPress={() => navigation.navigate("Order", { product })}>
                         Adicionar ao Carrinho - {formatarPreco(totalPrice)}
                     </Text>
                 </View>
