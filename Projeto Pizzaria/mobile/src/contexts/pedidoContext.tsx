@@ -1,0 +1,59 @@
+import React, { createContext, useContext, useState, ReactNode } from "react";
+
+interface PedidoItem {
+    product_id: string;
+    name: string;
+    image_url: string;
+    qtd: number;
+    price: number; // preço do produto após customização
+    removedIngredients: string[];
+    extras: string[];
+    observation: string;
+}
+
+interface pedidoContextType {
+    pedido: PedidoItem[];
+    addItem: (item: PedidoItem) => void;
+    removeItem: (product_id: string) => void;
+    clearPedido: () => void;
+    totalPedido: number;
+}
+
+const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
+
+export const PedidoProvider = ({ children }: { children: ReactNode }) => {
+    const [pedido, setpedido] = useState<PedidoItem[]>([]);
+
+    const addItem = (item: PedidoItem) => {
+        setpedido((prev) => [...prev, item]);
+    };
+
+    const removeItem = (product_id: string) => {
+        setpedido((prev) => prev.filter((i) => i.product_id !== product_id));
+    };
+
+    const clearPedido = () => {
+        setpedido([]);
+    };
+
+    const totalPedido = pedido.reduce((acc, item) => acc + item.price, 0);
+
+    return (
+        <pedidoContext.Provider
+            value={{
+                pedido,
+                addItem,
+                removeItem,
+                clearPedido,
+                totalPedido
+            }}>
+            {children}
+        </pedidoContext.Provider>
+    );
+};
+
+export const usePedido = () => {
+    const context = useContext(pedidoContext);
+    if (!context) throw new Error("usePedido deve ser usado dentro de um PedidoProvider");
+    return context;
+};

@@ -6,6 +6,7 @@ import ProductInfo from "../pages/ProductInfo";
 import CustomizeProduct from "../pages/CustomizeProduct";
 import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
+import { PedidoProvider } from "../contexts/pedidoContext";
 
 export type StackParamsList = {
     Home: undefined;
