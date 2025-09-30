@@ -39,7 +39,10 @@ class CreateItemService {
     // 🔎 busca a comanda correta
     const comanda = await PrismaClient.comanda.findUnique({
       where: { id: pedido_comanda.comanda_id },
-      select: { status: true },
+      select: {
+        status: true,
+        cliente_id: true
+      },
     });
 
     if (!comanda) {
@@ -63,8 +66,34 @@ class CreateItemService {
         price: true,
         points: true,
         name: true,
+        category_id: true
       },
     });
+
+    if (produto.category_id == 'c6803b68-81a6-45a9-957b-9899c31905ae') {
+
+      const cliente = await PrismaClient.cliente.findFirst({
+        where: {
+          id: comanda.cliente_id
+        }
+      })
+
+      const hoje = new Date();
+      const nascimento = new Date(cliente.data_nasc);
+
+      let idade = hoje.getFullYear() - nascimento.getFullYear();
+      const mes = hoje.getMonth() - nascimento.getMonth();
+
+      // Ajusta se ainda não fez aniversário esse ano
+      if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+        idade--;
+      }
+
+      if (idade < 18) {
+        throw new Error("Cliente deve ter pelo menos 18 anos.");
+      }
+
+    }
 
     if (!produto) {
       throw new Error("O produto não existe");

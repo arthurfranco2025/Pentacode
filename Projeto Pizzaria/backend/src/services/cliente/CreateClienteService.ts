@@ -13,6 +13,10 @@ interface ClienteRequest {
 class CreateClienteService {
     async execute({ name, email, password, cpf, data_nasc }: ClienteRequest) {
 
+        if (!name) {
+            throw new Error("Insira o seu nome")
+        }
+
         if (!email) {
             throw new Error("Email incorreto")
         }
@@ -35,8 +39,22 @@ class CreateClienteService {
             throw new Error('Data de Nascimento é obrigatória')
         }
 
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            throw new Error("Email inválido");
+        if (!validarNome(name)) {
+            throw new Error("O seu nome não pode contar caracteres especiais")
+        }
+
+        if(!validarEmail(email)) {
+            throw new Error("Somente letras (a - z), números (0 - 9) e pontos (.) são permitidos.")
+        }
+
+        function validarNome(nome: string): boolean {
+            const regex = /^[A-Za-zÀ-ÿ\s]+$/;
+            return regex.test(nome);
+        }
+
+        function validarEmail(email: string): boolean{
+            const regex = /^[a-z0-9.]+@[a-z0-9.]+\.[a-z]+$/i;
+            return regex.test(email);
         }
 
         const senhaSegura = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#./+¨()]{8,}$/;
@@ -48,7 +66,7 @@ class CreateClienteService {
             where: {
                 email: email
             }
-        })  
+        })
         const clienteAlreadyExistsCPF = await prismaClient.cliente.findFirst({
             where: {
                 cpf: cpf
@@ -68,7 +86,7 @@ class CreateClienteService {
                 email: email,
                 password: passwordHash,
                 cpf: cpf,
-                data_nasc: dataDefault,
+                data_nasc: new Date(dataDefault),
             },
             select: {
                 id: true,

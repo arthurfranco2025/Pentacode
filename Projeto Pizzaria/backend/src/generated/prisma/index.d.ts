@@ -3423,6 +3423,7 @@ export namespace Prisma {
     password: string | null
     cpf: string | null
     data_nasc: Date | null
+    image_url: string | null
     points: number | null
     created_at: Date | null
     updated_at: Date | null
@@ -3435,6 +3436,7 @@ export namespace Prisma {
     password: string | null
     cpf: string | null
     data_nasc: Date | null
+    image_url: string | null
     points: number | null
     created_at: Date | null
     updated_at: Date | null
@@ -3447,6 +3449,7 @@ export namespace Prisma {
     password: number
     cpf: number
     data_nasc: number
+    image_url: number
     points: number
     created_at: number
     updated_at: number
@@ -3469,6 +3472,7 @@ export namespace Prisma {
     password?: true
     cpf?: true
     data_nasc?: true
+    image_url?: true
     points?: true
     created_at?: true
     updated_at?: true
@@ -3481,6 +3485,7 @@ export namespace Prisma {
     password?: true
     cpf?: true
     data_nasc?: true
+    image_url?: true
     points?: true
     created_at?: true
     updated_at?: true
@@ -3493,6 +3498,7 @@ export namespace Prisma {
     password?: true
     cpf?: true
     data_nasc?: true
+    image_url?: true
     points?: true
     created_at?: true
     updated_at?: true
@@ -3592,6 +3598,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc: Date | null
+    image_url: string | null
     points: number
     created_at: Date | null
     updated_at: Date | null
@@ -3623,6 +3630,7 @@ export namespace Prisma {
     password?: boolean
     cpf?: boolean
     data_nasc?: boolean
+    image_url?: boolean
     points?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -3640,6 +3648,7 @@ export namespace Prisma {
     password?: boolean
     cpf?: boolean
     data_nasc?: boolean
+    image_url?: boolean
     points?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -3652,6 +3661,7 @@ export namespace Prisma {
     password?: boolean
     cpf?: boolean
     data_nasc?: boolean
+    image_url?: boolean
     points?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -3664,12 +3674,13 @@ export namespace Prisma {
     password?: boolean
     cpf?: boolean
     data_nasc?: boolean
+    image_url?: boolean
     points?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type ClienteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "cpf" | "data_nasc" | "points" | "created_at" | "updated_at", ExtArgs["result"]["cliente"]>
+  export type ClienteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "cpf" | "data_nasc" | "image_url" | "points" | "created_at" | "updated_at", ExtArgs["result"]["cliente"]>
   export type ClienteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     avaliacao?: boolean | Cliente$avaliacaoArgs<ExtArgs>
     favoritos?: boolean | Cliente$favoritosArgs<ExtArgs>
@@ -3695,6 +3706,7 @@ export namespace Prisma {
       password: string
       cpf: string
       data_nasc: Date | null
+      image_url: string | null
       points: number
       created_at: Date | null
       updated_at: Date | null
@@ -4131,6 +4143,7 @@ export namespace Prisma {
     readonly password: FieldRef<"Cliente", 'String'>
     readonly cpf: FieldRef<"Cliente", 'String'>
     readonly data_nasc: FieldRef<"Cliente", 'DateTime'>
+    readonly image_url: FieldRef<"Cliente", 'String'>
     readonly points: FieldRef<"Cliente", 'Float'>
     readonly created_at: FieldRef<"Cliente", 'DateTime'>
     readonly updated_at: FieldRef<"Cliente", 'DateTime'>
@@ -18227,6 +18240,7 @@ export namespace Prisma {
     password: 'password',
     cpf: 'cpf',
     data_nasc: 'data_nasc',
+    image_url: 'image_url',
     points: 'points',
     created_at: 'created_at',
     updated_at: 'updated_at'
@@ -18581,6 +18595,7 @@ export namespace Prisma {
     password?: StringFilter<"Cliente"> | string
     cpf?: StringFilter<"Cliente"> | string
     data_nasc?: DateTimeNullableFilter<"Cliente"> | Date | string | null
+    image_url?: StringNullableFilter<"Cliente"> | string | null
     points?: FloatFilter<"Cliente"> | number
     created_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
@@ -18597,6 +18612,7 @@ export namespace Prisma {
     password?: SortOrder
     cpf?: SortOrder
     data_nasc?: SortOrderInput | SortOrder
+    image_url?: SortOrderInput | SortOrder
     points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
@@ -18616,6 +18632,7 @@ export namespace Prisma {
     password?: StringFilter<"Cliente"> | string
     cpf?: StringFilter<"Cliente"> | string
     data_nasc?: DateTimeNullableFilter<"Cliente"> | Date | string | null
+    image_url?: StringNullableFilter<"Cliente"> | string | null
     points?: FloatFilter<"Cliente"> | number
     created_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Cliente"> | Date | string | null
@@ -18632,6 +18649,7 @@ export namespace Prisma {
     password?: SortOrder
     cpf?: SortOrder
     data_nasc?: SortOrderInput | SortOrder
+    image_url?: SortOrderInput | SortOrder
     points?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
@@ -18652,6 +18670,7 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"Cliente"> | string
     cpf?: StringWithAggregatesFilter<"Cliente"> | string
     data_nasc?: DateTimeNullableWithAggregatesFilter<"Cliente"> | Date | string | null
+    image_url?: StringNullableWithAggregatesFilter<"Cliente"> | string | null
     points?: FloatWithAggregatesFilter<"Cliente"> | number
     created_at?: DateTimeNullableWithAggregatesFilter<"Cliente"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Cliente"> | Date | string | null
@@ -19534,6 +19553,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -19550,6 +19570,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -19566,6 +19587,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19582,6 +19604,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19598,6 +19621,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -19610,6 +19634,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19622,6 +19647,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20533,6 +20559,21 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -20591,6 +20632,7 @@ export namespace Prisma {
     password?: SortOrder
     cpf?: SortOrder
     data_nasc?: SortOrder
+    image_url?: SortOrder
     points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -20607,6 +20649,7 @@ export namespace Prisma {
     password?: SortOrder
     cpf?: SortOrder
     data_nasc?: SortOrder
+    image_url?: SortOrder
     points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -20619,6 +20662,7 @@ export namespace Prisma {
     password?: SortOrder
     cpf?: SortOrder
     data_nasc?: SortOrder
+    image_url?: SortOrder
     points?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -20626,6 +20670,24 @@ export namespace Prisma {
 
   export type ClienteSumOrderByAggregateInput = {
     points?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -20678,21 +20740,6 @@ export namespace Prisma {
     cliente_id?: SortOrder
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type ProductListRelationFilter = {
     every?: ProductWhereInput
     some?: ProductWhereInput
@@ -20725,24 +20772,6 @@ export namespace Prisma {
     image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -21333,6 +21362,10 @@ export namespace Prisma {
     connect?: PedidoWhereUniqueInput | PedidoWhereUniqueInput[]
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -21493,10 +21526,6 @@ export namespace Prisma {
     connectOrCreate?: ProductCreateOrConnectWithoutCategoryInput | ProductCreateOrConnectWithoutCategoryInput[]
     createMany?: ProductCreateManyCategoryInputEnvelope
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type ProductUpdateManyWithoutCategoryNestedInput = {
@@ -22221,33 +22250,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -22260,6 +22262,17 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -22277,6 +22290,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -22604,6 +22633,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -22619,6 +22649,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -22691,6 +22722,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22706,6 +22738,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23000,6 +23033,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23015,6 +23049,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23109,6 +23144,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23124,6 +23160,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23190,6 +23227,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23205,6 +23243,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23313,6 +23352,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23328,6 +23368,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23400,6 +23441,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23415,6 +23457,7 @@ export namespace Prisma {
     password: string
     cpf: string
     data_nasc?: Date | string | null
+    image_url?: string | null
     points?: number
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23475,6 +23518,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23490,6 +23534,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     cpf?: StringFieldUpdateOperationsInput | string
     data_nasc?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     points?: FloatFieldUpdateOperationsInput | number
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

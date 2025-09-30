@@ -58,14 +58,9 @@ class AuthClienteService {
             }
         }
 
-        // if (!guest && (!email || !cpf || !password)) {
-            // throw new Error("Insira os dados de login");
-        // }
-
-        // if(!guest){
-        //     throw new Error("Insira o guest")
-        // }
-
+       if (guest == false) {
+        throw new Error("Insira os seus dados de login")
+       }
 
         // Gera token JWT
         const token = sign(

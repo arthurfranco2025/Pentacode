@@ -2,7 +2,7 @@ import PrismaClient from "../../prisma";
 
 interface ComandaRequest {
     cliente_id: string;
-    mesa_id: string; // mesa opcional
+    mesa_id: string; 
 }
 
 class OpenComandaService {
@@ -28,8 +28,7 @@ class OpenComandaService {
         const comandaExistente = await PrismaClient.comanda.findFirst({
             where: {
                 cliente_id,
-                status: "aberta",
-                mesa_id: mesa_id || undefined
+                status: "aberta"
             }
         });
 

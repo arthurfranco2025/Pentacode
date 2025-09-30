@@ -21,8 +21,19 @@ type RootStackParamList = {
 	ProductInfo: {
 		product: Product;
 	};
+	Order: undefined;
 };
 
+
+// const PromoCard = ({ title, price }: { title: string; price: string }) => (
+// 	<View style={styles.card}>
+// 		<Text style={styles.promoText}>{title}</Text>
+// 		<Text style={styles.priceText}>{price}</Text>
+// 		<TouchableOpacity style={styles.button} onPress={() => alert("Pressed!")}>
+// 			<Text style={styles.buttonText}>VER</Text>
+// 		</TouchableOpacity>
+// 	</View>
+// );
 interface Categories {
 	name: string;
 	id: string;
@@ -52,6 +63,11 @@ const CategoryCard = ({
 			// Adicionar um placeholder enquanto a imagem carrega
 			// defaultSource={require('../../assets/placeholder.png')}
 			/>
+			onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
+			onLoad={() => console.log('Image loaded successfully')}
+		// Adicione um placeholder enquanto a imagem carrega
+		// defaultSource={require('../../assets/placeholder.png')}
+		/>
 		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
 	</View>
 );
@@ -63,7 +79,7 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([])
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
-	
+
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image
@@ -254,7 +270,10 @@ export default function Home() {
 					/>
 					<Text style={styles.cartText}>: R$0.00</Text>
 				</View>
-				<TouchableOpacity style={styles.orderButton} onPress={() => alert("Pressed!")}>
+				<TouchableOpacity
+					style={styles.orderButton}
+					onPress={() => navigation.navigate('Order')}
+				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
 
