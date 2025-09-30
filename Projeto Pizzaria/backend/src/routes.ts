@@ -72,6 +72,7 @@ import { SearchProductController } from './controllers/product/searchProductCont
 import { CreateMesaController } from './controllers/mesa/createMesaController';
 
 import { CreateAvalicaoController } from './controllers/avaliacao/createAvaliacaoController';
+import { ListComandaPorClienteController } from './controllers/comanda/ListComandaPorClienteController';
 
 //CATEGORIES ROUTE
 router.post('/category', isAuthenticated, upload.single('image'), new CreateCategoryController().handle.bind(new CreateCategoryController()))
@@ -108,6 +109,7 @@ router.put('/comanda/fechar', isAuthenticated, new CloseComandaController().hand
 router.get('/comanda/lista', isAuthenticated, new ListComandaController().handle.bind(new ListComandaController))
 router.put('/comanda/pagar', isAuthenticated, new PagarComandaController().handle)
 router.put('/comanda/pagarPorPontos', isAuthenticated, new PagarComandaPorPontosController().handle.bind(new PagarComandaPorPontosController))
+router.get('/comanda/listarComandaPorCliente', isAuthenticated, new ListComandaPorClienteController().handle.bind(new ListComandaPorClienteController))
 
 //PEDIDO ROUTE
 router.post('/pedido', isAuthenticated, new OpenPedidoController().handle)
