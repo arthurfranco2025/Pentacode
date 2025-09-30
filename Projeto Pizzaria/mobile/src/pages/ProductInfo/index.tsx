@@ -75,7 +75,7 @@ export default function ProductInfo() {
                 colors={["#391D8A", "#261B47"]}
                 style={styles.header}
             >
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image
                         source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
                         style={{ width: 24, height: 24 }}
@@ -113,7 +113,7 @@ export default function ProductInfo() {
                     </View>
 
                     <Text style={styles.desc}>{product.description}</Text>
-                    
+
                     <View style={styles.priceRow}>
                         <Text style={styles.price}>{formatarPreco(product.price)}</Text>
                     </View>

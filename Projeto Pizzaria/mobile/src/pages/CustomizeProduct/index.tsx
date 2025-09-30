@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { api } from '../../services/api';
 import {
     View,
@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, NavigationProp, RouteProp, useRoute } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
+import { usePedido } from "../../contexts/pedidoContext";
+
 
 type RootStackParamList = {
     ProductInfo: { product: Product };
@@ -52,6 +54,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function CustomizeProduct() {
+    const { addItem } = usePedido();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const route = useRoute<RouteProp<RootStackParamList, 'CustomizeProduct'>>();
     const { product } = route.params;
@@ -76,13 +79,29 @@ export default function CustomizeProduct() {
                     params: { product_id: product.id }
                 });
                 setIngredients(response.data);
+                console.log("Ingredientes recebidos:", response.data.map((i: ingrediente_produto) => i.id));
 
-                const initialIngSelection: { [key: string]: boolean } = {};
-                response.data.forEach((ing: ingrediente_produto, index: number) => {
-                    // Garante que cada ingrediente tenha key única
-                    initialIngSelection[ing.id || `ingredient-${index}`] = true;
-                });
+                // const initialIngSelection: { [key: string]: boolean } = {};
+                // response.data.forEach((ing: ingrediente_produto, index: number) => {
+                //     // Garante que cada ingrediente tenha key única
+                //     initialIngSelection[ing.id || `ingredient-${index}`] = true;
+                // });
+                // setSelectedIngredients(initialIngSelection);
+
+                // const initialIngSelection: { [key: string]: boolean } = {};
+                // response.data.forEach((ing: ingrediente_produto) => {
+                //     if (ing.id) {
+                //         initialIngSelection[ing.id] = true;
+                //     }
+                // });
+                // setSelectedIngredients(initialIngSelection);
+
+                const initialIngSelection = response.data.reduce((acc: { [key: string]: boolean }, ing: ingrediente_produto) => {
+                    acc[ing.id] = true; // todos começam selecionados
+                    return acc;
+                }, {});
                 setSelectedIngredients(initialIngSelection);
+
 
                 setLoading(false);
             } catch (error) {
@@ -112,7 +131,9 @@ export default function CustomizeProduct() {
                 setLoading(false);
             }
         }
-        loadExtras();
+        if (product.category_id == '1da0ee77-2a79-4a91-a3a4-863857d9691c') {
+            loadExtras();
+        }
     }, [product.id]);
 
     const calculateTotalPrice = () => {
@@ -144,14 +165,20 @@ export default function CustomizeProduct() {
         setIngredientsExpanded(prev => !prev);
     };
 
-    const handleIngredientToggle = (id: string, index: number) => {
-        const key = id || `ingredient-${index}`;
+    const handleIngredientToggle = (id: string) => {
         setSelectedIngredients(prev => ({
             ...prev,
-            [key]: !prev[key],
+            [id]: !prev[id],
         }));
+    };
 
-    }
+    // const handleIngredientToggle = (id: string, index: number) => {
+    //     const key = id || `ingredient-${index}`;
+    //     setSelectedIngredients(prev => ({
+    //         ...prev,
+    //         [key]: !prev[key],
+    //     }));
+    // };
 
     const toggleExtras = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -171,6 +198,29 @@ export default function CustomizeProduct() {
         if (newQuantity > 0) {
             setQuantity(newQuantity);
         }
+    };
+
+    const customizedProduct = {
+        ...product,
+        quantity: quantity,
+        totalPrice: totalPrice,
+        removedIngredients: Object.entries(selectedIngredients)
+            .filter(([_, value]) => value === false)
+            .map(([id]) => {
+                const ingredient = ingredients.find(ing => ing.id === id);
+                return ingredient?.nome || id;
+            }),
+        selectedExtras: Object.entries(selectedExtras)
+            .filter(([_, value]) => value === true)
+            .map(([id]) => {
+                const extra = extras.find(e => e.id === id);
+                return {
+                    id: extra?.id,
+                    nome: extra?.nome,
+                    price: extra?.price
+                };
+            }),
+        observation: observation
     };
 
     return (
@@ -205,6 +255,11 @@ export default function CustomizeProduct() {
                     </View>
                 </View>
 
+                {product.category_id === "1da0ee77-2a79-4a91-a3a4-863857d9691c" ? (
+        <>
+
+        {/* Ingredientes */}
+
                 <TouchableOpacity style={styles.ingredientHeader} onPress={toggleIngredients} activeOpacity={0.7}>
                     <Text style={styles.ingredientHeaderText}>Ingredientes</Text>
                     <Ionicons name={ingredientsExpanded ? "chevron-up" : "chevron-down"} size={20} color="#391D8A" />
@@ -213,26 +268,42 @@ export default function CustomizeProduct() {
                 {loading ? (
                     <ActivityIndicator size="small" color="#4B3D9A" style={{ marginTop: 10 }} />
                 ) : (
-                    ingredientsExpanded && ingredients.map((ingredient, index) => {
-                        const key = ingredient.id || `ingredient-${index}`;
-                        return (
-                            <TouchableOpacity
-                                key={key}
-                                style={styles.ingredientItem}
-                                onPress={() => handleIngredientToggle(ingredient.id, index)}
-                                activeOpacity={0.7}
-                            >
-                                <Text style={styles.ingredientName}>{ingredient.nome}</Text>
-                                {selectedIngredients[key] ? (
-                                    <Ionicons name="checkbox" size={24} color="#391D8A" />
-                                ) : (
-                                    <Ionicons name="square-outline" size={24} color="#391D8A" />
-                                )}
-                            </TouchableOpacity>
-                        );
-                    })
+                    ingredientsExpanded && ingredients.map((ingredient) => (
+                        <TouchableOpacity
+                            key={ingredient.id}
+                            style={styles.ingredientItem}
+                            onPress={() => handleIngredientToggle(ingredient.id)}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={styles.ingredientName}>{ingredient.nome}</Text>
+                            {selectedIngredients[ingredient.id] ? (
+                                <Ionicons name="checkbox" size={24} color="#391D8A" />
+                            ) : (
+                                <Ionicons name="square-outline" size={24} color="#391D8A" />
+                            )}
+                        </TouchableOpacity>
+                    ))
+                    // ingredientsExpanded && ingredients.map((ingredient, index) => {
+                    // const key = ingredient.id || `ingredient-${index}`;
+                    // return (
+                    //     <TouchableOpacity
+                    //         key={key}
+                    //         style={styles.ingredientItem}
+                    //         onPress={() => handleIngredientToggle(ingredient.id, index)}
+                    //         activeOpacity={0.7}
+                    //     >
+                    //         <Text style={styles.ingredientName}>{ingredient.nome}</Text>
+                    //         {selectedIngredients[key] ? (
+                    //             <Ionicons name="checkbox" size={24} color="#391D8A" />
+                    //         ) : (
+                    //             <Ionicons name="square-outline" size={24} color="#391D8A" />
+                    //         )}
+                    //     </TouchableOpacity>
+                    // );
+                    // })
                 )}
 
+                {/* Adicionais */}
                 <TouchableOpacity style={styles.ingredientHeader}
                     onPress={toggleExtras} activeOpacity={0.7}
                 >
@@ -263,6 +334,13 @@ export default function CustomizeProduct() {
                     })
                 )}
 
+            </>
+
+                ) : (
+                    <Text style={{textAlign: "center", marginTop: 10, fontSize: 16, color: '#000'}}>
+                        Este produto não tem adicionais.
+                    </Text>
+                )}
                 <TextInput
                     style={styles.textArea}
                     placeholder="Alguma observação?"
@@ -277,9 +355,25 @@ export default function CustomizeProduct() {
                 style={{ marginHorizontal: 20, marginBottom: 20 }}
                 onPress={() => {
                     // Filtra ingredientes que estão "false", ou seja, removidos
+                    // const removedIngredients = Object.entries(selectedIngredients)
+                    //     .filter(([_, value]) => value === false)
+                    //     .map(([key]) => {
+                    //         const ingredient = ingredients.find((ing, idx) => ing.id === key || key === `ingredient-${idx}`);
+                    //         return ingredient ? ingredient.id : null; // melhor retornar ID real
+                    //     })
+                    //     .filter(Boolean);
                     const removedIngredients = Object.entries(selectedIngredients)
                         .filter(([_, value]) => value === false)
                         .map(([id]) => id);
+
+                    // Salva um array dos ids selecionados
+                    const selectedExtrasIds = Object.entries(selectedExtras)
+                        .filter(([_, isSelected]) => isSelected)
+                        .map(([key]) => {
+                            const extra = extras.find((ex, idx) => ex.id === key || key === `extra-${idx}`);
+                            return extra ? extra.id : null;
+                        })
+                        .filter(Boolean);
 
                     // Payload para o backend
                     const itemToSend = {
@@ -290,16 +384,16 @@ export default function CustomizeProduct() {
                     };
 
                     // payload "completo" que fica no contexto do carrinho (para exibir no resumo)
-                    const cartItem = {
+                    const pedidoItem = {
                         ...itemToSend,
                         name: product.name,
                         image_url: product.image_url,
                         removedIngredients,
-                        extras: selectedExtras,
+                        extras: selectedExtrasIds,
                         observation,
                     };
 
-                    console.log("Item que vai para o carrinho:", cartItem);
+                    console.log("Item que vai para o carrinho:", pedidoItem);
 
                     // cartContext.addItem(cartItem);
                     // navigation.goBack();
@@ -309,7 +403,7 @@ export default function CustomizeProduct() {
             >
                 <View style={[styles.confirmButton, { backgroundColor: '#FF3B30' }]}>
                     <Text style={styles.confirmText} onPress={() => navigation.navigate("Order", { product })}>
-                        Adicionar ao Carrinho - {formatarPreco(totalPrice)}
+                        Adicionar ao Pedido - {formatarPreco(totalPrice)}
                     </Text>
                 </View>
             </TouchableOpacity>

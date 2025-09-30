@@ -7,6 +7,7 @@ import CustomizeProduct from "../pages/CustomizeProduct";
 import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
 import ScanQrCode from "../pages/ScanQrCode";
+import { PedidoProvider } from "../contexts/pedidoContext";
 
 export type StackParamsList = {
     Home: {

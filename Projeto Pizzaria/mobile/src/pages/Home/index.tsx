@@ -114,9 +114,9 @@ export default function Home() {
 				setLoadingCategories(true)
 				const dbaCategories = await api.get('/category/list');
 				// console.log('Categorias carregadas:', dbaCategories.data)
-				// dbaCategories.data.forEach((cat: Categories) => {
-				// 	console.log('Image path:', cat.image_url)
-				// });
+				dbaCategories.data.forEach((cat: Categories) => {
+					console.log('Image path:', cat.image_url)
+				});
 				setCategories(dbaCategories.data);
 			} catch (error) {
 				console.error('Error loading data:', error)
