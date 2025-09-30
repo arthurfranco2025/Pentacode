@@ -29,7 +29,7 @@ class CreateMesaService {
     });
 
     // 🔗 gera URL que o QRCode vai apontar
-    const urlMesa = `https://10.65.105.46/comanda/${mesa.id}`;
+    const urlMesa = `https://localhost:3333/comanda/${mesa.id}`;
 
     // 🖼️ gera QRCode em base64
     const qrCodeDataURL = await QRCode.toDataURL(urlMesa);
