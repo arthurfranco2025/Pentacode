@@ -89,7 +89,7 @@ router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().han
 //FAVORITOS ROUTE
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)
 //nesse o front tem q manda o id do favorito pra url de algum jeito
-router.delete('/favorito', isAuthenticated, new RemoveFavoritoController().handle)
+router.delete('/favorito/delete', isAuthenticated, new RemoveFavoritoController().handle)
 router.get('/favoritos', isAuthenticated, new ListFavoritoController().handle)
 
 //FUNCIONARIOS ROUTE

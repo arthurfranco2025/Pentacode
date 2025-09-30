@@ -22,7 +22,8 @@ class CreateFavoritoService {
         if (product_id) {
             const productExists = await prismaClient.product.findFirst({
                 where: {
-                    id: product_id
+                    id: product_id,
+                        
                 }
             });
             if (!productExists) {
@@ -38,15 +39,18 @@ class CreateFavoritoService {
             data: {
                 cliente_id: cliente_id,
                 product_id: product_id,
-            },
-            select: {
-                id: true,
-                cliente_id: true,
-                product_id: true,
             }
         });
 
-        return favorito;
+        const produto = await prismaClient.product.findUnique({
+            where: { id: product_id },
+            select: { name: true }
+        });
+
+        return { 
+            message: `Produto adicionado aos favoritos: ${favorito.product_id}`,
+            nomeProduto: produto?.name
+        };
     }
 }
 
