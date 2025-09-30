@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function QRScanner() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -12,7 +13,7 @@ export default function QRScanner() {
   const [startCamera, setStartCamera] = useState(false);
 
   const navigation = useNavigation<NavigationProp<StackParamsList>>();
-  const { user } = useContext(AuthContext); // usuário logado
+  const { user, signOut } = useContext(AuthContext); // usuário logado e logout
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -24,7 +25,6 @@ export default function QRScanner() {
     if (scanned) return;
     setScanned(true);
 
-    // data vem do QR Code, assumindo que seja o ID da mesa
     let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
 
     if (!user?.id) {
@@ -36,17 +36,13 @@ export default function QRScanner() {
     try {
       const cliente_id = user.id;
 
-      // Chamada ao backend para abrir a comanda
       const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
-
       const numeroMesa = response.data.mesa.numero_mesa;
 
-      // Mostra alert com número da mesa
       Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
         {
           text: "OK",
           onPress: () => {
-            // Navega para Home passando mesaId e numero_mesa
             navigation.navigate("Home", {
               mesaId: mesa_id,
               numero_mesa: numeroMesa,
@@ -81,57 +77,94 @@ export default function QRScanner() {
     );
   }
 
-  // Tela inicial antes de abrir a câmera
-  if (!startCamera) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.title}>Escanear QR Code da Mesa</Text>
-        <Text style={styles.subtitle}>
-          Clique no botão abaixo para abrir a câmera
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setStartCamera(true)}
-        >
-          <Text style={styles.buttonText}>Abrir Câmera</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // Tela da câmera
   return (
     <View style={styles.container}>
-      <CameraView
-        style={StyleSheet.absoluteFillObject}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr", "ean13", "code128"],
-        }}
-        onBarcodeScanned={handleBarCodeScanned}
-      />
-
-      {/* Botão de voltar */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => setStartCamera(false)}
+      {/* HEADER */}
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        colors={["#391D8A", "#261B47"]}
+        style={styles.header}
       >
-        <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
+        <View style={{ width: 24 }} />
+        <Text style={styles.logoText}>
+          Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+        </Text>
+        <View style={{ width: 24 }} />
+      </LinearGradient>
+
+      {/* Tela inicial antes de abrir a câmera */}
+      {!startCamera && (
+        <View style={styles.center}>
+          <Text style={styles.title}>Escanear QR Code da Mesa</Text>
+          <Text style={styles.subtitle}>
+            Clique no botão abaixo para abrir a câmera
+          </Text>
+
+          {/* Botão Abrir Câmera */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setStartCamera(true)}
+          >
+            <Text style={styles.buttonText}>Abrir Câmera</Text>
+          </TouchableOpacity>
+
+          {/* Botão Logout */}
+          <TouchableOpacity
+            style={[styles.button, styles.logoutButton]}
+            onPress={() => signOut()}
+          >
+            <Text style={styles.buttonText}>Sair</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Tela da câmera */}
+      {startCamera && (
+        <View style={styles.cameraContainer}>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr", "ean13", "code128"],
+            }}
+            onBarcodeScanned={handleBarCodeScanned}
+          />
+
+          {/* Botão de voltar */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setStartCamera(false)}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: "#fff" },
+  cameraContainer: { flex: 1 },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+  },
+  logoText: { fontSize: 28, fontWeight: "bold", color: "#fff" },
+
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, color: "#333", textAlign: "center" },
   subtitle: { fontSize: 16, color: "#666", marginBottom: 30, textAlign: "center" },
+
   button: {
     backgroundColor: "#391D8A",
     paddingVertical: 15,
@@ -142,8 +175,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    marginTop: 10,
   },
+  logoutButton: { backgroundColor: "#FF3F4B" },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "rgba(0,0,0,0.5)", padding: 10, borderRadius: 20 },
+
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 10,
+    borderRadius: 20,
+  },
   backButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
 });
