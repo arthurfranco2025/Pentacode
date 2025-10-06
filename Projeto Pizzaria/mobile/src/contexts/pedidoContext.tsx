@@ -17,12 +17,15 @@ interface pedidoContextType {
     removeItem: (product_id: string) => void;
     clearPedido: () => void;
     totalPedido: number;
+    pedidoId: string | null;
+    setPedidoId: (id: string | null) => void; 
 }
 
 const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
 
 export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedido, setpedido] = useState<PedidoItem[]>([]);
+    const [pedidoId, setPedidoId] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
         setpedido((prev) => [...prev, item]);
@@ -45,7 +48,9 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
                 addItem,
                 removeItem,
                 clearPedido,
-                totalPedido
+                totalPedido,
+                pedidoId,
+                setPedidoId
             }}>
             {children}
         </pedidoContext.Provider>
