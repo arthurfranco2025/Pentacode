@@ -2,3 +2,5 @@
 node_modules/
 # Ignorar arquivos de build
 /mobile/src/services/api.ts
+api.ts
+/services
