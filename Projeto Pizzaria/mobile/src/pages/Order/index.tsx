@@ -8,42 +8,19 @@ import {
     ScrollView
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp, RouteProp } from "@react-navigation/native";
-
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
+import { usePedido } from "../../contexts/pedidoContext";
 
 type RootStackParamList = {
-    CustomizeProduct: { product: Product };
-    Order: { product: Product };
     Home: undefined;
 };
 
-interface Product {
-    id: string;
-    name: string;
-    price: string;
-    description?: string;
-    image_url: string;
-    category_id: string;
-    quantity?: number;
-    removedIngredients?: string[];
-    selectedExtras?: Adicionais[];
-    observation?: string;
-    totalPrice?: number;
-}
-
-interface Adicionais {
-    id: string;
-    nome: string;
-    price: string;
-    qtd: boolean;
-}
-
-export default function Order({ route }: { route?: RouteProp<RootStackParamList, "Order"> }) {
+export default function Order() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const product = route?.params?.product;
+    const { pedido, totalPedido } = usePedido();
 
-    if (!product) {
+    if (!pedido || pedido.length === 0) {
         return (
             <View style={styles.noProduct}>
                 <Image
@@ -84,87 +61,63 @@ export default function Order({ route }: { route?: RouteProp<RootStackParamList,
 
                 <Text style={styles.title}>Pedido</Text>
 
-                <View style={styles.card}>
-                    <Image
-                        source={{ uri: product.image_url }}
-                        style={styles.image}
-                    />
-                    <View style={styles.info}>
-                        <Text style={styles.productName}>{product.name}</Text>
-                        <Text style={styles.quantity}>Quantidade: {product.quantity}</Text>
+                {pedido.map((product, index) => (
+                    <View key={index} style={styles.card}>
+                        <Image
+                            source={{ uri: product.image_url }}
+                            style={styles.image}
+                        />
+                        <View style={styles.info}>
+                            <Text style={styles.productName}>{product.name}</Text>
+                            <Text style={styles.quantity}>Quantidade: {product.qtd}</Text>
 
-                        {product.removedIngredients && product.removedIngredients.length > 0 && (
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
-                                {product.removedIngredients.map((ing, index) => (
-                                    <Text key={index} style={styles.itemTextRemoved}>- {ing}</Text>
-                                ))}
-                            </View>
-                        )}
+                            {product.removedIngredients && product.removedIngredients.length > 0 && (
+                                <View style={styles.section}>
+                                    <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
+                                    {product.removedIngredients.map((ing, idx) => (
+                                        <Text key={idx} style={styles.itemTextRemoved}>- {ing}</Text>
+                                    ))}
+                                </View>
+                            )}
 
-                        {product.selectedExtras && product.selectedExtras.length > 0 && (
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Adicionais:</Text>
-                                {product.selectedExtras.map((extra, index) => (
-                                    <Text key={index} style={styles.itemTextSelected}>
-                                        - {extra.nome} (+R$ {extra.price})
-                                    </Text>
-                                ))}
-                            </View>
-                        )}
+                            {product.extras && product.extras.length > 0 && (
+                                <View style={styles.section}>
+                                    <Text style={styles.sectionTitle}>Adicionais:</Text>
+                                    {product.extras.map((extra, idx) => (
+                                        <Text key={idx} style={styles.itemTextSelected}>- {extra}</Text>
+                                    ))}
+                                </View>
+                            )}
 
-                        {product.observation && (
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Observação:</Text>
-                                <Text style={styles.textObservation}>{product.observation}</Text>
-                            </View>
-                        )}
+                            {product.observation && (
+                                <View style={styles.section}>
+                                    <Text style={styles.sectionTitle}>Observação:</Text>
+                                    <Text style={styles.textObservation}>{product.observation}</Text>
+                                </View>
+                            )}
 
-                        <Text style={styles.totalValue}>
-                            Total: {formatarPreco(product.totalPrice ?? 0)}
-                        </Text>
+                            <Text style={styles.totalValue}>
+                                Total: {formatarPreco(product.price)}
+                            </Text>
+                        </View>
                     </View>
-                </View>
+                ))}
+
+                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
+                    Valor total do pedido: {formatarPreco(totalPedido)}
+                </Text>
             </ScrollView>
-            <TouchableOpacity style={styles.buttonMore}>
-                <Text style={styles.buttonText}>Pedir mais</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity style={styles.buttonFinish}>
                 <Text style={styles.buttonText}>Finalizar pedido</Text>
-            </TouchableOpacity >
-        </View >
+            </TouchableOpacity>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff"
-    },
-    noProduct: {
-        alignItems: 'center',
-        gap: 10
-    },
-    cart: {
-        width: 100,
-        height: 100
-    },
-    returnButton: {
-        backgroundColor: "#FF3F4B",
-        borderRadius: 12,
-        paddingVertical: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    returnButtonText: {
-        color: "#fff",
-        fontWeight: "700",
-        padding: 8,
-    },
-    scroll: {
-        flex: 1
-    },
+    container: { flex: 1, backgroundColor: "#fff" },
+    scroll: { flex: 1 },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -173,93 +126,36 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 20,
     },
-    logoText: {
-        color: "#fff",
-        fontSize: 20,
-        fontWeight: "700"
-    },
-    title: {
-        padding: 10,
-        fontSize: 25,
-        fontWeight: "700"
-    },
+    logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
+    title: { padding: 10, fontSize: 25, fontWeight: "700" },
     card: {
         flexDirection: "row",
         backgroundColor: "#fff",
         borderRadius: 12,
         padding: 10,
         marginBottom: 20,
+        marginHorizontal: 20,
         alignItems: "center",
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3
     },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 12
-    },
-    info: {
-        flex: 1,
-        marginLeft: 10
-    },
-    productName: {
-        fontWeight: "bold",
-        fontSize: 16
-    },
-    price: {
-        fontSize: 14,
-        marginVertical: 5
-    },
-    section: {
-        marginTop: 10,
-    },
-    sectionTitle: {
-        fontWeight: "bold",
-        fontSize: 14,
-        marginBottom: 5,
-    },
-    itemTextRemoved: {
-        fontSize: 14,
-        color: "#666",
-    },
-    itemTextSelected: {
-        fontSize: 14,
-        color: "#666",
-    },
-    textObservation: {
-        fontSize: 14,
-        color: "#666",
-    },
-    quantity: {
-        fontSize: 14,
-        color: "#666",
-        marginVertical: 5,
-    },
-    totalValue: {
-        fontSize: 16,
-        fontWeight: "bold",
-        marginTop: 10,
-        color: "#FF3F4B",
-    },
-    buttonMore: {
-        backgroundColor: '#008344ff',
-        borderRadius: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        alignItems: "center",
-        marginBottom: 15,
-        alignSelf: "center",
-        width: "80%",
-        maxWidth: 300
-    },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "700",
-        fontSize: 16,
-        letterSpacing: 1
-    },
+    image: { width: 100, height: 100, borderRadius: 12 },
+    info: { flex: 1, marginLeft: 10 },
+    productName: { fontWeight: "bold", fontSize: 16 },
+    quantity: { fontSize: 14, color: "#666", marginVertical: 5 },
+    section: { marginTop: 10 },
+    sectionTitle: { fontWeight: "bold", fontSize: 14, marginBottom: 5 },
+    itemTextRemoved: { fontSize: 14, color: "#666" },
+    itemTextSelected: { fontSize: 14, color: "#666" },
+    textObservation: { fontSize: 14, color: "#666" },
+    totalValue: { fontSize: 16, fontWeight: "bold", marginTop: 10, color: "#FF3F4B" },
+    noProduct: { alignItems: 'center', gap: 10 },
+    cart: { width: 100, height: 100 },
+    returnButton: { backgroundColor: "#FF3F4B", borderRadius: 12, paddingVertical: 12, alignItems: "center", justifyContent: "center" },
+    returnButtonText: { color: "#fff", fontWeight: "700", padding: 8 },
+    
     buttonFinish: {
         backgroundColor: '#940B14',
         borderRadius: 12,
@@ -270,5 +166,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         width: "80%",
         maxWidth: 300
-    }
+    },
+    buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 }
 });
