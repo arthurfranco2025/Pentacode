@@ -11567,6 +11567,7 @@ export namespace Prisma {
     qtd: number | null
     price: number | null
     points: number | null
+    observacoes: string | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
@@ -11578,6 +11579,7 @@ export namespace Prisma {
     qtd: number | null
     price: number | null
     points: number | null
+    observacoes: string | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
@@ -11590,6 +11592,8 @@ export namespace Prisma {
     price: number
     points: number
     removidos: number
+    adicionais: number
+    observacoes: number
     created_at: number
     updated_at: number
     pedido_id: number
@@ -11615,6 +11619,7 @@ export namespace Prisma {
     qtd?: true
     price?: true
     points?: true
+    observacoes?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11626,6 +11631,7 @@ export namespace Prisma {
     qtd?: true
     price?: true
     points?: true
+    observacoes?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11638,6 +11644,8 @@ export namespace Prisma {
     price?: true
     points?: true
     removidos?: true
+    adicionais?: true
+    observacoes?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
@@ -11737,6 +11745,8 @@ export namespace Prisma {
     price: number
     points: number
     removidos: JsonValue | null
+    adicionais: JsonValue | null
+    observacoes: string | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string
@@ -11768,6 +11778,8 @@ export namespace Prisma {
     price?: boolean
     points?: boolean
     removidos?: boolean
+    adicionais?: boolean
+    observacoes?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11784,6 +11796,8 @@ export namespace Prisma {
     price?: boolean
     points?: boolean
     removidos?: boolean
+    adicionais?: boolean
+    observacoes?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11798,6 +11812,8 @@ export namespace Prisma {
     price?: boolean
     points?: boolean
     removidos?: boolean
+    adicionais?: boolean
+    observacoes?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
@@ -11812,13 +11828,15 @@ export namespace Prisma {
     price?: boolean
     points?: boolean
     removidos?: boolean
+    adicionais?: boolean
+    observacoes?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
   }
 
-  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "removidos" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
+  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "removidos" | "adicionais" | "observacoes" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
   export type ItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -11847,6 +11865,8 @@ export namespace Prisma {
       price: number
       points: number
       removidos: Prisma.JsonValue | null
+      adicionais: Prisma.JsonValue | null
+      observacoes: string | null
       created_at: Date | null
       updated_at: Date | null
       pedido_id: string
@@ -12282,6 +12302,8 @@ export namespace Prisma {
     readonly price: FieldRef<"Item", 'Float'>
     readonly points: FieldRef<"Item", 'Float'>
     readonly removidos: FieldRef<"Item", 'Json'>
+    readonly adicionais: FieldRef<"Item", 'Json'>
+    readonly observacoes: FieldRef<"Item", 'String'>
     readonly created_at: FieldRef<"Item", 'DateTime'>
     readonly updated_at: FieldRef<"Item", 'DateTime'>
     readonly pedido_id: FieldRef<"Item", 'String'>
@@ -18333,6 +18355,8 @@ export namespace Prisma {
     price: 'price',
     points: 'points',
     removidos: 'removidos',
+    adicionais: 'adicionais',
+    observacoes: 'observacoes',
     created_at: 'created_at',
     updated_at: 'updated_at',
     pedido_id: 'pedido_id',
@@ -19113,6 +19137,8 @@ export namespace Prisma {
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
     removidos?: JsonNullableFilter<"Item">
+    adicionais?: JsonNullableFilter<"Item">
+    observacoes?: StringNullableFilter<"Item"> | string | null
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -19128,6 +19154,8 @@ export namespace Prisma {
     price?: SortOrder
     points?: SortOrder
     removidos?: SortOrderInput | SortOrder
+    adicionais?: SortOrderInput | SortOrder
+    observacoes?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -19146,6 +19174,8 @@ export namespace Prisma {
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
     removidos?: JsonNullableFilter<"Item">
+    adicionais?: JsonNullableFilter<"Item">
+    observacoes?: StringNullableFilter<"Item"> | string | null
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -19161,6 +19191,8 @@ export namespace Prisma {
     price?: SortOrder
     points?: SortOrder
     removidos?: SortOrderInput | SortOrder
+    adicionais?: SortOrderInput | SortOrder
+    observacoes?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
@@ -19181,6 +19213,8 @@ export namespace Prisma {
     price?: FloatWithAggregatesFilter<"Item"> | number
     points?: FloatWithAggregatesFilter<"Item"> | number
     removidos?: JsonNullableWithAggregatesFilter<"Item">
+    adicionais?: JsonNullableWithAggregatesFilter<"Item">
+    observacoes?: StringNullableWithAggregatesFilter<"Item"> | string | null
     created_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     pedido_id?: StringWithAggregatesFilter<"Item"> | string
@@ -20098,6 +20132,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -20111,6 +20147,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -20124,6 +20162,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -20137,6 +20177,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -20150,6 +20192,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -20162,6 +20206,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20172,6 +20218,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -21063,6 +21111,8 @@ export namespace Prisma {
     price?: SortOrder
     points?: SortOrder
     removidos?: SortOrder
+    adicionais?: SortOrder
+    observacoes?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -21080,6 +21130,7 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    observacoes?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -21091,6 +21142,7 @@ export namespace Prisma {
     qtd?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    observacoes?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
@@ -22846,6 +22898,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -22858,6 +22912,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -22976,6 +23032,8 @@ export namespace Prisma {
     price?: FloatFilter<"Item"> | number
     points?: FloatFilter<"Item"> | number
     removidos?: JsonNullableFilter<"Item">
+    adicionais?: JsonNullableFilter<"Item">
+    observacoes?: StringNullableFilter<"Item"> | string | null
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
@@ -23098,6 +23156,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product: ProductCreateNestedOneWithoutItemsInput
@@ -23110,6 +23170,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -23972,6 +24034,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
@@ -23984,6 +24048,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -24035,6 +24101,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -24047,6 +24115,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -24338,6 +24408,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
@@ -24364,6 +24436,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
@@ -24376,6 +24450,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -24388,6 +24464,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
@@ -24444,6 +24522,8 @@ export namespace Prisma {
     price: number
     points?: number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
@@ -24455,6 +24535,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutItemsNestedInput
@@ -24467,6 +24549,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
@@ -24479,6 +24563,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
     removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string

@@ -4,7 +4,7 @@ import { EditItemService } from '../../services/item/editItemService';
 class EditItemController {
     async handle(req: Request, res: Response) {
 
-        const { id, product_id, qtd, price } = req.body;
+        const { id, product_id, qtd, removidos, adicionais, observacoes } = req.body;
 
         const editItemService = new EditItemService();
 
@@ -13,7 +13,9 @@ class EditItemController {
                 id,
                 product_id,
                 qtd,
-                price
+                removidos,
+                adicionais,
+                observacoes
             });
 
             return res.status(200).json(itemAtualizado);

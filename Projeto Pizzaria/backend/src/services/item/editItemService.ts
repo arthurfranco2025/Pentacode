@@ -4,10 +4,13 @@ interface EditItemRequest {
     id: string;
     product_id?: string;
     qtd?: number;
+    removidos?: { id: string }[];
+    adicionais?: { id: string }[];
+    observacoes?: string;
 }
 
 class EditItemService {
-    async execute({ id, product_id, qtd }: EditItemRequest) {
+    async execute({ id, product_id, qtd, removidos, adicionais, observacoes }: EditItemRequest) {
 
         const Item = await PrismaClient.item.findUnique({
             where: { id },
@@ -52,6 +55,11 @@ class EditItemService {
                 qtd: qtd ?? Item.qtd,
                 price: precoAtualizado,
                 points: pontosAtualizado,
+                removidos:
+                    Array.isArray(removidos) && removidos.length > 0 ? removidos : null,
+                adicionais:
+                    Array.isArray(adicionais) && adicionais.length > 0 ? adicionais : null,
+                observacoes: observacoes || null,
             },
         });
 

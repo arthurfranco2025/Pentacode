@@ -5,10 +5,12 @@ interface CreateItemRequest {
   pedido_id: string;
   qtd: number;
   removidos?: { id: string }[];
+  adicionais?: { id: string }[];
+  observacoes?: string;
 }
 
 class CreateItemService {
-  async execute({ product_id, pedido_id, qtd, removidos }: CreateItemRequest) {
+  async execute({ product_id, pedido_id, qtd, removidos, adicionais, observacoes }: CreateItemRequest) {
     // 🔎 validações iniciais
     if (!pedido_id) {
       throw new Error("É preciso ter um pedido para criar um item");
@@ -113,6 +115,9 @@ class CreateItemService {
         points: pontosFinal,
         removidos:
           Array.isArray(removidos) && removidos.length > 0 ? removidos : null,
+        adicionais:
+          Array.isArray(adicionais) && adicionais.length > 0 ? adicionais : null,
+        observacoes: observacoes || null,
       },
       select: {
         id: true,

@@ -145,6 +145,8 @@ model Item {
   price      Float
   points     Float     @default(0)
   removidos  Json?
+  adicionais Json?
+  observacoes String?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 

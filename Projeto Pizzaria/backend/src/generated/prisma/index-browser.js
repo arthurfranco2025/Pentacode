@@ -209,6 +209,8 @@ exports.Prisma.ItemScalarFieldEnum = {
   price: 'price',
   points: 'points',
   removidos: 'removidos',
+  adicionais: 'adicionais',
+  observacoes: 'observacoes',
   created_at: 'created_at',
   updated_at: 'updated_at',
   pedido_id: 'pedido_id',

@@ -140,13 +140,15 @@ model Avaliacao {
 }
 
 model Item {
-  id         String    @id @default(uuid())
-  qtd        Int
-  price      Float
-  points     Float     @default(0)
-  removidos  Json?
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  id          String    @id @default(uuid())
+  qtd         Int
+  price       Float
+  points      Float     @default(0)
+  removidos   Json?
+  adicionais  Json?
+  observacoes String?
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
 
   pedido  Pedido  @relation(fields: [pedido_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
