@@ -28,8 +28,9 @@ export default function QRScanner() {
     let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
 
     if (!user?.id) {
-      Alert.alert("Erro", "Usuário não autenticado!");
-      setScanned(false);
+      Alert.alert("Erro", "Usuário não autenticado!", [
+        { text: "OK", onPress: () => setScanned(false) },
+      ]);
       return;
     }
 
@@ -37,7 +38,8 @@ export default function QRScanner() {
       const cliente_id = user.id;
       const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
 
-      const numeroMesa = response.data.mesa.numero_mesa;
+      const numeroMesa = response.data?.mesa?.numero_mesa;
+      if (!numeroMesa) throw new Error("Número da mesa não encontrado");
 
       Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
         {
@@ -55,9 +57,9 @@ export default function QRScanner() {
       console.log(err.response?.data || err.message);
       Alert.alert(
         "Erro",
-        err.response?.data?.message || "Não foi possível abrir a comanda"
+        err.response?.data?.message || "Não foi possível abrir a comanda",
+        [{ text: "OK", onPress: () => setScanned(false) }]
       );
-      setScanned(false);
     }
   };
 
@@ -79,7 +81,7 @@ export default function QRScanner() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER - agora sempre aparece */}
+      {/* HEADER */}
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
