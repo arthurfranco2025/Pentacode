@@ -3,14 +3,14 @@ import { CreateItemService } from "../../services/item/createItemService";
 
 class CreateItemController {
     async handle(req: Request, res: Response) {
-        const { product_id, pedido_id, qtd, removidos, adicionais, observacoes } = req.body;
+        const { product_id, cliente_id, qtd, removidos, adicionais, observacoes } = req.body;
 
         const createItemService = new CreateItemService();
 
         try {
             const item = await createItemService.execute({
                 product_id,
-                pedido_id,
+                cliente_id,
                 qtd,
                 removidos,
                 adicionais,

@@ -2,7 +2,7 @@ import PrismaClient from "../../prisma";
 
 interface CreateItemRequest {
   product_id: string;
-  pedido_id?: string;
+  cliente_id: string;
   qtd: number;
   removidos?: { id: string }[];
   adicionais?: { id: string }[];
@@ -10,70 +10,58 @@ interface CreateItemRequest {
 }
 
 class CreateItemService {
-  async execute({ product_id, pedido_id, qtd, removidos, adicionais, observacoes }: CreateItemRequest) {
+  async execute({ product_id, qtd, removidos, adicionais, observacoes, cliente_id }: CreateItemRequest) {
     if (!product_id) throw new Error("É preciso ter um produto");
     if (!qtd || qtd <= 0) throw new Error("Quantidade inválida");
+    if (!cliente_id) throw new Error("Cliente é obrigatório");
 
-    let pedido_comanda: any;
+    //  Busca comanda do cliente que esteja aberta
+    const comanda = await PrismaClient.comanda.findFirst({
+      where: {
+        cliente_id,
+        status: "aberta",
+      },
+      select: { id: true, cliente_id: true, status: true },
+    });
 
-    // 🔎 Se não tiver pedido_id, cria um novo pedido automaticamente
-    if (!pedido_id || pedido_id === "null") {
-      // Busca uma comanda aberta qualquer (ou defina a regra que quiser)
-      const comandaAberta = await PrismaClient.comanda.findFirst({
-        where: { status: "aberta" },
-        select: { id: true, cliente_id: true },
-      });
+    if (!comanda) {
+      throw new Error("Nenhuma comanda aberta encontrada para este cliente.");
+    }
 
-      if (!comandaAberta) {
-        throw new Error("Nenhuma comanda aberta encontrada para criar o pedido.");
-      }
+    //  Busca pedido ativo do cliente (status = "pedido realizado")
+    let pedido = await PrismaClient.pedido.findFirst({
+      where: {
+        comanda_id: comanda.id,
+        cliente_id,
+        status: "pedido realizado",
+      },
+    });
 
-      const novoPedido = await PrismaClient.pedido.create({
+    //  Se não tiver pedido ativo, cria um novo automaticamente
+    if (!pedido) {
+      pedido = await PrismaClient.pedido.create({
         data: {
-          comanda_id: comandaAberta.id,
-          cliente_id: comandaAberta.cliente_id,
+          comanda_id: comanda.id,
+          cliente_id,
           status: "pedido realizado",
           price: 0,
           points: 0,
         },
       });
-
-      pedido_id = novoPedido.id;
-      pedido_comanda = { comanda_id: comandaAberta.id };
-    } else {
-      // Caso já tenha um pedido existente
-      pedido_comanda = await PrismaClient.pedido.findUnique({
-        where: { id: pedido_id },
-        select: { comanda_id: true },
-      });
     }
 
-    if (!pedido_comanda?.comanda_id) {
-      throw new Error("Esse pedido não tem comanda vinculada");
-    }
-
-    const comanda = await PrismaClient.comanda.findUnique({
-      where: { id: pedido_comanda.comanda_id },
-      select: { status: true, cliente_id: true },
-    });
-
-    if (!comanda) throw new Error("Comanda não encontrada");
-    if (comanda.status === "fechada") throw new Error("A comanda está fechada");
-    if (comanda.status === "aguardando pagamento") {
-      throw new Error("A comanda está aguardando pagamento, não é possível adicionar itens");
-    }
-
+    // Busca o produto
     const produto = await PrismaClient.product.findUnique({
       where: { id: product_id },
-      select: { price: true, points: true, name: true, category_id: true },
+      select: { name: true, price: true, points: true, category_id: true },
     });
 
     if (!produto) throw new Error("O produto não existe");
 
-    // 🔞 Restrição de 18 anos
+    // Verificação de idade (para categoria alcoólica, por exemplo)
     if (produto.category_id === "c6803b68-81a6-45a9-957b-9899c31905ae") {
-      const cliente = await PrismaClient.cliente.findFirst({
-        where: { id: comanda.cliente_id },
+      const cliente = await PrismaClient.cliente.findUnique({
+        where: { id: cliente_id },
       });
 
       const hoje = new Date();
@@ -85,14 +73,15 @@ class CreateItemService {
       if (idade < 18) throw new Error("Cliente deve ter pelo menos 18 anos.");
     }
 
-    // 💰 Cria item
+    // Calcula preço e pontos
     const precoFinal = qtd * produto.price;
     const pontosFinal = qtd * produto.points;
 
+    // 🧾 Cria o item no pedido ativo
     const item = await PrismaClient.item.create({
       data: {
-        pedido: { connect: { id: pedido_id } },
-        product: { connect: { id: product_id } },
+        pedido_id: pedido.id,
+        product_id,
         qtd,
         price: precoFinal,
         points: pontosFinal,
@@ -102,18 +91,23 @@ class CreateItemService {
       },
     });
 
-    // 🔄 Atualiza totais
-    const itens = await PrismaClient.item.findMany({ where: { pedido_id } });
-    const totalPedido = itens.reduce((acc, i) => acc + i.price, 0);
-    const totalPontos = itens.reduce((acc, i) => acc + i.points, 0);
+    // 🔄 Atualiza totais do pedido
+    const itensDoPedido = await PrismaClient.item.findMany({
+      where: { pedido_id: pedido.id },
+      select: { price: true, points: true },
+    });
+
+    const totalPedido = itensDoPedido.reduce((acc, i) => acc + i.price, 0);
+    const totalPontos = itensDoPedido.reduce((acc, i) => acc + i.points, 0);
 
     await PrismaClient.pedido.update({
-      where: { id: pedido_id },
+      where: { id: pedido.id },
       data: { price: totalPedido, points: totalPontos },
     });
 
+    // 🔄 Atualiza totais da comanda
     const pedidos = await PrismaClient.pedido.findMany({
-      where: { comanda_id: pedido_comanda.comanda_id },
+      where: { comanda_id: comanda.id },
       select: { price: true, points: true },
     });
 
@@ -121,22 +115,11 @@ class CreateItemService {
     const totalComandaPontos = pedidos.reduce((acc, p) => acc + p.points, 0);
 
     await PrismaClient.comanda.update({
-      where: { id: pedido_comanda.comanda_id },
+      where: { id: comanda.id },
       data: { price: totalComanda, points: totalComandaPontos },
     });
 
-    // 📝 Mensagem
-    let mensagem = `Nenhum ingrediente removido do produto ${produto.name}`;
-    if (removidos?.length) {
-      const ingredientes = await PrismaClient.ingrediente.findMany({
-        where: { id: { in: removidos.map(r => r.id) } },
-        select: { nome: true },
-      });
-      const nomes = ingredientes.map(i => i.nome).join(", ");
-      mensagem = `Ingredientes removidos do produto ${produto.name}: ${nomes}`;
-    }
-
-    return { item, mensagem };
+    return { item, mensagem: `Item adicionado ao pedido ${pedido.id}` };
   }
 }
 
