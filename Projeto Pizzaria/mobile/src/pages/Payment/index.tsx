@@ -9,7 +9,11 @@ import {
     StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamsList } from "../../routes/app.routes"; // Ajuste o caminho conforme sua pasta
+
+type PaymentScreenNavigationProp = NativeStackNavigationProp<StackParamsList, "Payment">;
 
 export default function Payment() {
     const [selectedCard, setSelectedCard] = useState("");
@@ -19,7 +23,7 @@ export default function Payment() {
     const [finalConfirmVisible, setFinalConfirmVisible] = useState(false);
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
-    const navigation = useNavigation<NavigationProp<any>>();
+    const navigation = useNavigation<PaymentScreenNavigationProp>();
 
     const cardOptions = [
         { label: "Crédito", value: "credito" },
@@ -248,6 +252,7 @@ export default function Payment() {
     );
 }
 
+// Mantive exatamente os mesmos styles que você já tinha
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#FFF", alignItems: "center" },
     scrollView: { flex: 1, width: "100%" },
@@ -363,7 +368,6 @@ const styles = StyleSheet.create({
     confirmModalButtonText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
     confirmModalSubtitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#391D8A", textAlign: "center" },
 
-    // ESTILIZAÇÃO DO BOTÃO LOGOUT
     logoutWrapper: {
         position: "absolute",
         bottom: 20,

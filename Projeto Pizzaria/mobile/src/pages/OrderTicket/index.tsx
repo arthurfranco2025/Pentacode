@@ -8,15 +8,17 @@ import {
   Image
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
+import { StackParamsList } from "../../routes/app.routes"; // ajuste conforme seu projeto
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 export default function OrderTicket() {
-  const navigation = useNavigation();
-  const { comanda } = useComanda();
-  const { pedido, totalPedido } = usePedido();
+  const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
+  const { comanda, calcularTotalComanda } = useComanda();
+  const { pedido } = usePedido();
 
   if (!comanda) {
     return (
@@ -28,10 +30,13 @@ export default function OrderTicket() {
 
   const { comandaId, mesaId, numero_mesa } = comanda;
 
-  const handleFinalize = () => {
-    // Aqui você pode chamar API para finalizar a comanda
-    alert(`Comanda ${numero_mesa} finalizada!`);
-    // navigation.navigate("Home");
+  const handleGoToPayment = () => {
+    navigation.navigate("Payment", {
+      comandaId,
+      mesaId,
+      numero_mesa,
+      total: calcularTotalComanda(),
+    });
   };
 
   return (
@@ -66,9 +71,7 @@ export default function OrderTicket() {
         ) : (
           pedido.map((item, index) => (
             <View key={index} style={styles.card}>
-              <Text>
-                Pedido #{index + 1} 
-              </Text>
+              <Text>Pedido #{index + 1}</Text>
               <Text style={styles.productName}>
                 {item.name} x{item.qtd}
               </Text>
@@ -106,13 +109,13 @@ export default function OrderTicket() {
         )}
 
         <Text style={[styles.totalValue, { textAlign: "center", fontSize: 18 }]}>
-          Valor total: {formatarPreco(totalPedido)}
+          Valor total: {formatarPreco(calcularTotalComanda())}
         </Text>
       </ScrollView>
 
-      {/* Botão finalizar */}
-      <TouchableOpacity style={styles.finishButton} onPress={handleFinalize}>
-        <Text style={styles.finishText}>Finalizar Comanda</Text>
+      {/* Botão pagamento */}
+      <TouchableOpacity style={styles.finishButton} onPress={handleGoToPayment}>
+        <Text style={styles.finishText}>Ir para pagamento</Text>
       </TouchableOpacity>
     </View>
   );
