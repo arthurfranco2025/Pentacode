@@ -14,13 +14,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { formatarPreco } from "../../components/utils/formatPrice"
-import { useRoute, RouteProp } from "@react-navigation/native";
-import { StackParamsList } from "../../routes/app.routes";
+import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
-
-
+import { StackParamsList } from "../../routes/app.routes";
 
 type RootStackParamList = {
 	Home: undefined;
@@ -30,16 +27,6 @@ type RootStackParamList = {
 	Order: undefined;
 };
 
-
-// const PromoCard = ({ title, price }: { title: string; price: string }) => (
-// 	<View style={styles.card}>
-// 		<Text style={styles.promoText}>{title}</Text>
-// 		<Text style={styles.priceText}>{price}</Text>
-// 		<TouchableOpacity style={styles.button} onPress={() => alert("Pressed!")}>
-// 			<Text style={styles.buttonText}>VER</Text>
-// 		</TouchableOpacity>
-// 	</View>
-// );
 interface Categories {
 	name: string;
 	id: string;
@@ -47,12 +34,12 @@ interface Categories {
 }
 
 interface Product {
-    id: string;
-    name: string;
-    price: string;
-    description?: string;
-    image_url: string;
-    category_id: string;
+	id: string;
+	name: string;
+	price: number; // alterei para number, já que o totalPedido é number
+	description?: string;
+	image_url: string;
+	category_id: string;
 }
 
 const CategoryCard = ({
@@ -63,31 +50,25 @@ const CategoryCard = ({
 	label: string;
 }) => (
 	<View style={styles.categoryBg}>
-		<Image source={{ uri: image_url }} style={styles.categoryImage}
-		// onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
-		// onLoad={() => console.log('Image loaded successfully')}
-		// Adicione um placeholder enquanto a imagem carrega
-		// defaultSource={require('../../assets/placeholder.png')}
-		/>
-		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">{label}</Text>
+		<Image source={{ uri: image_url }} style={styles.categoryImage} />
+		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">
+			{label}
+		</Text>
 	</View>
 );
 
 export default function Home() {
-	const { signOut } = useContext(AuthContext)
+	const { signOut } = useContext(AuthContext);
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const [showCategories, setShowCategories] = useState(true);
-	const [categories, setCategories] = useState<Categories[]>([])
+	const [categories, setCategories] = useState<Categories[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
-	const [selectedCategory, setSelectedCategory] = useState<string>('');
-
+	const [selectedCategory, setSelectedCategory] = useState<string>("");
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
 
-	const { comanda } = useComanda()
-
-	console.log("Mesa ID:", comanda?.mesaId);
-	console.log("Número da mesa:", comanda?.numero_mesa);
+	const { comanda } = useComanda();
+	const { totalPedido } = usePedido(); // total do pedido real
 
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
@@ -97,68 +78,65 @@ export default function Home() {
 				resizeMode="cover"
 			/>
 			<View style={styles.productInfo}>
-				<Text style={styles.promoText} ellipsizeMode="tail" numberOfLines={2}>{product.name}</Text>
+				<Text
+					style={styles.promoText}
+					ellipsizeMode="tail"
+					numberOfLines={2}
+				>
+					{product.name}
+				</Text>
 				<Text style={styles.priceText}>{formatarPreco(product.price)}</Text>
-				<TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProductInfo', { product })}>
+				<TouchableOpacity
+					style={styles.button}
+					onPress={() => navigation.navigate("ProductInfo", { product })}
+				>
 					<Text style={styles.buttonText}>VER</Text>
 				</TouchableOpacity>
 			</View>
 		</View>
 	);
 
-
-
 	useEffect(() => {
 		async function loadCategories() {
 			try {
-				setLoadingCategories(true)
-				const dbaCategories = await api.get('/category/list');
-				// console.log('Categorias carregadas:', dbaCategories.data)
-				dbaCategories.data.forEach((cat: Categories) => {
-					console.log('Image path:', cat.image_url)
-				});
+				setLoadingCategories(true);
+				const dbaCategories = await api.get("/category/list");
 				setCategories(dbaCategories.data);
 			} catch (error) {
-				console.error('Error loading data:', error)
+				console.error("Error loading data:", error);
 			} finally {
-				setLoadingCategories(false)
+				setLoadingCategories(false);
 			}
 		}
 
-		loadCategories()
-
-	}, [])
+		loadCategories();
+	}, []);
 
 	useEffect(() => {
 		async function LoadListProduct() {
 			try {
-				setLoadingProducts(true)
+				setLoadingProducts(true);
 				if (selectedCategory) {
-					const dbaListProductsByCategories = await api.get('category/products', {
-						params: {
-							category_id: selectedCategory
+					const dbaListProductsByCategories = await api.get(
+						"category/products",
+						{
+							params: { category_id: selectedCategory },
 						}
-					});
-					// console.log('Produtos carregados:', dbaListProductsByCategories.data)
-					setProducts(dbaListProductsByCategories.data)
+					);
+					setProducts(dbaListProductsByCategories.data);
 				} else {
 					setProducts([]);
 				}
 			} catch (error) {
-				if (typeof error === 'object' && error !== null && 'response' in error) {
-					console.error('Error loading products:', (error as any).response?.data || error);
-				} else {
-					console.error('Error loading products:', error);
-				}
+				console.error("Error loading products:", error);
 				setProducts([]);
 			} finally {
-				setLoadingProducts(false)
+				setLoadingProducts(false);
 			}
 		}
 
 		LoadListProduct();
-	}, [selectedCategory])
-
+	}, [selectedCategory]);
 
 	return (
 		<View style={styles.container}>
@@ -171,7 +149,9 @@ export default function Home() {
 			>
 				<TouchableOpacity>
 					<Image
-						source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }} //Alterar isso
+						source={{
+							uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png",
+						}}
 						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>
@@ -183,16 +163,20 @@ export default function Home() {
 				</Text>
 			</LinearGradient>
 
-			{/* Categorias */}
+			{/* Categorias e Produtos */}
 			<View style={styles.menuSearchRow}>
-				<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
+				<TouchableOpacity
+					onPress={() => setShowCategories((v) => !v)}
+					activeOpacity={0.8}
+				>
 					<Image
-						source={{ uri: "https://img.icons8.com/ios-filled/50/000000/menu.png" }}
+						source={{
+							uri: "https://img.icons8.com/ios-filled/50/000000/menu.png",
+						}}
 						style={styles.sideIcon}
 					/>
 				</TouchableOpacity>
 
-				{/* Barra de busca */}
 				<View style={styles.searchBox}>
 					<Image
 						source={{
@@ -201,16 +185,11 @@ export default function Home() {
 						resizeMode="stretch"
 						style={styles.searchIcon}
 					/>
-					<TextInput
-						placeholder="Buscar"
-						placeholderTextColor="#8A8A8A"
-						style={styles.input}
-					/>
+					<TextInput placeholder="Buscar" placeholderTextColor="#8A8A8A" style={styles.input} />
 				</View>
 			</View>
 
 			<View style={styles.content}>
-
 				<View style={styles.mainRow}>
 					{showCategories && (
 						<ScrollView
@@ -218,7 +197,6 @@ export default function Home() {
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={styles.categoriesContainer}
 						>
-
 							{loadingCategories ? (
 								<ActivityIndicator size="large" color="#391D8A" style={{ marginTop: 20 }} />
 							) : (
@@ -228,7 +206,7 @@ export default function Home() {
 										onPress={() => setSelectedCategory(category.id)}
 										style={[
 											styles.categoryItem,
-											selectedCategory === category.id && styles.selectedCategory
+											selectedCategory === category.id && styles.selectedCategory,
 										]}
 									>
 										<CategoryCard image_url={category.image_url} label={category.name} />
@@ -262,19 +240,10 @@ export default function Home() {
 							)}
 						</View>
 					</View>
-
-					{/* Decoração
-					<Image
-						source={{
-							uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/8jzvo0et_expires_30_days.png",
-						}}
-						resizeMode="stretch"
-						style={styles.decoration}
-					/> */}
 				</View>
 			</View>
 
-			{/* Rodapé */}
+			{/* Rodapé com total real */}
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0, y: 1 }}
@@ -289,8 +258,9 @@ export default function Home() {
 						resizeMode="stretch"
 						style={styles.cartIcon}
 					/>
-					<Text style={styles.cartText}>: R$0.00</Text>
+					<Text style={styles.cartText}>{formatarPreco(totalPedido)}</Text>
 				</View>
+
 				<TouchableOpacity
 					style={styles.orderButton}
 					onPress={() => navigation.navigate("Order")}
@@ -298,12 +268,9 @@ export default function Home() {
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
 
-				<Button
-					title='Sair do App'
-					onPress={signOut}
-				/>
+				<Button title="Sair do App" onPress={signOut} />
 			</LinearGradient>
-		</View >
+		</View>
 	);
 }
 
