@@ -19,6 +19,7 @@ export type StackParamsList = {
         comandaId: string;
         mesaId: string;
         numero_mesa: number;
+        statusPedido: string;
     };
 };
 

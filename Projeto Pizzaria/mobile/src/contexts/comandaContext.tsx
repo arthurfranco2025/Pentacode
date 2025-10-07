@@ -16,6 +16,7 @@ type Pedido = {
   items: Item[];
   total: number;
   createdAt: string;
+  statusPedido: string;
 };
 
 type Comanda = {

@@ -16,7 +16,7 @@ import { usePedido } from "../../contexts/pedidoContext";
 export default function OrderTicket() {
   const navigation = useNavigation();
   const { comanda } = useComanda();
-  const { pedido, totalPedido } = usePedido();
+  const { pedido, totalPedido, statusPedido } = usePedido();
 
   if (!comanda) {
     return (
@@ -67,7 +67,7 @@ export default function OrderTicket() {
           pedido.map((item, index) => (
             <View key={index} style={styles.card}>
               <Text>
-                Pedido #{index + 1} 
+                Pedido #{index + 1}
               </Text>
               <Text style={styles.productName}>
                 {item.name} x{item.qtd}
@@ -90,6 +90,12 @@ export default function OrderTicket() {
                   ))}
                 </View>
               )}
+
+              <View>
+                <Text>
+                 Status: {statusPedido}
+                </Text>
+              </View>
 
               {item.observation && (
                 <View style={styles.section}>

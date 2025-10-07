@@ -22,7 +22,7 @@ type OrderScreenNavigationProp = NativeStackNavigationProp<
 
 export default function Order() {
     const navigation = useNavigation<OrderScreenNavigationProp>();
-    const { pedido, totalPedido, removeItem } = usePedido();
+    const { pedido, totalPedido, removeItem, statusPedido, updateStatusPedido } = usePedido();
     const { comanda } = useComanda();
 
     if (!comanda) {
@@ -35,13 +35,19 @@ export default function Order() {
 
     const { comandaId, mesaId, numero_mesa } = comanda;
 
-    function handleFinishPedido() {
-        navigation.navigate("OrderTicket", {
-            comandaId,
-            mesaId,
-            numero_mesa,
-        });
+    async function handleFinishPedido() {
+        try {
+            await updateStatusPedido("Pedido realizado"); // 🔄 chama API e atualiza o contexto
+            navigation.navigate("OrderTicket", {
+                comandaId,
+                mesaId,
+                numero_mesa,
+            });
+        } catch (error) {
+            alert("Erro ao atualizar status do pedido.");
+        }
     }
+
 
     if (!pedido || pedido.length === 0) {
         return (
@@ -83,6 +89,10 @@ export default function Order() {
 
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
+
+                <Text style={styles.statusText}>
+                    Status: {statusPedido || "Nenhum pedido iniciado"}
+                </Text>
 
                 {pedido.map((product, index) => (
                     <View key={index} style={styles.card}>
@@ -155,6 +165,14 @@ export default function Order() {
 }
 
 const styles = StyleSheet.create({
+    statusText: {
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#00C851",
+        marginTop: 10,
+        marginBottom: 10,
+    },
     container: {
         flex: 1,
         backgroundColor: "#1d1d2e",

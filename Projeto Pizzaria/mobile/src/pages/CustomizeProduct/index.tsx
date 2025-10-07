@@ -53,7 +53,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function CustomizeProduct() {
-    const { addItem, pedidoId, setPedidoId } = usePedido();
+    const { addItem, pedidoId, setPedidoId, setStatusPedido } = usePedido();
     const { user } = React.useContext(AuthContext);
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const route = useRoute<RouteProp<RootStackParamList, 'CustomizeProduct'>>();
@@ -69,6 +69,8 @@ export default function CustomizeProduct() {
     const [ingredientsExpanded, setIngredientsExpanded] = useState(false);
     const [selectedIngredients, setSelectedIngredients] = useState<{ [key: string]: boolean }>({});
     const [selectedExtras, setSelectedExtras] = useState<{ [key: string]: boolean }>({});
+
+    
 
     // Carrega ingredientes
     useEffect(() => {
@@ -165,6 +167,7 @@ export default function CustomizeProduct() {
             });
             const { item } = response.data;
             if (!pedidoId && item.pedido_id) setPedidoId(item.pedido_id);
+            setStatusPedido("Pedido em andamento"); 
             addItem({
                 product_id: product.id,
                 name: product.name,
