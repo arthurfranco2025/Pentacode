@@ -1,7 +1,5 @@
 import React, { useState, createContext, ReactNode, useEffect } from "react";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { api } from '../services/api'
 
 type AuthContextData = {
@@ -26,8 +24,9 @@ type AuthProviderProps = {
 }
 
 type SignInProps = {
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
+    guest?: boolean; // novo
 }
 
 type SignUpProps = {
@@ -54,13 +53,10 @@ export function AuthProvider({children}: AuthProviderProps){
     const isAuthenticated = !!user.name;
 
     useEffect(() => {
-
         async function getUser() {
-            
             const userInfo = await AsyncStorage.getItem('@sujeitopizzaria');
             let hasUser: UserProps = JSON.parse(userInfo || '{}')
 
-            
             if(Object.keys(hasUser).length > 0) {
                 api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`
 
@@ -71,77 +67,63 @@ export function AuthProvider({children}: AuthProviderProps){
                     token: hasUser.token
                 })
             }
-            
+
             setLoading(false);
         }
         getUser();
-
     }, [])
 
-    async function signIn({ email, password}: SignInProps) {
+    async function signIn({ email, password, guest = false }: SignInProps) {
         setLoadingAuth(true);
 
         try {
-            const response = await api.post('/login', {
-                email,
-                password
-            })
+            let response;
 
-            // console.log(response.data);
-
-            const { id, name, token } = response.data;
-
-            const data = {
-                ...response.data
+            if (guest) {
+                // Login como convidado
+                response = await api.post('/login', { guest: true });
+            } else {
+                // Login normal
+                if (!email || !password) {
+                    throw new Error('Email e senha são obrigatórios');
+                }
+                response = await api.post('/login', { email, password });
             }
 
-            await AsyncStorage.setItem('@sujeitopizzaria', JSON.stringify(data))
+            const { id, name, email: userEmail, token } = response.data;
 
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+            const data = { id, name, email: userEmail, token };
 
+            await AsyncStorage.setItem('@sujeitopizzaria', JSON.stringify(data));
+
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             setUser({
                 id,
                 name,
-                email,
+                email: userEmail,
                 token,
-            })
-
-            setLoadingAuth(false)
-            console.log('sucesso')
+            });
 
         } catch (err) {
-            console.log('erro ao acessar', err)
-            setLoadingAuth(false)
+            console.log('erro ao acessar', err);
+        } finally {
+            setLoadingAuth(false);
         }
-
-        // } catch (err: any) {
-        // if (err.response) {
-        //     console.log('Status:', err.response.status);         
-        //     console.log('Data:', err.response.data);             
-        //     console.log('Headers:', err.response.headers);
-        // } else {
-        //     console.log('Erro inesperado:', err.message);
-        // }
-        // setLoadingAuth(false);
-        // }
-
     }
 
-        async function signOut() {
-            await AsyncStorage.clear()
-            .then( () => {
-                setUser({
-                    id: '',
-                    name: '',
-                    email: '',
-                    token: ''
-                })
-            })
-            
-        }
+    async function signOut() {
+        await AsyncStorage.clear().then(() => {
+            setUser({
+                id: '',
+                name: '',
+                email: '',
+                token: ''
+            });
+        });
+    }
 
-        async function signUp({name, email, password, cpf, data_nasc}: SignUpProps) {
+    async function signUp({name, email, password, cpf, data_nasc}: SignUpProps) {
         setLoadingAuth(true);
 
         try {
@@ -154,11 +136,11 @@ export function AuthProvider({children}: AuthProviderProps){
             })
 
             setLoadingAuth(false);
-            return( response.data );
+            return response.data;
 
         } catch (err: any) {
             setLoadingAuth(false)
-            
+
             if(err.response) {
                 throw new Error(err.response.data.error || 'Erro ao cadastrar')
             } 
@@ -166,18 +148,16 @@ export function AuthProvider({children}: AuthProviderProps){
         }
     }
 
-        
-
     return(
         <AuthContext.Provider 
-        value={{ 
-            user, 
-            isAuthenticated, 
-            signIn, 
-            signUp,
-            loading, 
-            loadingAuth,
-            signOut,
+            value={{ 
+                user, 
+                isAuthenticated, 
+                signIn, 
+                signUp,
+                loading, 
+                loadingAuth,
+                signOut,
             }}
         >
             {children}

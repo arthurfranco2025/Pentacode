@@ -28,7 +28,6 @@ export default function SignIn() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-
 	useFocusEffect(
 		React.useCallback(() => {
 			const backAction = () => {
@@ -52,13 +51,18 @@ export default function SignIn() {
 	function handleSignUp() {
 		navigation.navigate('SignUp')
 	}
+
 	async function handleLogin() {
 		if (email === '' || password === '') {
-			alert('erro')
+			alert('Preencha todos os campos');
 			return;
 		}
 
-		await signIn({ email, password })
+		await signIn({ email, password });
+	}
+
+	async function handleGuestLogin() {
+		await signIn({ guest: true });
 	}
 
 	return (
@@ -109,12 +113,19 @@ export default function SignIn() {
 						/>
 					</View>
 
-
 					<TouchableOpacity style={styles.button} onPress={handleLogin}>
 						{loadingAuth ? (
 							<ActivityIndicator size={25} color='#fff' />
 						) : (
 							<Text style={styles.buttonText}>Acessar</Text>
+						)}
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.guestButton} onPress={handleGuestLogin}>
+						{loadingAuth ? (
+							<ActivityIndicator size={25} color='#fff' />
+						) : (
+							<Text style={styles.buttonText}>Entrar como convidado</Text>
 						)}
 					</TouchableOpacity>
 
@@ -229,4 +240,11 @@ const styles = StyleSheet.create({
     	left: 20,
     	zIndex: 1
   },
+	guestButton: {
+		backgroundColor: "#391D8A",
+		borderRadius: 5,
+		paddingVertical: 12,
+		alignItems: "center",
+		marginBottom: 20,
+	},
 });
