@@ -188,6 +188,8 @@ exports.Prisma.ComandaScalarFieldEnum = {
   status: 'status',
   price: 'price',
   points: 'points',
+  tipoPagamento: 'tipoPagamento',
+  pagoEm: 'pagoEm',
   created_at: 'created_at',
   updated_at: 'updated_at',
   cliente_id: 'cliente_id',
@@ -211,10 +213,12 @@ exports.Prisma.ItemScalarFieldEnum = {
   removidos: 'removidos',
   adicionais: 'adicionais',
   observacoes: 'observacoes',
+  dois_sabores: 'dois_sabores',
   created_at: 'created_at',
   updated_at: 'updated_at',
   pedido_id: 'pedido_id',
-  product_id: 'product_id'
+  product_id: 'product_id',
+  product2_id: 'product2_id'
 };
 
 exports.Prisma.IngredienteScalarFieldEnum = {

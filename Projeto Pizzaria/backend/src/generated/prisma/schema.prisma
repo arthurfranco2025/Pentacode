@@ -77,10 +77,10 @@ model Product {
   created_at  DateTime? @default(now())
   updated_at  DateTime? @default(now())
 
-  category    Category @relation(fields: [category_id], references: [id])
-  category_id String
-
-  items               Item[]
+  category            Category              @relation(fields: [category_id], references: [id])
+  category_id         String
+  sabor1_items        Item[]                @relation("Sabor1")
+  sabor2_items        Item[]                @relation("Sabor2")
   favoritos           Favorito[]
   product_ingrediente Product_ingrediente[]
 
@@ -106,12 +106,14 @@ model Pedido {
 }
 
 model Comanda {
-  id         String    @id @default(uuid())
-  status     String
-  price      Float
-  points     Float
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  id            String    @id @default(uuid())
+  status        String
+  price         Float
+  points        Float
+  tipoPagamento String    @default("nulo")
+  pagoEm        DateTime?
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @default(now())
 
   cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
@@ -140,22 +142,24 @@ model Avaliacao {
 }
 
 model Item {
-  id          String    @id @default(uuid())
-  qtd         Int
-  price       Float
-  points      Float     @default(0)
-  removidos   Json?
-  adicionais  Json?
-  observacoes String?
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @default(now())
+  id           String    @id @default(uuid())
+  qtd          Int
+  price        Float
+  points       Float     @default(0)
+  removidos    Json?
+  adicionais   Json?
+  observacoes  String?
+  dois_sabores Boolean   @default(false)
+  created_at   DateTime? @default(now())
+  updated_at   DateTime? @default(now())
 
-  pedido  Pedido  @relation(fields: [pedido_id], references: [id])
-  product Product @relation(fields: [product_id], references: [id])
+  pedido   Pedido   @relation(fields: [pedido_id], references: [id])
+  product  Product  @relation("Sabor1", fields: [product_id], references: [id])
+  product2 Product? @relation("Sabor2", fields: [product2_id], references: [id])
 
-  pedido_id  String
-  product_id String
-
+  pedido_id      String
+  product_id     String
+  product2_id    String?
   Item_adicional Item_adicional[]
 
   @@map("items")

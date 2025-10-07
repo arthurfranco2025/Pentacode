@@ -6,3 +6,6 @@ env
 
 # Ignorar dependências do Node
 node_modules/
+
+# Expo
+.expo/

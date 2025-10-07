@@ -10,7 +10,8 @@ class ListComandaPorClienteService {
       where: {
         id: cliente_id,
       },
-      include: {
+      select: {
+        name: true, // Adiciona o nome do cliente
         comandas: true,
       },
     })
@@ -19,7 +20,10 @@ class ListComandaPorClienteService {
       throw new Error("Cliente não encontrado")
     }
 
-    return clienteComComandas.comandas
+    return {
+      nomeCliente: clienteComComandas.name,
+      comandas: clienteComComandas.comandas
+    }
   }
 }
 
