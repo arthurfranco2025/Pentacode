@@ -141,9 +141,15 @@ export default function Order() {
                 </Text>
             </ScrollView>
 
-            <TouchableOpacity style={styles.buttonFinish} onPress={handleFinishPedido}>
-                <Text style={styles.buttonText}>Finalizar pedido</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonsRow}>
+                <TouchableOpacity style={styles.buttonAddMore} onPress={() => navigation.navigate("Home")}>
+                    <Text style={styles.buttonText}>Adicionar mais itens</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.buttonFinish} onPress={handleFinishPedido}>
+                    <Text style={styles.buttonText}>Finalizar pedido</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -175,31 +181,82 @@ const styles = StyleSheet.create({
         elevation: 3,
         position: "relative",
     },
-    image: { width: 100, height: 100, borderRadius: 12 },
+    image: { 
+        width: 100, 
+        height: 100, 
+        borderRadius: 12 
+    },
     info: { flex: 1, marginLeft: 10 },
     productName: { fontWeight: "bold", fontSize: 16 },
-    quantity: { fontSize: 14, color: "#666", marginVertical: 5 },
+    quantity: { 
+        fontSize: 14, 
+        color: "#666", 
+        marginVertical: 5 
+    },
     section: { marginTop: 10 },
-    sectionTitle: { fontWeight: "bold", fontSize: 14, marginBottom: 5 },
+    sectionTitle: { 
+        fontWeight: "bold", 
+        fontSize: 14, 
+        marginBottom: 5 
+    },
     itemTextRemoved: { fontSize: 14, color: "#666" },
     itemTextSelected: { fontSize: 14, color: "#666" },
     textObservation: { fontSize: 14, color: "#666" },
-    totalValue: { fontSize: 16, fontWeight: "bold", marginTop: 10, color: "#FF3F4B" },
+    totalValue: { fontSize: 16, 
+        fontWeight: "bold", 
+        marginTop: 10, 
+        color: "#028f3aff"
+    },
     deleteButton: { marginLeft: 10, padding: 5 },
-    noProduct: { alignItems: 'center', gap: 10, justifyContent: 'center', flex: 1 },
+    noProduct: { 
+        alignItems: 'center', 
+        gap: 10, 
+        justifyContent: 'center', 
+        flex: 1
+    },
     cart: { width: 100, height: 100 },
-    returnButton: { backgroundColor: "#FF3F4B", borderRadius: 12, paddingVertical: 12, alignItems: "center", justifyContent: "center" },
+    returnButton: { 
+        backgroundColor: "#FF3F4B",
+        borderRadius: 12,
+        paddingVertical: 12,
+        alignItems: "center",
+        justifyContent: "center"
+    },
     returnButtonText: { color: "#fff", fontWeight: "700", padding: 8 },
-    buttonFinish: {
+    
+    buttonText: { 
+        color: "#fff",
+        fontWeight: "700", 
+        fontSize: 16, 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+    },
+
+    buttonsRow: {
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 15,
+        gap: 12, 
+        },
+
+        buttonAddMore: {
+        backgroundColor: '#391D8A',
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        alignItems: "center",
+        // flex: 1,
+        marginHorizontal: 10,
+        },
+
+        buttonFinish: {
         backgroundColor: '#940B14',
         borderRadius: 12,
         paddingVertical: 12,
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         alignItems: "center",
-        marginBottom: 15,
-        alignSelf: "center",
-        width: "80%",
-        maxWidth: 300
-    },
-    buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 }
-});
+        // flex: 1,
+        marginHorizontal: 10,
+        },
+    });
