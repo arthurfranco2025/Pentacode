@@ -18,7 +18,7 @@ import { formatarPreco } from "../../components/utils/formatPrice"
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { StackParamsList } from "../../routes/app.routes";
 import { useComanda } from "../../contexts/comandaContext";
-
+import { usePedido } from "../../contexts/pedidoContext";
 
 
 
@@ -47,12 +47,12 @@ interface Categories {
 }
 
 interface Product {
-	id: string;
-	name: string;
-	price: string;
-	description?: string;
-	image_url: string;
-	category_id: string
+    id: string;
+    name: string;
+    price: string;
+    description?: string;
+    image_url: string;
+    category_id: string;
 }
 
 const CategoryCard = ({
@@ -293,7 +293,7 @@ export default function Home() {
 				</View>
 				<TouchableOpacity
 					style={styles.orderButton}
-					onPress={() => navigation.navigate('Order')}
+					onPress={() => navigation.navigate("Order")}
 				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>

@@ -10,12 +10,16 @@ import OrderTicket from "../pages/OrderTicket";
 import ScanQrCode from "../pages/ScanQrCode";
 
 export type StackParamsList = {
-    Home: undefined;
+    Home: undefined
     ProductInfo: undefined;
     CustomizeProduct: undefined;
     Order: undefined
     ScanQrCode: undefined
-    OrderTicket: undefined;
+    OrderTicket: {
+        comandaId: string;
+        mesaId: string;
+        numero_mesa: number;
+    };
 };
 
 const Stack = createNativeStackNavigator();
