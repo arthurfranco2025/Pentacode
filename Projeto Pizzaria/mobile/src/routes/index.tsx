@@ -6,6 +6,7 @@ import AppRoutes from "./app.routes";
 import AuthRoutes from "./auth.routes";
 import { AuthContext } from "../contexts/AuthContext";
 import { PedidoProvider } from '../contexts/pedidoContext';
+import { ComandaProvider } from '../contexts/comandaContext';
 
 function Routes (){
     const {isAuthenticated, loading} = useContext(AuthContext);
@@ -24,7 +25,14 @@ function Routes (){
     }
     
     return(
-        isAuthenticated ? <PedidoProvider><AppRoutes/></PedidoProvider> : <AuthRoutes/>
+        isAuthenticated ? 
+            <ComandaProvider>
+                <PedidoProvider>
+                    <AppRoutes/>
+                </PedidoProvider>
+            </ComandaProvider> 
+                : 
+            <AuthRoutes/>
     )
     }
 

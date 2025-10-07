@@ -17,24 +17,17 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice"
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { StackParamsList } from "../../routes/app.routes";
+import { useComanda } from "../../contexts/comandaContext";
 
 
 
 
 type RootStackParamList = {
-	Home: {
-		comandaId: string;
-		mesaId: string;
-		mesaNumero: number
-	};
+	Home: undefined;
 	ProductInfo: {
 		product: Product;
 	};
-	Order: {
-		comandaId: string;
-		mesaId: string;
-		mesaNumero: number
-	};
+	Order: undefined;
 };
 
 
@@ -90,12 +83,11 @@ export default function Home() {
 
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
-	const route = useRoute<RouteProp<StackParamsList, "Home">>();
-	const { mesaId, numero_mesa } = route.params;
 
-	console.log("Mesa ID:", mesaId);
-	console.log("Número da mesa:", numero_mesa);
+	const { comanda } = useComanda()
 
+	console.log("Mesa ID:", comanda?.mesaId);
+	console.log("Número da mesa:", comanda?.numero_mesa);
 
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
@@ -187,7 +179,7 @@ export default function Home() {
 					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 				</Text>
 				<Text style={{ color: "#fff", fontSize: 14, fontWeight: "600" }}>
-					Mesa {numero_mesa}
+					Mesa {comanda?.numero_mesa}
 				</Text>
 			</LinearGradient>
 
@@ -301,11 +293,7 @@ export default function Home() {
 				</View>
 				<TouchableOpacity
 					style={styles.orderButton}
-					onPress={() => navigation.navigate('Order', {
-						comandaId,
-						mesaId,
-						mesaNumero
-					})}
+					onPress={() => navigation.navigate('Order')}
 				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>

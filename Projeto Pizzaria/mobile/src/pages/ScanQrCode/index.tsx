@@ -6,6 +6,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useComanda } from "../../contexts/comandaContext";
 
 export default function QRScanner() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -14,6 +15,8 @@ export default function QRScanner() {
 
   const navigation = useNavigation<NavigationProp<StackParamsList>>();
   const { user, signOut } = useContext(AuthContext);
+
+  const { setComanda } = useComanda();
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -42,15 +45,18 @@ export default function QRScanner() {
       const numeroMesa = response.data?.mesa?.numero_mesa;
       if (!numeroMesa) throw new Error("Número da mesa não encontrado");
 
+      setComanda({
+        comandaId: comanda_id,
+        mesaId: mesa_id,
+        numero_mesa: numeroMesa,
+        pedidos: [],
+      });
+
       Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
         {
           text: "OK",
           onPress: () => {
-            navigation.navigate("Home", {
-              comandaId: comanda_id,
-              mesaId: mesa_id,
-              numero_mesa: numeroMesa,
-            });
+            navigation.navigate("Home");
             setScanned(false);
           },
         },

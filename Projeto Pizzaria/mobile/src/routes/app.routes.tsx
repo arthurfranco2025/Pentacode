@@ -8,18 +8,14 @@ import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
 import OrderTicket from "../pages/OrderTicket";
 import ScanQrCode from "../pages/ScanQrCode";
-import { PedidoProvider } from "../contexts/pedidoContext";
 
 export type StackParamsList = {
-    Home: {
-        comandaId: string;
-        mesaId: string;
-        numero_mesa: number;
-    };
+    Home: undefined;
     ProductInfo: undefined;
     CustomizeProduct: undefined;
     Order: undefined
     ScanQrCode: undefined
+    OrderTicket: undefined;
 };
 
 const Stack = createNativeStackNavigator();
