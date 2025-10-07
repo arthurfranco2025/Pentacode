@@ -64,7 +64,6 @@ export default function Home() {
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
 
-	const { comanda } = useComanda();
 	const { totalPedido } = usePedido(); // total do pedido real
 
 	const ItemCard = ({ product }: { product: Product }) => (
