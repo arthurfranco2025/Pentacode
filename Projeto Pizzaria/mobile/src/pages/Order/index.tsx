@@ -8,32 +8,32 @@ import {
     ScrollView
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
+import { useComanda } from "../../contexts/comandaContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamsList } from "../../routes/app.routes";
 
-type RootStackParamList = {
-    Home: {
-        // undefined;
-        comandaId: string;
-        mesaId: string;
-        numero_mesa: number;
-    }
-    OrderTicket: {
-        // undefined;
-        comandaId: string;
-        mesaId: string;
-        numero_mesa: number;
-    }
-
-
-};
+type OrderScreenNavigationProp = NativeStackNavigationProp<
+  StackParamsList,
+  "Order"
+>;
 
 export default function Order() {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const { pedido, totalPedido } = usePedido();
-    const route = useRoute<RouteProp<RootStackParamList, 'Home'>>();
-    const { comandaId, mesaId, numero_mesa } = route.params;
+    const navigation = useNavigation<OrderScreenNavigationProp>();
+    const { pedido, totalPedido, removeItem } = usePedido();
+    const { comanda } = useComanda();
+
+    if (!comanda) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Carregando comanda...</Text>
+            </View>
+        );
+    }
+
+    const { comandaId, mesaId, numero_mesa } = comanda;
 
     function handleFinishPedido() {
         navigation.navigate("OrderTicket", {
@@ -53,11 +53,7 @@ export default function Order() {
                 <Text>Nenhum produto no carrinho.</Text>
                 <TouchableOpacity
                     style={styles.returnButton}
-                    onPress={() => navigation.navigate('Home', {
-                        comandaId,
-                        mesaId,
-                        numero_mesa
-                    })}
+                    onPress={() => navigation.navigate('Home')}
                 >
                     <Text style={styles.returnButtonText}>Voltar ao cardápio</Text>
                 </TouchableOpacity>
@@ -98,7 +94,7 @@ export default function Order() {
                             <Text style={styles.productName}>{product.name}</Text>
                             <Text style={styles.quantity}>Quantidade: {product.qtd}</Text>
 
-                            {product.removedIngredients && product.removedIngredients.length > 0 && (
+                            {product.removedIngredients?.length > 0 && (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
                                     {product.removedIngredients.map((ing, idx) => (
@@ -107,7 +103,7 @@ export default function Order() {
                                 </View>
                             )}
 
-                            {product.extras && product.extras.length > 0 && (
+                            {product.extras?.length > 0 && (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Adicionais:</Text>
                                     {product.extras.map((extra, idx) => (
@@ -127,6 +123,16 @@ export default function Order() {
                                 Total: {formatarPreco(product.price)}
                             </Text>
                         </View>
+
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => removeItem(product.product_id)}
+                        >
+                            <Image
+                                source={{ uri: "https://img.icons8.com/fluency-systems-regular/48/ff3f4b/trash.png" }}
+                                style={{ width: 24, height: 24 }}
+                            />
+                        </TouchableOpacity>
                     </View>
                 ))}
 
@@ -166,7 +172,8 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 5,
-        elevation: 3
+        elevation: 3,
+        position: "relative",
     },
     image: { width: 100, height: 100, borderRadius: 12 },
     info: { flex: 1, marginLeft: 10 },
@@ -178,11 +185,11 @@ const styles = StyleSheet.create({
     itemTextSelected: { fontSize: 14, color: "#666" },
     textObservation: { fontSize: 14, color: "#666" },
     totalValue: { fontSize: 16, fontWeight: "bold", marginTop: 10, color: "#FF3F4B" },
-    noProduct: { alignItems: 'center', gap: 10 },
+    deleteButton: { marginLeft: 10, padding: 5 },
+    noProduct: { alignItems: 'center', gap: 10, justifyContent: 'center', flex: 1 },
     cart: { width: 100, height: 100 },
     returnButton: { backgroundColor: "#FF3F4B", borderRadius: 12, paddingVertical: 12, alignItems: "center", justifyContent: "center" },
     returnButtonText: { color: "#fff", fontWeight: "700", padding: 8 },
-
     buttonFinish: {
         backgroundColor: '#940B14',
         borderRadius: 12,
