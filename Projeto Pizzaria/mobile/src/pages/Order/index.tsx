@@ -16,8 +16,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamsList } from "../../routes/app.routes";
 
 type OrderScreenNavigationProp = NativeStackNavigationProp<
-  StackParamsList,
-  "Order"
+    StackParamsList,
+    "Order"
 >;
 
 export default function Order() {
@@ -28,7 +28,7 @@ export default function Order() {
     if (!comanda) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Carregando comanda...</Text>
+                <Text style={{ color: "#FFF" }}>Carregando comanda...</Text>
             </View>
         );
     }
@@ -50,7 +50,7 @@ export default function Order() {
                     source={{ uri: 'https://images.vexels.com/media/users/3/141186/isolated/preview/431ad815c9a8402ebdf354c82923c2a5-carrinho-de-compras-6.png' }}
                     style={styles.cart}
                 />
-                <Text>Nenhum produto no carrinho.</Text>
+                <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum produto no carrinho.</Text>
                 <TouchableOpacity
                     style={styles.returnButton}
                     onPress={() => navigation.navigate('Home')}
@@ -63,25 +63,25 @@ export default function Order() {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scroll}>
-                <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    colors={["#391D8A", "#261B47"]}
-                    style={styles.header}
-                >
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image
-                            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-                            style={{ width: 24, height: 24 }}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.logoText}>
-                        Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-                    </Text>
-                    <View style={{ width: 24 }} />
-                </LinearGradient>
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                colors={["#3D1F93", "#1d1d2e"]}
+                style={styles.header}
+            >
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image
+                        source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+                        style={{ width: 26, height: 26 }}
+                    />
+                </TouchableOpacity>
+                <Text style={styles.logoText}>
+                    Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+                </Text>
+                <View style={{ width: 26 }} />
+            </LinearGradient>
 
+            <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
 
                 {pedido.map((product, index) => (
@@ -155,8 +155,11 @@ export default function Order() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
-    scroll: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: "#1d1d2e",
+    },
+
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -165,71 +168,123 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 20,
     },
-    logoText: { color: "#fff", fontSize: 20, fontWeight: "700" },
-    title: { padding: 10, fontSize: 25, fontWeight: "700" },
+
+    logoText: {
+        color: "#FFF",
+        fontSize: 22,
+        fontWeight: "700",
+    },
+
+    title: {
+        padding: 10,
+        fontSize: 25,
+        fontWeight: "700",
+        color: "#FFF",
+    },
+
     card: {
         flexDirection: "row",
-        backgroundColor: "#fff",
+        backgroundColor: "#2a2a40",
         borderRadius: 12,
-        padding: 10,
+        padding: 12,
         marginBottom: 20,
         marginHorizontal: 20,
         alignItems: "center",
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
         position: "relative",
     },
-    image: { 
-        width: 100, 
-        height: 100, 
-        borderRadius: 12 
+
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 12,
     },
-    info: { flex: 1, marginLeft: 10 },
-    productName: { fontWeight: "bold", fontSize: 16 },
-    quantity: { 
-        fontSize: 14, 
-        color: "#666", 
-        marginVertical: 5 
+
+    info: {
+        flex: 1,
+        marginLeft: 12,
     },
-    section: { marginTop: 10 },
-    sectionTitle: { 
-        fontWeight: "bold", 
-        fontSize: 14, 
-        marginBottom: 5 
+
+    productName: {
+        fontWeight: "700",
+        fontSize: 16,
+        color: "#FFF",
     },
-    itemTextRemoved: { fontSize: 14, color: "#666" },
-    itemTextSelected: { fontSize: 14, color: "#666" },
-    textObservation: { fontSize: 14, color: "#666" },
-    totalValue: { fontSize: 16, 
-        fontWeight: "bold", 
-        marginTop: 10, 
-        color: "#028f3aff"
+
+    quantity: {
+        fontSize: 14,
+        color: "#ccc",
+        marginVertical: 5,
     },
-    deleteButton: { marginLeft: 10, padding: 5 },
-    noProduct: { 
-        alignItems: 'center', 
-        gap: 10, 
-        justifyContent: 'center', 
-        flex: 1
+
+    section: {
+        marginTop: 10,
     },
-    cart: { width: 100, height: 100 },
-    returnButton: { 
+
+    sectionTitle: {
+        fontWeight: "700",
+        fontSize: 14,
+        marginBottom: 5,
+        color: "#FFF",
+    },
+
+    itemTextRemoved: {
+        fontSize: 14,
+        color: "#FF6B6B",
+    },
+
+    itemTextSelected: {
+        fontSize: 14,
+        color: "#00C851",
+    },
+
+    textObservation: {
+        fontSize: 14,
+        color: "#ccc",
+    },
+
+    totalValue: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginTop: 10,
+        color: "#FF3F4B",
+    },
+
+    deleteButton: {
+        marginLeft: 10,
+        padding: 5,
+    },
+
+    noProduct: {
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1,
+        gap: 12,
+    },
+
+    cart: {
+        width: 100,
+        height: 100,
+    },
+
+    returnButton: {
         backgroundColor: "#FF3F4B",
         borderRadius: 12,
         paddingVertical: 12,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
-    returnButtonText: { color: "#fff", fontWeight: "700", padding: 8 },
-    
-    buttonText: { 
-        color: "#fff",
-        fontWeight: "700", 
-        fontSize: 16, 
-        alignItems: 'center', 
-        justifyContent: 'center', 
+
+    returnButtonText: {
+        color: "#FFF",
+        fontWeight: "700",
+        padding: 8,
+    },
+
+    buttonText: {
+        color: "#FFF",
+        fontWeight: "700",
+        fontSize: 16,
+        textAlign: "center",
     },
 
     buttonsRow: {
@@ -237,26 +292,24 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 15,
-        gap: 12, 
-        },
+        gap: 12,
+    },
 
-        buttonAddMore: {
-        backgroundColor: '#391D8A',
+    buttonAddMore: {
+        backgroundColor: "#391D8A",
         borderRadius: 12,
         paddingVertical: 12,
         paddingHorizontal: 16,
         alignItems: "center",
-        // flex: 1,
         marginHorizontal: 10,
-        },
+    },
 
-        buttonFinish: {
-        backgroundColor: '#940B14',
+    buttonFinish: {
+        backgroundColor: "#940B14",
         borderRadius: 12,
         paddingVertical: 12,
         paddingHorizontal: 16,
         alignItems: "center",
-        // flex: 1,
         marginHorizontal: 10,
-        },
-    });
+    },
+});
