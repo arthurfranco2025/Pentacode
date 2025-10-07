@@ -1,73 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, useNavigation, NavigationProp, RouteProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
+import { api } from "../../services/api";
+import Home from "../Home";
+
+// type RouteParams = {
+//     comandaId: string;
+//     mesaId: string;
+//     numero_mesa: number;
+// }
 
 type RootStackParamList = {
     Home: {
-        // undefined;
         comandaId: string;
         mesaId: string;
         numero_mesa: number;
-    }
-    OrderTicket: {
-        // undefined;
+    };
+    Order: {
         comandaId: string;
         mesaId: string;
         numero_mesa: number;
-    }
-
-
+    };
+    Payment: undefined;
 };
 
-export default function Order() {
+export default function OrderTicket() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const { pedido, totalPedido } = usePedido();
-    const route = useRoute<RouteProp<RootStackParamList, 'Home'>>();
+    const [pedidos, setPedidos] = useState();
+    const [loading, setLoading] = useState(true);
+    const route = useRoute<RouteProp<RootStackParamList, 'OrderTicket'>>();
     const { comandaId, mesaId, numero_mesa } = route.params;
+    // const { pedido, totalPedido } = usePedido();
 
-    function handleFinishPedido() {
-        navigation.navigate("OrderTicket", {
-            comandaId,
-            mesaId,
-            numero_mesa,
-        });
-    }
+    useEffect(() => {
+        async function listarPedidos() {
+            try {
+                const response = await api.get(`/pedido/comanda/${comandaId}`);
+                console.log('Pedidos na comanda:', response.data)
+                setPedidos(response.data)
+            } catch (err: any) {
+                setLoading(false)
+                console.log(err.response?.data || err.message);
+            }
+        }
 
-    if (!pedido || pedido.length === 0) {
-        return (
-            <View style={styles.noProduct}>
-                <Image
-                    source={{ uri: 'https://images.vexels.com/media/users/3/141186/isolated/preview/431ad815c9a8402ebdf354c82923c2a5-carrinho-de-compras-6.png' }}
-                    style={styles.cart}
-                />
-                <Text>Nenhum produto no carrinho.</Text>
-                <TouchableOpacity
-                    style={styles.returnButton}
-                    onPress={() => navigation.navigate('Home', {
-                        comandaId,
-                        mesaId,
-                        numero_mesa
-                    })}
-                >
-                    <Text style={styles.returnButtonText}>Voltar ao cardápio</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
+        if (comandaId) {
+            listarPedidos()
+        }
+        listarPedidos();
+    }, [comandaId]);
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scroll}>
+            {/* <ScrollView style={styles.scroll}>
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
@@ -86,9 +82,9 @@ export default function Order() {
                     <View style={{ width: 24 }} />
                 </LinearGradient>
 
-                <Text style={styles.title}>Pedido</Text>
+                <Text style={styles.title}>Pedido</Text> */}
 
-                {pedido.map((product, index) => (
+            {/* {pedidos.map((pedidos, index) => (
                     <View key={index} style={styles.card}>
                         <Image
                             source={{ uri: product.image_url }}
@@ -137,7 +133,7 @@ export default function Order() {
 
             <TouchableOpacity style={styles.buttonFinish} onPress={handleFinishPedido}>
                 <Text style={styles.buttonText}>Finalizar pedido</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 }

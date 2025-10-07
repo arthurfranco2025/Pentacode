@@ -6,11 +6,13 @@ import ProductInfo from "../pages/ProductInfo";
 import CustomizeProduct from "../pages/CustomizeProduct";
 import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
+import OrderTicket from "../pages/OrderTicket";
 import ScanQrCode from "../pages/ScanQrCode";
 import { PedidoProvider } from "../contexts/pedidoContext";
 
 export type StackParamsList = {
     Home: {
+        comandaId: string;
         mesaId: string;
         numero_mesa: number;
     };
@@ -56,6 +58,11 @@ function AppRoutes() {
             <Stack.Screen
                 name="Order"
                 component={Order}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="OrderTicket"
+                component={OrderTicket}
                 options={{ headerShown: false }}
             />
 

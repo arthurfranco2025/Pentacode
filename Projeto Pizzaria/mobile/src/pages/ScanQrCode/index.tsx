@@ -38,6 +38,7 @@ export default function QRScanner() {
       const cliente_id = user.id;
       const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
 
+      const comanda_id = response.data.id
       const numeroMesa = response.data?.mesa?.numero_mesa;
       if (!numeroMesa) throw new Error("Número da mesa não encontrado");
 
@@ -46,6 +47,7 @@ export default function QRScanner() {
           text: "OK",
           onPress: () => {
             navigation.navigate("Home", {
+              comandaId: comanda_id,
               mesaId: mesa_id,
               numero_mesa: numeroMesa,
             });

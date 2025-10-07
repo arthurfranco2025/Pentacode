@@ -22,11 +22,19 @@ import { StackParamsList } from "../../routes/app.routes";
 
 
 type RootStackParamList = {
-	Home: {mesaId: string; mesaNumero: number};
+	Home: {
+		comandaId: string;
+		mesaId: string;
+		mesaNumero: number
+	};
 	ProductInfo: {
 		product: Product;
 	};
-	Order: undefined;
+	Order: {
+		comandaId: string;
+		mesaId: string;
+		mesaNumero: number
+	};
 };
 
 
@@ -83,10 +91,10 @@ export default function Home() {
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
 	const route = useRoute<RouteProp<StackParamsList, "Home">>();
-    const { mesaId, numero_mesa } = route.params;
+	const { mesaId, numero_mesa } = route.params;
 
 	console.log("Mesa ID:", mesaId);
-    console.log("Número da mesa:", numero_mesa);
+	console.log("Número da mesa:", numero_mesa);
 
 
 	const ItemCard = ({ product }: { product: Product }) => (
@@ -181,7 +189,7 @@ export default function Home() {
 				<Text style={{ color: "#fff", fontSize: 14, fontWeight: "600" }}>
 					Mesa {numero_mesa}
 				</Text>
-				</LinearGradient>
+			</LinearGradient>
 
 			{/* Categorias */}
 			<View style={styles.menuSearchRow}>
@@ -293,7 +301,11 @@ export default function Home() {
 				</View>
 				<TouchableOpacity
 					style={styles.orderButton}
-					onPress={() => navigation.navigate('Order')}
+					onPress={() => navigation.navigate('Order', {
+						comandaId,
+						mesaId,
+						mesaNumero
+					})}
 				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
