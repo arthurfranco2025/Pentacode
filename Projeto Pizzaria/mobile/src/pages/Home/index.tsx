@@ -17,6 +17,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
+import { StackParamsList } from "../../routes/app.routes";
 
 type RootStackParamList = {
 	Home: undefined;
@@ -35,7 +36,7 @@ interface Categories {
 interface Product {
 	id: string;
 	name: string;
-	price: string;
+	price: number; // alterei para number, já que o totalPedido é number
 	description?: string;
 	image_url: string;
 	category_id: string;
@@ -60,25 +61,27 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
-
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
 
-	console.log("Mesa ID:", comanda?.mesaId);
-	console.log("Número da mesa:", comanda?.numero_mesa);
+	const { comanda } = useComanda();
+	const { totalPedido } = usePedido(); // total do pedido real
 
 	const ItemCard = ({ product }: { product: Product }) => (
 		<View style={[styles.card, !showCategories && styles.ThreeCards]}>
 			<Image source={{ uri: product.image_url }} style={styles.productImage} resizeMode="cover" />
 			<View style={styles.productInfo}>
-				<Text style={styles.promoText} ellipsizeMode="tail" numberOfLines={2}>
+				<Text
+					style={styles.promoText}
+					ellipsizeMode="tail"
+					numberOfLines={2}
+				>
 					{product.name}
 				</Text>
 				<Text style={styles.priceText}>{formatarPreco(product.price)}</Text>
 				<TouchableOpacity
 					style={styles.button}
 					onPress={() => navigation.navigate("ProductInfo", { product })}
-					activeOpacity={0.8}
 				>
 					<Text style={styles.buttonText}>VER</Text>
 				</TouchableOpacity>
@@ -98,6 +101,7 @@ export default function Home() {
 				setLoadingCategories(false);
 			}
 		}
+
 		loadCategories();
 	}, []);
 
@@ -106,9 +110,12 @@ export default function Home() {
 			try {
 				setLoadingProducts(true);
 				if (selectedCategory) {
-					const dbaListProductsByCategories = await api.get("category/products", {
-						params: { category_id: selectedCategory },
-					});
+					const dbaListProductsByCategories = await api.get(
+						"category/products",
+						{
+							params: { category_id: selectedCategory },
+						}
+					);
 					setProducts(dbaListProductsByCategories.data);
 				} else {
 					setProducts([]);
@@ -123,8 +130,6 @@ export default function Home() {
 		LoadListProduct();
 	}, [selectedCategory]);
 
-	const totalPedido = pedido.reduce((acc, item) => acc + item.price * item.qtd, 0);
-
 	return (
 		<View style={styles.container}>
 			{/* Header */}
@@ -137,9 +142,9 @@ export default function Home() {
 				<TouchableOpacity>
 					<Image
 						source={{
-							uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF",
+							uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png",
 						}}
-						style={{ width: 26, height: 26 }}
+						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>
 				<Text style={styles.logoText}>
@@ -150,11 +155,16 @@ export default function Home() {
 				</Text>
 			</LinearGradient>
 
-			{/* Categorias e busca */}
+			{/* Categorias e Produtos */}
 			<View style={styles.menuSearchRow}>
-				<TouchableOpacity onPress={() => setShowCategories(v => !v)} activeOpacity={0.8}>
+				<TouchableOpacity
+					onPress={() => setShowCategories((v) => !v)}
+					activeOpacity={0.8}
+				>
 					<Image
-						source={{ uri: "https://img.icons8.com/?size=100&id=59832&format=png&color=8A8A8A" }}
+						source={{
+							uri: "https://img.icons8.com/ios-filled/50/000000/menu.png",
+						}}
 						style={styles.sideIcon}
 					/>
 				</TouchableOpacity>
@@ -221,7 +231,7 @@ export default function Home() {
 				</View>
 			</View>
 
-			{/* Rodapé */}
+			{/* Rodapé com total real */}
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0, y: 1 }}
@@ -235,8 +245,9 @@ export default function Home() {
 						}}
 						style={styles.cartIcon}
 					/>
-					<Text style={styles.cartText}>: {formatarPreco(totalPedido)}</Text>
+					<Text style={styles.cartText}>{formatarPreco(totalPedido)}</Text>
 				</View>
+
 				<TouchableOpacity
 					style={styles.orderButton}
 					onPress={() => navigation.navigate('Order')}
