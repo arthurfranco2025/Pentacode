@@ -120,7 +120,8 @@ export default function Order() {
                             )}
 
                             <Text style={styles.totalValue}>
-                                Total: {formatarPreco(product.price)}
+                                <Text style={{ color: "#FFFFFF" }}>Total: </Text>
+                                {formatarPreco(product.price)}
                             </Text>
                         </View>
 
@@ -137,19 +138,27 @@ export default function Order() {
                 ))}
 
                 <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
-                    Valor total do pedido: {formatarPreco(totalPedido)}
+                    <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
+                    <Text>{formatarPreco(totalPedido)}</Text>
                 </Text>
             </ScrollView>
 
             <View style={styles.buttonsRow}>
-                <TouchableOpacity style={styles.buttonAddMore} onPress={() => navigation.navigate("Home")}>
+                <TouchableOpacity
+                    style={[styles.button, styles.buttonAddMore]}
+                    onPress={() => navigation.navigate("Home")}
+                >
                     <Text style={styles.buttonText}>Adicionar mais itens</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonFinish} onPress={handleFinishPedido}>
+                <TouchableOpacity
+                    style={[styles.button, styles.buttonFinish]}
+                    onPress={handleFinishPedido}
+                >
                     <Text style={styles.buttonText}>Finalizar pedido</Text>
                 </TouchableOpacity>
             </View>
+
         </View>
     );
 }
@@ -229,12 +238,12 @@ const styles = StyleSheet.create({
 
     itemTextRemoved: {
         fontSize: 14,
-        color: "#FF6B6B",
+        color: "#FFF",
     },
 
     itemTextSelected: {
         fontSize: 14,
-        color: "#00C851",
+        color: "#FFF",
     },
 
     textObservation: {
@@ -246,7 +255,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         marginTop: 10,
-        color: "#FF3F4B",
+        color: "#00C851",
     },
 
     deleteButton: {
@@ -280,36 +289,35 @@ const styles = StyleSheet.create({
         padding: 8,
     },
 
-    buttonText: {
-        color: "#FFF",
-        fontWeight: "700",
-        fontSize: 16,
-        textAlign: "center",
-    },
-
     buttonsRow: {
-        flexDirection: "column",
+        width: "100%",           // ocupa toda a largura disponível
+        flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 15,
-        gap: 12,
+        gap: 10,                 // espaço entre os botões (React Native >=0.71)
+    },
+
+    button: {
+        flex: 1,                 // faz os botões terem o mesmo tamanho
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: "center",
     },
 
     buttonAddMore: {
-        backgroundColor: "#391D8A",
-        borderRadius: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        alignItems: "center",
-        marginHorizontal: 10,
+        backgroundColor: "#007bff", // cor do botão "Adicionar"
+        marginRight: 5,             // separação entre os botões
     },
 
     buttonFinish: {
-        backgroundColor: "#940B14",
-        borderRadius: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        alignItems: "center",
-        marginHorizontal: 10,
+        backgroundColor: "#28a745", // cor do botão "Finalizar"
+        marginLeft: 5,              // separação entre os botões
+    },
+
+    buttonText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
     },
 });

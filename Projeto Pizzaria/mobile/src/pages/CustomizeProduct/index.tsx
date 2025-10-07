@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 12,
         marginHorizontal: 20,
-        marginTop: 20,
+        margin: 15,
         alignItems: "center",
     },
 
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 12,
         marginHorizontal: 20,
-        marginBottom: 10,
+        marginBottom: 15,
     },
 
     ingredientHeaderText: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 12,
         marginHorizontal: 20,
-        marginBottom: 8,
+        marginBottom: 15,
     },
 
     ingredientName: {
@@ -404,7 +404,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 14,
         marginHorizontal: 20,
-        marginTop: 20,
         textAlignVertical: "top",
         fontSize: 16,
         color: "#FFF",
