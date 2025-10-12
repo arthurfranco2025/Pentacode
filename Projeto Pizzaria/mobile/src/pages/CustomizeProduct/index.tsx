@@ -151,9 +151,18 @@ export default function CustomizeProduct() {
         try {
             if (!user?.id) throw new Error("Cliente não logado");
             const cliente_id = user.id;
+
+            let pedido_id = pedidoId;
+            if (!pedido_id) {
+                // Cria o pedido antes de adicionar o item
+                const pedidoResponse = await api.post("/pedido", { cliente_id });
+                pedido_id = pedidoResponse.data.id;
+                setPedidoId(pedido_id);
+            }
+
             const response = await api.post("/item", {
                 product_id: product.id,
-                cliente_id,
+                pedido_id,
                 qtd: quantity,
                 removidos: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
@@ -164,13 +173,13 @@ export default function CustomizeProduct() {
                 observacoes: observation
             });
             const { item } = response.data;
-            if (!pedidoId && item.pedido_id) setPedidoId(item.pedido_id);
             addItem({
                 product_id: product.id,
                 name: product.name,
                 image_url: product.image_url,
                 qtd: quantity,
                 price: item.price,
+                totalPrice: totalPrice,
                 removedIngredients: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
                     .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),

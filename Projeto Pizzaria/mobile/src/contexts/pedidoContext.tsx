@@ -5,7 +5,8 @@ interface PedidoItem {
     name: string;
     image_url: string;
     qtd: number;
-    price: number; // preço do produto após customização
+    price: number; // preço unitário do produto após customização
+    totalPrice?: number; // preço total do produto (unitário * qtd + adicionais)
     removedIngredients: string[];
     extras: string[];
     observation: string;
@@ -28,7 +29,7 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedidoId, setPedidoId] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
-        setpedido((prev) => [...prev, item]);
+    setpedido((prev) => [...prev, item]); // já recebe totalPrice do CustomizeProduct
     };
 
     const removeItem = (product_id: string) => {

@@ -121,7 +121,7 @@ export default function Order() {
 
                             <Text style={styles.totalValue}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(product.price)}
+                                {formatarPreco(product.totalPrice ?? product.price)}
                             </Text>
                         </View>
 
@@ -137,9 +137,9 @@ export default function Order() {
                     </View>
                 ))}
 
-                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
+                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}> 
                     <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
-                    <Text>{formatarPreco(totalPedido)}</Text>
+                    <Text>{formatarPreco(pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0))}</Text>
                 </Text>
             </ScrollView>
 
@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
     },
 
     noProduct: {
+        backgroundColor: "#1d1d2e",
         alignItems: "center",
         justifyContent: "center",
         flex: 1,
