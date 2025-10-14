@@ -41,7 +41,7 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const clearPedido = () => {
-        setStatusPedido("");
+        setPedidoStatus("");
         setpedido([]);
         setPedidoId(null);
     };
