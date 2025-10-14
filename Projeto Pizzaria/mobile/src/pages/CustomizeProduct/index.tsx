@@ -355,25 +355,143 @@ export default function CustomizeProduct() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#1d1d2e" },
-    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 10, paddingHorizontal: 30 },
-    logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
-    card: { flexDirection: "row", backgroundColor: "#2a2a40", borderRadius: 12, padding: 12, marginHorizontal: 20, margin: 15, alignItems: "center" },
-    productImage: { width: 100, height: 100, borderRadius: 12 },
-    productInfo: { flex: 1, marginLeft: 12 },
-    productName: { fontSize: 18, fontWeight: "700", color: "#FFF" },
-    price: { fontSize: 16, marginVertical: 5, color: "#00C851", fontWeight: "700" },
-    quantityContainer: { flexDirection: "row", alignItems: "center", marginTop: 8 },
-    button: { width: 32, height: 32, borderRadius: 8, backgroundColor: "#5A3FFF", justifyContent: "center", alignItems: "center" },
-    buttonText: { color: "#FFF", fontWeight: "bold", fontSize: 16 },
-    quantity: { marginHorizontal: 12, fontSize: 16, color: "#FFF" },
-    ingredientHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: "#3b3b55f7", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 12, marginHorizontal: 20, marginBottom: 15 },
-    ingredientHeaderText: { fontSize: 18, fontWeight: "bold", color: "#FFF" },
-    ingredientItem: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: "#2a2a40", paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, marginHorizontal: 20, marginBottom: 15 },
-    ingredientName: { fontSize: 16, fontWeight: "600", color: "#FFF" },
-    textArea: { borderColor: "#3b3b55f7", borderWidth: 1, borderRadius: 12, padding: 14, marginHorizontal: 20, textAlignVertical: "top", fontSize: 16, color: "#FFF" },
-    confirmButton: { paddingVertical: 16, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#FF3F4B", elevation: 8, shadowColor: "#FF3F4B" },
-    confirmText: { color: "#FFF", fontSize: 18, fontWeight: "bold", textTransform: "uppercase", letterSpacing: 0.8 },
-    modalContainer: { flex: 1, backgroundColor: "#000000aa", justifyContent: "center", paddingHorizontal: 20 },
-    modalContent: { backgroundColor: "#1d1d2e", borderRadius: 12, padding: 16, maxHeight: "80%" },
+    container: { 
+        flex: 1, 
+        backgroundColor: "#1d1d2e" 
+    },
+    header: { 
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        paddingTop: 52, 
+        paddingBottom: 10, 
+        paddingHorizontal: 30 
+    },
+    logoText: { color: "#fff", 
+        fontSize: 22, 
+        fontWeight: "700" 
+    },
+    card: { 
+        flexDirection: "row", 
+        backgroundColor: "#2a2a40", 
+        borderRadius: 12, 
+        padding: 12, 
+        marginHorizontal: 20, 
+        margin: 15, 
+        alignItems: "center" 
+    },
+    productImage: { 
+        width: 100, 
+        height: 100, 
+        borderRadius: 12 
+    },
+    productInfo: { 
+        flex: 1, 
+        marginLeft: 12 
+    },
+    productName: { 
+        fontSize: 18, 
+        fontWeight: "700", 
+        color: "#FFF" 
+    },
+    price: { 
+        fontSize: 16, 
+        marginVertical: 5, 
+        color: "#00C851", 
+        fontWeight: "700" 
+    },
+    quantityContainer: { 
+        flexDirection: "row", 
+        alignItems: "center", 
+        marginTop: 8 
+    },
+    button: { 
+        width: 32, 
+        height: 32, 
+        borderRadius: 8, 
+        backgroundColor: "#5A3FFF", 
+        justifyContent: "center",
+        alignItems: "center" 
+    },
+    buttonText: { 
+        color: "#FFF", 
+        fontWeight: "bold", 
+        fontSize: 16 
+    },
+    quantity: { 
+        marginHorizontal: 12, 
+        fontSize: 16, 
+        color: "#FFF" 
+    },
+    ingredientHeader: { 
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        backgroundColor: "#3b3b55f7", 
+        paddingVertical: 14, 
+        paddingHorizontal: 20, 
+        borderRadius: 12,
+        marginHorizontal: 20,
+        marginTop: 10,
+        marginBottom: 5 
+    },
+    ingredientHeaderText: { 
+        fontSize: 18, 
+        fontWeight: "bold", 
+        color: "#FFF" 
+    },
+    ingredientItem: { 
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        backgroundColor: "#2a2a40", 
+        paddingVertical: 12, 
+        paddingHorizontal: 20, 
+        borderRadius: 12, 
+        marginHorizontal: 20, 
+        marginBottom: 15 
+    },
+    ingredientName: { 
+        fontSize: 16, 
+        fontWeight: "600", 
+        color: "#FFF" 
+    },
+    textArea: { 
+        borderColor: "#3b3b55f7", 
+        borderWidth: 1, 
+        borderRadius: 12, 
+        padding: 14, 
+        marginHorizontal: 20, 
+        textAlignVertical: "top", 
+        fontSize: 16, 
+        color: "#FFF" 
+    },
+    confirmButton: { 
+        paddingVertical: 16, 
+        borderRadius: 12, 
+        alignItems: "center", 
+        justifyContent: "center", 
+        backgroundColor: "#FF3F4B", 
+        elevation: 8, 
+        shadowColor: "#FF3F4B"
+    },
+    confirmText: { 
+        color: "#FFF", 
+        fontSize: 18, 
+        fontWeight: "bold", 
+        textTransform: "uppercase", 
+        letterSpacing: 0.8 
+    },
+    modalContainer: { 
+        flex: 1, 
+        backgroundColor: "#000000aa", 
+        justifyContent: "center", 
+        paddingHorizontal: 20
+    },
+    modalContent: { 
+        backgroundColor: "#1d1d2e", 
+        borderRadius: 12, 
+        padding: 16, 
+        maxHeight: "80%" 
+    },
 });
