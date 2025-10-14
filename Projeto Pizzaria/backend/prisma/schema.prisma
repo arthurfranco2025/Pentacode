@@ -221,6 +221,7 @@ model Item_adicional {
 model Mesa {
   id          String @id @default(uuid())
   numero_mesa Int    @unique
+  url         String @default("")
 
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())

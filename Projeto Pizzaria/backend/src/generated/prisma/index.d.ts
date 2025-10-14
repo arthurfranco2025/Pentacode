@@ -9446,7 +9446,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento: string
+    tipoPagamento: string | null
     pagoEm: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -9564,7 +9564,7 @@ export namespace Prisma {
       status: string
       price: number
       points: number
-      tipoPagamento: string
+      tipoPagamento: string | null
       pagoEm: Date | null
       created_at: Date | null
       updated_at: Date | null
@@ -17276,6 +17276,7 @@ export namespace Prisma {
   export type MesaMinAggregateOutputType = {
     id: string | null
     numero_mesa: number | null
+    url: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17283,6 +17284,7 @@ export namespace Prisma {
   export type MesaMaxAggregateOutputType = {
     id: string | null
     numero_mesa: number | null
+    url: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17290,6 +17292,7 @@ export namespace Prisma {
   export type MesaCountAggregateOutputType = {
     id: number
     numero_mesa: number
+    url: number
     created_at: number
     updated_at: number
     _all: number
@@ -17307,6 +17310,7 @@ export namespace Prisma {
   export type MesaMinAggregateInputType = {
     id?: true
     numero_mesa?: true
+    url?: true
     created_at?: true
     updated_at?: true
   }
@@ -17314,6 +17318,7 @@ export namespace Prisma {
   export type MesaMaxAggregateInputType = {
     id?: true
     numero_mesa?: true
+    url?: true
     created_at?: true
     updated_at?: true
   }
@@ -17321,6 +17326,7 @@ export namespace Prisma {
   export type MesaCountAggregateInputType = {
     id?: true
     numero_mesa?: true
+    url?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -17415,6 +17421,7 @@ export namespace Prisma {
   export type MesaGroupByOutputType = {
     id: string
     numero_mesa: number
+    url: string
     created_at: Date | null
     updated_at: Date | null
     _count: MesaCountAggregateOutputType | null
@@ -17441,6 +17448,7 @@ export namespace Prisma {
   export type MesaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     numero_mesa?: boolean
+    url?: boolean
     created_at?: boolean
     updated_at?: boolean
     Comanda?: boolean | Mesa$ComandaArgs<ExtArgs>
@@ -17450,6 +17458,7 @@ export namespace Prisma {
   export type MesaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     numero_mesa?: boolean
+    url?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["mesa"]>
@@ -17457,6 +17466,7 @@ export namespace Prisma {
   export type MesaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     numero_mesa?: boolean
+    url?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["mesa"]>
@@ -17464,11 +17474,12 @@ export namespace Prisma {
   export type MesaSelectScalar = {
     id?: boolean
     numero_mesa?: boolean
+    url?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type MesaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "numero_mesa" | "created_at" | "updated_at", ExtArgs["result"]["mesa"]>
+  export type MesaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "numero_mesa" | "url" | "created_at" | "updated_at", ExtArgs["result"]["mesa"]>
   export type MesaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Comanda?: boolean | Mesa$ComandaArgs<ExtArgs>
     _count?: boolean | MesaCountOutputTypeDefaultArgs<ExtArgs>
@@ -17484,6 +17495,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       numero_mesa: number
+      url: string
       created_at: Date | null
       updated_at: Date | null
     }, ExtArgs["result"]["mesa"]>
@@ -17912,6 +17924,7 @@ export namespace Prisma {
   interface MesaFieldRefs {
     readonly id: FieldRef<"Mesa", 'String'>
     readonly numero_mesa: FieldRef<"Mesa", 'Int'>
+    readonly url: FieldRef<"Mesa", 'String'>
     readonly created_at: FieldRef<"Mesa", 'DateTime'>
     readonly updated_at: FieldRef<"Mesa", 'DateTime'>
   }
@@ -18534,6 +18547,7 @@ export namespace Prisma {
   export const MesaScalarFieldEnum: {
     id: 'id',
     numero_mesa: 'numero_mesa',
+    url: 'url',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -19113,7 +19127,7 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
-    tipoPagamento?: StringFilter<"Comanda"> | string
+    tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
@@ -19130,7 +19144,7 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
-    tipoPagamento?: SortOrder
+    tipoPagamento?: SortOrderInput | SortOrder
     pagoEm?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
@@ -19150,7 +19164,7 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
-    tipoPagamento?: StringFilter<"Comanda"> | string
+    tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
@@ -19167,7 +19181,7 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
-    tipoPagamento?: SortOrder
+    tipoPagamento?: SortOrderInput | SortOrder
     pagoEm?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
@@ -19188,7 +19202,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Comanda"> | string
     price?: FloatWithAggregatesFilter<"Comanda"> | number
     points?: FloatWithAggregatesFilter<"Comanda"> | number
-    tipoPagamento?: StringWithAggregatesFilter<"Comanda"> | string
+    tipoPagamento?: StringNullableWithAggregatesFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
@@ -19610,6 +19624,7 @@ export namespace Prisma {
     NOT?: MesaWhereInput | MesaWhereInput[]
     id?: StringFilter<"Mesa"> | string
     numero_mesa?: IntFilter<"Mesa"> | number
+    url?: StringFilter<"Mesa"> | string
     created_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
     Comanda?: ComandaListRelationFilter
@@ -19618,6 +19633,7 @@ export namespace Prisma {
   export type MesaOrderByWithRelationInput = {
     id?: SortOrder
     numero_mesa?: SortOrder
+    url?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     Comanda?: ComandaOrderByRelationAggregateInput
@@ -19629,6 +19645,7 @@ export namespace Prisma {
     AND?: MesaWhereInput | MesaWhereInput[]
     OR?: MesaWhereInput[]
     NOT?: MesaWhereInput | MesaWhereInput[]
+    url?: StringFilter<"Mesa"> | string
     created_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Mesa"> | Date | string | null
     Comanda?: ComandaListRelationFilter
@@ -19637,6 +19654,7 @@ export namespace Prisma {
   export type MesaOrderByWithAggregationInput = {
     id?: SortOrder
     numero_mesa?: SortOrder
+    url?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     _count?: MesaCountOrderByAggregateInput
@@ -19652,6 +19670,7 @@ export namespace Prisma {
     NOT?: MesaScalarWhereWithAggregatesInput | MesaScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Mesa"> | string
     numero_mesa?: IntWithAggregatesFilter<"Mesa"> | number
+    url?: StringWithAggregatesFilter<"Mesa"> | string
     created_at?: DateTimeNullableWithAggregatesFilter<"Mesa"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Mesa"> | Date | string | null
   }
@@ -20137,7 +20156,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -20152,7 +20171,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -20167,7 +20186,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20182,7 +20201,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20197,7 +20216,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -20210,7 +20229,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20221,7 +20240,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20641,6 +20660,7 @@ export namespace Prisma {
   export type MesaCreateInput = {
     id?: string
     numero_mesa: number
+    url?: string
     created_at?: Date | string | null
     updated_at?: Date | string | null
     Comanda?: ComandaCreateNestedManyWithoutMesaInput
@@ -20649,6 +20669,7 @@ export namespace Prisma {
   export type MesaUncheckedCreateInput = {
     id?: string
     numero_mesa: number
+    url?: string
     created_at?: Date | string | null
     updated_at?: Date | string | null
     Comanda?: ComandaUncheckedCreateNestedManyWithoutMesaInput
@@ -20657,6 +20678,7 @@ export namespace Prisma {
   export type MesaUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Comanda?: ComandaUpdateManyWithoutMesaNestedInput
@@ -20665,6 +20687,7 @@ export namespace Prisma {
   export type MesaUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Comanda?: ComandaUncheckedUpdateManyWithoutMesaNestedInput
@@ -20673,6 +20696,7 @@ export namespace Prisma {
   export type MesaCreateManyInput = {
     id?: string
     numero_mesa: number
+    url?: string
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -20680,6 +20704,7 @@ export namespace Prisma {
   export type MesaUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20687,6 +20712,7 @@ export namespace Prisma {
   export type MesaUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -21518,6 +21544,7 @@ export namespace Prisma {
   export type MesaCountOrderByAggregateInput = {
     id?: SortOrder
     numero_mesa?: SortOrder
+    url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -21529,6 +21556,7 @@ export namespace Prisma {
   export type MesaMaxOrderByAggregateInput = {
     id?: SortOrder
     numero_mesa?: SortOrder
+    url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -21536,6 +21564,7 @@ export namespace Prisma {
   export type MesaMinOrderByAggregateInput = {
     id?: SortOrder
     numero_mesa?: SortOrder
+    url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -22719,7 +22748,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -22733,7 +22762,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -22863,7 +22892,7 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
-    tipoPagamento?: StringFilter<"Comanda"> | string
+    tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
@@ -23454,7 +23483,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23468,7 +23497,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23583,7 +23612,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23597,7 +23626,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23662,6 +23691,7 @@ export namespace Prisma {
   export type MesaCreateWithoutComandaInput = {
     id?: string
     numero_mesa: number
+    url?: string
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -23669,6 +23699,7 @@ export namespace Prisma {
   export type MesaUncheckedCreateWithoutComandaInput = {
     id?: string
     numero_mesa: number
+    url?: string
     created_at?: Date | string | null
     updated_at?: Date | string | null
   }
@@ -23793,6 +23824,7 @@ export namespace Prisma {
   export type MesaUpdateWithoutComandaInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -23800,6 +23832,7 @@ export namespace Prisma {
   export type MesaUncheckedUpdateWithoutComandaInput = {
     id?: StringFieldUpdateOperationsInput | string
     numero_mesa?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -23878,7 +23911,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23892,7 +23925,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -23965,7 +23998,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23979,7 +24012,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24601,7 +24634,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -24615,7 +24648,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -24670,7 +24703,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -24737,7 +24770,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24751,7 +24784,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24765,7 +24798,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25265,7 +25298,7 @@ export namespace Prisma {
     status: string
     price: number
     points: number
-    tipoPagamento?: string
+    tipoPagamento?: string | null
     pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
@@ -25277,7 +25310,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25291,7 +25324,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25305,7 +25338,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
-    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
