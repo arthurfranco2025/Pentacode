@@ -86,9 +86,54 @@ export default function Home() {
 	const [categories, setCategories] = useState<Categories[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [showCategories, setShowCategories] = useState(true);
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
+
+	const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+	async function fetchProductsByName(name: string) {
+		if (!name || name.trim() === '') {
+			setProducts([]);
+			return;
+		}
+
+		try {
+			setLoadingProducts(true);
+			const res = await api.get('/product/search', { params: { name } });
+			setProducts(res.data);
+		} catch (err) {
+			console.error('Error searching products:', err);
+			setProducts([]);
+		} finally {
+			setLoadingProducts(false);
+		}
+	}
+
+	function handleSearch() {
+		fetchProductsByName(searchTerm);
+	}
+
+	useEffect(() => {
+		if (debounceTimer) {
+			clearTimeout(debounceTimer);
+		}
+
+		const timer = setTimeout(() => {
+			if (searchTerm && searchTerm.trim() !== '') {
+				fetchProductsByName(searchTerm);
+			} else {
+				setProducts([]);
+			}
+		}, 500);
+
+		setDebounceTimer(timer);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [searchTerm]);
 
 	useEffect(() => {
 		const loadCategories = async () => {
@@ -107,6 +152,11 @@ export default function Home() {
 
 	useEffect(() => {
 		const loadProducts = async () => {
+			// if there is a search term, don't load by category
+			if (searchTerm && searchTerm.trim() !== '') {
+				return;
+			}
+
 			if (!selectedCategory) {
 				setProducts([]);
 				return;
@@ -174,9 +224,13 @@ export default function Home() {
 						placeholder="Buscar"
 						placeholderTextColor="#8A8A8A"
 						style={styles.input}
+						value={searchTerm}
+						onChangeText={(text) => setSearchTerm(text)}
+						onSubmitEditing={() => handleSearch()}
 					/>
 				</View>
 			</View>
+
 
 			{/* CONTENT */}
 			<View style={styles.content}>
@@ -195,10 +249,10 @@ export default function Home() {
 									style={{ marginTop: 20 }}
 								/>
 							) : (
-								categories.map((cat) => (
-									<TouchableOpacity
-										key={cat.id}
-										onPress={() => setSelectedCategory(cat.id)}
+										categories.map((cat) => (
+											<TouchableOpacity
+												key={cat.id}
+												onPress={() => { setSelectedCategory(cat.id); setSearchTerm(''); }}
 										style={[
 											styles.categoryItem,
 											selectedCategory === cat.id && styles.selectedCategory,
@@ -236,7 +290,9 @@ export default function Home() {
 							</ScrollView>
 						) : (
 							<Text style={styles.emptyText}>
-								{selectedCategory
+								{searchTerm && searchTerm.trim() !== ''
+									? "Nenhum produto encontrado para sua busca"
+									: selectedCategory
 									? "Nenhum produto nesta categoria"
 									: "Selecione uma categoria"}
 							</Text>

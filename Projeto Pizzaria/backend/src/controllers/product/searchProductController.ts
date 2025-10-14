@@ -4,7 +4,7 @@ import { SearchProductService } from '../../services/product/searchProductServic
 class SearchProductController{
     async handle(req: Request, res: Response){
 
-        const {name} = req.body
+        const name = (req.query?.name as string) || req.body?.name
         const searchProductService = new SearchProductService()
 
         const listaProdutos = await searchProductService.execute({
