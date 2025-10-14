@@ -2132,13 +2132,15 @@ export namespace Prisma {
    */
 
   export type ProductCountOutputType = {
-    items: number
+    sabor1_items: number
+    sabor2_items: number
     favoritos: number
     product_ingrediente: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    items?: boolean | ProductCountOutputTypeCountItemsArgs
+    sabor1_items?: boolean | ProductCountOutputTypeCountSabor1_itemsArgs
+    sabor2_items?: boolean | ProductCountOutputTypeCountSabor2_itemsArgs
     favoritos?: boolean | ProductCountOutputTypeCountFavoritosArgs
     product_ingrediente?: boolean | ProductCountOutputTypeCountProduct_ingredienteArgs
   }
@@ -2157,7 +2159,14 @@ export namespace Prisma {
   /**
    * ProductCountOutputType without action
    */
-  export type ProductCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProductCountOutputTypeCountSabor1_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ItemWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountSabor2_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ItemWhereInput
   }
 
@@ -7028,7 +7037,8 @@ export namespace Prisma {
     updated_at?: boolean
     category_id?: boolean
     category?: boolean | CategoryDefaultArgs<ExtArgs>
-    items?: boolean | Product$itemsArgs<ExtArgs>
+    sabor1_items?: boolean | Product$sabor1_itemsArgs<ExtArgs>
+    sabor2_items?: boolean | Product$sabor2_itemsArgs<ExtArgs>
     favoritos?: boolean | Product$favoritosArgs<ExtArgs>
     product_ingrediente?: boolean | Product$product_ingredienteArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -7078,7 +7088,8 @@ export namespace Prisma {
   export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "points" | "description" | "promocao" | "image_url" | "created_at" | "updated_at" | "category_id", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
-    items?: boolean | Product$itemsArgs<ExtArgs>
+    sabor1_items?: boolean | Product$sabor1_itemsArgs<ExtArgs>
+    sabor2_items?: boolean | Product$sabor2_itemsArgs<ExtArgs>
     favoritos?: boolean | Product$favoritosArgs<ExtArgs>
     product_ingrediente?: boolean | Product$product_ingredienteArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -7094,7 +7105,8 @@ export namespace Prisma {
     name: "Product"
     objects: {
       category: Prisma.$CategoryPayload<ExtArgs>
-      items: Prisma.$ItemPayload<ExtArgs>[]
+      sabor1_items: Prisma.$ItemPayload<ExtArgs>[]
+      sabor2_items: Prisma.$ItemPayload<ExtArgs>[]
       favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
       product_ingrediente: Prisma.$Product_ingredientePayload<ExtArgs>[]
     }
@@ -7504,7 +7516,8 @@ export namespace Prisma {
   export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    items<T extends Product$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sabor1_items<T extends Product$sabor1_itemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$sabor1_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sabor2_items<T extends Product$sabor2_itemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$sabor2_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     favoritos<T extends Product$favoritosArgs<ExtArgs> = {}>(args?: Subset<T, Product$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     product_ingrediente<T extends Product$product_ingredienteArgs<ExtArgs> = {}>(args?: Subset<T, Product$product_ingredienteArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Product_ingredientePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -7942,9 +7955,33 @@ export namespace Prisma {
   }
 
   /**
-   * Product.items
+   * Product.sabor1_items
    */
-  export type Product$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Product$sabor1_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Item
+     */
+    select?: ItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Item
+     */
+    omit?: ItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ItemInclude<ExtArgs> | null
+    where?: ItemWhereInput
+    orderBy?: ItemOrderByWithRelationInput | ItemOrderByWithRelationInput[]
+    cursor?: ItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ItemScalarFieldEnum | ItemScalarFieldEnum[]
+  }
+
+  /**
+   * Product.sabor2_items
+   */
+  export type Product$sabor2_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Item
      */
@@ -9232,6 +9269,8 @@ export namespace Prisma {
     status: string | null
     price: number | null
     points: number | null
+    tipoPagamento: string | null
+    pagoEm: Date | null
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string | null
@@ -9243,6 +9282,8 @@ export namespace Prisma {
     status: string | null
     price: number | null
     points: number | null
+    tipoPagamento: string | null
+    pagoEm: Date | null
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string | null
@@ -9254,6 +9295,8 @@ export namespace Prisma {
     status: number
     price: number
     points: number
+    tipoPagamento: number
+    pagoEm: number
     created_at: number
     updated_at: number
     cliente_id: number
@@ -9277,6 +9320,8 @@ export namespace Prisma {
     status?: true
     price?: true
     points?: true
+    tipoPagamento?: true
+    pagoEm?: true
     created_at?: true
     updated_at?: true
     cliente_id?: true
@@ -9288,6 +9333,8 @@ export namespace Prisma {
     status?: true
     price?: true
     points?: true
+    tipoPagamento?: true
+    pagoEm?: true
     created_at?: true
     updated_at?: true
     cliente_id?: true
@@ -9299,6 +9346,8 @@ export namespace Prisma {
     status?: true
     price?: true
     points?: true
+    tipoPagamento?: true
+    pagoEm?: true
     created_at?: true
     updated_at?: true
     cliente_id?: true
@@ -9397,6 +9446,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento: string
+    pagoEm: Date | null
     created_at: Date | null
     updated_at: Date | null
     cliente_id: string
@@ -9427,6 +9478,8 @@ export namespace Prisma {
     status?: boolean
     price?: boolean
     points?: boolean
+    tipoPagamento?: boolean
+    pagoEm?: boolean
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
@@ -9443,6 +9496,8 @@ export namespace Prisma {
     status?: boolean
     price?: boolean
     points?: boolean
+    tipoPagamento?: boolean
+    pagoEm?: boolean
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
@@ -9456,6 +9511,8 @@ export namespace Prisma {
     status?: boolean
     price?: boolean
     points?: boolean
+    tipoPagamento?: boolean
+    pagoEm?: boolean
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
@@ -9469,13 +9526,15 @@ export namespace Prisma {
     status?: boolean
     price?: boolean
     points?: boolean
+    tipoPagamento?: boolean
+    pagoEm?: boolean
     created_at?: boolean
     updated_at?: boolean
     cliente_id?: boolean
     mesa_id?: boolean
   }
 
-  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id" | "mesa_id", ExtArgs["result"]["comanda"]>
+  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "tipoPagamento" | "pagoEm" | "created_at" | "updated_at" | "cliente_id" | "mesa_id", ExtArgs["result"]["comanda"]>
   export type ComandaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
     mesa?: boolean | Comanda$mesaArgs<ExtArgs>
@@ -9505,6 +9564,8 @@ export namespace Prisma {
       status: string
       price: number
       points: number
+      tipoPagamento: string
+      pagoEm: Date | null
       created_at: Date | null
       updated_at: Date | null
       cliente_id: string
@@ -9940,6 +10001,8 @@ export namespace Prisma {
     readonly status: FieldRef<"Comanda", 'String'>
     readonly price: FieldRef<"Comanda", 'Float'>
     readonly points: FieldRef<"Comanda", 'Float'>
+    readonly tipoPagamento: FieldRef<"Comanda", 'String'>
+    readonly pagoEm: FieldRef<"Comanda", 'DateTime'>
     readonly created_at: FieldRef<"Comanda", 'DateTime'>
     readonly updated_at: FieldRef<"Comanda", 'DateTime'>
     readonly cliente_id: FieldRef<"Comanda", 'String'>
@@ -11568,10 +11631,12 @@ export namespace Prisma {
     price: number | null
     points: number | null
     observacoes: string | null
+    dois_sabores: boolean | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
     product_id: string | null
+    product2_id: string | null
   }
 
   export type ItemMaxAggregateOutputType = {
@@ -11580,10 +11645,12 @@ export namespace Prisma {
     price: number | null
     points: number | null
     observacoes: string | null
+    dois_sabores: boolean | null
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string | null
     product_id: string | null
+    product2_id: string | null
   }
 
   export type ItemCountAggregateOutputType = {
@@ -11594,10 +11661,12 @@ export namespace Prisma {
     removidos: number
     adicionais: number
     observacoes: number
+    dois_sabores: number
     created_at: number
     updated_at: number
     pedido_id: number
     product_id: number
+    product2_id: number
     _all: number
   }
 
@@ -11620,10 +11689,12 @@ export namespace Prisma {
     price?: true
     points?: true
     observacoes?: true
+    dois_sabores?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
     product_id?: true
+    product2_id?: true
   }
 
   export type ItemMaxAggregateInputType = {
@@ -11632,10 +11703,12 @@ export namespace Prisma {
     price?: true
     points?: true
     observacoes?: true
+    dois_sabores?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
     product_id?: true
+    product2_id?: true
   }
 
   export type ItemCountAggregateInputType = {
@@ -11646,10 +11719,12 @@ export namespace Prisma {
     removidos?: true
     adicionais?: true
     observacoes?: true
+    dois_sabores?: true
     created_at?: true
     updated_at?: true
     pedido_id?: true
     product_id?: true
+    product2_id?: true
     _all?: true
   }
 
@@ -11747,10 +11822,12 @@ export namespace Prisma {
     removidos: JsonValue | null
     adicionais: JsonValue | null
     observacoes: string | null
+    dois_sabores: boolean
     created_at: Date | null
     updated_at: Date | null
     pedido_id: string
     product_id: string
+    product2_id: string | null
     _count: ItemCountAggregateOutputType | null
     _avg: ItemAvgAggregateOutputType | null
     _sum: ItemSumAggregateOutputType | null
@@ -11780,12 +11857,15 @@ export namespace Prisma {
     removidos?: boolean
     adicionais?: boolean
     observacoes?: boolean
+    dois_sabores?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
+    product2_id?: boolean
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
     Item_adicional?: boolean | Item$Item_adicionalArgs<ExtArgs>
     _count?: boolean | ItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["item"]>
@@ -11798,12 +11878,15 @@ export namespace Prisma {
     removidos?: boolean
     adicionais?: boolean
     observacoes?: boolean
+    dois_sabores?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
+    product2_id?: boolean
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
   }, ExtArgs["result"]["item"]>
 
   export type ItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11814,12 +11897,15 @@ export namespace Prisma {
     removidos?: boolean
     adicionais?: boolean
     observacoes?: boolean
+    dois_sabores?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
+    product2_id?: boolean
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
   }, ExtArgs["result"]["item"]>
 
   export type ItemSelectScalar = {
@@ -11830,26 +11916,31 @@ export namespace Prisma {
     removidos?: boolean
     adicionais?: boolean
     observacoes?: boolean
+    dois_sabores?: boolean
     created_at?: boolean
     updated_at?: boolean
     pedido_id?: boolean
     product_id?: boolean
+    product2_id?: boolean
   }
 
-  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "removidos" | "adicionais" | "observacoes" | "created_at" | "updated_at" | "pedido_id" | "product_id", ExtArgs["result"]["item"]>
+  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "price" | "points" | "removidos" | "adicionais" | "observacoes" | "dois_sabores" | "created_at" | "updated_at" | "pedido_id" | "product_id" | "product2_id", ExtArgs["result"]["item"]>
   export type ItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
     Item_adicional?: boolean | Item$Item_adicionalArgs<ExtArgs>
     _count?: boolean | ItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
   }
   export type ItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    product2?: boolean | Item$product2Args<ExtArgs>
   }
 
   export type $ItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11857,6 +11948,7 @@ export namespace Prisma {
     objects: {
       pedido: Prisma.$PedidoPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      product2: Prisma.$ProductPayload<ExtArgs> | null
       Item_adicional: Prisma.$Item_adicionalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -11867,10 +11959,12 @@ export namespace Prisma {
       removidos: Prisma.JsonValue | null
       adicionais: Prisma.JsonValue | null
       observacoes: string | null
+      dois_sabores: boolean
       created_at: Date | null
       updated_at: Date | null
       pedido_id: string
       product_id: string
+      product2_id: string | null
     }, ExtArgs["result"]["item"]>
     composites: {}
   }
@@ -12267,6 +12361,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     pedido<T extends PedidoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PedidoDefaultArgs<ExtArgs>>): Prisma__PedidoClient<$Result.GetResult<Prisma.$PedidoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product2<T extends Item$product2Args<ExtArgs> = {}>(args?: Subset<T, Item$product2Args<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     Item_adicional<T extends Item$Item_adicionalArgs<ExtArgs> = {}>(args?: Subset<T, Item$Item_adicionalArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Item_adicionalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -12304,10 +12399,12 @@ export namespace Prisma {
     readonly removidos: FieldRef<"Item", 'Json'>
     readonly adicionais: FieldRef<"Item", 'Json'>
     readonly observacoes: FieldRef<"Item", 'String'>
+    readonly dois_sabores: FieldRef<"Item", 'Boolean'>
     readonly created_at: FieldRef<"Item", 'DateTime'>
     readonly updated_at: FieldRef<"Item", 'DateTime'>
     readonly pedido_id: FieldRef<"Item", 'String'>
     readonly product_id: FieldRef<"Item", 'String'>
+    readonly product2_id: FieldRef<"Item", 'String'>
   }
     
 
@@ -12701,6 +12798,25 @@ export namespace Prisma {
      * Limit how many Items to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Item.product2
+   */
+  export type Item$product2Args<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
   }
 
   /**
@@ -18328,6 +18444,8 @@ export namespace Prisma {
     status: 'status',
     price: 'price',
     points: 'points',
+    tipoPagamento: 'tipoPagamento',
+    pagoEm: 'pagoEm',
     created_at: 'created_at',
     updated_at: 'updated_at',
     cliente_id: 'cliente_id',
@@ -18357,10 +18475,12 @@ export namespace Prisma {
     removidos: 'removidos',
     adicionais: 'adicionais',
     observacoes: 'observacoes',
+    dois_sabores: 'dois_sabores',
     created_at: 'created_at',
     updated_at: 'updated_at',
     pedido_id: 'pedido_id',
-    product_id: 'product_id'
+    product_id: 'product_id',
+    product2_id: 'product2_id'
   };
 
   export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
@@ -18828,7 +18948,8 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     category_id?: StringFilter<"Product"> | string
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
-    items?: ItemListRelationFilter
+    sabor1_items?: ItemListRelationFilter
+    sabor2_items?: ItemListRelationFilter
     favoritos?: FavoritoListRelationFilter
     product_ingrediente?: Product_ingredienteListRelationFilter
   }
@@ -18845,7 +18966,8 @@ export namespace Prisma {
     updated_at?: SortOrderInput | SortOrder
     category_id?: SortOrder
     category?: CategoryOrderByWithRelationInput
-    items?: ItemOrderByRelationAggregateInput
+    sabor1_items?: ItemOrderByRelationAggregateInput
+    sabor2_items?: ItemOrderByRelationAggregateInput
     favoritos?: FavoritoOrderByRelationAggregateInput
     product_ingrediente?: Product_ingredienteOrderByRelationAggregateInput
   }
@@ -18865,7 +18987,8 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"Product"> | Date | string | null
     category_id?: StringFilter<"Product"> | string
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
-    items?: ItemListRelationFilter
+    sabor1_items?: ItemListRelationFilter
+    sabor2_items?: ItemListRelationFilter
     favoritos?: FavoritoListRelationFilter
     product_ingrediente?: Product_ingredienteListRelationFilter
   }, "id">
@@ -18990,6 +19113,8 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
+    tipoPagamento?: StringFilter<"Comanda"> | string
+    pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
@@ -19005,6 +19130,8 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    tipoPagamento?: SortOrder
+    pagoEm?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     cliente_id?: SortOrder
@@ -19023,6 +19150,8 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
+    tipoPagamento?: StringFilter<"Comanda"> | string
+    pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
@@ -19038,6 +19167,8 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    tipoPagamento?: SortOrder
+    pagoEm?: SortOrderInput | SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     cliente_id?: SortOrder
@@ -19057,6 +19188,8 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Comanda"> | string
     price?: FloatWithAggregatesFilter<"Comanda"> | number
     points?: FloatWithAggregatesFilter<"Comanda"> | number
+    tipoPagamento?: StringWithAggregatesFilter<"Comanda"> | string
+    pagoEm?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     cliente_id?: StringWithAggregatesFilter<"Comanda"> | string
@@ -19139,12 +19272,15 @@ export namespace Prisma {
     removidos?: JsonNullableFilter<"Item">
     adicionais?: JsonNullableFilter<"Item">
     observacoes?: StringNullableFilter<"Item"> | string | null
+    dois_sabores?: BoolFilter<"Item"> | boolean
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
     product_id?: StringFilter<"Item"> | string
+    product2_id?: StringNullableFilter<"Item"> | string | null
     pedido?: XOR<PedidoScalarRelationFilter, PedidoWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    product2?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     Item_adicional?: Item_adicionalListRelationFilter
   }
 
@@ -19156,12 +19292,15 @@ export namespace Prisma {
     removidos?: SortOrderInput | SortOrder
     adicionais?: SortOrderInput | SortOrder
     observacoes?: SortOrderInput | SortOrder
+    dois_sabores?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
     product_id?: SortOrder
+    product2_id?: SortOrderInput | SortOrder
     pedido?: PedidoOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    product2?: ProductOrderByWithRelationInput
     Item_adicional?: Item_adicionalOrderByRelationAggregateInput
   }
 
@@ -19176,12 +19315,15 @@ export namespace Prisma {
     removidos?: JsonNullableFilter<"Item">
     adicionais?: JsonNullableFilter<"Item">
     observacoes?: StringNullableFilter<"Item"> | string | null
+    dois_sabores?: BoolFilter<"Item"> | boolean
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
     product_id?: StringFilter<"Item"> | string
+    product2_id?: StringNullableFilter<"Item"> | string | null
     pedido?: XOR<PedidoScalarRelationFilter, PedidoWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    product2?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     Item_adicional?: Item_adicionalListRelationFilter
   }, "id">
 
@@ -19193,10 +19335,12 @@ export namespace Prisma {
     removidos?: SortOrderInput | SortOrder
     adicionais?: SortOrderInput | SortOrder
     observacoes?: SortOrderInput | SortOrder
+    dois_sabores?: SortOrder
     created_at?: SortOrderInput | SortOrder
     updated_at?: SortOrderInput | SortOrder
     pedido_id?: SortOrder
     product_id?: SortOrder
+    product2_id?: SortOrderInput | SortOrder
     _count?: ItemCountOrderByAggregateInput
     _avg?: ItemAvgOrderByAggregateInput
     _max?: ItemMaxOrderByAggregateInput
@@ -19215,10 +19359,12 @@ export namespace Prisma {
     removidos?: JsonNullableWithAggregatesFilter<"Item">
     adicionais?: JsonNullableWithAggregatesFilter<"Item">
     observacoes?: StringNullableWithAggregatesFilter<"Item"> | string | null
+    dois_sabores?: BoolWithAggregatesFilter<"Item"> | boolean
     created_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
     pedido_id?: StringWithAggregatesFilter<"Item"> | string
     product_id?: StringWithAggregatesFilter<"Item"> | string
+    product2_id?: StringNullableWithAggregatesFilter<"Item"> | string | null
   }
 
   export type IngredienteWhereInput = {
@@ -19812,7 +19958,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
-    items?: ItemCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteCreateNestedManyWithoutProductInput
   }
@@ -19828,7 +19975,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
-    items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemUncheckedCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoUncheckedCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteUncheckedCreateNestedManyWithoutProductInput
   }
@@ -19844,7 +19992,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
-    items?: ItemUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUpdateManyWithoutProductNestedInput
   }
@@ -19860,7 +20009,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
-    items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUncheckedUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUncheckedUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -19987,6 +20137,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
@@ -20000,6 +20152,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -20013,6 +20167,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
@@ -20026,6 +20182,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
@@ -20039,6 +20197,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -20050,6 +20210,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20059,6 +20221,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
@@ -20134,10 +20298,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
-    product: ProductCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutSabor1_itemsInput
+    product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
   }
 
@@ -20149,10 +20315,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
     product_id: string
+    product2_id?: string | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -20164,10 +20332,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
-    product?: ProductUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
+    product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
   }
 
@@ -20179,10 +20349,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
     product_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -20194,10 +20366,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
     product_id: string
+    product2_id?: string | null
   }
 
   export type ItemUpdateManyMutationInput = {
@@ -20208,6 +20382,7 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20220,10 +20395,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
     product_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type IngredienteCreateInput = {
@@ -20967,6 +21144,8 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    tipoPagamento?: SortOrder
+    pagoEm?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
@@ -20983,6 +21162,8 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    tipoPagamento?: SortOrder
+    pagoEm?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
@@ -20994,6 +21175,8 @@ export namespace Prisma {
     status?: SortOrder
     price?: SortOrder
     points?: SortOrder
+    tipoPagamento?: SortOrder
+    pagoEm?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     cliente_id?: SortOrder
@@ -21095,6 +21278,11 @@ export namespace Prisma {
     isNot?: PedidoWhereInput
   }
 
+  export type ProductNullableScalarRelationFilter = {
+    is?: ProductWhereInput | null
+    isNot?: ProductWhereInput | null
+  }
+
   export type Item_adicionalListRelationFilter = {
     every?: Item_adicionalWhereInput
     some?: Item_adicionalWhereInput
@@ -21113,10 +21301,12 @@ export namespace Prisma {
     removidos?: SortOrder
     adicionais?: SortOrder
     observacoes?: SortOrder
+    dois_sabores?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
     product_id?: SortOrder
+    product2_id?: SortOrder
   }
 
   export type ItemAvgOrderByAggregateInput = {
@@ -21131,10 +21321,12 @@ export namespace Prisma {
     price?: SortOrder
     points?: SortOrder
     observacoes?: SortOrder
+    dois_sabores?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
     product_id?: SortOrder
+    product2_id?: SortOrder
   }
 
   export type ItemMinOrderByAggregateInput = {
@@ -21143,10 +21335,12 @@ export namespace Prisma {
     price?: SortOrder
     points?: SortOrder
     observacoes?: SortOrder
+    dois_sabores?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     pedido_id?: SortOrder
     product_id?: SortOrder
+    product2_id?: SortOrder
   }
 
   export type ItemSumOrderByAggregateInput = {
@@ -21621,6 +21815,13 @@ export namespace Prisma {
     connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
   }
 
+  export type ItemCreateNestedManyWithoutProduct2Input = {
+    create?: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input> | ItemCreateWithoutProduct2Input[] | ItemUncheckedCreateWithoutProduct2Input[]
+    connectOrCreate?: ItemCreateOrConnectWithoutProduct2Input | ItemCreateOrConnectWithoutProduct2Input[]
+    createMany?: ItemCreateManyProduct2InputEnvelope
+    connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+  }
+
   export type FavoritoCreateNestedManyWithoutProductInput = {
     create?: XOR<FavoritoCreateWithoutProductInput, FavoritoUncheckedCreateWithoutProductInput> | FavoritoCreateWithoutProductInput[] | FavoritoUncheckedCreateWithoutProductInput[]
     connectOrCreate?: FavoritoCreateOrConnectWithoutProductInput | FavoritoCreateOrConnectWithoutProductInput[]
@@ -21639,6 +21840,13 @@ export namespace Prisma {
     create?: XOR<ItemCreateWithoutProductInput, ItemUncheckedCreateWithoutProductInput> | ItemCreateWithoutProductInput[] | ItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ItemCreateOrConnectWithoutProductInput | ItemCreateOrConnectWithoutProductInput[]
     createMany?: ItemCreateManyProductInputEnvelope
+    connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+  }
+
+  export type ItemUncheckedCreateNestedManyWithoutProduct2Input = {
+    create?: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input> | ItemCreateWithoutProduct2Input[] | ItemUncheckedCreateWithoutProduct2Input[]
+    connectOrCreate?: ItemCreateOrConnectWithoutProduct2Input | ItemCreateOrConnectWithoutProduct2Input[]
+    createMany?: ItemCreateManyProduct2InputEnvelope
     connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
   }
 
@@ -21682,6 +21890,20 @@ export namespace Prisma {
     deleteMany?: ItemScalarWhereInput | ItemScalarWhereInput[]
   }
 
+  export type ItemUpdateManyWithoutProduct2NestedInput = {
+    create?: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input> | ItemCreateWithoutProduct2Input[] | ItemUncheckedCreateWithoutProduct2Input[]
+    connectOrCreate?: ItemCreateOrConnectWithoutProduct2Input | ItemCreateOrConnectWithoutProduct2Input[]
+    upsert?: ItemUpsertWithWhereUniqueWithoutProduct2Input | ItemUpsertWithWhereUniqueWithoutProduct2Input[]
+    createMany?: ItemCreateManyProduct2InputEnvelope
+    set?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    disconnect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    delete?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    update?: ItemUpdateWithWhereUniqueWithoutProduct2Input | ItemUpdateWithWhereUniqueWithoutProduct2Input[]
+    updateMany?: ItemUpdateManyWithWhereWithoutProduct2Input | ItemUpdateManyWithWhereWithoutProduct2Input[]
+    deleteMany?: ItemScalarWhereInput | ItemScalarWhereInput[]
+  }
+
   export type FavoritoUpdateManyWithoutProductNestedInput = {
     create?: XOR<FavoritoCreateWithoutProductInput, FavoritoUncheckedCreateWithoutProductInput> | FavoritoCreateWithoutProductInput[] | FavoritoUncheckedCreateWithoutProductInput[]
     connectOrCreate?: FavoritoCreateOrConnectWithoutProductInput | FavoritoCreateOrConnectWithoutProductInput[]
@@ -21721,6 +21943,20 @@ export namespace Prisma {
     connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
     update?: ItemUpdateWithWhereUniqueWithoutProductInput | ItemUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: ItemUpdateManyWithWhereWithoutProductInput | ItemUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: ItemScalarWhereInput | ItemScalarWhereInput[]
+  }
+
+  export type ItemUncheckedUpdateManyWithoutProduct2NestedInput = {
+    create?: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input> | ItemCreateWithoutProduct2Input[] | ItemUncheckedCreateWithoutProduct2Input[]
+    connectOrCreate?: ItemCreateOrConnectWithoutProduct2Input | ItemCreateOrConnectWithoutProduct2Input[]
+    upsert?: ItemUpsertWithWhereUniqueWithoutProduct2Input | ItemUpsertWithWhereUniqueWithoutProduct2Input[]
+    createMany?: ItemCreateManyProduct2InputEnvelope
+    set?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    disconnect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    delete?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    connect?: ItemWhereUniqueInput | ItemWhereUniqueInput[]
+    update?: ItemUpdateWithWhereUniqueWithoutProduct2Input | ItemUpdateWithWhereUniqueWithoutProduct2Input[]
+    updateMany?: ItemUpdateManyWithWhereWithoutProduct2Input | ItemUpdateManyWithWhereWithoutProduct2Input[]
     deleteMany?: ItemScalarWhereInput | ItemScalarWhereInput[]
   }
 
@@ -21978,9 +22214,15 @@ export namespace Prisma {
     connect?: PedidoWhereUniqueInput
   }
 
-  export type ProductCreateNestedOneWithoutItemsInput = {
-    create?: XOR<ProductCreateWithoutItemsInput, ProductUncheckedCreateWithoutItemsInput>
-    connectOrCreate?: ProductCreateOrConnectWithoutItemsInput
+  export type ProductCreateNestedOneWithoutSabor1_itemsInput = {
+    create?: XOR<ProductCreateWithoutSabor1_itemsInput, ProductUncheckedCreateWithoutSabor1_itemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSabor1_itemsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutSabor2_itemsInput = {
+    create?: XOR<ProductCreateWithoutSabor2_itemsInput, ProductUncheckedCreateWithoutSabor2_itemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSabor2_itemsInput
     connect?: ProductWhereUniqueInput
   }
 
@@ -22006,12 +22248,22 @@ export namespace Prisma {
     update?: XOR<XOR<PedidoUpdateToOneWithWhereWithoutItemsInput, PedidoUpdateWithoutItemsInput>, PedidoUncheckedUpdateWithoutItemsInput>
   }
 
-  export type ProductUpdateOneRequiredWithoutItemsNestedInput = {
-    create?: XOR<ProductCreateWithoutItemsInput, ProductUncheckedCreateWithoutItemsInput>
-    connectOrCreate?: ProductCreateOrConnectWithoutItemsInput
-    upsert?: ProductUpsertWithoutItemsInput
+  export type ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput = {
+    create?: XOR<ProductCreateWithoutSabor1_itemsInput, ProductUncheckedCreateWithoutSabor1_itemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSabor1_itemsInput
+    upsert?: ProductUpsertWithoutSabor1_itemsInput
     connect?: ProductWhereUniqueInput
-    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutItemsInput, ProductUpdateWithoutItemsInput>, ProductUncheckedUpdateWithoutItemsInput>
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutSabor1_itemsInput, ProductUpdateWithoutSabor1_itemsInput>, ProductUncheckedUpdateWithoutSabor1_itemsInput>
+  }
+
+  export type ProductUpdateOneWithoutSabor2_itemsNestedInput = {
+    create?: XOR<ProductCreateWithoutSabor2_itemsInput, ProductUncheckedCreateWithoutSabor2_itemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSabor2_itemsInput
+    upsert?: ProductUpsertWithoutSabor2_itemsInput
+    disconnect?: ProductWhereInput | boolean
+    delete?: ProductWhereInput | boolean
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutSabor2_itemsInput, ProductUpdateWithoutSabor2_itemsInput>, ProductUncheckedUpdateWithoutSabor2_itemsInput>
   }
 
   export type Item_adicionalUpdateManyWithoutItemNestedInput = {
@@ -22467,6 +22719,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     mesa?: MesaCreateNestedOneWithoutComandaInput
@@ -22479,6 +22733,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     mesa_id?: string | null
@@ -22607,6 +22863,8 @@ export namespace Prisma {
     status?: StringFilter<"Comanda"> | string
     price?: FloatFilter<"Comanda"> | number
     points?: FloatFilter<"Comanda"> | number
+    tipoPagamento?: StringFilter<"Comanda"> | string
+    pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     created_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     cliente_id?: StringFilter<"Comanda"> | string
@@ -22654,7 +22912,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
-    items?: ItemCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemCreateNestedManyWithoutProduct2Input
     product_ingrediente?: Product_ingredienteCreateNestedManyWithoutProductInput
   }
 
@@ -22669,7 +22928,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
-    items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemUncheckedCreateNestedManyWithoutProduct2Input
     product_ingrediente?: Product_ingredienteUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -22737,7 +22997,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
-    items?: ItemUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUpdateManyWithoutProduct2NestedInput
     product_ingrediente?: Product_ingredienteUpdateManyWithoutProductNestedInput
   }
 
@@ -22752,7 +23013,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
-    items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUncheckedUpdateManyWithoutProduct2NestedInput
     product_ingrediente?: Product_ingredienteUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -22809,7 +23071,8 @@ export namespace Prisma {
     image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    items?: ItemCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteCreateNestedManyWithoutProductInput
   }
@@ -22824,7 +23087,8 @@ export namespace Prisma {
     image_url?: string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemUncheckedCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoUncheckedCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteUncheckedCreateNestedManyWithoutProductInput
   }
@@ -22900,9 +23164,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
+    product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
   }
 
@@ -22914,9 +23180,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
+    product2_id?: string | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -22927,6 +23195,48 @@ export namespace Prisma {
 
   export type ItemCreateManyProductInputEnvelope = {
     data: ItemCreateManyProductInput | ItemCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ItemCreateWithoutProduct2Input = {
+    id?: string
+    qtd: number
+    price: number
+    points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
+    dois_sabores?: boolean
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    pedido: PedidoCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutSabor1_itemsInput
+    Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
+  }
+
+  export type ItemUncheckedCreateWithoutProduct2Input = {
+    id?: string
+    qtd: number
+    price: number
+    points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
+    dois_sabores?: boolean
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    pedido_id: string
+    product_id: string
+    Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
+  }
+
+  export type ItemCreateOrConnectWithoutProduct2Input = {
+    where: ItemWhereUniqueInput
+    create: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input>
+  }
+
+  export type ItemCreateManyProduct2InputEnvelope = {
+    data: ItemCreateManyProduct2Input | ItemCreateManyProduct2Input[]
     skipDuplicates?: boolean
   }
 
@@ -23034,10 +23344,28 @@ export namespace Prisma {
     removidos?: JsonNullableFilter<"Item">
     adicionais?: JsonNullableFilter<"Item">
     observacoes?: StringNullableFilter<"Item"> | string | null
+    dois_sabores?: BoolFilter<"Item"> | boolean
     created_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     updated_at?: DateTimeNullableFilter<"Item"> | Date | string | null
     pedido_id?: StringFilter<"Item"> | string
     product_id?: StringFilter<"Item"> | string
+    product2_id?: StringNullableFilter<"Item"> | string | null
+  }
+
+  export type ItemUpsertWithWhereUniqueWithoutProduct2Input = {
+    where: ItemWhereUniqueInput
+    update: XOR<ItemUpdateWithoutProduct2Input, ItemUncheckedUpdateWithoutProduct2Input>
+    create: XOR<ItemCreateWithoutProduct2Input, ItemUncheckedCreateWithoutProduct2Input>
+  }
+
+  export type ItemUpdateWithWhereUniqueWithoutProduct2Input = {
+    where: ItemWhereUniqueInput
+    data: XOR<ItemUpdateWithoutProduct2Input, ItemUncheckedUpdateWithoutProduct2Input>
+  }
+
+  export type ItemUpdateManyWithWhereWithoutProduct2Input = {
+    where: ItemScalarWhereInput
+    data: XOR<ItemUpdateManyMutationInput, ItemUncheckedUpdateManyWithoutProduct2Input>
   }
 
   export type FavoritoUpsertWithWhereUniqueWithoutProductInput = {
@@ -23126,6 +23454,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
@@ -23138,6 +23468,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -23158,9 +23490,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
-    product: ProductCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutSabor1_itemsInput
+    product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
   }
 
@@ -23172,9 +23506,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
+    product2_id?: string | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -23247,6 +23583,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
@@ -23259,6 +23597,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
@@ -23538,6 +23878,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
@@ -23550,6 +23892,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -23621,6 +23965,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
@@ -23633,6 +23979,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
@@ -23667,7 +24015,7 @@ export namespace Prisma {
     create: XOR<PedidoCreateWithoutItemsInput, PedidoUncheckedCreateWithoutItemsInput>
   }
 
-  export type ProductCreateWithoutItemsInput = {
+  export type ProductCreateWithoutSabor1_itemsInput = {
     id?: string
     name: string
     price: number
@@ -23678,11 +24026,12 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
+    sabor2_items?: ItemCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteCreateNestedManyWithoutProductInput
   }
 
-  export type ProductUncheckedCreateWithoutItemsInput = {
+  export type ProductUncheckedCreateWithoutSabor1_itemsInput = {
     id?: string
     name: string
     price: number
@@ -23693,13 +24042,51 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
+    sabor2_items?: ItemUncheckedCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoUncheckedCreateNestedManyWithoutProductInput
     product_ingrediente?: Product_ingredienteUncheckedCreateNestedManyWithoutProductInput
   }
 
-  export type ProductCreateOrConnectWithoutItemsInput = {
+  export type ProductCreateOrConnectWithoutSabor1_itemsInput = {
     where: ProductWhereUniqueInput
-    create: XOR<ProductCreateWithoutItemsInput, ProductUncheckedCreateWithoutItemsInput>
+    create: XOR<ProductCreateWithoutSabor1_itemsInput, ProductUncheckedCreateWithoutSabor1_itemsInput>
+  }
+
+  export type ProductCreateWithoutSabor2_itemsInput = {
+    id?: string
+    name: string
+    price: number
+    points: number
+    description: string
+    promocao: boolean
+    image_url?: string | null
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    category: CategoryCreateNestedOneWithoutProductsInput
+    sabor1_items?: ItemCreateNestedManyWithoutProductInput
+    favoritos?: FavoritoCreateNestedManyWithoutProductInput
+    product_ingrediente?: Product_ingredienteCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutSabor2_itemsInput = {
+    id?: string
+    name: string
+    price: number
+    points: number
+    description: string
+    promocao: boolean
+    image_url?: string | null
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    category_id: string
+    sabor1_items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    favoritos?: FavoritoUncheckedCreateNestedManyWithoutProductInput
+    product_ingrediente?: Product_ingredienteUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutSabor2_itemsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutSabor2_itemsInput, ProductUncheckedCreateWithoutSabor2_itemsInput>
   }
 
   export type Item_adicionalCreateWithoutItemInput = {
@@ -23757,18 +24144,18 @@ export namespace Prisma {
     comanda_id?: StringFieldUpdateOperationsInput | string
   }
 
-  export type ProductUpsertWithoutItemsInput = {
-    update: XOR<ProductUpdateWithoutItemsInput, ProductUncheckedUpdateWithoutItemsInput>
-    create: XOR<ProductCreateWithoutItemsInput, ProductUncheckedCreateWithoutItemsInput>
+  export type ProductUpsertWithoutSabor1_itemsInput = {
+    update: XOR<ProductUpdateWithoutSabor1_itemsInput, ProductUncheckedUpdateWithoutSabor1_itemsInput>
+    create: XOR<ProductCreateWithoutSabor1_itemsInput, ProductUncheckedCreateWithoutSabor1_itemsInput>
     where?: ProductWhereInput
   }
 
-  export type ProductUpdateToOneWithWhereWithoutItemsInput = {
+  export type ProductUpdateToOneWithWhereWithoutSabor1_itemsInput = {
     where?: ProductWhereInput
-    data: XOR<ProductUpdateWithoutItemsInput, ProductUncheckedUpdateWithoutItemsInput>
+    data: XOR<ProductUpdateWithoutSabor1_itemsInput, ProductUncheckedUpdateWithoutSabor1_itemsInput>
   }
 
-  export type ProductUpdateWithoutItemsInput = {
+  export type ProductUpdateWithoutSabor1_itemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
@@ -23779,11 +24166,12 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
+    sabor2_items?: ItemUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUpdateManyWithoutProductNestedInput
   }
 
-  export type ProductUncheckedUpdateWithoutItemsInput = {
+  export type ProductUncheckedUpdateWithoutSabor1_itemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
@@ -23794,6 +24182,50 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
+    sabor2_items?: ItemUncheckedUpdateManyWithoutProduct2NestedInput
+    favoritos?: FavoritoUncheckedUpdateManyWithoutProductNestedInput
+    product_ingrediente?: Product_ingredienteUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUpsertWithoutSabor2_itemsInput = {
+    update: XOR<ProductUpdateWithoutSabor2_itemsInput, ProductUncheckedUpdateWithoutSabor2_itemsInput>
+    create: XOR<ProductCreateWithoutSabor2_itemsInput, ProductUncheckedCreateWithoutSabor2_itemsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutSabor2_itemsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutSabor2_itemsInput, ProductUncheckedUpdateWithoutSabor2_itemsInput>
+  }
+
+  export type ProductUpdateWithoutSabor2_itemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    description?: StringFieldUpdateOperationsInput | string
+    promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
+    sabor1_items?: ItemUpdateManyWithoutProductNestedInput
+    favoritos?: FavoritoUpdateManyWithoutProductNestedInput
+    product_ingrediente?: Product_ingredienteUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutSabor2_itemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    description?: StringFieldUpdateOperationsInput | string
+    promocao?: BoolFieldUpdateOperationsInput | boolean
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    category_id?: StringFieldUpdateOperationsInput | string
+    sabor1_items?: ItemUncheckedUpdateManyWithoutProductNestedInput
     favoritos?: FavoritoUncheckedUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -23877,7 +24309,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category: CategoryCreateNestedOneWithoutProductsInput
-    items?: ItemCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoCreateNestedManyWithoutProductInput
   }
 
@@ -23892,7 +24325,8 @@ export namespace Prisma {
     created_at?: Date | string | null
     updated_at?: Date | string | null
     category_id: string
-    items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor1_items?: ItemUncheckedCreateNestedManyWithoutProductInput
+    sabor2_items?: ItemUncheckedCreateNestedManyWithoutProduct2Input
     favoritos?: FavoritoUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -23944,7 +24378,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
-    items?: ItemUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUpdateManyWithoutProductNestedInput
   }
 
@@ -23959,7 +24394,8 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category_id?: StringFieldUpdateOperationsInput | string
-    items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUncheckedUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -24036,10 +24472,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
-    product: ProductCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutSabor1_itemsInput
+    product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
   }
 
   export type ItemUncheckedCreateWithoutItem_adicionalInput = {
@@ -24050,10 +24488,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
     product_id: string
+    product2_id?: string | null
   }
 
   export type ItemCreateOrConnectWithoutItem_adicionalInput = {
@@ -24103,10 +24543,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
-    product?: ProductUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
+    product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
   }
 
   export type ItemUncheckedUpdateWithoutItem_adicionalInput = {
@@ -24117,10 +24559,12 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
     product_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AdicionalUpsertWithoutItem_adicionalInput = {
@@ -24157,6 +24601,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
@@ -24169,6 +24615,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -24222,6 +24670,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     mesa_id?: string | null
@@ -24287,6 +24737,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mesa?: MesaUpdateOneWithoutComandaNestedInput
@@ -24299,6 +24751,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24311,6 +24765,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24370,7 +24826,8 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    items?: ItemUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUpdateManyWithoutProductNestedInput
   }
@@ -24385,7 +24842,8 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor1_items?: ItemUncheckedUpdateManyWithoutProductNestedInput
+    sabor2_items?: ItemUncheckedUpdateManyWithoutProduct2NestedInput
     favoritos?: FavoritoUncheckedUpdateManyWithoutProductNestedInput
     product_ingrediente?: Product_ingredienteUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -24410,9 +24868,26 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     pedido_id: string
+    product2_id?: string | null
+  }
+
+  export type ItemCreateManyProduct2Input = {
+    id?: string
+    qtd: number
+    price: number
+    points?: number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: string | null
+    dois_sabores?: boolean
+    created_at?: Date | string | null
+    updated_at?: Date | string | null
+    pedido_id: string
+    product_id: string
   }
 
   export type FavoritoCreateManyProductInput = {
@@ -24438,9 +24913,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
+    product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
   }
 
@@ -24452,9 +24929,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -24466,9 +24945,58 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pedido_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ItemUpdateWithoutProduct2Input = {
+    id?: StringFieldUpdateOperationsInput | string
+    qtd?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
+    Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
+  }
+
+  export type ItemUncheckedUpdateWithoutProduct2Input = {
+    id?: StringFieldUpdateOperationsInput | string
+    qtd?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pedido_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
+  }
+
+  export type ItemUncheckedUpdateManyWithoutProduct2Input = {
+    id?: StringFieldUpdateOperationsInput | string
+    qtd?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    points?: FloatFieldUpdateOperationsInput | number
+    removidos?: NullableJsonNullValueInput | InputJsonValue
+    adicionais?: NullableJsonNullValueInput | InputJsonValue
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pedido_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type FavoritoUpdateWithoutProductInput = {
@@ -24524,9 +25052,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: string | null
+    dois_sabores?: boolean
     created_at?: Date | string | null
     updated_at?: Date | string | null
     product_id: string
+    product2_id?: string | null
   }
 
   export type ItemUpdateWithoutPedidoInput = {
@@ -24537,9 +25067,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    product?: ProductUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
+    product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
   }
 
@@ -24551,9 +25083,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -24565,9 +25099,11 @@ export namespace Prisma {
     removidos?: NullableJsonNullValueInput | InputJsonValue
     adicionais?: NullableJsonNullValueInput | InputJsonValue
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product_id?: StringFieldUpdateOperationsInput | string
+    product2_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AvaliacaoCreateManyComandaInput = {
@@ -24729,6 +25265,8 @@ export namespace Prisma {
     status: string
     price: number
     points: number
+    tipoPagamento?: string
+    pagoEm?: Date | string | null
     created_at?: Date | string | null
     updated_at?: Date | string | null
     cliente_id: string
@@ -24739,6 +25277,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
@@ -24751,6 +25291,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string
@@ -24763,6 +25305,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     points?: FloatFieldUpdateOperationsInput | number
+    tipoPagamento?: StringFieldUpdateOperationsInput | string
+    pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cliente_id?: StringFieldUpdateOperationsInput | string

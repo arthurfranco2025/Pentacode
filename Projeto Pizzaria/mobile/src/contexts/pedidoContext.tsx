@@ -1,12 +1,13 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { api } from "../services/api"; // ✅ certifique-se que o caminho está correto
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { api } from '../services/api'; 
 
 interface PedidoItem {
     product_id: string;
     name: string;
     image_url: string;
     qtd: number;
-    price: number;
+    price: number; // preço unitário do produto após customização
+    totalPrice?: number; // preço total do produto (unitário * qtd + adicionais)
     removedIngredients: string[];
     extras: string[];
     observation: string;
@@ -20,9 +21,8 @@ interface pedidoContextType {
     totalPedido: number;
     pedidoId: string | null;
     setPedidoId: (id: string | null) => void;
-    statusPedido: string;
-    setStatusPedido: (status: string) => void;
-    updateStatusPedido: (novoStatus: string) => Promise<void>; // ✅ nova função
+    pedidoStatus: string | null;
+    fetchPedidoStatus: () => void;
 }
 
 const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
@@ -30,10 +30,10 @@ const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
 export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedido, setpedido] = useState<PedidoItem[]>([]);
     const [pedidoId, setPedidoId] = useState<string | null>(null);
-    const [statusPedido, setStatusPedido] = useState<string>("");
+    const [pedidoStatus, setPedidoStatus] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
-        setpedido((prev) => [...prev, item]);
+        setpedido((prev) => [...prev, item]); // já recebe totalPrice do CustomizeProduct
     };
 
     const removeItem = (product_id: string) => {
@@ -41,29 +41,31 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const clearPedido = () => {
-        setpedido([]);
         setStatusPedido("");
+        setpedido([]);
         setPedidoId(null);
     };
 
     const totalPedido = pedido.reduce((acc, item) => acc + item.price, 0);
 
-    // ✅ função para atualizar o status na API
-    const updateStatusPedido = async (novoStatus: string) => {
+    // Função para buscar status do pedido
+    const fetchPedidoStatus = async () => {
+        if (!pedidoId) return;
         try {
-            if (!pedidoId) throw new Error("Pedido ID não encontrado.");
-
-            await api.put(`/pedido/editarStatus`, {
-                pedido_id: pedidoId,
-                status: novoStatus,
-            });
-
-            setStatusPedido(novoStatus);
-        } catch (error: any) {
-            console.error("Erro ao atualizar status do pedido:", error);
-            throw new Error(error?.response?.data?.message || "Erro ao atualizar status");
+            const response = await api.get(`/pedidos/${pedidoId}/status`);
+            setPedidoStatus(response.data.status);
+        } catch (error) {
+            setPedidoStatus(null);
         }
     };
+
+    // Buscando o status a cada 5 segundos
+    useEffect(() => {
+        if (!pedidoId) return;
+        fetchPedidoStatus(); // busca inicial
+        const interval = setInterval(fetchPedidoStatus, 5000);
+        return () => clearInterval(interval);
+    }, [pedidoId]);
 
     return (
         <pedidoContext.Provider
@@ -75,11 +77,9 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
                 totalPedido,
                 pedidoId,
                 setPedidoId,
-                statusPedido,
-                setStatusPedido,
-                updateStatusPedido, // ✅ exportado
-            }}
-        >
+                pedidoStatus,
+                fetchPedidoStatus
+            }}>
             {children}
         </pedidoContext.Provider>
     );

@@ -48,10 +48,11 @@ class RemovePedidoService{
         const removePedido = await PrismaClient.pedido.delete({
             where: {
                 id: pedido_id
-            }
+            },
         })
 
-        return removePedido
+        return { message : `Pedido Removido: ${removePedido.id} da comanda ${removePedido.comanda_id}` }
+        
     }
 }
 

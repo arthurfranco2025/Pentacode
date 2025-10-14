@@ -8,15 +8,16 @@ import {
   Image
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
-import { formatarPreco } from "../../components/utils/formatPrice";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { StackParamsList } from "../../routes/app.routes";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
+import { formatarPreco } from "../../components/utils/formatPrice";
 
 export default function OrderTicket() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
-  const { pedido, totalPedido, statusPedido } = usePedido();
+  const { pedido, totalPedido, pedidoStatus } = usePedido();
 
   if (!comanda) {
     return (
@@ -28,10 +29,13 @@ export default function OrderTicket() {
 
   const { comandaId, mesaId, numero_mesa } = comanda;
 
-  const handleFinalize = () => {
-    // Aqui você pode chamar API para finalizar a comanda
-    alert(`Comanda ${numero_mesa} finalizada!`);
-    // navigation.navigate("Home");
+  const handleGoToPayment = () => {
+    navigation.navigate("Payment", {
+      comandaId,
+      mesaId,
+      numero_mesa,
+      total: totalPedido,
+    });
   };
 
   return (
@@ -56,37 +60,44 @@ export default function OrderTicket() {
       </LinearGradient>
 
       {/* Conteúdo */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.title}>Comanda #{numero_mesa}</Text>
 
         {pedido.length === 0 ? (
           <View style={styles.noProduct}>
-            <Text style={{ color: "#FFF" }}>Nenhum produto na comanda.</Text>
+            <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum produto na comanda.</Text>
           </View>
         ) : (
           pedido.map((item, index) => (
             <View key={index} style={styles.card}>
-              <Text>
-                Pedido #{index + 1}
-              </Text>
+              <View style={styles.cardHeader}>
+                <Text style={styles.pedidoNumber}>Pedido #{index + 1}</Text>
+                <Text style={styles.priceTag}>
+                  {formatarPreco(item.totalPrice ?? item.price)}
+                </Text>
+              </View>
+
               <Text style={styles.productName}>
                 {item.name} x{item.qtd}
               </Text>
 
               {item.removedIngredients?.length > 0 && (
                 <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
+                  <Text style={styles.sectionTitle}>Ingredientes Removidos</Text>
                   {item.removedIngredients.map((ing, idx) => (
-                    <Text key={idx} style={styles.itemTextRemoved}>- {ing}</Text>
+                    <Text key={idx} style={styles.itemTextRemoved}>– {ing}</Text>
                   ))}
                 </View>
               )}
 
               {item.extras?.length > 0 && (
                 <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Adicionais:</Text>
+                  <Text style={styles.sectionTitle}>Adicionais</Text>
                   {item.extras.map((extra, idx) => (
-                    <Text key={idx} style={styles.itemTextSelected}>- {extra}</Text>
+                    <Text key={idx} style={styles.itemTextSelected}>+ {extra}</Text>
                   ))}
                 </View>
               )}
@@ -99,47 +110,128 @@ export default function OrderTicket() {
 
               {item.observation && (
                 <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Observação:</Text>
+                  <Text style={styles.sectionTitle}>Observação</Text>
                   <Text style={styles.textObservation}>{item.observation}</Text>
                 </View>
               )}
 
-              <Text style={styles.totalValue}>
-                Total: {formatarPreco(item.price)}
-              </Text>
+              {pedidoStatus && (
+                <View style={{ alignItems: 'left', marginVertical: 10 }}>
+                  <Text style={{ color: "#FFF", fontSize: 16 }}>
+                    Status do pedido: <Text style={{ fontWeight: 'bold', color: "#FF3F4B" }}>{pedidoStatus}</Text>
+                  </Text>
+                </View>
+              )}
             </View>
           ))
         )}
 
-        <Text style={[styles.totalValue, { textAlign: "center", fontSize: 18 }]}>
-          Valor total: {formatarPreco(totalPedido)}
-        </Text>
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalText}>
+            Valor total:
+          </Text>
+          <Text style={styles.totalValue}>
+            {formatarPreco(
+              pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0)
+            )}
+          </Text>
+        </View>
       </ScrollView>
 
-      {/* Botão finalizar */}
-      <TouchableOpacity style={styles.finishButton} onPress={handleFinalize}>
-        <Text style={styles.finishText}>Finalizar Comanda</Text>
-      </TouchableOpacity>
+      {/* Botão pagamento */}
+      <LinearGradient
+        colors={["#FF3F4B", "#e83640"]}
+        style={styles.finishButton}
+      >
+        <TouchableOpacity onPress={handleGoToPayment}>
+          <Text style={styles.finishText}>Ir para pagamento</Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1d1d2e" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 12, paddingHorizontal: 20 },
-  logoText: { color: "#FFF", fontSize: 22, fontWeight: "700" },
-  title: { fontSize: 25, fontWeight: "700", color: "#FFF", padding: 10 },
-  card: { backgroundColor: "#2a2a40", borderRadius: 12, padding: 12, marginHorizontal: 20, marginBottom: 16 },
-  productName: { fontSize: 18, fontWeight: "700", color: "#FFF" },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 52,
+    paddingBottom: 14,
+    paddingHorizontal: 20,
+    elevation: 5,
+  },
+  logoText: { color: "#FFF", fontSize: 22, fontWeight: "800", letterSpacing: 0.5 },
+  scrollContent: { paddingBottom: 140, paddingTop: 10 },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#FFF",
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  card: {
+    backgroundColor: "#2a2a40",
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  pedidoNumber: { color: "#aaa", fontSize: 13, fontWeight: "600" },
+  priceTag: { color: "#00C851", fontWeight: "700", fontSize: 16 },
+  productName: { fontSize: 18, fontWeight: "700", color: "#FFF", marginBottom: 6 },
   section: { marginTop: 8 },
-  sectionTitle: { fontWeight: "700", fontSize: 14, color: "#FFF" },
-  itemTextRemoved: { fontSize: 14, color: "#FF6B6B" },
-  itemTextSelected: { fontSize: 14, color: "#00C851" },
-  textObservation: { fontSize: 14, color: "#ccc" },
-  totalValue: { fontSize: 16, fontWeight: "bold", marginTop: 10, color: "#FF3F4B" },
-  finishButton: { backgroundColor: "#FF3F4B", marginHorizontal: 20, marginBottom: 20, paddingVertical: 16, borderRadius: 12, alignItems: "center" },
-  finishText: { color: "#FFF", fontWeight: "700", fontSize: 18, textAlign: "center" },
+  sectionTitle: { fontWeight: "700", fontSize: 14, color: "#FFF", marginBottom: 4 },
+  itemTextRemoved: { fontSize: 14, color: "#FF6B6B", marginLeft: 4 },
+  itemTextSelected: { fontSize: 14, color: "#00B347", marginLeft: 4 },
+  textObservation: { fontSize: 14, color: "#ccc", marginLeft: 4 },
+  totalContainer: {
+    backgroundColor: "#2a2a40",
+    marginHorizontal: 20,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  totalText: { color: "#FFF", fontSize: 17, fontWeight: "600" },
+  totalValue: { color: "#00C851", fontSize: 18, fontWeight: "800" },
+  finishButton: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    paddingVertical: 16,
+    borderRadius: 14,
+    elevation: 8,
+    shadowColor: "#FF3F4B",
+  },
+  finishText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 18,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   loadingText: { color: "#FFF", fontSize: 16 },
-  noProduct: { flex: 1, justifyContent: "center", alignItems: "center", marginTop: 50 },
+  noProduct: {
+    backgroundColor: "#1d1d2e",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 60,
+    padding: 20,
+  },
 });

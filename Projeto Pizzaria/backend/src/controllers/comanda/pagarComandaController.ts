@@ -4,11 +4,12 @@ import { PagarComandaService } from '../../services/comanda/pagarComandaService'
 class PagarComandaController{
     async handle(req: Request, res: Response){
 
-        const { comanda_id } = req.body
+        const { comanda_id, tipoPagamento } = req.body
         const pagarComandaService = new PagarComandaService()
 
         const pagarComanda = await pagarComandaService.execute({
-            comanda_id
+            comanda_id,
+            tipoPagamento
         });
 
         res.json(pagarComanda)

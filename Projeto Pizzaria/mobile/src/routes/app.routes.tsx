@@ -8,6 +8,7 @@ import Dashboard from "../pages/Dashboard";
 import Order from "../pages/Order"
 import OrderTicket from "../pages/OrderTicket";
 import ScanQrCode from "../pages/ScanQrCode";
+import Payment from "../pages/Payment";
 
 export type StackParamsList = {
     Home: undefined
@@ -21,6 +22,13 @@ export type StackParamsList = {
         numero_mesa: number;
         statusPedido: string;
     };
+     Payment: {
+        comandaId: string;
+        mesaId: string;
+        numero_mesa: number;
+        total: number;
+    }
+    SignIn: undefined
 };
 
 const Stack = createNativeStackNavigator();
@@ -67,7 +75,11 @@ function AppRoutes() {
                 options={{ headerShown: false }}
             />
 
-
+            <Stack.Screen
+                name="Payment"
+                component={Payment}
+                options={{ headerShown: false }}
+            />
 
             {/* <Stack.Screen 
                 name="SignUp" 
