@@ -16,7 +16,7 @@ class CreateProductIngredienteService {
             }
         })
 
-        const JaExiste = await PrismaClient.product_ingrediente.findFirst({
+        const JaExiste = await prismaClient.product_ingrediente.findFirst({
             where:{
                 ingrediente_id,
                 product_id,
