@@ -22,7 +22,8 @@ type OrderScreenNavigationProp = NativeStackNavigationProp<
 
 export default function Order() {
     const navigation = useNavigation<OrderScreenNavigationProp>();
-    const { pedido, totalPedido, removeItem, statusPedido, updateStatusPedido } = usePedido(); const { comanda } = useComanda();
+    const { pedido, totalPedido, removeItem, pedidoStatus } = usePedido();
+    const { comanda } = useComanda();
 
     if (!comanda) {
         return (

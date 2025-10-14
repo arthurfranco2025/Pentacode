@@ -40,7 +40,8 @@ class OpenPedidoService {
                 id: true,
                 cliente_id: true,
                 comanda: true,
-                price: true
+                price: true,
+                status: true,
             }
         });
 

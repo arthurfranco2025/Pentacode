@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { api } from "../services/api";
+import { api } from '../services/api'; // ajuste o caminho se necessário
 
 interface PedidoItem {
     product_id: string;
@@ -21,9 +21,8 @@ interface pedidoContextType {
     totalPedido: number;
     pedidoId: string | null;
     setPedidoId: (id: string | null) => void;
-    statusPedido: string;
-    setStatusPedido: (status: string) => void;
-    updateStatusPedido: (novoStatus: string) => Promise<void>;
+    pedidoStatus: string | null;
+    fetchPedidoStatus: () => void;
 }
 
 const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
@@ -31,27 +30,7 @@ const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
 export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedido, setpedido] = useState<PedidoItem[]>([]);
     const [pedidoId, setPedidoId] = useState<string | null>(null);
-    const [statusPedido, setStatusPedido] = useState<string>("");
-
-    // Função para buscar pedidos da comanda e atualizar status e pedidoId
-    const fetchPedidoStatus = async (comanda_id?: string) => {
-        try {
-            if (!comanda_id && !pedidoId) return;
-            const idParaBuscar = comanda_id || pedidoId;
-            const response = await api.post("/pedido/listPedidosPorComanda", { comanda_id: idParaBuscar });
-            // Supondo que retorna um array de pedidos, pega o primeiro
-            if (response.data && response.data.length > 0) {
-                setStatusPedido(response.data[0].status || "");
-                setPedidoId(response.data[0].id); // Garante que pedidoId seja o ID do pedido real
-            }
-        } catch (error) {
-            console.error("Erro ao buscar status do pedido:", error);
-        }
-    };
-
-    useEffect(() => {
-        if (pedidoId) fetchPedidoStatus();
-    }, [pedidoId]);
+    const [pedidoStatus, setPedidoStatus] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
         setpedido((prev) => [...prev, item]); // já recebe totalPrice do CustomizeProduct
@@ -69,21 +48,24 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
 
     const totalPedido = pedido.reduce((acc, item) => acc + item.price, 0);
 
-    const updateStatusPedido = async (novoStatus: string) => {
+    // Função para buscar status do pedido
+    const fetchPedidoStatus = async () => {
+        if (!pedidoId) return;
         try {
-            if (!pedidoId) throw new Error("Pedido ID não encontrado.");
-
-            await api.put(`/pedido/editarStatus`, {
-                pedido_id: pedidoId,
-                status: novoStatus,
-            });
-
-            setStatusPedido(novoStatus);
-        } catch (error: any) {
-            console.error("Erro ao atualizar status do pedido:", error);
-            throw new Error(error?.response?.data?.message || "Erro ao atualizar status");
+            const response = await api.get(`/pedidos/${pedidoId}/status`);
+            setPedidoStatus(response.data.status);
+        } catch (error) {
+            setPedidoStatus(null);
         }
     };
+
+    // Buscando o status a cada 5 segundos
+    useEffect(() => {
+        if (!pedidoId) return;
+        fetchPedidoStatus(); // busca inicial
+        const interval = setInterval(fetchPedidoStatus, 5000);
+        return () => clearInterval(interval);
+    }, [pedidoId]);
 
     return (
         <pedidoContext.Provider
@@ -95,9 +77,8 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
                 totalPedido,
                 pedidoId,
                 setPedidoId,
-                statusPedido,
-                setStatusPedido,
-                updateStatusPedido,
+                pedidoStatus,
+                fetchPedidoStatus
             }}>
             {children}
         </pedidoContext.Provider>

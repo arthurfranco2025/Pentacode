@@ -17,7 +17,7 @@ import { formatarPreco } from "../../components/utils/formatPrice";
 export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
-  const { pedido, totalPedido, statusPedido } = usePedido();
+  const { pedido, totalPedido, pedidoStatus } = usePedido();
 
   if (!comanda) {
     return (
@@ -112,6 +112,14 @@ export default function OrderTicket() {
                 <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Observação</Text>
                   <Text style={styles.textObservation}>{item.observation}</Text>
+                </View>
+              )}
+
+              {pedidoStatus && (
+                <View style={{ alignItems: 'left', marginVertical: 10 }}>
+                  <Text style={{ color: "#FFF", fontSize: 16 }}>
+                    Status do pedido: <Text style={{ fontWeight: 'bold', color: "#FF3F4B" }}>{pedidoStatus}</Text>
+                  </Text>
                 </View>
               )}
             </View>
