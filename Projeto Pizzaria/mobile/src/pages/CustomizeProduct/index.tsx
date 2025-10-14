@@ -300,8 +300,6 @@ const styles = StyleSheet.create({
         paddingTop: 52,
         paddingBottom: 10,
         paddingHorizontal: 30,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ffffff1b",
     },
 
     logoText: {
@@ -424,11 +422,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#FF3F4B",
+        elevation: 8,
+        shadowColor: "#FF3F4B",
     },
 
     confirmText: {
         color: "#FFF",
         fontSize: 18,
         fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: 0.8,
     },
 });

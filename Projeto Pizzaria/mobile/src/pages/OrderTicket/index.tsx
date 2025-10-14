@@ -110,7 +110,7 @@ export default function OrderTicket() {
               )}
 
               {pedidoStatus && (
-                <View style={{ alignItems: 'left', marginVertical: 10 }}>
+                <View style={{ alignItems: 'flex-start', marginVertical: 10 }}>
                   <Text style={{ color: "#FFF", fontSize: 16 }}>
                     Status do pedido: <Text style={{ fontWeight: 'bold', color: "#FF3F4B" }}>{pedidoStatus}</Text>
                   </Text>
@@ -132,21 +132,21 @@ export default function OrderTicket() {
         </View>
       </ScrollView>
 
-      {/* Botão pagamento */}
-      <LinearGradient
-        colors={["#FF3F4B", "#e83640"]}
+      <TouchableOpacity
         style={styles.finishButton}
+        onPress={handleGoToPayment}
       >
-        <TouchableOpacity onPress={handleGoToPayment}>
-          <Text style={styles.finishText}>Ir para pagamento</Text>
-        </TouchableOpacity>
-      </LinearGradient>
+        <Text style={styles.finishText}>Ir para pagamento</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1d1d2e" },
+  container: {
+    flex: 1,
+    backgroundColor: "#1d1d2e",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -156,8 +156,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     elevation: 5,
   },
-  logoText: { color: "#FFF", fontSize: 22, fontWeight: "800", letterSpacing: 0.5 },
-  scrollContent: { paddingBottom: 140, paddingTop: 10 },
+  logoText: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  scrollContent: {
+    paddingBottom: 140,
+    paddingTop: 10,
+  },
   title: {
     fontSize: 26,
     fontWeight: "700",
@@ -183,14 +191,46 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 6,
   },
-  pedidoNumber: { color: "#aaa", fontSize: 13, fontWeight: "600" },
-  priceTag: { color: "#00C851", fontWeight: "700", fontSize: 16 },
-  productName: { fontSize: 18, fontWeight: "700", color: "#FFF", marginBottom: 6 },
-  section: { marginTop: 8 },
-  sectionTitle: { fontWeight: "700", fontSize: 14, color: "#FFF", marginBottom: 4 },
-  itemTextRemoved: { fontSize: 14, color: "#FF6B6B", marginLeft: 4 },
-  itemTextSelected: { fontSize: 14, color: "#00B347", marginLeft: 4 },
-  textObservation: { fontSize: 14, color: "#ccc", marginLeft: 4 },
+  pedidoNumber: {
+    color: "#aaa",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  priceTag: {
+    color: "#00C851",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#FFF",
+    marginBottom: 6,
+  },
+  section: {
+    marginTop: 8,
+  },
+  sectionTitle: {
+    fontWeight: "700",
+    fontSize: 14,
+    color: "#FFF",
+    marginBottom: 4,
+  },
+  itemTextRemoved: {
+    fontSize: 14,
+    color: "#FF6B6B",
+    marginLeft: 4,
+  },
+  itemTextSelected: {
+    fontSize: 14,
+    color: "#00B347",
+    marginLeft: 4,
+  },
+  textObservation: {
+    fontSize: 14,
+    color: "#ccc",
+    marginLeft: 4,
+  },
   totalContainer: {
     backgroundColor: "#2a2a40",
     marginHorizontal: 20,
@@ -201,9 +241,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  totalText: { color: "#FFF", fontSize: 17, fontWeight: "600" },
-  totalValue: { color: "#00C851", fontSize: 18, fontWeight: "800" },
+  totalText: {
+    color: "#FFF",
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  totalValue: {
+    color: "#00C851",
+    fontSize: 18,
+    fontWeight: "800",
+  },
   finishButton: {
+    backgroundColor: "#FF3F4B",
     marginHorizontal: 20,
     marginBottom: 20,
     paddingVertical: 16,
@@ -219,8 +268,15 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.8,
   },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: "#FFF", fontSize: 16 },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#FFF",
+    fontSize: 16,
+  },
   noProduct: {
     backgroundColor: "#1d1d2e",
     justifyContent: "center",
