@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import React, { useState, useEffect } from "react";
 import {
 	View,
 	ScrollView,
@@ -16,7 +15,6 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
-// import { StackParamsList } from "../../routes/app.routes";
 
 interface Categories {
 	id: string;
@@ -84,6 +82,7 @@ export default function Home() {
 	const [showCategories, setShowCategories] = useState(true);
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
+	const [searchText, setSearchText] = useState("");
 
 	useEffect(() => {
 		const loadCategories = async () => {
@@ -102,15 +101,18 @@ export default function Home() {
 
 	useEffect(() => {
 		const loadProducts = async () => {
-			if (!selectedCategory) {
-				setProducts([]);
-				return;
-			}
 			try {
 				setLoadingProducts(true);
-				const res = await api.get("/category/products", {
-					params: { category_id: selectedCategory },
-				});
+
+				let res;
+				if (selectedCategory) {
+					res = await api.get("/category/products", {
+						params: { category_id: selectedCategory },
+					});
+				} else {
+					res = await api.get("/products/list");
+				}
+
 				setProducts(res.data);
 			} catch (err) {
 				console.error("Error loading products:", err);
@@ -121,6 +123,10 @@ export default function Home() {
 		};
 		loadProducts();
 	}, [selectedCategory]);
+
+	const filteredProducts = products.filter((prod) =>
+		prod.name.toLowerCase().includes(searchText.toLowerCase())
+	);
 
 	return (
 		<View style={styles.container}>
@@ -135,7 +141,7 @@ export default function Home() {
 						source={{
 							uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF",
 						}}
-						style={styles.icon24}
+						style={styles.iconProfile}
 					/>
 				</TouchableOpacity>
 				<Text style={styles.logoText}>
@@ -161,7 +167,13 @@ export default function Home() {
 						}}
 						style={styles.searchIcon}
 					/>
-					<TextInput placeholder="Buscar" placeholderTextColor="#8A8A8A" style={styles.input} />
+					<TextInput
+						placeholder="Buscar"
+						placeholderTextColor="#8A8A8A"
+						style={styles.input}
+						value={searchText}
+						onChangeText={setSearchText}
+					/>
 				</View>
 			</View>
 
@@ -196,13 +208,13 @@ export default function Home() {
 					<View style={[styles.rightColumn, !showCategories && styles.rightColumnFull]}>
 						{loadingProducts ? (
 							<ActivityIndicator size="large" color="#FF3F4B" style={{ marginTop: 20 }} />
-						) : products.length > 0 ? (
+						) : filteredProducts.length > 0 ? (
 							<ScrollView
 								contentContainerStyle={styles.productsContainer}
 								showsVerticalScrollIndicator={false}
 							>
 								<View style={styles.productsGrid}>
-									{products.map((prod) => (
+									{filteredProducts.map((prod) => (
 										<ItemCard
 											key={prod.id}
 											product={prod}
@@ -214,9 +226,11 @@ export default function Home() {
 							</ScrollView>
 						) : (
 							<Text style={styles.emptyText}>
-								{selectedCategory
-									? "Nenhum produto nesta categoria"
-									: "Selecione uma categoria"}
+								{searchText
+									? "Nenhum produto encontrado"
+									: selectedCategory
+										? "Nenhum produto nesta categoria"
+										: "Selecione uma categoria"}
 							</Text>
 						)}
 					</View>
@@ -239,10 +253,7 @@ export default function Home() {
 					<Text style={styles.cartText}>{formatarPreco(totalPedido)}</Text>
 				</View>
 
-				<TouchableOpacity
-					style={styles.orderButton}
-					onPress={() => navigation.navigate("Order")}
-				>
+				<TouchableOpacity style={styles.orderButton} onPress={() => navigation.navigate("Order")}>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
 			</LinearGradient>
@@ -268,31 +279,16 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: "#ffffff1b",
 	},
-	icon24: {
-		width: 24,
-		height: 24,
-	},
-	logoText: {
-		color: "#fff",
-		fontSize: 22,
-		fontWeight: "700",
-	},
-	mesaText: {
-		color: "#fff",
-		fontSize: 14,
-		fontWeight: "600",
-	},
+	iconProfile: { width: 24, height: 24 },
+	logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
+	mesaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
 	menuSearchRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		paddingHorizontal: 20,
 		marginVertical: 10,
 	},
-	sideIcon: {
-		width: 40,
-		height: 40,
-		marginRight: 10,
-	},
+	sideIcon: { width: 40, height: 40, marginRight: 10 },
 	searchBox: {
 		flex: 1,
 		flexDirection: "row",
@@ -303,68 +299,24 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		height: 40,
 	},
-	searchIcon: {
-		width: 20,
-		height: 20,
-		marginRight: 8,
-	},
-	input: {
-		flex: 1,
-		color: "#FFF",
-	},
-	mainRow: {
-		flexDirection: "row",
-		width: "100%",
-		height: "100%",
-	},
-	leftColumn: {
-		width: "35%",
-		borderRightWidth: 1,
-		borderRightColor: "#ffffff1b",
-	},
-	rightColumn: {
-		width: "65%",
-		paddingHorizontal: 8,
-	},
-	rightColumnFull: {
-		width: "100%",
-	},
-	categoriesContainer: {
-		paddingVertical: 10,
-	},
+	searchIcon: { width: 20, height: 20, marginRight: 8 },
+	input: { flex: 1, color: "#FFF" },
+	mainRow: { flexDirection: "row", width: "100%", height: "100%" },
+	leftColumn: { width: "35%", borderRightWidth: 1, borderRightColor: "#ffffff1b" },
+	rightColumn: { width: "65%", paddingHorizontal: 8 },
+	rightColumnFull: { width: "100%" },
+	categoriesContainer: { paddingVertical: 10 },
 	categoryItem: {
 		paddingVertical: 10,
 		borderBottomWidth: 1,
 		borderBottomColor: "#ffffff1b",
 	},
-	selectedCategory: {
-		backgroundColor: "#3b3b55f7",
-	},
-	categoryBg: {
-		alignItems: "center",
-		paddingHorizontal: 5,
-	},
-	categoryImage: {
-		width: 65,
-		height: 65,
-	},
-	categoryText: {
-		color: "#FFF",
-		fontWeight: "600",
-		fontSize: 15,
-		marginTop: 5,
-		textAlign: "center",
-	},
-	productsContainer: {
-		paddingVertical: 10,
-		flexGrow: 1,
-	},
-	productsGrid: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "flex-start",
-		gap: 7,
-	},
+	selectedCategory: { backgroundColor: "#3b3b55f7" },
+	categoryBg: { alignItems: "center", paddingHorizontal: 5 },
+	categoryImage: { width: 65, height: 65 },
+	categoryText: { color: "#FFF", fontWeight: "600", fontSize: 15, marginTop: 5, textAlign: "center" },
+	productsContainer: { paddingVertical: 10, flexGrow: 1 },
+	productsGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", gap: 7 },
 	card: {
 		width: "48%",
 		backgroundColor: "#2a2a40",
@@ -376,32 +328,11 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		marginBottom: 5,
 	},
-	ThreeCards: {
-		width: "32%",
-	},
-	productImage: {
-		width: "100%",
-		height: 120,
-		borderTopLeftRadius: 12,
-		borderTopRightRadius: 12,
-	},
-	productInfo: {
-		padding: 8,
-		flex: 1,
-		justifyContent: "space-between",
-	},
-	promoText: {
-		color: "#FFF",
-		fontSize: 16,
-		fontWeight: "600",
-		marginBottom: 4,
-	},
-	priceText: {
-		color: "#00C851",
-		fontSize: 14,
-		fontWeight: "700",
-		marginBottom: 8,
-	},
+	ThreeCards: { width: "32%" },
+	productImage: { width: "100%", height: 120, borderTopLeftRadius: 12, borderTopRightRadius: 12 },
+	productInfo: { padding: 8, flex: 1, justifyContent: "space-between" },
+	promoText: { color: "#FFF", fontSize: 16, fontWeight: "600", marginBottom: 4 },
+	priceText: { color: "#00C851", fontSize: 14, fontWeight: "700", marginBottom: 8 },
 	button: {
 		backgroundColor: "#5A3FFF",
 		borderRadius: 8,
@@ -433,36 +364,20 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: "#ffffff1b",
 	},
-	footerRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	cartIcon: {
-		width: 32,
-		height: 32,
-	},
-	cartText: {
-		color: "#fff",
-		fontSize: 18,
-		fontWeight: "600",
-	},
+	footerRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+	cartIcon: { width: 32, height: 32 },
+	cartText: { color: "#fff", fontSize: 18, fontWeight: "600" },
 	orderButton: {
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "#FF3F4B",
 		borderRadius: 7,
 		marginLeft: 16,
-		padding: 5,
+		paddingVertical: 6,
+		paddingHorizontal: 10,
 		width: "60%",
 		elevation: 8,
 		shadowColor: "#FF3F4B",
 	},
-	orderText: {
-		color: "#fff",
-		fontSize: 18,
-		fontWeight: "bold",
-		textTransform: "uppercase",
-		letterSpacing: 0.8,
-	},
+	orderText: { color: "#fff", fontSize: 18, fontWeight: "bold", textTransform: "uppercase", letterSpacing: 0.8 },
 });
