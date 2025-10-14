@@ -45,10 +45,10 @@ model Favorito {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  product    Product @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
   product_id String
 
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+  cliente    Cliente @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
   cliente_id String
 
   @@map("favorites")
@@ -95,9 +95,9 @@ model Pedido {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+  cliente    Cliente @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
   cliente_id String
-  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  comanda    Comanda @relation(fields: [comanda_id], references: [id], onDelete: Cascade)
   comanda_id String
 
   items Item[]
@@ -110,15 +110,15 @@ model Comanda {
   status        String
   price         Float
   points        Float
-  tipoPagamento String    @default("nulo")
+  tipoPagamento String?
   pagoEm        DateTime?
   created_at    DateTime? @default(now())
   updated_at    DateTime? @default(now())
 
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+  cliente    Cliente @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
   cliente_id String
 
-  mesa    Mesa?   @relation(fields: [mesa_id], references: [id])
+  mesa    Mesa?   @relation(fields: [mesa_id], references: [id], onDelete: Cascade)
   mesa_id String?
 
   avaliacao Avaliacao[]
@@ -133,8 +133,8 @@ model Avaliacao {
   descricao  String
   created_at DateTime? @default(now())
 
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
-  comanda    Comanda @relation(fields: [comanda_id], references: [id])
+  cliente    Cliente @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
+  comanda    Comanda @relation(fields: [comanda_id], references: [id], onDelete: Cascade)
   cliente_id String
   comanda_id String
 
@@ -153,9 +153,9 @@ model Item {
   created_at   DateTime? @default(now())
   updated_at   DateTime? @default(now())
 
-  pedido   Pedido   @relation(fields: [pedido_id], references: [id])
-  product  Product  @relation("Sabor1", fields: [product_id], references: [id])
-  product2 Product? @relation("Sabor2", fields: [product2_id], references: [id])
+  pedido   Pedido   @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  product  Product  @relation("Sabor1", fields: [product_id], references: [id], onDelete: Cascade)
+  product2 Product? @relation("Sabor2", fields: [product2_id], references: [id], onDelete: SetNull)
 
   pedido_id      String
   product_id     String
@@ -183,10 +183,10 @@ model Product_ingrediente {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  product    Product @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
   product_id String
 
-  ingrediente    Ingrediente @relation(fields: [ingrediente_id], references: [id])
+  ingrediente    Ingrediente @relation(fields: [ingrediente_id], references: [id], onDelete: Cascade)
   ingrediente_id String
 
   @@map("product_ingrediente")
@@ -209,10 +209,10 @@ model Item_adicional {
   id  String @id @default(uuid())
   qtd Int    @default(1)
 
-  item    Item   @relation(fields: [item_id], references: [id])
+  item    Item   @relation(fields: [item_id], references: [id], onDelete: Cascade)
   item_id String
 
-  adicional    Adicional @relation(fields: [adicional_id], references: [id])
+  adicional    Adicional @relation(fields: [adicional_id], references: [id], onDelete: Cascade)
   adicional_id String
 
   @@map("item_adicional")
@@ -221,6 +221,7 @@ model Item_adicional {
 model Mesa {
   id          String @id @default(uuid())
   numero_mesa Int    @unique
+  url         String @default("")
 
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())

@@ -34,11 +34,11 @@ class EditPedidoStatusService {
         }
 
         const statusValidos = [
-            'pedido realizado',
-            'pedido em preparo',
-            'pedido pronto',
-            'aguardando pagamento',
-            'pedido pago separadamente'
+            'Pedido realizado',
+            'Pedido em preparo',
+            'Pedido pronto',
+            'Aguardando pagamento',
+            'Pedido pago separadamente'
           ]
           
           if (!statusValidos.includes(status)) {

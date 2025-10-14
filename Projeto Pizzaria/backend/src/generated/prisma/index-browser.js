@@ -257,6 +257,7 @@ exports.Prisma.Item_adicionalScalarFieldEnum = {
 exports.Prisma.MesaScalarFieldEnum = {
   id: 'id',
   numero_mesa: 'numero_mesa',
+  url: 'url',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
