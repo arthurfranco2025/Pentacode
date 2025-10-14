@@ -34,6 +34,15 @@ class CreateMesaService {
     //  gera QRCode em base64
     const qrCodeDataURL = await QRCode.toDataURL(urlMesa);
 
+    await PrismaClient.mesa.update({
+      where: {
+        id: mesa.id
+      },
+      data:{
+        url : qrCodeDataURL
+      }
+    })
+
     return {
       ...mesa,
       qrCode: qrCodeDataURL,

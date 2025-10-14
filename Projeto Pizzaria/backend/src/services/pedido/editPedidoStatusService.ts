@@ -16,7 +16,7 @@ class EditPedidoStatusService {
     async execute({ pedido_id, status }: EditStatusPedidoRequest) {
 
         if (!status) {
-            throw new Error('Insira o status da comanda')
+            throw new Error('Insira o status do pedido')
         }
 
         if (!pedido_id) {
