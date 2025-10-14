@@ -22,8 +22,7 @@ type OrderScreenNavigationProp = NativeStackNavigationProp<
 
 export default function Order() {
     const navigation = useNavigation<OrderScreenNavigationProp>();
-    const { pedido, totalPedido, removeItem } = usePedido();
-    const { comanda } = useComanda();
+    const { pedido, totalPedido, removeItem, statusPedido, updateStatusPedido } = usePedido(); const { comanda } = useComanda();
 
     if (!comanda) {
         return (
@@ -35,12 +34,17 @@ export default function Order() {
 
     const { comandaId, mesaId, numero_mesa } = comanda;
 
-    function handleFinishPedido() {
-        navigation.navigate("OrderTicket", {
-            comandaId,
-            mesaId,
-            numero_mesa,
-        });
+    async function handleFinishPedido() {
+        try {
+            await updateStatusPedido("Pedido realizado"); // 🔄 chama API e atualiza o contexto
+            navigation.navigate("OrderTicket", {
+                comandaId,
+                mesaId,
+                numero_mesa,
+            });
+        } catch (error) {
+            alert("Erro ao atualizar status do pedido.");
+        }
     }
 
     if (!pedido || pedido.length === 0) {
@@ -83,6 +87,10 @@ export default function Order() {
 
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
+
+                <Text style={styles.statusText}>
+                    Status: {statusPedido || "Nenhum pedido iniciado"}
+                </Text>
 
                 {pedido.map((product, index) => (
                     <View key={index} style={styles.card}>
@@ -137,7 +145,7 @@ export default function Order() {
                     </View>
                 ))}
 
-                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}> 
+                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
                     <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
                     <Text>{formatarPreco(pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0))}</Text>
                 </Text>
@@ -189,6 +197,15 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: "700",
         color: "#FFF",
+    },
+
+    statusText: {
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#00C851",
+        marginTop: 10,
+        marginBottom: 10,
     },
 
     card: {

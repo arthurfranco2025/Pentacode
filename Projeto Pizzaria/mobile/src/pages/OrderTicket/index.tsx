@@ -17,7 +17,7 @@ import { formatarPreco } from "../../components/utils/formatPrice";
 export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
-  const { pedido, totalPedido } = usePedido();
+  const { pedido, totalPedido, statusPedido } = usePedido();
 
   if (!comanda) {
     return (
@@ -101,6 +101,12 @@ export default function OrderTicket() {
                   ))}
                 </View>
               )}
+
+              <View>
+                <Text>
+                  Status: {statusPedido}
+                </Text>
+              </View>
 
               {item.observation && (
                 <View style={styles.section}>
