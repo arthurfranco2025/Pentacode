@@ -36,16 +36,12 @@ export default function Order() {
     const { comandaId, mesaId, numero_mesa } = comanda;
 
     async function handleFinishPedido() {
-        try {
-            await updateStatusPedido("Pedido realizado"); // 🔄 chama API e atualiza o contexto
-            navigation.navigate("OrderTicket", {
-                comandaId,
-                mesaId,
-                numero_mesa,
-            });
-        } catch (error) {
-            alert("Erro ao atualizar status do pedido.");
-        }
+        navigation.navigate("OrderTicket", {
+            comandaId,
+            mesaId,
+            numero_mesa,
+        });
+
     }
 
 
@@ -89,10 +85,6 @@ export default function Order() {
 
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
-
-                <Text style={styles.statusText}>
-                    Status: {statusPedido || "Nenhum pedido iniciado"}
-                </Text>
 
                 {pedido.map((product, index) => (
                     <View key={index} style={styles.card}>

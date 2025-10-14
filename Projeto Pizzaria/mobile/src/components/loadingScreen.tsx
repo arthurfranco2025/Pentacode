@@ -8,10 +8,10 @@ export function LoadingScreen() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#fff", // cor de fundo
+        backgroundColor: "#fff",
       }}
     >
-      <ActivityIndicator size="large" color="#ff9000" /> 
+      <ActivityIndicator size="large" color="#f00" /> 
       <Text style={{ marginTop: 10, fontSize: 16, color: "#333" }}>
         Carregando...
       </Text>
