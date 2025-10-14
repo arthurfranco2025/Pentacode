@@ -102,12 +102,6 @@ export default function OrderTicket() {
                 </View>
               )}
 
-              <View>
-                <Text>
-                  Status: {statusPedido}
-                </Text>
-              </View>
-
               {item.observation && (
                 <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Observação</Text>
