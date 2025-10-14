@@ -102,12 +102,6 @@ export default function OrderTicket() {
                 </View>
               )}
 
-              <View>
-                <Text>
-                 Status: {statusPedido}
-                </Text>
-              </View>
-
               {item.observation && (
                 <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Observação</Text>
@@ -116,7 +110,7 @@ export default function OrderTicket() {
               )}
 
               {pedidoStatus && (
-                <View style={{ alignItems: 'left', marginVertical: 10 }}>
+                <View style={{ marginVertical: 10 }}>
                   <Text style={{ color: "#FFF", fontSize: 16 }}>
                     Status do pedido: <Text style={{ fontWeight: 'bold', color: "#FF3F4B" }}>{pedidoStatus}</Text>
                   </Text>

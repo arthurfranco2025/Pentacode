@@ -53,7 +53,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function CustomizeProduct() {
-    const { addItem, pedidoId, setPedidoId, setStatusPedido } = usePedido();
+    const { addItem, pedidoId, setPedidoId } = usePedido();
     const { user } = React.useContext(AuthContext);
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const route = useRoute<RouteProp<RootStackParamList, 'CustomizeProduct'>>();
