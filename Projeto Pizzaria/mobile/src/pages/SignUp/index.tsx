@@ -20,74 +20,67 @@ type RootStackParamList = {
 
 export default function SignUp() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { signUp, loadingAuth } = useContext(AuthContext)
+  const { signUp, loadingAuth } = useContext(AuthContext);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [cpf, setCpf] = useState("");
-
   const [data_nasc, setData_Nasc] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false)
-
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
 
-  function handleHasLogin(){
-    navigation.navigate('SignIn')
+  function handleHasLogin() {
+    navigation.navigate("SignIn");
   }
 
   async function handleSubmit() {
-
     try {
-    if (name === '' || email === '' || password === '' || confirmPassword === '' || cpf === '' || !data_nasc) {
-      setError('Preencha todos os campos!');
-      return;
+      if (name === "" || email === "" || password === "" || confirmPassword === "" || cpf === "" || !data_nasc) {
+        setError("Preencha todos os campos!");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError("As senhas não coincidem!");
+        return;
+      }
+
+      setError("");
+
+      await signUp({
+        name,
+        email,
+        password,
+        cpf,
+        data_nasc,
+      });
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "SignIn" }],
+        })
+      );
+    } catch (err: any) {
+      let mensagem = "Erro desconhecido";
+
+      if (err.response?.data?.message) {
+        mensagem = err.response.data.message;
+      } else if (err.message) {
+        mensagem = err.message;
+      }
+
+      setError("Erro ao cadastrar!\n" + mensagem);
+      console.log("Erro:", mensagem);
     }
-
-    if (password !== confirmPassword) {
-      setError('As senhas não coincidem!');
-      return;
-    }
-    
-    setError('')
-
-    await signUp({
-      name, 
-      email, 
-      password, 
-      cpf, 
-      data_nasc
-    });
-
-    console.log('Cadastro realizado com sucesso!');
-    // navigation.navigate('SignIn')
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'SignIn' }],
-      })
-    );
-    
-  } catch (err: any) { 
-    let mensagem = 'Erro desconhecido';
-
-    if (err.response?.data?.message) {
-      mensagem = err.response.data.message; 
-    } else if (err.message) {
-      mensagem = err.message; 
-    }
-
-    setError('Erro ao cadastrar!\n'+mensagem);
-    console.log('Erro:', mensagem);
   }
-}
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === "ios");
     if (selectedDate) setData_Nasc(selectedDate);
   };
-
 
   return (
     <View style={styles.safeArea}>
@@ -103,79 +96,42 @@ export default function SignUp() {
 
           <Text style={styles.title}>Cadastro</Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Nome</Text>
-            <TextInput
-              placeholder="Digite seu nome"
-              placeholderTextColor="#8A8A8A"
-              value={name}
-              onChangeText={setName}
-              style={styles.input}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <TextInput
-              placeholder="Digite seu email"
-              placeholderTextColor="#8A8A8A"
-              value={email}
-              onChangeText={setEmail}
-              style={styles.input}
-            />
-          </View>
-
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Senha</Text>
-            <TextInput
-              placeholder="Digite sua senha"
-              placeholderTextColor="#8A8A8A"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              style={styles.input}
+          {/* Campos de entrada */}
+          {[
+            { label: "Nome", value: name, onChange: setName, placeholder: "Digite seu nome" },
+            { label: "Email", value: email, onChange: setEmail, placeholder: "Digite seu email" },
+            { label: "Senha", value: password, onChange: setPassword, placeholder: "Digite sua senha", secure: true },
+            { label: "Confirmar senha", value: confirmPassword, onChange: setConfirmPassword, placeholder: "Confirme sua senha", secure: true },
+            { label: "CPF", value: cpf, onChange: setCpf, placeholder: "Digite seu CPF" },
+          ].map((field, index) => (
+            <View style={styles.inputGroup} key={index}>
+              <Text style={styles.inputLabel}>{field.label}</Text>
+              <TextInput
+                placeholder={field.placeholder}
+                placeholderTextColor="#8A8A8A"
+                value={field.value}
+                onChangeText={field.onChange}
+                style={styles.input}
+                secureTextEntry={field.secure || false}
               />
-          </View>
+            </View>
+          ))}
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Confirmar senha</Text>
-            <TextInput
-              placeholder="Confirme sua senha"
-              placeholderTextColor="#8A8A8A"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              style={styles.input}
-              />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>CPF</Text>
-            <TextInput
-              placeholder="Digite seu CPF"
-              placeholderTextColor="#8A8A8A"
-              value={cpf}
-              onChangeText={setCpf}
-              style={styles.input}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Data de Nascimento:</Text>
+            <Text style={styles.inputLabel}>Data de Nascimento</Text>
             <TouchableOpacity
               style={styles.buttonDate}
               onPress={() => setShowDatePicker(true)}
-              activeOpacity={0.7} // efeito de opacidade ao tocar
+              activeOpacity={0.7}
             >
               <Text style={styles.buttonText2}>
                 {data_nasc instanceof Date
-                  ? data_nasc.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })
-                  : 'Selecione uma data'}
+                  ? data_nasc.toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
+                  : "Selecione uma data"}
               </Text>
             </TouchableOpacity>
 
@@ -190,23 +146,20 @@ export default function SignUp() {
             )}
           </View>
 
-          {/* Mostra o erro somente se existir */}
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit} disabled={loadingAuth}>
-            <Text style={styles.buttonText}>{loadingAuth ? 'Carregando...' : 'Cadastrar'}</Text>
+            <Text style={styles.buttonText}>{loadingAuth ? "Carregando..." : "Cadastrar"}</Text>
           </TouchableOpacity>
 
           <Text style={styles.dividerText}>ou</Text>
 
           <TouchableOpacity onPress={handleHasLogin}>
-            <Text style={styles.loginText}>Possui conta? Login</Text>
+            <Text style={styles.loginText}>
+              Já possui uma conta?{" "}
+              <Text style={styles.linkText}>Login</Text>
+            </Text>
           </TouchableOpacity>
-
-            {/* /* <TouchableOpacity onPress={handleHasLogin}>
-              <Text style={styles.loginText}>Entrar como convidado</Text>''
-            </TouchableOpacity> FUTURA FUNCAO DE ENTRAR COMO CONVIDADO - poc */ }
-
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -219,13 +172,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#1d1d2e",
   },
   scrollContent: {
-    paddingHorizontal: 32,
-    paddingBottom: 50,
+    paddingHorizontal: 28,
+    paddingVertical: 40,
   },
   logo: {
-    marginTop: 50,
-    marginBottom: 20,
-    fontSize: 62,
+    marginTop: 30,
+    marginBottom: 10,
+    fontSize: 58,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -233,19 +186,19 @@ const styles = StyleSheet.create({
   red: { color: "#E32636" },
   title: {
     color: "#fff",
-    fontSize: 38,
+    fontSize: 34,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: 30,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
   inputLabel: {
     color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 8,
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 6,
   },
   input: {
     backgroundColor: "#101026",
@@ -257,57 +210,55 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
   },
-  buttonSubmit: {
-    backgroundColor: "#FF3F4B",
+  buttonDate: {
+    backgroundColor: "#101026",
     borderRadius: 5,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
+    borderWidth: 1,
+    borderColor: "#8A8A8A",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignItems: "flex-start",
   },
   buttonText2: {
     color: "#8A8A8A",
     fontSize: 14,
-    textAlign: 'left',
   },
-  buttonDate: {
-    backgroundColor: "#101026",
-    borderRadius: 5,
-    paddingVertical: 12,
+  buttonSubmit: {
+    backgroundColor: "#FF3F4B",
+    borderRadius: 6,
+    paddingVertical: 14,
     alignItems: "center",
+    marginTop: 10,
     marginBottom: 20,
-    outlineWidth: 1,
-    outlineColor: "#8A8A8A"
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
   },
   dividerText: {
     textAlign: "center",
     color: "#fff",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 18,
   },
   loginText: {
     textAlign: "center",
     color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: "600",
     marginBottom: 60,
+  },
+  linkText: {
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+    color: "#FF3F4B",
   },
   errorText: {
     color: "red",
-    marginBottom: 20,
+    marginBottom: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
-  // HasLoginText: {
-  //   textAlign: "center",
-  //   color: "#fff",
-  //   fontSize: 12,
-  //   fontWeight: "bold",
-  //   marginBottom: 60,
-  //   textDecorationLine: 'underline',
-  // }
-})
+});

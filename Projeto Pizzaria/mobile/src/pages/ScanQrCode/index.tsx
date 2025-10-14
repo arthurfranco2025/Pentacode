@@ -9,190 +9,244 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useComanda } from "../../contexts/comandaContext";
 
 export default function QRScanner() {
-  const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false);
-  const [startCamera, setStartCamera] = useState(false);
+	const [permission, requestPermission] = useCameraPermissions();
+	const [scanned, setScanned] = useState(false);
+	const [startCamera, setStartCamera] = useState(false);
 
-  const navigation = useNavigation<NavigationProp<StackParamsList>>();
-  const { user, signOut } = useContext(AuthContext);
+	const navigation = useNavigation<NavigationProp<StackParamsList>>();
+	const { user, signOut } = useContext(AuthContext);
+	const { setComanda } = useComanda();
 
-  const { setComanda } = useComanda();
+	useEffect(() => {
+		if (!permission?.granted) {
+			requestPermission();
+		}
+	}, [permission]);
 
-  useEffect(() => {
-    if (!permission?.granted) {
-      requestPermission();
-    }
-  }, [permission]);
+	const handleBarCodeScanned = async ({ data }: { data: string }) => {
+		if (scanned) return;
+		setScanned(true);
 
-  const handleBarCodeScanned = async ({ data }: { data: string }) => {
-    if (scanned) return;
-    setScanned(true);
+		let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
 
-    let mesa_id = data.includes("/") ? data.split("/").pop() || data : data;
+		if (!user?.id) {
+			Alert.alert("Erro", "Usuário não autenticado!", [
+				{ text: "OK", onPress: () => setScanned(false) },
+			]);
+			return;
+		}
 
-    if (!user?.id) {
-      Alert.alert("Erro", "Usuário não autenticado!", [
-        { text: "OK", onPress: () => setScanned(false) },
-      ]);
-      return;
-    }
+		try {
+			const cliente_id = user.id;
+			const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
 
-    try {
-      const cliente_id = user.id;
-      const response = await api.post(`/comanda/${mesa_id}`, { cliente_id });
+			const comanda_id = response.data.id;
+			const numeroMesa = response.data?.mesa?.numero_mesa;
+			if (!numeroMesa) throw new Error("Número da mesa não encontrado");
 
-      const comanda_id = response.data.id
-      const numeroMesa = response.data?.mesa?.numero_mesa;
-      if (!numeroMesa) throw new Error("Número da mesa não encontrado");
+			setComanda({
+				comandaId: comanda_id,
+				mesaId: mesa_id,
+				numero_mesa: numeroMesa,
+				pedidos: [],
+			});
 
-      setComanda({
-        comandaId: comanda_id,
-        mesaId: mesa_id,
-        numero_mesa: numeroMesa,
-        pedidos: [],
-      });
+			Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
+				{
+					text: "OK",
+					onPress: () => {
+						navigation.navigate("Home");
+						setScanned(false);
+					},
+				},
+			]);
+		} catch (err: any) {
+			console.log(err.response?.data || err.message);
+			Alert.alert(
+				"Erro",
+				err.response?.data?.message || "Não foi possível abrir a comanda",
+				[{ text: "OK", onPress: () => setScanned(false) }]
+			);
+		}
+	};
 
-      Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("Home");
-            setScanned(false);
-          },
-        },
-      ]);
-    } catch (err: any) {
-      console.log(err.response?.data || err.message);
-      Alert.alert(
-        "Erro",
-        err.response?.data?.message || "Não foi possível abrir a comanda",
-        [{ text: "OK", onPress: () => setScanned(false) }]
-      );
-    }
-  };
+	if (!permission) {
+		return (
+			<View style={styles.center}>
+				<Text>Solicitando permissão da câmera...</Text>
+			</View>
+		);
+	}
 
-  if (!permission) {
-    return (
-      <View style={styles.center}>
-        <Text>Solicitando permissão da câmera...</Text>
-      </View>
-    );
-  }
+	if (!permission.granted) {
+		return (
+			<View style={styles.center}>
+				<Text>Sem acesso à câmera!</Text>
+			</View>
+		);
+	}
 
-  if (!permission.granted) {
-    return (
-      <View style={styles.center}>
-        <Text>Sem acesso à câmera!</Text>
-      </View>
-    );
-  }
+	return (
+		<View style={styles.container}>
+			{/* HEADER */}
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0, y: 1 }}
+				colors={["#391D8A", "#1d1d2e"]}
+				style={[styles.header, startCamera && styles.headerCameraOpen]}
+			>
+				<Text style={styles.logoText}>
+					Penta<Text style={styles.logoRed}>Pizza</Text>
+				</Text>
+			</LinearGradient>
 
-  return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        colors={["#391D8A", "#261B47"]}
-        style={[styles.header, startCamera && styles.headerCameraOpen]}
-      >
-        <View style={{ width: 24 }} />
-        <Text style={styles.logoText}>
-          Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-        </Text>
-        <View style={{ width: 24 }} />
-      </LinearGradient>
+			{/* Tela inicial */}
+			{!startCamera && (
+				<View style={styles.center}>
+					<Text style={styles.title}>Escanear QR Code da Mesa</Text>
+					<Text style={styles.subtitle}>
+						Clique abaixo para abrir a câmera
+					</Text>
 
-      {/* Tela inicial antes de abrir a câmera */}
-      {!startCamera && (
-        <View style={styles.center}>
-          <Text style={styles.title}>Escanear QR Code da Mesa</Text>
-          <Text style={styles.subtitle}>
-            Clique no botão abaixo para abrir a câmera
-          </Text>
+					<TouchableOpacity
+						style={styles.button}
+						onPress={() => setStartCamera(true)}
+						activeOpacity={0.8}
+					>
+						<Text style={styles.buttonText}>Abrir Câmera</Text>
+					</TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setStartCamera(true)}
-          >
-            <Text style={styles.buttonText}>Abrir Câmera</Text>
-          </TouchableOpacity>
+					<TouchableOpacity
+						style={[styles.button, styles.logoutButton]}
+						onPress={signOut}
+						activeOpacity={0.8}
+					>
+						<Text style={styles.buttonText}>Sair</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 
-          <TouchableOpacity
-            style={[styles.button, styles.logoutButton]}
-            onPress={signOut}
-          >
-            <Text style={styles.buttonText}>Sair</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+			{/* Câmera aberta */}
+			{startCamera && (
+				<View style={styles.cameraContainer}>
+					<CameraView
+						style={StyleSheet.absoluteFillObject}
+						barcodeScannerSettings={{
+							barcodeTypes: ["qr", "ean13", "code128"],
+						}}
+						onBarcodeScanned={handleBarCodeScanned}
+					/>
 
-      {/* Tela da câmera */}
-      {startCamera && (
-        <View style={styles.cameraContainer}>
-          <CameraView
-            style={StyleSheet.absoluteFillObject}
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr", "ean13", "code128"],
-            }}
-            onBarcodeScanned={handleBarCodeScanned}
-          />
-
-          {/* Botão de voltar */}
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => setStartCamera(false)}
-          >
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
+					<View style={styles.cameraOverlay}>
+						<Text style={styles.cameraHint}>
+							Aponte para o QR Code da sua mesa
+						</Text>
+						<TouchableOpacity
+							style={styles.backButton}
+							onPress={() => setStartCamera(false)}
+							activeOpacity={0.8}
+						>
+							<Text style={styles.backButtonText}>←</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			)}
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF" },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, color: "#333", textAlign: "center" },
-  subtitle: { fontSize: 16, color: "#666", marginBottom: 30, textAlign: "center" },
-  button: {
-    backgroundColor: "#391D8A",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-    marginBottom: 15,
-  },
-  logoutButton: { backgroundColor: "#FF3F4B" },
-  buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "rgba(0,0,0,0.5)", padding: 10, borderRadius: 20 },
-  backButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    marginBottom: 30,
-  },
-  headerCameraOpen: {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    marginBottom: 0,
-  },
-  logoText: { fontSize: 28, fontWeight: "bold", color: "#FFF" },
-
-  cameraContainer: { flex: 1 },
+	container: {
+		flex: 1,
+		backgroundColor: "#1D1D2E",
+	},
+	center: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingHorizontal: 24,
+	},
+	title: {
+		fontSize: 26,
+		fontWeight: "bold",
+		color: "#FFF",
+		textAlign: "center",
+		marginBottom: 10,
+	},
+	subtitle: {
+		fontSize: 15,
+		color: "#C8C8C8",
+		textAlign: "center",
+		marginBottom: 30,
+	},
+	button: {
+		backgroundColor: "#391D8A",
+		paddingVertical: 14,
+		paddingHorizontal: 50,
+		borderRadius: 30,
+		elevation: 4,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 3 },
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		marginBottom: 15,
+	},
+	logoutButton: {
+		backgroundColor: "#FF3F4B",
+	},
+	buttonText: {
+		color: "#FFF",
+		fontSize: 15,
+		fontWeight: "bold",
+		letterSpacing: 0.5,
+	},
+	header: {
+		paddingVertical: 36,
+		alignItems: "center",
+		borderBottomLeftRadius: 18,
+		borderBottomRightRadius: 18,
+		marginBottom: 40,
+	},
+	headerCameraOpen: {
+		// borderBottomLeftRadius: 0,
+		// borderBottomRightRadius: 0,
+		marginBottom: 0,
+	},
+	logoText: {
+		fontSize: 34,
+		fontWeight: "bold",
+		color: "#FFF",
+	},
+	logoRed: {
+		color: "#FF3F4B",
+	},
+	cameraContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	cameraOverlay: {
+		position: "absolute",
+		bottom: 40,
+		alignItems: "center",
+		width: "100%",
+	},
+	cameraHint: {
+		color: "#FFF",
+		fontSize: 14,
+		marginBottom: 20,
+		textAlign: "center",
+		opacity: 0.85,
+	},
+	backButton: {
+		backgroundColor: "#FF3F4B",
+		paddingVertical: 10,
+		paddingHorizontal: 22,
+		borderRadius: 25,
+	},
+	backButtonText: {
+		color: "#FFF",
+		fontSize: 18,
+		fontWeight: "bold",
+	},
 });

@@ -22,6 +22,7 @@ type RootStackParamList = {
 	CustomizeProduct: {
 		product: Product;
 	};
+	Order: undefined;
 };
 
 type RouteParams = RouteProp<RootStackParamList, "ProductInfo">;
@@ -63,7 +64,6 @@ export default function ProductInfo() {
 
 	return (
 		<View style={styles.container}>
-			{/* Header */}
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0, y: 1 }}
@@ -84,7 +84,6 @@ export default function ProductInfo() {
 				<View style={{ width: 26 }} />
 			</LinearGradient>
 
-			{/* Conteúdo principal */}
 			<ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
 				<Image
 					source={{ uri: product.image_url }}
@@ -126,33 +125,17 @@ export default function ProductInfo() {
 					>
 						<Text style={styles.addButtonText}>Adicionar ao Pedido</Text>
 					</TouchableOpacity>
-
-					<TouchableOpacity style={styles.payButton}>
-						<Text style={styles.payButtonText}>Pagar Separadamente</Text>
-					</TouchableOpacity>
 				</View>
 			</ScrollView>
 
-			{/* Footer */}
-			<LinearGradient
-				start={{ x: 0, y: 0 }}
-				end={{ x: 0, y: 1 }}
-				colors={["#1d1d2e", "#3D1F93"]}
-				style={styles.footer}
-			>
-				<View style={styles.footerRow}>
-					<Image
-						source={{
-							uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/e6jpmght_expires_30_days.png",
-						}}
-						style={styles.cartIcon}
-					/>
-					<Text style={styles.cartText}>: 0,00</Text>
-				</View>
-				<TouchableOpacity style={styles.orderButton}>
+			<View style={styles.footer}>
+				<TouchableOpacity
+					style={styles.orderButton}
+					onPress={() => navigation.navigate("Order")}
+				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
-			</LinearGradient>
+			</View>
 		</View>
 	);
 }
@@ -167,8 +150,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		paddingTop: 52,
-		paddingBottom: 10,
-		paddingHorizontal: 30,
+		paddingBottom: 12,
+		paddingHorizontal: 25,
 		borderBottomWidth: 1,
 		borderBottomColor: "#ffffff1b",
 	},
@@ -179,105 +162,88 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		width: "100%",
-		height: 250,
+		height: 260,
 		borderBottomLeftRadius: 25,
 		borderBottomRightRadius: 25,
+		marginBottom: 10,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 5 },
+		shadowOpacity: 0.3,
+		shadowRadius: 10,
 	},
 	contentContainer: {
-		paddingHorizontal: 20,
+		paddingHorizontal: 22,
 		paddingVertical: 20,
 	},
 	titleRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: 15,
+		marginBottom: 12,
 	},
 	title: {
-		fontSize: 22,
+		fontSize: 24,
 		fontWeight: "700",
 		color: "#fff",
 		flex: 1,
-		paddingRight: 10,
+		paddingRight: 12,
 	},
 	favoriteIcon: {
-		width: 28,
-		height: 28,
+		width: 30,
+		height: 30,
 	},
 	desc: {
 		color: "#ccc",
-		marginBottom: 15,
 		fontSize: 15,
 		lineHeight: 22,
+		marginBottom: 20,
 	},
 	priceRow: {
-		marginBottom: 15,
+		marginBottom: 25,
 	},
 	price: {
-		fontSize: 18,
+		fontSize: 20,
 		fontWeight: "700",
 		color: "#00C851",
 	},
 	addButton: {
-		backgroundColor: "#FF3F4B",
-		borderRadius: 10,
-		paddingVertical: 12,
+		backgroundColor: "#5A3FFF",
+		borderRadius: 12,
+		paddingVertical: 14,
 		alignItems: "center",
-		marginBottom: 12,
+		marginBottom: 15,
+		elevation: 8,
+		shadowColor: "#5A3FFF",
 	},
 	addButtonText: {
 		color: "#fff",
 		fontWeight: "700",
 		fontSize: 16,
-	},
-	payButton: {
-		backgroundColor: "#5A3FFF",
-		borderRadius: 10,
-		paddingVertical: 12,
-		alignItems: "center",
-		marginBottom: 15,
-	},
-	payButtonText: {
-		color: "#fff",
-		fontWeight: "700",
-		fontSize: 16,
+		textTransform: "uppercase",
+		letterSpacing: 0.8,
 	},
 	footer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingHorizontal: 16,
-		paddingVertical: 10,
-		borderTopWidth: 1,
-		borderTopColor: "#ffffff1b",
-	},
-	footerRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	cartIcon: {
-		width: 32,
-		height: 32,
-	},
-	cartText: {
-		color: "#fff",
-		fontSize: 18,
-		fontWeight: "600",
+		paddingVertical: 12,
 	},
 	orderButton: {
+		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "#FF3F4B",
-		borderRadius: 7,
-		marginLeft: 16,
-		paddingVertical: 8,
-		elevation: 5,
-		width: "50%",
+		borderRadius: 10,
+		paddingVertical: 12,
+		elevation: 8,
+		shadowColor: "#FF3F4B",
 	},
 	orderText: {
 		color: "#fff",
 		fontSize: 18,
 		fontWeight: "bold",
+		textTransform: "uppercase",
+		letterSpacing: 0.8,
 	},
 });

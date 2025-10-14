@@ -110,7 +110,7 @@ model Comanda {
   status        String
   price         Float
   points        Float
-  tipoPagamento String    @default("nulo")
+  tipoPagamento String?
   pagoEm        DateTime?
   created_at    DateTime? @default(now())
   updated_at    DateTime? @default(now())
@@ -221,6 +221,7 @@ model Item_adicional {
 model Mesa {
   id          String @id @default(uuid())
   numero_mesa Int    @unique
+  url         String @default("")
 
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())

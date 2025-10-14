@@ -55,6 +55,7 @@ export default function Home() {
 	const { signOut } = useContext(AuthContext);
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const { comanda } = useComanda();
+	const { user } = useContext(AuthContext)
 	const { pedido } = usePedido();
 
 	const [showCategories, setShowCategories] = useState(true);
@@ -254,7 +255,6 @@ export default function Home() {
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>
 
-				<Button title="Sair do App" onPress={signOut} />
 			</LinearGradient>
 		</View>
 	);

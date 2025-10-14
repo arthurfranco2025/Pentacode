@@ -11,7 +11,8 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
-    StyleSheet
+    StyleSheet,
+    Modal
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -70,7 +71,10 @@ export default function CustomizeProduct() {
     const [selectedIngredients, setSelectedIngredients] = useState<{ [key: string]: boolean }>({});
     const [selectedExtras, setSelectedExtras] = useState<{ [key: string]: boolean }>({});
 
-    
+    // 2º Sabor
+    const [showSecondFlavorModal, setShowSecondFlavorModal] = useState(false);
+    const [secondFlavorProducts, setSecondFlavorProducts] = useState<Product[]>([]);
+    const [selectedSecondFlavor, setSelectedSecondFlavor] = useState<Product | null>(null);
 
     // Carrega ingredientes
     useEffect(() => {
@@ -118,7 +122,11 @@ export default function CustomizeProduct() {
 
     // Calcula preço total
     useEffect(() => {
-        const basePrice = Number(product.price);
+        const qtd = quantity;
+        const price1 = Number(product.price);
+        const price2 = selectedSecondFlavor ? Number(selectedSecondFlavor.price) : 0;
+
+        // Extras selecionados
         const extrasPrice = Object.entries(selectedExtras).reduce((acc, [extraId, isSelected]) => {
             if (isSelected) {
                 const extra = extras.find(e => e.id === extraId);
@@ -126,8 +134,17 @@ export default function CustomizeProduct() {
             }
             return acc;
         }, 0);
-        setTotalPrice((basePrice + extrasPrice) * quantity);
-    }, [quantity, selectedExtras, extras]);
+
+        let finalPrice = 0;
+
+        if (selectedSecondFlavor) {
+            finalPrice = ((price1 / 2 + price2 / 2 + 10) + extrasPrice) * qtd;
+        } else {
+            finalPrice = (price1 + extrasPrice) * qtd;
+        }
+
+        setTotalPrice(finalPrice);
+    }, [quantity, selectedExtras, extras, selectedSecondFlavor, product.price]);
 
     const toggleIngredients = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -149,6 +166,27 @@ export default function CustomizeProduct() {
 
     const handleQuantityChange = (newQuantity: number) => { if (newQuantity > 0) setQuantity(newQuantity); };
 
+    // Funções do 2º sabor
+    const openSecondFlavor = async () => {
+        try {
+            const response = await api.get("/category/products", {
+                params: { category_id: "1da0ee77-2a79-4a91-a3a4-863857d9691c" }
+            });
+
+            const filteredProducts = response.data.filter((p: Product) => p.id !== product.id);
+            setSecondFlavorProducts(filteredProducts);
+            setShowSecondFlavorModal(true);
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao carregar os sabores de pizza");
+        }
+    };
+
+    const selectSecondFlavor = (product: Product) => {
+        setSelectedSecondFlavor(product);
+        setShowSecondFlavorModal(false);
+    };
+
     const handleAddToPedido = async () => {
         try {
             if (!user?.id) throw new Error("Cliente não logado");
@@ -156,7 +194,6 @@ export default function CustomizeProduct() {
 
             let pedido_id = pedidoId;
             if (!pedido_id) {
-                // Cria o pedido antes de adicionar o item
                 const pedidoResponse = await api.post("/pedido", { cliente_id });
                 pedido_id = pedidoResponse.data.id;
                 setPedidoId(pedido_id);
@@ -164,6 +201,7 @@ export default function CustomizeProduct() {
 
             const response = await api.post("/item", {
                 product_id: product.id,
+                product2_id: selectedSecondFlavor?.id,
                 pedido_id,
                 qtd: quantity,
                 removidos: Object.entries(selectedIngredients)
@@ -174,7 +212,9 @@ export default function CustomizeProduct() {
                     .map(([id]) => ({ id })),
                 observacoes: observation
             });
+
             const { item } = response.data;
+
             addItem({
                 product_id: product.id,
                 name: product.name,
@@ -190,6 +230,7 @@ export default function CustomizeProduct() {
                     .map(([id]) => extras.find(e => e.id === id)?.nome || id),
                 observation
             });
+
             navigation.navigate("Order", { product });
         } catch (error: any) {
             alert(error.message || "Erro ao adicionar item");
@@ -223,7 +264,7 @@ export default function CustomizeProduct() {
                     <Image source={{ uri: product.image_url }} style={styles.productImage} />
                     <View style={styles.productInfo}>
                         <Text style={styles.productName}>{product.name}</Text>
-                        <Text style={styles.price}>{formatarPreco(product.price)}</Text>
+                        <Text style={styles.price}>{formatarPreco(totalPrice)}</Text>
                         <View style={styles.quantityContainer}>
                             <TouchableOpacity style={styles.button} onPress={() => handleQuantityChange(quantity - 1)}>
                                 <Text style={styles.buttonText}>-</Text>
@@ -236,9 +277,10 @@ export default function CustomizeProduct() {
                     </View>
                 </View>
 
-                {/* Ingredientes */}
+                {/* Ingredientes e Adicionais */}
                 {product.category_id === "1da0ee77-2a79-4a91-a3a4-863857d9691c" && (
                     <>
+                        {/* Ingredientes */}
                         <TouchableOpacity style={styles.ingredientHeader} onPress={toggleIngredients}>
                             <Text style={styles.ingredientHeaderText}>Ingredientes</Text>
                             <Ionicons name={ingredientsExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
@@ -252,6 +294,7 @@ export default function CustomizeProduct() {
                             ))
                         )}
 
+                        {/* Adicionais */}
                         <TouchableOpacity style={styles.ingredientHeader} onPress={toggleExtras}>
                             <Text style={styles.ingredientHeaderText}>Adicionais</Text>
                             <Ionicons name={extrasExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
@@ -264,6 +307,28 @@ export default function CustomizeProduct() {
                                 </TouchableOpacity>
                             ))
                         )}
+
+                        {/* 2º Sabor */}
+                        <TouchableOpacity style={styles.ingredientHeader} onPress={openSecondFlavor}>
+                            <Text style={styles.ingredientHeaderText}>
+                                {selectedSecondFlavor ? `2º Sabor: ${selectedSecondFlavor.name}` : "Adicionar 2º Sabor"}
+                            </Text>
+                            <Ionicons name={selectedSecondFlavor ? "checkmark" : "add"} size={20} color="#fff" />
+                        </TouchableOpacity>
+                        <Modal visible={showSecondFlavorModal} animationType="slide" transparent>
+                            <View style={styles.modalContainer}>
+                                <ScrollView style={styles.modalContent}>
+                                    {secondFlavorProducts.map((p) => (
+                                        <TouchableOpacity key={p.id} onPress={() => selectSecondFlavor(p)} style={styles.ingredientItem}>
+                                            <Text style={styles.ingredientName}>{p.name} - {formatarPreco(p.price)}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                    <TouchableOpacity onPress={() => setShowSecondFlavorModal(false)} style={[styles.ingredientItem, { justifyContent: "center", backgroundColor: "#FF3F4B" }]}>
+                                        <Text style={{ color: "#fff", fontWeight: "700" }}>Fechar</Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
+                            </View>
+                        </Modal>
                     </>
                 )}
 
@@ -290,147 +355,25 @@ export default function CustomizeProduct() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#1d1d2e",
-    },
-
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingTop: 52,
-        paddingBottom: 10,
-        paddingHorizontal: 30,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ffffff1b",
-    },
-
-    logoText: {
-        color: "#fff",
-        fontSize: 22,
-        fontWeight: "700",
-    },
-
-    card: {
-        flexDirection: "row",
-        backgroundColor: "#2a2a40",
-        borderRadius: 12,
-        padding: 12,
-        marginHorizontal: 20,
-        margin: 15,
-        alignItems: "center",
-    },
-
-    productImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 12,
-    },
-
-    productInfo: {
-        flex: 1,
-        marginLeft: 12,
-    },
-
-    productName: {
-        fontSize: 18,
-        fontWeight: "700",
-        color: "#FFF",
-    },
-
-    price: {
-        fontSize: 16,
-        marginVertical: 5,
-        color: "#00C851",
-        fontWeight: "700",
-    },
-
-    quantityContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 8,
-    },
-
-    button: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: "#5A3FFF",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    buttonText: {
-        color: "#FFF",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-
-    quantity: {
-        marginHorizontal: 12,
-        fontSize: 16,
-        color: "#FFF",
-    },
-
-    ingredientHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#3b3b55f7",
-        paddingVertical: 14,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        marginHorizontal: 20,
-        marginBottom: 15,
-    },
-
-    ingredientHeaderText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#FFF",
-    },
-
-    ingredientItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#2a2a40",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        marginHorizontal: 20,
-        marginBottom: 15,
-    },
-
-    ingredientName: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#FFF",
-    },
-
-    textArea: {
-        borderColor: "#3b3b55f7",
-        borderWidth: 1,
-        borderRadius: 12,
-        padding: 14,
-        marginHorizontal: 20,
-        textAlignVertical: "top",
-        fontSize: 16,
-        color: "#FFF",
-    },
-
-    confirmButton: {
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#FF3F4B",
-    },
-
-    confirmText: {
-        color: "#FFF",
-        fontSize: 18,
-        fontWeight: "bold",
-    },
+    container: { flex: 1, backgroundColor: "#1d1d2e" },
+    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 10, paddingHorizontal: 30 },
+    logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
+    card: { flexDirection: "row", backgroundColor: "#2a2a40", borderRadius: 12, padding: 12, marginHorizontal: 20, margin: 15, alignItems: "center" },
+    productImage: { width: 100, height: 100, borderRadius: 12 },
+    productInfo: { flex: 1, marginLeft: 12 },
+    productName: { fontSize: 18, fontWeight: "700", color: "#FFF" },
+    price: { fontSize: 16, marginVertical: 5, color: "#00C851", fontWeight: "700" },
+    quantityContainer: { flexDirection: "row", alignItems: "center", marginTop: 8 },
+    button: { width: 32, height: 32, borderRadius: 8, backgroundColor: "#5A3FFF", justifyContent: "center", alignItems: "center" },
+    buttonText: { color: "#FFF", fontWeight: "bold", fontSize: 16 },
+    quantity: { marginHorizontal: 12, fontSize: 16, color: "#FFF" },
+    ingredientHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: "#3b3b55f7", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 12, marginHorizontal: 20, marginBottom: 15 },
+    ingredientHeaderText: { fontSize: 18, fontWeight: "bold", color: "#FFF" },
+    ingredientItem: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: "#2a2a40", paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, marginHorizontal: 20, marginBottom: 15 },
+    ingredientName: { fontSize: 16, fontWeight: "600", color: "#FFF" },
+    textArea: { borderColor: "#3b3b55f7", borderWidth: 1, borderRadius: 12, padding: 14, marginHorizontal: 20, textAlignVertical: "top", fontSize: 16, color: "#FFF" },
+    confirmButton: { paddingVertical: 16, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#FF3F4B", elevation: 8, shadowColor: "#FF3F4B" },
+    confirmText: { color: "#FFF", fontSize: 18, fontWeight: "bold", textTransform: "uppercase", letterSpacing: 0.8 },
+    modalContainer: { flex: 1, backgroundColor: "#000000aa", justifyContent: "center", paddingHorizontal: 20 },
+    modalContent: { backgroundColor: "#1d1d2e", borderRadius: 12, padding: 16, maxHeight: "80%" },
 });

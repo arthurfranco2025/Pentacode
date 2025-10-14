@@ -23,9 +23,10 @@ export default function Payment() {
   const [selectedCard, setSelectedCard] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
-  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [finalConfirmVisible, setFinalConfirmVisible] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [garcomClosed, setGarcomClosed] = useState(false); // novo estado
 
   const navigation = useNavigation<PaymentScreenNavigationProp>();
   const { signOut } = useContext(AuthContext);
@@ -85,7 +86,7 @@ export default function Payment() {
               selectedOption === "Vale Refeição" && styles.optionSelected,
             ]}
             onPress={() => setSelectedOption("Vale Refeição")}
-            disabled={paymentConfirmed}
+            disabled={garcomClosed}
           >
             <Image
               source={{
@@ -103,7 +104,7 @@ export default function Payment() {
               selectedOption === "PIX" && styles.optionSelected,
             ]}
             onPress={() => setSelectedOption("PIX")}
-            disabled={paymentConfirmed}
+            disabled={garcomClosed}
           >
             <Image
               source={{ uri: "https://img.icons8.com/color/512/pix.png" }}
@@ -119,7 +120,7 @@ export default function Payment() {
               selectedOption === "cartao" && styles.optionSelected,
             ]}
             onPress={() => setModalVisible(true)}
-            disabled={paymentConfirmed}
+            disabled={garcomClosed}
           >
             <Image
               source={{
@@ -141,7 +142,7 @@ export default function Payment() {
               selectedOption === "Dinheiro" && styles.optionSelected,
             ]}
             onPress={() => setSelectedOption("Dinheiro")}
-            disabled={paymentConfirmed}
+            disabled={garcomClosed}
           >
             <Image
               source={{
@@ -155,17 +156,36 @@ export default function Payment() {
 
         {/* Botão principal */}
         <LinearGradient
-          colors={["#FF3F4B", "#e83640"]}
-          style={styles.confirmButton}
+          colors={
+            garcomClosed
+              ? ["#777", "#555"]
+              : ["#FF3F4B", "#e83640"]
+          }
+          style={[
+            styles.confirmButton,
+            garcomClosed && { opacity: 0.7 },
+          ]}
         >
-          <TouchableOpacity onPress={handleConfirmPayment}>
+          <TouchableOpacity
+            onPress={handleConfirmPayment}
+            disabled={garcomClosed}
+          >
             <Text style={styles.confirmText}>
               {paymentConfirmed
-                ? "Forma de Pagamento Confirmada"
+                ? garcomClosed
+                  ? "Pagamento Finalizado"
+                  : "Forma de Pagamento Confirmada"
                 : "Confirmar Pagamento"}
             </Text>
           </TouchableOpacity>
         </LinearGradient>
+
+        {/* Botão de Logout — só aparece quando o modal do garçom for fechado */}
+        {garcomClosed && (
+          <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+            <Text style={styles.logoutText}>Sair do App</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       {/* Modal de tipo de cartão */}
@@ -200,7 +220,7 @@ export default function Payment() {
       <Modal transparent visible={finalConfirmVisible} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Confirmar pagamento?</Text>
+            <Text style={styles.modalTitle}>Confirmar forma de pagamento?</Text>
             <Text style={styles.modalSubtitle}>
               {selectedOption === "cartao"
                 ? cardOptions.find((o) => o.value === selectedCard)?.label
@@ -224,19 +244,22 @@ export default function Payment() {
         </View>
       </Modal>
 
-      {/* Modal final */}
+      {/* Modal final (garçom) */}
       <Modal transparent visible={confirmModalVisible} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={[styles.modalTitle, { color: "#00C851" }]}>
-              ✅ Pagamento Confirmado!
+              ✅ Forma de Pagamento Confirmada!
             </Text>
             <Text style={styles.modalSubtitle}>
-              O garçom está a caminho 🍕
+              O garçom está a caminho com sua comanda!
             </Text>
             <TouchableOpacity
               style={[styles.modalButton, { backgroundColor: "#FF3F4B" }]}
-              onPress={() => setConfirmModalVisible(false)}
+              onPress={() => {
+                setConfirmModalVisible(false);
+                setGarcomClosed(true); // só aqui o logout aparece e o botão desativa
+              }}
             >
               <Text style={styles.modalButtonText}>Fechar</Text>
             </TouchableOpacity>
@@ -292,6 +315,23 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   confirmText: {
+    color: "#FFF",
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 18,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  logoutButton: {
+    backgroundColor: "#FF3F4B",
+    marginHorizontal: 20,
+    marginBottom: 40,
+    borderRadius: 14,
+    paddingVertical: 16,
+    shadowColor: "#ff00ccff",
+    elevation: 6,
+  },
+  logoutText: {
     color: "#FFF",
     textAlign: "center",
     fontWeight: "700",

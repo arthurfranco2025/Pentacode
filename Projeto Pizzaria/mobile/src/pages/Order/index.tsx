@@ -53,7 +53,7 @@ export default function Order() {
         return (
             <View style={styles.noProduct}>
                 <Image
-                    source={{ uri: 'https://images.vexels.com/media/users/3/141186/isolated/preview/431ad815c9a8402ebdf354c82923c2a5-carrinho-de-compras-6.png' }}
+                    source={{ uri: 'https://img.icons8.com/?size=100&id=rX7GcyLQDDjE&format=png&color=FFFFFF' }}
                     style={styles.cart}
                 />
                 <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum produto no carrinho.</Text>
@@ -147,7 +147,7 @@ export default function Order() {
                     </View>
                 ))}
 
-                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}> 
+                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
                     <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
                     <Text>{formatarPreco(pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0))}</Text>
                 </Text>
@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#1d1d2e",
     },
-
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -195,20 +194,18 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 20,
     },
-
     logoText: {
         color: "#FFF",
         fontSize: 22,
         fontWeight: "700",
     },
-
     title: {
-        padding: 10,
-        fontSize: 25,
+        fontSize: 26,
         fontWeight: "700",
         color: "#FFF",
+        paddingHorizontal: 20,
+        marginBottom: 10,
     },
-
     card: {
         flexDirection: "row",
         backgroundColor: "#2a2a40",
@@ -219,68 +216,56 @@ const styles = StyleSheet.create({
         alignItems: "center",
         position: "relative",
     },
-
     image: {
         width: 100,
         height: 100,
         borderRadius: 12,
     },
-
     info: {
         flex: 1,
         marginLeft: 12,
     },
-
     productName: {
         fontWeight: "700",
         fontSize: 16,
         color: "#FFF",
     },
-
     quantity: {
         fontSize: 14,
         color: "#ccc",
         marginVertical: 5,
     },
-
     section: {
         marginTop: 10,
     },
-
     sectionTitle: {
         fontWeight: "700",
         fontSize: 14,
         marginBottom: 5,
         color: "#FFF",
     },
-
     itemTextRemoved: {
         fontSize: 14,
         color: "#FFF",
     },
-
     itemTextSelected: {
         fontSize: 14,
         color: "#FFF",
     },
-
     textObservation: {
         fontSize: 14,
         color: "#ccc",
     },
-
     totalValue: {
         fontSize: 16,
         fontWeight: "bold",
         marginTop: 10,
         color: "#00C851",
     },
-
     deleteButton: {
         marginLeft: 10,
         padding: 5,
     },
-
     noProduct: {
         backgroundColor: "#1d1d2e",
         alignItems: "center",
@@ -288,12 +273,10 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: 12,
     },
-
     cart: {
         width: 100,
         height: 100,
     },
-
     returnButton: {
         backgroundColor: "#FF3F4B",
         borderRadius: 12,
@@ -301,39 +284,37 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-
     returnButtonText: {
         color: "#FFF",
         fontWeight: "700",
         padding: 8,
     },
-
     buttonsRow: {
-        width: "100%",           // ocupa toda a largura disponível
+        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 15,
-        gap: 10,                 // espaço entre os botões (React Native >=0.71)
+        marginBottom: 20,
+        gap: 10,
     },
-
     button: {
-        flex: 1,                 // faz os botões terem o mesmo tamanho
+        flex: 1,
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: "center",
     },
-
     buttonAddMore: {
-        backgroundColor: "#007bff", // cor do botão "Adicionar"
-        marginRight: 5,             // separação entre os botões
+        backgroundColor: "#5A3FFF",
+        marginLeft: 20,
+        elevation: 8,
+        shadowColor: "#5A3FFF",
     },
-
     buttonFinish: {
-        backgroundColor: "#28a745", // cor do botão "Finalizar"
-        marginLeft: 5,              // separação entre os botões
+        backgroundColor: "#FF3F4B",
+        marginRight: 20,
+        elevation: 8,
+        shadowColor: "#FF3F4B",
     },
-
     buttonText: {
         color: "#fff",
         fontWeight: "bold",
