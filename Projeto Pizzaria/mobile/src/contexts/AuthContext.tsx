@@ -121,6 +121,7 @@ export function AuthProvider({children}: AuthProviderProps){
                 token: ''
             });
         });
+        await AsyncStorage.removeItem('@comanda');
     }
 
     async function signUp({name, email, password, cpf, data_nasc}: SignUpProps) {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { api } from '../services/api'; // ajuste o caminho se necessário
+import { api } from '../services/api'; 
 
 interface PedidoItem {
     product_id: string;

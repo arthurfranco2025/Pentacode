@@ -35,13 +35,15 @@ export default function Order() {
 
     const { comandaId, mesaId, numero_mesa } = comanda;
 
-    function handleFinishPedido() {
+    async function handleFinishPedido() {
         navigation.navigate("OrderTicket", {
             comandaId,
             mesaId,
             numero_mesa,
         });
+
     }
+
 
     if (!pedido || pedido.length === 0) {
         return (
@@ -164,6 +166,14 @@ export default function Order() {
 }
 
 const styles = StyleSheet.create({
+    statusText: {
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#00C851",
+        marginTop: 10,
+        marginBottom: 10,
+    },
     container: {
         flex: 1,
         backgroundColor: "#1d1d2e",

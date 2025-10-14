@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Item = {
   id: string;
@@ -32,12 +33,41 @@ type ComandaContextData = {
   removerPedido: (pedidoId: string) => void;
   calcularTotalComanda: () => number;
   limparComanda: () => void;
+  loadingComanda: boolean;
 };
 
 const ComandaContext = createContext<ComandaContextData>({} as ComandaContextData);
 
 export function ComandaProvider({ children }: { children: ReactNode }) {
   const [comanda, setComanda] = useState<Comanda | null>(null);
+  const [loadingComanda, setLoadingComanda] = useState(true);
+  
+  useEffect(() => {
+    async function loadComanda() {
+      try {
+        const storedComanda = await AsyncStorage.getItem("@comanda");
+        if (storedComanda) {
+          setComanda(JSON.parse(storedComanda));
+        }
+      } catch (error) {
+        console.log("Erro ao carregar comanda:", error);
+      } finally {
+        setLoadingComanda(false);
+      }
+    }
+
+    loadComanda();
+  }, []);
+
+  useEffect(() => {
+    async function saveComanda() {
+      if (comanda) {
+        await AsyncStorage.setItem("@comanda", JSON.stringify(comanda));
+      }
+    }
+
+    if (comanda) saveComanda();
+  }, [comanda]);
 
   function adicionarPedido(pedido: Pedido) {
     if (!comanda) return;
@@ -73,6 +103,7 @@ export function ComandaProvider({ children }: { children: ReactNode }) {
         removerPedido,
         calcularTotalComanda,
         limparComanda,
+        loadingComanda
       }}
     >
       {children}
