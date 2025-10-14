@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import prismaClient from "../../prisma";
 
 
-cron.schedule('0 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
   try {
  
     const convidados = await prismaClient.cliente.findMany({
