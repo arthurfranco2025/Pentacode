@@ -343,14 +343,12 @@ export default function CustomizeProduct() {
                 />
             </ScrollView>
 
-            <TouchableOpacity style={{ marginHorizontal: 20, marginBottom: 20 }} onPress={handleAddToPedido}>
-                <View style={styles.confirmButton}>
-                    <Text style={styles.confirmText}>
-                        Adicionar ao Pedido - {formatarPreco(totalPrice)}
-                    </Text>
-                </View>
+            <TouchableOpacity style={styles.confirmButton} onPress={handleAddToPedido}>
+                <Text style={styles.confirmText}>
+                    Adicionar ao Pedido - {formatarPreco(totalPrice)}
+                </Text>
             </TouchableOpacity>
-        </View>
+        </View >
     );
 }
 
