@@ -138,38 +138,199 @@ export default function OrderTicket() {
         </View>
       </ScrollView>
 
-      <TouchableOpacity
-        style={styles.finishButton}
-        onPress={handleGoToPayment}
-      >
-        <Text style={styles.finishText}>Ir para pagamento</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonsRow} />
+
+        <TouchableOpacity
+          style={styles.buttonAddMore}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Text style={styles.buttonText}>Adicionar mais itens</Text>
+        </TouchableOpacity>
+
+
+        <TouchableOpacity
+          style={styles.finishButton}
+          onPress={handleGoToPayment}
+        >
+          <Text style={styles.finishText}>Ir para pagamento</Text>
+        </TouchableOpacity>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1d1d2e" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 14, paddingHorizontal: 20, elevation: 5 },
-  logoText: { color: "#FFF", fontSize: 22, fontWeight: "800", letterSpacing: 0.5 },
-  scrollContent: { paddingBottom: 140, paddingTop: 10 },
-  title: { fontSize: 26, fontWeight: "700", color: "#FFF", paddingHorizontal: 20, marginBottom: 10 },
-  card: { backgroundColor: "#2a2a40", borderRadius: 16, padding: 16, marginHorizontal: 20, marginBottom: 18, shadowColor: "#000", shadowOpacity: 0.3, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 4 },
-  cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 },
-  pedidoNumber: { color: "#aaa", fontSize: 13, fontWeight: "600" },
-  priceTag: { color: "#00C851", fontWeight: "700", fontSize: 16 },
-  productName: { fontSize: 18, fontWeight: "700", color: "#FFF", marginBottom: 6 },
-  section: { marginTop: 8 },
-  sectionTitle: { fontWeight: "700", fontSize: 14, color: "#FFF", marginBottom: 4 },
-  itemTextRemoved: { fontSize: 14, color: "#FF6B6B", marginLeft: 4 },
-  itemTextSelected: { fontSize: 14, color: "#00B347", marginLeft: 4 },
-  textObservation: { fontSize: 14, color: "#ccc", marginLeft: 4 },
-  totalContainer: { backgroundColor: "#2a2a40", marginHorizontal: 20, borderRadius: 12, padding: 16, marginTop: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  totalText: { color: "#FFF", fontSize: 17, fontWeight: "600" },
-  totalValue: { color: "#00C851", fontSize: 18, fontWeight: "800" },
-  finishButton: { backgroundColor: "#FF3F4B", marginHorizontal: 20, marginBottom: 20, paddingVertical: 16, borderRadius: 14, elevation: 8, shadowColor: "#FF3F4B" },
-  finishText: { color: "#FFF", fontWeight: "700", fontSize: 18, textAlign: "center", textTransform: "uppercase", letterSpacing: 0.8 },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: "#FFF", fontSize: 16 },
-  noProduct: { backgroundColor: "#1d1d2e", justifyContent: "center", alignItems: "center", marginTop: 60, padding: 20 },
-});
+  container: {
+    flex: 1,
+    backgroundColor: "#1d1d2e"
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 52,
+    paddingBottom: 14,
+    paddingHorizontal: 20, elevation: 5
+  },
+  logoText: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: 1.2
+  },
+  scrollContent: {
+    paddingBottom: 140,
+    paddingTop: 10
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#FFF",
+    paddingHorizontal: 20,
+    marginBottom: 10
+  },
+  card: {
+    backgroundColor: "#2a2a40",
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0, height: 2
+    },
+    shadowRadius: 4,
+    elevation: 4
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6
+  },
+  pedidoNumber: {
+    color: "#aaa",
+    fontSize: 13,
+    fontWeight: "600"
+  },
+  priceTag: {
+    color: "#00C851",
+    fontWeight: "700",
+    fontSize: 16
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#FFF",
+    marginBottom: 6
+  },
+  section: {
+    marginTop: 8
+  },
+  sectionTitle: {
+    fontWeight: "700",
+    fontSize: 14,
+    color: "#FFF",
+    marginBottom: 4
+  },
+  itemTextRemoved: {
+    fontSize: 14,
+    color: "#FF6B6B",
+    marginLeft: 4
+  },
+  itemTextSelected: {
+    fontSize: 14,
+    color: "#00B347",
+    marginLeft: 4
+  },
+  textObservation: {
+    fontSize: 14,
+    color: "#ccc",
+    marginLeft: 4
+  },
+  totalContainer: {
+    backgroundColor: "#2a2a40",
+    marginHorizontal: 20,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  totalText: {
+    color: "#FFF",
+    fontSize: 17,
+    fontWeight: "600"
+  },
+  totalValue: {
+    color: "#00C851",
+    fontSize: 18,
+    fontWeight: "800"
+  },
+  finishButton: {
+    backgroundColor: "#FF3F4B",
+    marginHorizontal: 20,
+    marginBottom: 20,
+    paddingVertical: 16,
+    borderRadius: 14,
+    elevation: 8,
+    shadowColor: "#FF3F4B"
+  },
+  buttonsRow: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    gap: 10,
+  },
+  buttonAddMore: {
+    backgroundColor: "#5A3FFF",
+    marginHorizontal: 20,
+    marginBottom: 20,
+    paddingVertical: 16,
+    borderRadius: 14,
+    elevation: 8,
+    shadowColor: "#5A3FFF"
+  },
+  buttonFinish: {
+    backgroundColor: "#FF3F4B",
+    marginRight: 20,
+    elevation: 8,
+    shadowColor: "#FF3F4B",
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 18,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 0.8
+  },
+  finishText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 18,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 0.8
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  loadingText: {
+    color: "#FFF",
+    fontSize: 16
+  },
+  noProduct: {
+    backgroundColor: "#1d1d2e",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 60,
+    padding: 20
+  },
+})
