@@ -1,7 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigation, NavigationProp, CommonActions } from "@react-navigation/native";
-import { DateTimePickerEvent, default as DateTimePicker } from "@react-native-community/datetimepicker";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import {
   View,
   ScrollView,
@@ -11,7 +9,13 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  BackHandler,
+  Image,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { AuthContext } from "../../contexts/AuthContext";
 
 type RootStackParamList = {
   SignIn: undefined;
@@ -25,65 +29,61 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [cpf, setCpf] = useState("");
-  const [data_nasc, setData_Nasc] = useState(new Date());
+  const [dataNasc, setDataNasc] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
 
-  function handleHasLogin() {
+  function handleGoBack() {
+    navigation.goBack();
+  }
+
+  function handleSignIn() {
     navigation.navigate("SignIn");
   }
 
-  async function handleSubmit() {
+  function formatarCPF(value: string) {
+    let cpfNumeros = value.replace(/\D/g, "");
+    if (cpfNumeros.length > 11) cpfNumeros = cpfNumeros.slice(0, 11);
+    cpfNumeros = cpfNumeros.replace(/(\d{3})(\d)/, "$1.$2");
+    cpfNumeros = cpfNumeros.replace(/(\d{3})(\d)/, "$1.$2");
+    cpfNumeros = cpfNumeros.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return cpfNumeros;
+  }
+
+  async function handleSignUp() {
+    if (!name || !email || !password || !cpf || !dataNasc) {
+      setError("Preencha todos os campos");
+      return;
+    }
+
     try {
-      if (name === "" || email === "" || password === "" || confirmPassword === "" || cpf === "" || !data_nasc) {
-        setError("Preencha todos os campos!");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        setError("As senhas não coincidem!");
-        return;
-      }
-
-      setError("");
-
       await signUp({
         name,
         email,
         password,
-        cpf,
-        data_nasc,
+        cpf: cpf.replace(/\D/g, ""), // envia só números para o backend
+        data_nasc: dataNasc,
       });
-
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "SignIn" }],
-        })
-      );
+      setError("");
+      navigation.navigate("SignIn");
     } catch (err: any) {
-      let mensagem = "Erro desconhecido";
-
-      if (err.response?.data?.message) {
-        mensagem = err.response.data.message;
-      } else if (err.message) {
-        mensagem = err.message;
-      }
-
-      setError("Erro ao cadastrar!\n" + mensagem);
-      console.log("Erro:", mensagem);
+      setError(err.message);
     }
   }
 
-  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === "ios");
-    if (selectedDate) setData_Nasc(selectedDate);
-  };
-
   return (
     <View style={styles.safeArea}>
+      <TouchableOpacity onPress={handleGoBack} style={styles.GoBack}>
+        <Image
+          source={{
+            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/m6rofw5v_expires_30_days.png",
+          }}
+          resizeMode="stretch"
+          style={styles.backIcon}
+        />
+      </TouchableOpacity>
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -96,68 +96,98 @@ export default function SignUp() {
 
           <Text style={styles.title}>Cadastro</Text>
 
-          {/* Campos de entrada */}
-          {[
-            { label: "Nome", value: name, onChange: setName, placeholder: "Digite seu nome" },
-            { label: "Email", value: email, onChange: setEmail, placeholder: "Digite seu email" },
-            { label: "Senha", value: password, onChange: setPassword, placeholder: "Digite sua senha", secure: true },
-            { label: "Confirmar senha", value: confirmPassword, onChange: setConfirmPassword, placeholder: "Confirme sua senha", secure: true },
-            { label: "CPF", value: cpf, onChange: setCpf, placeholder: "Digite seu CPF" },
-          ].map((field, index) => (
-            <View style={styles.inputGroup} key={index}>
-              <Text style={styles.inputLabel}>{field.label}</Text>
-              <TextInput
-                placeholder={field.placeholder}
-                placeholderTextColor="#8A8A8A"
-                value={field.value}
-                onChangeText={field.onChange}
-                style={styles.input}
-                secureTextEntry={field.secure || false}
-              />
-            </View>
-          ))}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Nome</Text>
+            <TextInput
+              placeholder="Digite seu nome"
+              placeholderTextColor="#8A8A8A"
+              value={name}
+              onChangeText={(text) => { setName(text); setError(""); }}
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              placeholder="Digite seu email"
+              placeholderTextColor="#8A8A8A"
+              value={email}
+              onChangeText={(text) => { setEmail(text); setError(""); }}
+              style={styles.input}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Senha</Text>
+            <TextInput
+              placeholder="Digite sua senha"
+              placeholderTextColor="#8A8A8A"
+              value={password}
+              onChangeText={(text) => { setPassword(text); setError(""); }}
+              style={styles.input}
+              secureTextEntry
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>CPF</Text>
+            <TextInput
+              placeholder="000.000.000-00"
+              placeholderTextColor="#8A8A8A"
+              value={cpf}
+              onChangeText={(text) => { setCpf(formatarCPF(text)); setError(""); }}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+          </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Data de Nascimento</Text>
             <TouchableOpacity
-              style={styles.buttonDate}
               onPress={() => setShowDatePicker(true)}
-              activeOpacity={0.7}
+              style={[styles.input, { justifyContent: "center" }]}
             >
-              <Text style={styles.buttonText2}>
-                {data_nasc instanceof Date
-                  ? data_nasc.toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                  : "Selecione uma data"}
+              <Text style={{ color: "#F0F0F0" }}>
+                {dataNasc.toLocaleDateString("pt-BR")}
               </Text>
             </TouchableOpacity>
-
             {showDatePicker && (
               <DateTimePicker
-                value={new Date(data_nasc)}
+                value={dataNasc}
                 mode="date"
-                display="default"
-                onChange={onChange}
+                display="calendar"
                 maximumDate={new Date()}
+                onChange={(_, date) => {
+                  setShowDatePicker(false);
+                  if (date) setDataNasc(date);
+                }}
               />
             )}
           </View>
 
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
-          <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit} disabled={loadingAuth}>
-            <Text style={styles.buttonText}>{loadingAuth ? "Carregando..." : "Cadastrar"}</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSignUp}
+            disabled={loadingAuth}
+          >
+            {loadingAuth ? (
+              <ActivityIndicator size={25} color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Cadastrar</Text>
+            )}
           </TouchableOpacity>
 
           <Text style={styles.dividerText}>ou</Text>
 
-          <TouchableOpacity onPress={handleHasLogin}>
+          <TouchableOpacity onPress={handleSignIn}>
             <Text style={styles.loginText}>
-              Já possui uma conta?{" "}
-              <Text style={styles.linkText}>Login</Text>
+              Já tem uma conta?{" "}
+              <Text style={styles.linkText}>Faça login</Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -210,25 +240,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
   },
-  buttonDate: {
-    backgroundColor: "#101026",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#8A8A8A",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    alignItems: "flex-start",
-  },
-  buttonText2: {
-    color: "#8A8A8A",
-    fontSize: 14,
-  },
-  buttonSubmit: {
+  button: {
     backgroundColor: "#FF3F4B",
     borderRadius: 6,
     paddingVertical: 14,
     alignItems: "center",
     marginTop: 10,
+    marginBottom: 14,
+  },
+  guestButton: {
+    backgroundColor: "#391D8A",
+    borderRadius: 6,
+    paddingVertical: 14,
+    alignItems: "center",
     marginBottom: 20,
   },
   buttonText: {
@@ -254,6 +278,16 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontWeight: "bold",
     color: "#FF3F4B",
+  },
+  backIcon: {
+    width: 28,
+    height: 28,
+  },
+  GoBack: {
+    position: "absolute",
+    top: 45,
+    left: 25,
+    zIndex: 1,
   },
   errorText: {
     color: "red",
