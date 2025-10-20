@@ -14,6 +14,7 @@ import { StackParamsList } from "../../routes/app.routes";
 import { useComanda } from "../../contexts/comandaContext";
 import { api } from "../../services/api";
 import { formatarPreco } from "../../components/utils/formatPrice";
+import { usePedido } from "../../contexts/pedidoContext"
 
 interface PedidoResponse {
   id: string;
@@ -31,6 +32,8 @@ export default function OrderTicket() {
   const [pedidos, setPedidos] = useState<PedidoResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { pedidoStatus, pedidoId, setPedidoId } = usePedido();
+
 
   useEffect(() => {
     async function loadPedidos() {
@@ -59,6 +62,27 @@ export default function OrderTicket() {
 
     loadPedidos();
   }, [comanda]);
+
+  useEffect(() => {
+    if (pedidos.length > 0 && !pedidoId) {
+      setPedidoId(pedidos[0].id);
+    }
+  }, [pedidos]);
+
+  // Atualiza o status do pedido quando o pedidoStatus mudar
+  useEffect(() => {
+    if (pedidoStatus && pedidoId) {
+      setPedidos(currentPedidos => 
+        currentPedidos.map(pedido => 
+          pedido.id === pedidoId 
+            ? { ...pedido, status: pedidoStatus }
+            : pedido
+        )
+      );
+    }
+  }, [pedidoStatus, pedidoId]);
+
+
 
   if (!comanda) {
     return (
@@ -130,9 +154,17 @@ export default function OrderTicket() {
 
               <View style={styles.statusContainer}>
                 <Text style={styles.statusLabel}>Status:</Text>
-                <Text style={[styles.statusValue,
-                { color: pedido.status === 'Finalizado' ? '#00C851' : '#FF3F4B' }]}>
-                  {pedido.status}
+                <Text 
+                  style={[
+                    styles.statusValue,
+                    { 
+                      color: pedido.id === pedidoId && pedidoStatus === 'pedido pronto' 
+                        ? '#00C851' 
+                        : '#FF3F4B' 
+                    }
+                  ]}
+                >
+                  {pedido.id === pedidoId ? pedidoStatus : pedido.status}
                 </Text>
               </View>
 
