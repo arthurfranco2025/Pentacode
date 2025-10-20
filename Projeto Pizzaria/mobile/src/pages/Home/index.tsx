@@ -37,6 +37,7 @@ type RootStackParamList = {
 	Home: undefined;
 	ProductInfo: { product: Product };
 	Order: undefined;
+	OrderTicket: undefined
 };
 
 const CategoryCard = ({ image_url, label }: { image_url: string; label: string }) => (
@@ -90,7 +91,7 @@ export default function Home() {
 	const [showCategories, setShowCategories] = useState(true);
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
-	const { signOut } = useContext(AuthContext)
+	const { signOut } = useContext(AuthContext);
 
 	const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
@@ -321,7 +322,7 @@ export default function Home() {
 
 				<TouchableOpacity
 					style={styles.orderButton}
-					onPress={() => navigation.navigate("Order")}
+					onPress={() => navigation.navigate("OrderTicket")}
 				>
 					<Text style={styles.orderText}>Pedido</Text>
 				</TouchableOpacity>

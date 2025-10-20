@@ -89,7 +89,54 @@ class CreateItemService {
       },
     });
 
+    const cliente = await PrismaClient.pedido.findFirst({
+      where:{
+        id : pedido_id
+      },
+       select :{
+         cliente_id: true
+       }
+    })
+
+     await PrismaClient.pedido.update({
+       where:{
+         id : pedido_id
+       },
+       data:{
+         price: {
+           increment: precoFinal
+         },
+         points:{
+          increment : pontosFinal
+         }
+       }
+     })
+
+     const comanda = await  PrismaClient.comanda.findFirst({
+       where:{
+         cliente_id : cliente.cliente_id
+       },
+       select:{
+        id : true
+       }
+     })
+
+     await PrismaClient.comanda.update({
+      where:{
+        id : comanda.id
+      },
+      data:{
+        price:{
+          increment : precoFinal
+        },
+        points :{
+          increment : pontosFinal
+        }
+      }
+     })
+
     return { item, mensagem: "Item criado com sucesso" };
+
   }
 }
 

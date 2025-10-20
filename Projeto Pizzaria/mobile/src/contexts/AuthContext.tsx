@@ -16,7 +16,7 @@ type UserProps = {
     id: string;
     name: string;
     email: string;
-    token: string
+    token: string;
 }
 
 type AuthProviderProps = {
@@ -24,9 +24,9 @@ type AuthProviderProps = {
 }
 
 type SignInProps = {
-    email?: string;
+    email?: string; // pode ser email ou CPF
     password?: string;
-    guest?: boolean; // novo
+    guest?: boolean;
 }
 
 type SignUpProps = {
@@ -39,39 +39,33 @@ type SignUpProps = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
-export function AuthProvider({children}: AuthProviderProps){
+export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserProps>({
         id: '',
         name: '',
         email: '',
         token: ''
-    })
+    });
 
-    const [loadingAuth, setLoadingAuth] = useState(false)
-    const [loading, setLoading] = useState(true)
+    const [loadingAuth, setLoadingAuth] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const isAuthenticated = !!user.name;
 
     useEffect(() => {
         async function getUser() {
             const userInfo = await AsyncStorage.getItem('@sujeitopizzaria');
-            let hasUser: UserProps = JSON.parse(userInfo || '{}')
+            let hasUser: UserProps = JSON.parse(userInfo || '{}');
 
-            if(Object.keys(hasUser).length > 0) {
-                api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`
-
-                setUser({
-                    id: hasUser.id,
-                    name: hasUser.name,
-                    email: hasUser.email,
-                    token: hasUser.token
-                })
+            if (Object.keys(hasUser).length > 0) {
+                api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`;
+                setUser(hasUser);
             }
 
             setLoading(false);
         }
         getUser();
-    }, [])
+    }, []);
 
     async function signIn({ email, password, guest = false }: SignInProps) {
         setLoadingAuth(true);
@@ -80,51 +74,38 @@ export function AuthProvider({children}: AuthProviderProps){
             let response;
 
             if (guest) {
-                // Login como convidado
                 response = await api.post('/login', { guest: true });
             } else {
-                // Login normal
                 if (!email || !password) {
-                    throw new Error('Email e senha são obrigatórios');
+                    throw new Error('Email ou CPF e senha são obrigatórios');
                 }
-                response = await api.post('/login', { email, password });
+
+                // Detecta se é CPF (apenas números) ou email
+                const isCPF = /^\d{11}$/.test(email.replace(/\D/g, ''));
+                const loginData = isCPF 
+                    ? { cpf: email.replace(/\D/g, ''), password } 
+                    : { email, password };
+
+                response = await api.post('/login', loginData);
             }
 
             const { id, name, email: userEmail, token } = response.data;
-
             const data = { id, name, email: userEmail, token };
 
             await AsyncStorage.setItem('@sujeitopizzaria', JSON.stringify(data));
-
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            setUser({
-                id,
-                name,
-                email: userEmail,
-                token,
-            });
+            setUser(data);
 
-        } catch (err) {
-            console.log('erro ao acessar', err);
+        } catch (err: any) {
+            const mensagem = err.response?.data?.message || err.response?.data?.error || err.message || 'Erro ao acessar';
+            throw new Error(mensagem);
         } finally {
             setLoadingAuth(false);
         }
     }
 
-    async function signOut() {
-        await AsyncStorage.clear().then(() => {
-            setUser({
-                id: '',
-                name: '',
-                email: '',
-                token: ''
-            });
-        });
-        await AsyncStorage.removeItem('@comanda');
-    }
-
-    async function signUp({name, email, password, cpf, data_nasc}: SignUpProps) {
+    async function signUp({ name, email, password, cpf, data_nasc }: SignUpProps) {
         setLoadingAuth(true);
 
         try {
@@ -134,22 +115,30 @@ export function AuthProvider({children}: AuthProviderProps){
                 password,
                 cpf,
                 data_nasc,
-            })
+            });
 
-            setLoadingAuth(false);
             return response.data;
 
         } catch (err: any) {
-            setLoadingAuth(false)
-
-            if(err.response) {
-                throw new Error(err.response.data.error || 'Erro ao cadastrar')
-            } 
-            throw new Error('Erro de conexão');
+            const mensagem = err.response?.data?.message || err.response?.data?.error || err.message || 'Erro de conexão';
+            throw new Error(mensagem);
+        } finally {
+            setLoadingAuth(false);
         }
     }
 
-    return(
+    async function signOut() {
+        await AsyncStorage.clear();
+        setUser({
+            id: '',
+            name: '',
+            email: '',
+            token: ''
+        });
+        await AsyncStorage.removeItem('@comanda');
+    }
+
+    return (
         <AuthContext.Provider 
             value={{ 
                 user, 
@@ -163,5 +152,5 @@ export function AuthProvider({children}: AuthProviderProps){
         >
             {children}
         </AuthContext.Provider>
-    )
+    );
 }

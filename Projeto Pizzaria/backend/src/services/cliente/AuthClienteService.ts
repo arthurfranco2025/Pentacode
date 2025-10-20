@@ -6,7 +6,7 @@ interface AuthRequest {
     email?: string;
     cpf?: string;
     password?: string;
-    guest?: boolean; // flag para login como convidado
+    guest?: boolean;
 }
 
 class AuthClienteService {
@@ -14,8 +14,8 @@ class AuthClienteService {
 
         let cliente;
 
-        if (guest == true) {
-            // Login como convidado: cria cliente com dados fake
+        if (guest) {
+            // Login como convidado
             const randomId = Math.floor(Math.random() * 100000);
             const nome = `Convidado_${randomId}`;
             const emailFake = `guest_${randomId}@pizzaria.com`;
@@ -32,7 +32,6 @@ class AuthClienteService {
             });
 
         } else {
-            // Login normal
             if (!email && !cpf) {
                 throw new Error("Insira um email ou CPF válido");
             }
@@ -40,10 +39,13 @@ class AuthClienteService {
                 throw new Error("Senha é obrigatória");
             }
 
+            // Busca pelo email OU pelo CPF
             cliente = await prismaClient.cliente.findFirst({
                 where: {
-                    email: email,
-                    cpf: cpf
+                    OR: [
+                        { email: email },
+                        { cpf: cpf }
+                    ]
                 }
             });
 
@@ -57,10 +59,6 @@ class AuthClienteService {
                 throw new Error("Usuário ou senha incorretos");
             }
         }
-
-       if (guest == false) {
-        throw new Error("Insira os seus dados de login")
-       }
 
         // Gera token JWT
         const token = sign(
