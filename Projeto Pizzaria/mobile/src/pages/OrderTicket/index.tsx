@@ -33,6 +33,16 @@ interface ItemPedido {
   };
   qtd: number;
   price: number;
+  observacao?: string;
+  removidos?: Array<{
+    id: string;
+    nome: string;
+  }>;
+  adicionais?: Array<{
+    id: string;
+    nome: string;
+    price: number;
+  }>;
 }
 
 export default function OrderTicket() {
@@ -221,12 +231,47 @@ export default function OrderTicket() {
                     <ActivityIndicator size="small" color="#FF3F4B" />
                   ) : (
                     itensPedido.map((item: ItemPedido) => (
-                      <View key={item.id} style={styles.itemRow}>
-                        <Text style={styles.itemName}>{item.product.name}</Text>
-                        <Text style={styles.itemQtd}>x{item.qtd}</Text>
-                        <Text style={styles.itemPrice}>
-                          {formatarPreco(item.price)}
-                        </Text>
+                      <View key={item.id} style={styles.itemContainer}>
+                        <View style={styles.itemRow}>
+                          <Text style={styles.itemName}>{item.product.name}</Text>
+                          <Text style={styles.itemQtd}>x{item.qtd}</Text>
+                          <Text style={styles.itemPrice}>
+                            {formatarPreco(item.price)}
+                          </Text>
+                        </View>
+
+                        {/* Removidos */}
+                        {item.removidos && item.removidos.length > 0 && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Removidos:</Text>
+                            <Text style={styles.removidosText}>
+                              {item.removidos.map(r => r.nome).join(', ')}
+                            </Text>
+                          </View>
+                        )}
+
+                        {/* Adicionais */}
+                        {item.adicionais && item.adicionais.length > 0 && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Adicionais:</Text>
+                            {item.adicionais.map(adicional => (
+                              <View key={adicional.id} style={styles.adicionalRow}>
+                                <Text style={styles.adicionalText}>{adicional.nome}</Text>
+                                <Text style={styles.adicionalPrice}>
+                                  {formatarPreco(adicional.price)}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+
+                        {/* Observação */}
+                        {item.observacao && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Observação:</Text>
+                            <Text style={styles.observacaoText}>{item.observacao}</Text>
+                          </View>
+                        )}
                       </View>
                     ))
                   )}
@@ -310,6 +355,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#444',
   },
+  itemContainer: {
+    backgroundColor: '#2b2b3c',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 8,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#444',
+    paddingVertical: 8,
+  },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -332,5 +391,37 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     minWidth: 80,
     textAlign: 'right',
+  },
+  detailsContainer: {
+    marginTop: 4,
+    paddingLeft: 12,
+  },
+  detailLabel: {
+    color: '#aaa',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  removidosText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+  },
+  adicionalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  adicionalText: {
+    color: '#00C851',
+    fontSize: 12,
+  },
+  adicionalPrice: {
+    color: '#00C851',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  observacaoText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontStyle: 'italic',
   },
 });
