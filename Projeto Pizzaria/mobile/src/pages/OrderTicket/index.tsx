@@ -26,6 +26,15 @@ interface PedidoResponse {
   updated_at: string;
 }
 
+interface ItemPedido {
+  id: string;
+  product: {
+    name: string;
+  };
+  qtd: number;
+  price: number;
+}
+
 export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
@@ -33,6 +42,11 @@ export default function OrderTicket() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { pedidoStatus, pedidoId, setPedidoId } = usePedido();
+
+  const [pedidoAberto, setPedidoAberto] = useState<string | null>(null);
+  const [itensPedido, setItensPedido] = useState<any[]>([]);
+  const [loadingItens, setLoadingItens] = useState(false);
+
 
 
   useEffect(() => {
@@ -72,9 +86,9 @@ export default function OrderTicket() {
   // Atualiza o status do pedido quando o pedidoStatus mudar
   useEffect(() => {
     if (pedidoStatus && pedidoId) {
-      setPedidos(currentPedidos => 
-        currentPedidos.map(pedido => 
-          pedido.id === pedidoId 
+      setPedidos(currentPedidos =>
+        currentPedidos.map(pedido =>
+          pedido.id === pedidoId
             ? { ...pedido, status: pedidoStatus }
             : pedido
         )
@@ -102,6 +116,30 @@ export default function OrderTicket() {
       total: pedidos.reduce((acc, pedido) => acc + pedido.total, 0),
     });
   };
+
+  const handleTogglePedido = async (pedidoId: string) => {
+    if (pedidoAberto === pedidoId) {
+      // Se o pedido já estiver aberto, fecha ele
+      setPedidoAberto(null);
+      return;
+    }
+
+    try {
+      setLoadingItens(true);
+      setPedidoAberto(pedidoId);
+
+      const response = await api.get('/item/listaPorPedido', {
+        params: {pedido_id: pedidoId }
+      });
+
+      setItensPedido(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar itens do pedido:", err);
+    } finally {
+      setLoadingItens(false);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -144,7 +182,11 @@ export default function OrderTicket() {
           </View>
         ) : (
           pedidos.map((pedido, index) => (
-            <View key={pedido.id} style={styles.card}>
+            <TouchableOpacity 
+              key={pedido.id} 
+              style={styles.card}
+              onPress={() => handleTogglePedido(pedido.id)}
+            >
               <View style={styles.cardHeader}>
                 <Text style={styles.pedidoNumber}>Pedido #{index + 1}</Text>
                 <Text style={styles.priceTag}>
@@ -154,13 +196,13 @@ export default function OrderTicket() {
 
               <View style={styles.statusContainer}>
                 <Text style={styles.statusLabel}>Status:</Text>
-                <Text 
+                <Text
                   style={[
                     styles.statusValue,
-                    { 
-                      color: pedido.id === pedidoId && pedidoStatus === 'pedido pronto' 
-                        ? '#00C851' 
-                        : '#FF3F4B' 
+                    {
+                      color: pedido.id === pedidoId && pedidoStatus === 'pedido pronto'
+                        ? '#00C851'
+                        : '#FF3F4B'
                     }
                   ]}
                 >
@@ -171,7 +213,27 @@ export default function OrderTicket() {
               <Text style={styles.dateText}>
                 {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
               </Text>
-            </View>
+
+              {/* Show items when pedido is open */}
+              {pedidoAberto === pedido.id && (
+                <View style={styles.itensContainer}>
+                  {loadingItens ? (
+                    <ActivityIndicator size="small" color="#FF3F4B" />
+                  ) : (
+                    itensPedido.map((item: ItemPedido) => (
+                      <View key={item.id} style={styles.itemRow}>
+                        <Text style={styles.itemName}>{item.product.name}</Text>
+                        <Text style={styles.itemQtd}>x{item.qtd}</Text>
+                        <Text style={styles.itemPrice}>
+                          {formatarPreco(item.price)}
+                        </Text>
+                      </View>
+                    ))
+                  )}
+                </View>
+              )}
+
+            </TouchableOpacity>
           ))
         )}
 
@@ -241,5 +303,34 @@ const styles = StyleSheet.create({
     color: '#aaa',
     fontSize: 12,
     marginTop: 8,
+  },
+  itensContainer: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#444',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  itemName: {
+    color: '#FFF',
+    fontSize: 14,
+    flex: 1,
+  },
+  itemQtd: {
+    color: '#aaa',
+    fontSize: 14,
+    marginHorizontal: 12,
+  },
+  itemPrice: {
+    color: '#00C851',
+    fontSize: 14,
+    fontWeight: '600',
+    minWidth: 80,
+    textAlign: 'right',
   },
 });

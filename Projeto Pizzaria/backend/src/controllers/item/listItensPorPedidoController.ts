@@ -4,7 +4,8 @@ import { ListItensPorPedidoService } from '../../services/item/listItensPorPedid
 class ListItensPorPedidoController{
     async handle(req: Request, res: Response){
 
-        const {pedido_id} = req.body
+        // const {pedido_id} = req.body
+        const pedido_id = (req.query.pedido_id as string) || req.body.pedido_id
 
         const listItensService = new ListItensPorPedidoService()
 
