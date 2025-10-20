@@ -225,11 +225,17 @@ export default function CustomizeProduct() {
                 removedIngredients: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
                     .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),
-                extras: Object.entries(selectedExtras)
-                    .filter(([_, selected]) => selected)
-                    .map(([id]) => extras.find(e => e.id === id)?.nome || id),
-                observation
-            });
+        extras: Object.entries(selectedExtras)
+            .filter(([_, selected]) => selected)
+            .map(([id]) => extras.find(e => e.id === id)?.nome || id),
+        observation,
+        secondFlavor: selectedSecondFlavor ? {
+            id: selectedSecondFlavor.id,
+            name: selectedSecondFlavor.name,
+            price: Number(selectedSecondFlavor.price),
+            image_url: selectedSecondFlavor.image_url
+        } : undefined
+    });
 
             navigation.navigate("Order", { product });
         } catch (error: any) {

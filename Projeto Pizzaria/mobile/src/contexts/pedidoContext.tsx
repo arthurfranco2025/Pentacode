@@ -6,11 +6,17 @@ interface PedidoItem {
     name: string;
     image_url: string;
     qtd: number;
-    price: number; // preço unitário do produto após customização
-    totalPrice?: number; // preço total do produto (unitário * qtd + adicionais)
+    price: number; // preço unitário do produto
+    totalPrice?: number; // preço total do item (unitário + extras + 2º sabor)
     removedIngredients: string[];
     extras: string[];
     observation: string;
+    secondFlavor?: {
+        id: string;
+        name: string;
+        price: number;
+        image_url?: string;
+    };
 }
 
 interface pedidoContextType {
@@ -33,7 +39,12 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedidoStatus, setPedidoStatus] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
-        setpedido((prev) => [...prev, item]); // já recebe totalPrice do CustomizeProduct
+        // Calculando o totalPrice do item: unitário + metade do segundo sabor + extras
+        const extrasTotal = item.extras.reduce((acc, _) => acc + 1, 0); // ajustar se extras tiver preço
+        const secondFlavorPrice = item.secondFlavor ? item.secondFlavor.price / 2 : 0;
+        const totalPrice = (item.price + secondFlavorPrice + extrasTotal) * item.qtd;
+
+        setpedido((prev) => [...prev, { ...item, totalPrice }]);
     };
 
     const removeItem = (product_id: string) => {
@@ -46,9 +57,8 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
         setPedidoId(null);
     };
 
-    const totalPedido = pedido.reduce((acc, item) => acc + item.price, 0);
+    const totalPedido = pedido.reduce((acc, item) => acc + (item.totalPrice ?? 0), 0);
 
-    // Função para buscar status do pedido
     const fetchPedidoStatus = async () => {
         if (!pedidoId) return;
         try {
@@ -59,10 +69,9 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Buscando o status a cada 5 segundos
     useEffect(() => {
         if (!pedidoId) return;
-        fetchPedidoStatus(); // busca inicial
+        fetchPedidoStatus();
         const interval = setInterval(fetchPedidoStatus, 5000);
         return () => clearInterval(interval);
     }, [pedidoId]);
@@ -87,7 +96,6 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
 
 export const usePedido = () => {
     const context = useContext(pedidoContext);
-    if (!context)
-        throw new Error("usePedido deve ser usado dentro de um PedidoProvider");
+    if (!context) throw new Error("usePedido deve ser usado dentro de um PedidoProvider");
     return context;
 };

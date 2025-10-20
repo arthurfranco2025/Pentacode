@@ -40,6 +40,7 @@ export default function Order() {
             comandaId,
             mesaId,
             numero_mesa,
+            statusPedido: pedidoStatus ?? "",
         });
 
     }
@@ -94,6 +95,13 @@ export default function Order() {
                         />
                         <View style={styles.info}>
                             <Text style={styles.productName}>{product.name}</Text>
+
+                            {product.secondFlavor && (
+                                <Text style={[styles.productName, { fontSize: 14, color: "#ccc" }]}>
+                                    + {product.secondFlavor.name} (2º sabor)
+                                </Text>
+                            )}
+
                             <Text style={styles.quantity}>Quantidade: {product.qtd}</Text>
 
                             {product.removedIngredients?.length > 0 && (
@@ -123,7 +131,7 @@ export default function Order() {
 
                             <Text style={styles.totalValue}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(product.totalPrice ?? product.price)}
+                                {formatarPreco(product.totalPrice ?? product.price + (product.secondFlavor?.price ?? 0))}
                             </Text>
                         </View>
 
