@@ -24,7 +24,7 @@ type AuthProviderProps = {
 }
 
 type SignInProps = {
-    email?: string;
+    email?: string; // pode ser email ou CPF
     password?: string;
     guest?: boolean;
 }
@@ -77,9 +77,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 response = await api.post('/login', { guest: true });
             } else {
                 if (!email || !password) {
-                    throw new Error('Email e senha são obrigatórios');
+                    throw new Error('Email ou CPF e senha são obrigatórios');
                 }
-                response = await api.post('/login', { email, password });
+
+                // Detecta se é CPF (apenas números) ou email
+                const isCPF = /^\d{11}$/.test(email.replace(/\D/g, ''));
+                const loginData = isCPF 
+                    ? { cpf: email.replace(/\D/g, ''), password } 
+                    : { email, password };
+
+                response = await api.post('/login', loginData);
             }
 
             const { id, name, email: userEmail, token } = response.data;
@@ -91,7 +98,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(data);
 
         } catch (err: any) {
-            // Captura mensagem do backend ou fallback
             const mensagem = err.response?.data?.message || err.response?.data?.error || err.message || 'Erro ao acessar';
             throw new Error(mensagem);
         } finally {
@@ -114,7 +120,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             return response.data;
 
         } catch (err: any) {
-            // Captura qualquer erro do backend
             const mensagem = err.response?.data?.message || err.response?.data?.error || err.message || 'Erro de conexão';
             throw new Error(mensagem);
         } finally {

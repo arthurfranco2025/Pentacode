@@ -25,9 +25,9 @@ export default function SignIn() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { signIn, loadingAuth } = useContext(AuthContext);
 
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState(""); // pode ser email ou CPF
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // novo estado para mensagem de erro
+  const [error, setError] = useState(""); 
 
   useFocusEffect(
     React.useCallback(() => {
@@ -54,16 +54,16 @@ export default function SignIn() {
   }
 
   async function handleLogin() {
-    if (email === "" || password === "") {
+    if (login === "" || password === "") {
       setError("Preencha todos os campos");
       return;
     }
 
     try {
-      await signIn({ email, password });
-      setError(""); // limpa erro se login der certo
+      await signIn({ email: login, password }); // backend trata email ou CPF
+      setError("");
     } catch (err: any) {
-      setError(err.message); // mostra erro do backend na tela
+      setError(err.message);
     }
   }
 
@@ -101,13 +101,14 @@ export default function SignIn() {
           <Text style={styles.title}>Login</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>Email ou CPF</Text>
             <TextInput
-              placeholder="Digite seu email"
+              placeholder="Digite seu email ou CPF"
               placeholderTextColor="#8A8A8A"
-              value={email}
-              onChangeText={(text) => { setEmail(text); setError(""); }} // limpa erro ao digitar
+              value={login}
+              onChangeText={(text) => { setLogin(text); setError(""); }}
               style={styles.input}
+              keyboardType="default"
             />
           </View>
 
@@ -118,12 +119,11 @@ export default function SignIn() {
               placeholderTextColor="#8A8A8A"
               secureTextEntry
               value={password}
-              onChangeText={(text) => { setPassword(text); setError(""); }} // limpa erro ao digitar
+              onChangeText={(text) => { setPassword(text); setError(""); }}
               style={styles.input}
             />
           </View>
 
-          {/* Mensagem de erro */}
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loadingAuth}>
@@ -146,8 +146,7 @@ export default function SignIn() {
 
           <TouchableOpacity onPress={handleSignUp}>
             <Text style={styles.loginText}>
-              Não tem uma conta?{" "}
-              <Text style={styles.linkText}>Cadastre-se</Text>
+              Não tem uma conta? <Text style={styles.linkText}>Cadastre-se</Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
