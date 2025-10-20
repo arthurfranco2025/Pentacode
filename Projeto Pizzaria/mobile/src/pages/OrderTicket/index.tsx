@@ -31,6 +31,9 @@ interface ItemPedido {
   product: {
     name: string;
   };
+  product2?: {  // Segundo sabor é opcional
+    name: string;
+  };
   qtd: number;
   price: number;
   observacao?: string;
@@ -233,7 +236,17 @@ export default function OrderTicket() {
                     itensPedido.map((item: ItemPedido) => (
                       <View key={item.id} style={styles.itemContainer}>
                         <View style={styles.itemRow}>
-                          <Text style={styles.itemName}>{item.product.name}</Text>
+                          <View style={styles.nameContainer}>
+                            <Text style={styles.itemName}>
+                              {item.product.name}
+                              {item.product2 && (
+                                <>
+                                  <Text style={styles.divider}> | </Text>
+                                  <Text style={styles.itemName}>{item.product2.name}</Text>
+                                </>
+                              )}
+                            </Text>
+                          </View>
                           <Text style={styles.itemQtd}>x{item.qtd}</Text>
                           <Text style={styles.itemPrice}>
                             {formatarPreco(item.price)}
@@ -282,6 +295,8 @@ export default function OrderTicket() {
           ))
         )}
 
+      </ScrollView>
+
         <View style={styles.totalContainer}>
           <Text style={styles.totalText}>
             Valor total:
@@ -292,8 +307,7 @@ export default function OrderTicket() {
             )}
           </Text>
         </View>
-      </ScrollView>
-
+        
       {pedidos.length > 0 && (
         <TouchableOpacity
           style={styles.finishButton}
@@ -375,10 +389,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 4,
   },
+  nameContainer: {
+    flex: 1,
+  },
   itemName: {
     color: '#FFF',
     fontSize: 14,
-    flex: 1,
   },
   itemQtd: {
     color: '#aaa',
@@ -423,5 +439,10 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontStyle: 'italic',
+  },
+  divider: {
+    color: '#FFF',
+    fontSize: 14,
+    marginHorizontal: 4,
   },
 });
