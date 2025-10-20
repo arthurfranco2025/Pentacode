@@ -6,34 +6,46 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  StyleSheet,
+  ActivityIndicator,
+  StyleSheet
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamsList } from "../../routes/app.routes";
 import { AuthContext } from "../../contexts/AuthContext";
+import { api } from "../../services/api";
 
 type PaymentScreenNavigationProp = NativeStackNavigationProp<
   StackParamsList,
   "Payment"
 >;
 
+type PaymentRouteProps = {
+  comandaId: string;
+  mesaId: string;
+  numero_mesa: number;
+  total: number;
+};
+
 export default function Payment() {
+  const navigation = useNavigation<PaymentScreenNavigationProp>();
+  const route = useRoute();
+  const { comandaId } = route.params as PaymentRouteProps;
+  const { signOut } = useContext(AuthContext);
+
   const [selectedCard, setSelectedCard] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const [finalConfirmVisible, setFinalConfirmVisible] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
-  const [garcomClosed, setGarcomClosed] = useState(false); // novo estado
-
-  const navigation = useNavigation<PaymentScreenNavigationProp>();
-  const { signOut } = useContext(AuthContext);
+  const [garcomClosed, setGarcomClosed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const cardOptions = [
-    { label: "Crédito", value: "credito" },
-    { label: "Débito", value: "debito" },
+    { label: "Crédito", value: "crédito" },
+    { label: "Débito", value: "débito" },
   ];
 
   const handleConfirmPayment = () => {
@@ -41,20 +53,52 @@ export default function Payment() {
     setFinalConfirmVisible(true);
   };
 
-  const handleFinalConfirm = () => {
-    setFinalConfirmVisible(false);
-    setConfirmModalVisible(true);
-    setPaymentConfirmed(true);
+  const handleFinalConfirm = async () => {
+    if (!selectedOption) return;
+
+    try {
+      setLoading(true);
+
+      // Garantindo que o tipoPagamento bate com o backend
+      let tipoPagamento = "";
+      if (selectedOption === "cartao") {
+        tipoPagamento = selectedCard.toLowerCase(); // 'crédito' ou 'débito'
+      } else if (selectedOption === "vale refeição") {
+        tipoPagamento = "vale refeição";
+      } else {
+        tipoPagamento = selectedOption.toLowerCase(); // pix ou dinheiro
+      }
+
+      await api.put("/comanda/pagar", {
+        comanda_id: comandaId,
+        tipoPagamento,
+      });
+
+      setPaymentConfirmed(true);
+      setFinalConfirmVisible(false);
+      setConfirmModalVisible(true);
+    } catch (error: any) {
+      console.log(
+        "Erro ao pagar comanda:",
+        error.response?.data || error.message
+      );
+      alert(
+        error.response?.data?.error ||
+          "Erro ao registrar pagamento. Tente novamente."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: "#1d1d2e" }}>
       {/* Header */}
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         colors={["#3D1F93", "#1d1d2e"]}
-        style={styles.header}
+        style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 14, paddingHorizontal: 20 }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
@@ -64,61 +108,84 @@ export default function Payment() {
             style={{ width: 26, height: 26 }}
           />
         </TouchableOpacity>
-        <Text style={styles.logoText}>
+        <Text style={{ color: "#FFF", fontSize: 22, fontWeight: "800" }}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
         <View style={{ width: 26 }} />
       </LinearGradient>
 
-      {/* Conteúdo */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Formas de Pagamento</Text>
+        <Text style={{ fontSize: 24, fontWeight: "700", color: "#FFF", paddingHorizontal: 20, marginBottom: 20 }}>
+          Formas de Pagamento
+        </Text>
 
-        <View style={styles.optionsWrapper}>
+        <View style={{ gap: 16 }}>
           {/* Vale Refeição */}
           <TouchableOpacity
-            style={[
-              styles.optionCard,
-              selectedOption === "Vale Refeição" && styles.optionSelected,
-            ]}
-            onPress={() => setSelectedOption("Vale Refeição")}
+            style={{
+              backgroundColor: "#2a2a40",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 14,
+              borderRadius: 12,
+              marginHorizontal: 20,
+              borderWidth: selectedOption === "vale refeição" ? 2 : 0,
+              borderColor: "#00C851",
+            }}
+            onPress={() => setSelectedOption("vale refeição")}
             disabled={garcomClosed}
           >
             <Image
               source={{
                 uri: "https://www.cidademarketing.com.br/marketing/wp-content/uploads/2019/02/valealimentacao_pesquisa.jpg",
               }}
-              style={styles.optionImage}
+              style={{ width: 50, height: 50, borderRadius: 8, marginRight: 14 }}
             />
-            <Text style={styles.optionText}>Vale Refeição</Text>
+            <Text style={{ color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 }}>
+              Vale Refeição
+            </Text>
           </TouchableOpacity>
 
           {/* Pix */}
           <TouchableOpacity
-            style={[
-              styles.optionCard,
-              selectedOption === "PIX" && styles.optionSelected,
-            ]}
-            onPress={() => setSelectedOption("PIX")}
+            style={{
+              backgroundColor: "#2a2a40",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 14,
+              borderRadius: 12,
+              marginHorizontal: 20,
+              borderWidth: selectedOption === "pix" ? 2 : 0,
+              borderColor: "#00C851",
+            }}
+            onPress={() => setSelectedOption("pix")}
             disabled={garcomClosed}
           >
             <Image
               source={{ uri: "https://img.icons8.com/color/512/pix.png" }}
-              style={styles.optionImage}
+              style={{ width: 50, height: 50, borderRadius: 8, marginRight: 14 }}
             />
-            <Text style={styles.optionText}>Pix QR Code</Text>
+            <Text style={{ color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 }}>
+              Pix QR Code
+            </Text>
           </TouchableOpacity>
 
           {/* Cartão */}
           <TouchableOpacity
-            style={[
-              styles.optionCard,
-              selectedOption === "cartao" && styles.optionSelected,
-            ]}
+            style={{
+              backgroundColor: "#2a2a40",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 14,
+              borderRadius: 12,
+              marginHorizontal: 20,
+              borderWidth: selectedOption === "cartao" ? 2 : 0,
+              borderColor: "#00C851",
+            }}
             onPress={() => setModalVisible(true)}
             disabled={garcomClosed}
           >
@@ -126,9 +193,9 @@ export default function Payment() {
               source={{
                 uri: "https://images.vexels.com/media/users/3/261853/isolated/preview/71bdb0b66f426075b049dc89581d8178-icone-de-cartoes-de-credito-de-dinheiro.png",
               }}
-              style={styles.optionImage}
+              style={{ width: 50, height: 50, borderRadius: 8, marginRight: 14 }}
             />
-            <Text style={styles.optionText}>
+            <Text style={{ color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 }}>
               {selectedCard
                 ? cardOptions.find((o) => o.value === selectedCard)?.label
                 : "Selecionar Cartão"}
@@ -137,131 +204,136 @@ export default function Payment() {
 
           {/* Dinheiro */}
           <TouchableOpacity
-            style={[
-              styles.optionCard,
-              selectedOption === "Dinheiro" && styles.optionSelected,
-            ]}
-            onPress={() => setSelectedOption("Dinheiro")}
+            style={{
+              backgroundColor: "#2a2a40",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 14,
+              borderRadius: 12,
+              marginHorizontal: 20,
+              borderWidth: selectedOption === "dinheiro" ? 2 : 0,
+              borderColor: "#00C851",
+            }}
+            onPress={() => setSelectedOption("dinheiro")}
             disabled={garcomClosed}
           >
             <Image
               source={{
                 uri: "https://cdn-icons-png.flaticon.com/512/5899/5899792.png",
               }}
-              style={styles.optionImage}
+              style={{ width: 50, height: 50, borderRadius: 8, marginRight: 14 }}
             />
-            <Text style={styles.optionText}>Dinheiro</Text>
+            <Text style={{ color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 }}>
+              Dinheiro
+            </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Botão principal */}
+        {/* Botão confirmar */}
         <LinearGradient
-          colors={
-            garcomClosed
-              ? ["#777", "#555"]
-              : ["#FF3F4B", "#e83640"]
-          }
-          style={[
-            styles.confirmButton,
-            garcomClosed && { opacity: 0.7 },
-          ]}
+          colors={garcomClosed ? ["#777", "#555"] : ["#FF3F4B", "#e83640"]}
+          style={{ marginHorizontal: 20, marginTop: 30, marginBottom: 30, borderRadius: 14, paddingVertical: 16 }}
         >
           <TouchableOpacity
             onPress={handleConfirmPayment}
-            disabled={garcomClosed}
+            disabled={garcomClosed || loading}
           >
-            <Text style={styles.confirmText}>
-              {paymentConfirmed
-                ? garcomClosed
-                  ? "Pagamento Finalizado"
-                  : "Forma de Pagamento Confirmada"
-                : "Confirmar Pagamento"}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+              <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "700", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" }}>
+                {paymentConfirmed
+                  ? garcomClosed
+                    ? "Pagamento Finalizado"
+                    : "Forma de Pagamento Confirmada"
+                  : "Confirmar Pagamento"}
+              </Text>
+            )}
           </TouchableOpacity>
         </LinearGradient>
 
-        {/* Botão de Logout — só aparece quando o modal do garçom for fechado */}
+        {/* Logout */}
         {garcomClosed && (
-          <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
-            <Text style={styles.logoutText}>Sair do App</Text>
+          <TouchableOpacity onPress={signOut} style={{ backgroundColor: "#FF3F4B", marginHorizontal: 20, marginBottom: 40, borderRadius: 14, paddingVertical: 16 }}>
+            <Text style={{ color: "#FFF", textAlign: "center", fontWeight: "700", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" }}>
+              Sair do App
+            </Text>
           </TouchableOpacity>
         )}
       </ScrollView>
 
-      {/* Modal de tipo de cartão */}
+      {/* Modal cartão */}
       <Modal transparent visible={modalVisible} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Escolha o tipo de cartão</Text>
+        <View style={{ flex:1, backgroundColor:"rgba(0,0,0,0.6)", justifyContent:"center", alignItems:"center" }}>
+          <View style={{ backgroundColor:"#2a2a40", padding:24, borderRadius:16, width:"80%", alignItems:"center" }}>
+            <Text style={{ color:"#FFF", fontSize:18, fontWeight:"700", marginBottom:10, textAlign:"center" }}>Escolha o tipo de cartão</Text>
             {cardOptions.map((opt) => (
               <TouchableOpacity
                 key={opt.value}
-                style={styles.modalButton}
+                style={{ backgroundColor:"#3D1F93", paddingVertical:12, borderRadius:10, marginTop:10, width:"50%", alignItems:"center" }}
                 onPress={() => {
                   setSelectedCard(opt.value);
                   setSelectedOption("cartao");
                   setModalVisible(false);
                 }}
               >
-                <Text style={styles.modalButtonText}>{opt.label}</Text>
+                <Text style={{ color:"#FFF", fontWeight:"700" }}>{opt.label}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: "#555" }]}
+              style={{ backgroundColor:"#555", paddingVertical:12, borderRadius:10, marginTop:10, width:"50%", alignItems:"center" }}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Cancelar</Text>
+              <Text style={{ color:"#FFF", fontWeight:"700" }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      {/* Modal de confirmação */}
+      {/* Modal confirmar pagamento */}
       <Modal transparent visible={finalConfirmVisible} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Confirmar forma de pagamento?</Text>
-            <Text style={styles.modalSubtitle}>
+        <View style={{ flex:1, backgroundColor:"rgba(0,0,0,0.6)", justifyContent:"center", alignItems:"center" }}>
+          <View style={{ backgroundColor:"#2a2a40", padding:24, borderRadius:16, width:"80%", alignItems:"center" }}>
+            <Text style={{ color:"#FFF", fontSize:18, fontWeight:"700", marginBottom:10, textAlign:"center" }}>Confirmar forma de pagamento?</Text>
+            <Text style={{ color:"#ccc", fontSize:16, textAlign:"center", marginBottom:20 }}>
               {selectedOption === "cartao"
                 ? cardOptions.find((o) => o.value === selectedCard)?.label
                 : selectedOption}
             </Text>
-            <View style={styles.modalActions}>
+            <View style={{ flexDirection:"row", gap:10 }}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: "#00C851" }]}
+                style={{ backgroundColor:"#00C851", paddingVertical:12, borderRadius:10, marginTop:10, width:"50%", alignItems:"center" }}
                 onPress={handleFinalConfirm}
               >
-                <Text style={styles.modalButtonText}>Sim</Text>
+                <Text style={{ color:"#FFF", fontWeight:"700" }}>Sim</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: "#FF3F4B" }]}
+                style={{ backgroundColor:"#FF3F4B", paddingVertical:12, borderRadius:10, marginTop:10, width:"50%", alignItems:"center" }}
                 onPress={() => setFinalConfirmVisible(false)}
               >
-                <Text style={styles.modalButtonText}>Não</Text>
+                <Text style={{ color:"#FFF", fontWeight:"700" }}>Não</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Modal final (garçom) */}
+      {/* Modal final */}
       <Modal transparent visible={confirmModalVisible} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={[styles.modalTitle, { color: "#00C851" }]}>
-              ✅ Forma de Pagamento Confirmada!
-            </Text>
-            <Text style={styles.modalSubtitle}>
+        <View style={{ flex:1, backgroundColor:"rgba(0,0,0,0.6)", justifyContent:"center", alignItems:"center" }}>
+          <View style={{ backgroundColor:"#2a2a40", padding:24, borderRadius:16, width:"80%", alignItems:"center" }}>
+            <Text style={{ color:"#00C851", fontSize:18, fontWeight:"700", marginBottom:10, textAlign:"center" }}>✅ Forma de Pagamento Confirmada!</Text>
+            <Text style={{ color:"#ccc", fontSize:16, textAlign:"center", marginBottom:20 }}>
               O garçom está a caminho com sua comanda!
             </Text>
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: "#FF3F4B" }]}
+              style={{ backgroundColor:"#FF3F4B", paddingVertical:12, borderRadius:10, marginTop:10, width:"50%", alignItems:"center" }}
               onPress={() => {
                 setConfirmModalVisible(false);
-                setGarcomClosed(true); // só aqui o logout aparece e o botão desativa
+                setGarcomClosed(true);
               }}
             >
-              <Text style={styles.modalButtonText}>Fechar</Text>
+              <Text style={{ color:"#FFF", fontWeight:"700" }}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -269,6 +341,7 @@ export default function Payment() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1d1d2e" },
