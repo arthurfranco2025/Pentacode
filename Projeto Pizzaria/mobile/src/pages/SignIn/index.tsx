@@ -27,6 +27,7 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // novo estado para mensagem de erro
 
   useFocusEffect(
     React.useCallback(() => {
@@ -54,15 +55,25 @@ export default function SignIn() {
 
   async function handleLogin() {
     if (email === "" || password === "") {
-      alert("Preencha todos os campos");
+      setError("Preencha todos os campos");
       return;
     }
 
-    await signIn({ email, password });
+    try {
+      await signIn({ email, password });
+      setError(""); // limpa erro se login der certo
+    } catch (err: any) {
+      setError(err.message); // mostra erro do backend na tela
+    }
   }
 
   async function handleGuestLogin() {
-    await signIn({ guest: true });
+    try {
+      await signIn({ guest: true });
+      setError("");
+    } catch (err: any) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -95,7 +106,7 @@ export default function SignIn() {
               placeholder="Digite seu email"
               placeholderTextColor="#8A8A8A"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => { setEmail(text); setError(""); }} // limpa erro ao digitar
               style={styles.input}
             />
           </View>
@@ -107,10 +118,13 @@ export default function SignIn() {
               placeholderTextColor="#8A8A8A"
               secureTextEntry
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => { setPassword(text); setError(""); }} // limpa erro ao digitar
               style={styles.input}
             />
           </View>
+
+          {/* Mensagem de erro */}
+          {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loadingAuth}>
             {loadingAuth ? (
@@ -234,5 +248,11 @@ const styles = StyleSheet.create({
     top: 45,
     left: 25,
     zIndex: 1,
+  },
+  errorText: { 
+    color: "red", 
+    marginBottom: 12, 
+    fontWeight: "bold", 
+    textAlign: "center" 
   },
 });
