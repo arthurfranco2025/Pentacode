@@ -90,6 +90,7 @@ export default function Home() {
 	const [showCategories, setShowCategories] = useState(true);
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
+	const { signOut } = useContext(AuthContext)
 
 	const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
@@ -186,7 +187,7 @@ export default function Home() {
 				colors={["#3D1F93", "#1d1d2e"]}
 				style={styles.header}
 			>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={signOut}>
 					<Image
 						source={{
 							uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF",
