@@ -187,7 +187,7 @@ export default function CustomizeProduct() {
         setShowSecondFlavorModal(false);
     };
 
-    const handleAddToPedido = () => {
+    const handleAddToPedido = async () => {
         try {
             if (!user?.id) throw new Error("Cliente não logado");
             const cliente_id = user.id;
@@ -242,8 +242,8 @@ export default function CustomizeProduct() {
                 name: product.name,
                 image_url: product.image_url,
                 qtd: quantity,
-                price: totalPrice,      // usa totalPrice calculado
-                totalPrice: totalPrice, // usa totalPrice calculado
+                price: item.price,
+                totalPrice: totalPrice,
                 removedIngredients: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
                     .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),
