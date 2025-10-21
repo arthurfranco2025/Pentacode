@@ -1,23 +1,110 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Image
+  Image,
+  ActivityIndicator
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { StackParamsList } from "../../routes/app.routes";
 import { useComanda } from "../../contexts/comandaContext";
-import { usePedido } from "../../contexts/pedidoContext";
+import { api } from "../../services/api";
 import { formatarPreco } from "../../components/utils/formatPrice";
+import { usePedido } from "../../contexts/pedidoContext"
+
+interface PedidoResponse {
+  id: string;
+  comanda_id: string;
+  status: string;
+  total: number;
+  draft: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ItemPedido {
+  id: string;
+  product: {
+    name: string;
+  };
+  product2?: {  // Segundo sabor é opcional
+    name: string;
+  };
+  qtd: number;
+  price: number;
+  observacao?: string;
+  removidos?: Array<{
+    id: string;
+    nome: string;
+  }>;
+  adicionais?: Array<{
+    id: string;
+    nome: string;
+    price: number;
+  }>;
+}
 
 export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
-  const { pedido, totalPedido, pedidoStatus } = usePedido();
+  const [pedidos, setPedidos] = useState<PedidoResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { pedidoStatus, pedidoId, setPedidoId } = usePedido();
+
+  const [pedidoAberto, setPedidoAberto] = useState<string | null>(null);
+  const [itensPedido, setItensPedido] = useState<any[]>([]);
+  const [loadingItens, setLoadingItens] = useState(false);
+
+
+
+  useEffect(() => {
+    async function loadPedidos() {
+      try {
+        if (!comanda?.comandaId) return;
+
+        const response = await api.get('/pedido/listaPorComanda', {
+          params: { comanda_id: comanda.comandaId } // confirme este nome com a API
+        });
+
+
+        setPedidos(response.data);
+      } catch (err: any) {
+        // mostra detalhes do erro para diagnosticar 400
+        console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
+        setError("Erro ao carregar pedidos");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadPedidos();
+  }, [comanda]);
+
+  useEffect(() => {
+    if (pedidos.length > 0 && !pedidoId) {
+      setPedidoId(pedidos[0].id);
+    }
+  }, [pedidos]);
+
+  // Atualiza o status do pedido quando o pedidoStatus mudar
+  useEffect(() => {
+    if (pedidoStatus && pedidoId) {
+      setPedidos(currentPedidos =>
+        currentPedidos.map(pedido =>
+          pedido.id === pedidoId
+            ? { ...pedido, status: pedidoStatus }
+            : pedido
+        )
+      );
+    }
+  }, [pedidoStatus, pedidoId]);
+
+
 
   if (!comanda) {
     return (
@@ -34,9 +121,33 @@ export default function OrderTicket() {
       comandaId,
       mesaId,
       numero_mesa,
-      total: totalPedido,
+      total: pedidos.reduce((acc, pedido) => acc + pedido.total, 0),
     });
   };
+
+  const handleTogglePedido = async (pedidoId: string) => {
+    if (pedidoAberto === pedidoId) {
+      // Se o pedido já estiver aberto, fecha ele
+      setPedidoAberto(null);
+      return;
+    }
+
+    try {
+      setLoadingItens(true);
+      setPedidoAberto(pedidoId);
+
+      const response = await api.get('/item/listaPorPedido', {
+        params: {pedido_id: pedidoId }
+      });
+
+      setItensPedido(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar itens do pedido:", err);
+    } finally {
+      setLoadingItens(false);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -65,64 +176,117 @@ export default function OrderTicket() {
       >
         <Text style={styles.title}>Comanda #{numero_mesa}</Text>
 
-        {pedido.length === 0 ? (
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FF3F4B" />
+          </View>
+        ) : error ? (
           <View style={styles.noProduct}>
-            <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum produto na comanda.</Text>
+            <Text style={{ color: "#FFF", fontSize: 16 }}>{error}</Text>
+          </View>
+        ) : pedidos.length === 0 ? (
+          <View style={styles.noProduct}>
+            <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum pedido na comanda.</Text>
           </View>
         ) : (
-          pedido.map((item, index) => (
-            <View key={index} style={styles.card}>
+          pedidos.map((pedido, index) => (
+            <TouchableOpacity 
+              key={pedido.id} 
+              style={styles.card}
+              onPress={() => handleTogglePedido(pedido.id)}
+            >
               <View style={styles.cardHeader}>
                 <Text style={styles.pedidoNumber}>Pedido #{index + 1}</Text>
                 <Text style={styles.priceTag}>
-                  {formatarPreco(item.totalPrice ?? item.price)}
+                  {formatarPreco(pedido.total)}
                 </Text>
               </View>
 
-              <Text style={styles.productName}>
-                {item.name} x{item.qtd}
+              <View style={styles.statusContainer}>
+                <Text style={styles.statusLabel}>Status:</Text>
+                <Text
+                  style={[
+                    styles.statusValue,
+                    {
+                      color: pedido.id === pedidoId && pedidoStatus === 'pedido pronto'
+                        ? '#00C851'
+                        : '#FF3F4B'
+                    }
+                  ]}
+                >
+                  {pedido.id === pedidoId ? pedidoStatus : pedido.status}
+                </Text>
+              </View>
+
+              <Text style={styles.dateText}>
+                {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
               </Text>
 
-              {item.secondFlavor && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>2º Sabor</Text>
-                  <Text style={styles.itemTextSelected}>{item.secondFlavor.name}</Text>
+              {/* Show items when pedido is open */}
+              {pedidoAberto === pedido.id && (
+                <View style={styles.itensContainer}>
+                  {loadingItens ? (
+                    <ActivityIndicator size="small" color="#FF3F4B" />
+                  ) : (
+                    itensPedido.map((item: ItemPedido) => (
+                      <View key={item.id} style={styles.itemContainer}>
+                        <View style={styles.itemRow}>
+                          <View style={styles.nameContainer}>
+                            <Text style={styles.itemName}>
+                              {item.product.name}
+                              {item.product2 && (
+                                <>
+                                  <Text style={styles.divider}> | </Text>
+                                  <Text style={styles.itemName}>{item.product2.name}</Text>
+                                </>
+                              )}
+                            </Text>
+                          </View>
+                          <Text style={styles.itemQtd}>x{item.qtd}</Text>
+                          <Text style={styles.itemPrice}>
+                            {formatarPreco(item.price)}
+                          </Text>
+                        </View>
+
+                        {/* Removidos */}
+                        {item.removidos && item.removidos.length > 0 && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Removidos:</Text>
+                            <Text style={styles.removidosText}>
+                              {item.removidos.map(r => r.nome).join(', ')}
+                            </Text>
+                          </View>
+                        )}
+
+                        {/* Adicionais */}
+                        {item.adicionais && item.adicionais.length > 0 && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Adicionais:</Text>
+                            {item.adicionais.map(adicional => (
+                              <View key={adicional.id} style={styles.adicionalRow}>
+                                <Text style={styles.adicionalText}>{adicional.nome}</Text>
+                                <Text style={styles.adicionalPrice}>
+                                  {formatarPreco(adicional.price)}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+
+                        {/* Observação */}
+                        {item.observacao && (
+                          <View style={styles.detailsContainer}>
+                            <Text style={styles.detailLabel}>Observação:</Text>
+                            <Text style={styles.observacaoText}>{item.observacao}</Text>
+                          </View>
+                        )}
+                      </View>
+                    ))
+                  )}
                 </View>
               )}
 
-              {item.removedIngredients?.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Ingredientes Removidos</Text>
-                  {item.removedIngredients.map((ing, idx) => (
-                    <Text key={idx} style={styles.itemTextRemoved}>– {ing}</Text>
-                  ))}
-                </View>
-              )}
-
-              {item.extras?.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Adicionais</Text>
-                  {item.extras.map((extra, idx) => (
-                    <Text key={idx} style={styles.itemTextSelected}>+ {extra}</Text>
-                  ))}
-                </View>
-              )}
-
-              {item.observation && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Observação</Text>
-                  <Text style={styles.textObservation}>{item.observation}</Text>
-                </View>
-              )}
-
-              {pedidoStatus && (
-                <View style={{ alignItems: 'flex-start', marginVertical: 10 }}>
-                  <Text style={{ color: "#FFF", fontSize: 16 }}>
-                    Status do pedido: <Text style={{ fontWeight: 'bold', color: "#FF3F4B" }}>{pedidoStatus}</Text>
-                  </Text>
-                </View>
-              )}
-            </View>
+            </TouchableOpacity>
           ))
         )}
 
@@ -132,28 +296,27 @@ export default function OrderTicket() {
           </Text>
           <Text style={styles.totalValue}>
             {formatarPreco(
-              pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0)
+              pedidos.reduce((acc, pedido) => acc + pedido.total, 0)
             )}
           </Text>
         </View>
       </ScrollView>
 
-      <View style={styles.buttonsRow} />
-
+      <View style={styles.buttonsRow}>
         <TouchableOpacity
           style={styles.buttonAddMore}
           onPress={() => navigation.navigate("Home")}
         >
-          <Text style={styles.buttonText}>Adicionar mais itens</Text>
+          <Text style={styles.buttonText}>Adicionar mais pedidos</Text>
         </TouchableOpacity>
-
 
         <TouchableOpacity
-          style={styles.finishButton}
+          style={styles.buttonFinish}
           onPress={handleGoToPayment}
         >
-          <Text style={styles.finishText}>Ir para pagamento</Text>
+          <Text style={styles.buttonText}>Ir para pagamento</Text>
         </TouchableOpacity>
+      </View>
 
     </View>
   );
@@ -284,35 +447,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 20,
+    paddingHorizontal: 20,
     gap: 10,
   },
   buttonAddMore: {
+    flex: 1,
     backgroundColor: "#5A3FFF",
-    marginHorizontal: 20,
-    marginBottom: 20,
     paddingVertical: 16,
     borderRadius: 14,
     elevation: 8,
-    shadowColor: "#5A3FFF"
+    shadowColor: "#5A3FFF",
   },
   buttonFinish: {
+    flex: 1,
     backgroundColor: "#FF3F4B",
-    marginRight: 20,
+    paddingVertical: 16,
+    borderRadius: 14,
     elevation: 8,
     shadowColor: "#FF3F4B",
   },
   buttonText: {
     color: "#FFF",
     fontWeight: "700",
-    fontSize: 18,
-    textAlign: "center",
-    textTransform: "uppercase",
-    letterSpacing: 0.8
-  },
-  finishText: {
-    color: "#FFF",
-    fontWeight: "700",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
     textTransform: "uppercase",
     letterSpacing: 0.8
@@ -332,5 +489,97 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 60,
     padding: 20
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 4,
+  },
+  statusLabel: {
+    color: '#aaa',
+    fontSize: 13,
+    marginRight: 6,
+  },
+  statusValue: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  dateText: {
+    color: '#aaa',
+    fontSize: 12,
+  },
+  itensContainer: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#3d3d56',
+    paddingTop: 12,
+  },
+  itemContainer: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3d3d56',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  nameContainer: {
+    flex: 1,
+    marginRight: 8,
+  },
+  itemName: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  divider: {
+    color: '#aaa',
+    fontSize: 14,
+    marginHorizontal: 4,
+  },
+  itemQtd: {
+    color: '#aaa',
+    fontSize: 14,
+    marginRight: 8,
+  },
+  itemPrice: {
+    color: '#00C851',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  detailsContainer: {
+    marginTop: 4,
+    paddingLeft: 12,
+  },
+  detailLabel: {
+    color: '#aaa',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  removidosText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+  },
+  adicionalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  adicionalText: {
+    color: '#00C851',
+    fontSize: 12,
+  },
+  adicionalPrice: {
+    color: '#00C851',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  observacaoText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontStyle: 'italic',
   },
 })

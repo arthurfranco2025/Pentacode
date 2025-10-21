@@ -1,4 +1,5 @@
 import React from "react";
+import { api } from "../../services/api";
 import {
     View,
     Text,
@@ -22,7 +23,7 @@ type OrderScreenNavigationProp = NativeStackNavigationProp<
 
 export default function Order() {
     const navigation = useNavigation<OrderScreenNavigationProp>();
-    const { pedido, totalPedido, removeItem, pedidoStatus } = usePedido();
+    const { pedido, pedidoId, totalPedido, removeItem, pedidoStatus, clearPedido, fetchPedidoStatus } = usePedido();
     const { comanda } = useComanda();
 
     if (!comanda) {
@@ -33,18 +34,45 @@ export default function Order() {
         );
     }
 
-    const { comandaId, mesaId, numero_mesa } = comanda;
+    const comandaId = comanda?.comandaId ?? null;
+    const mesaId = comanda?.mesaId ?? null;
+    const numero_mesa = comanda?.numero_mesa ?? null;
 
     async function handleFinishPedido() {
-        navigation.navigate("OrderTicket", {
-            comandaId,
-            mesaId,
-            numero_mesa,
-            statusPedido: pedidoStatus ?? "",
-        });
+        if (!pedidoId) {
+            alert("Nenhum pedido aberto para finalizar.");
+            return;
+        }
+        console.log("DEBUG request:", { id: pedidoId, status: "pedido realizado" });
 
+        try {
+            // marca como realizado
+            await api.put("/pedido/editarStatus", { pedido_id: pedidoId, status: "pedido realizado" });
+
+            // solicita o status atualizado do servidor (garante valor correto)
+            const statusResp = await api.get(`/pedidos/${pedidoId}/status`);
+            const status = statusResp.data?.status ?? "";
+
+            // limpa o contexto local (pedido, id, status)
+            clearPedido();
+
+            // navega passando o status retornado pelo servidor
+            navigation.navigate("OrderTicket", {
+                comandaId,
+                mesaId,
+                numero_mesa,
+                statusPedido: status,
+            });
+        } catch (err: any) {
+            if (err.response) {
+                console.log("Erro no servidor:", err.response.data);
+                console.log("Status:", err.response.status);
+            } else {
+                console.error("Erro desconhecido:", err);
+            }
+            alert("Erro ao finalizar pedido. Tente novamente.");
+        }
     }
-
 
     if (!pedido || pedido.length === 0) {
         return (
@@ -131,7 +159,7 @@ export default function Order() {
 
                             <Text style={styles.totalValue}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(product.totalPrice ?? product.price + (product.secondFlavor?.price ?? 0))}
+                                {formatarPreco(product.totalPrice ?? 0)}
                             </Text>
                         </View>
 
@@ -149,7 +177,7 @@ export default function Order() {
 
                 <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
                     <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
-                    <Text>{formatarPreco(pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0))}</Text>
+                    <Text>{formatarPreco(totalPedido)}</Text>
                 </Text>
             </ScrollView>
 
