@@ -6,6 +6,7 @@ interface EditStatusPedidoRequest {
 }
 
 //OPÇÕES DE STATUS
+//-pedido em andamento
 //-pedido realizado
 //-pedido em preparo
 //-pedido pronto
@@ -34,6 +35,7 @@ class EditPedidoStatusService {
         }
 
         const statusValidos = [
+            'pedido em andamento',
             'pedido realizado',
             'pedido em preparo',
             'pedido pronto',

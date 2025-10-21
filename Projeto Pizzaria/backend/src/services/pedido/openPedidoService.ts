@@ -30,7 +30,7 @@ class OpenPedidoService {
         // Cria o pedido
         const pedido = await PrismaClient.pedido.create({
             data: {
-                status: "pedido realizado",
+                status: "pedido em andamento",
                 price: 0,
                 points: 0,
                 cliente: { connect: { id: cliente_id } },
