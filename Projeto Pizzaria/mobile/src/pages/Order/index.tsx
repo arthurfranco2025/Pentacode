@@ -42,9 +42,7 @@ export default function Order() {
             numero_mesa,
             statusPedido: pedidoStatus ?? "",
         });
-
     }
-
 
     if (!pedido || pedido.length === 0) {
         return (
@@ -131,7 +129,7 @@ export default function Order() {
 
                             <Text style={styles.totalValue}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(product.totalPrice ?? product.price + (product.secondFlavor?.price ?? 0))}
+                                {formatarPreco(product.totalPrice ?? 0)}
                             </Text>
                         </View>
 
@@ -149,7 +147,7 @@ export default function Order() {
 
                 <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
                     <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
-                    <Text>{formatarPreco(pedido.reduce((acc, item) => acc + (item.totalPrice ?? item.price), 0))}</Text>
+                    <Text>{formatarPreco(totalPedido)}</Text>
                 </Text>
             </ScrollView>
 

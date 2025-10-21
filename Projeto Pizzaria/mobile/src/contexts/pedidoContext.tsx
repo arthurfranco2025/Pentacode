@@ -39,8 +39,15 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedidoStatus, setPedidoStatus] = useState<string | null>(null);
 
     const addItem = (item: PedidoItem) => {
-        // Calculando o totalPrice do item: unitário + metade do segundo sabor + extras
-        const extrasTotal = item.extras.reduce((acc, _) => acc + 1, 0); // ajustar se extras tiver preço
+        // If caller already provided a computed totalPrice, use it directly.
+        if (typeof item.totalPrice === 'number') {
+            setpedido((prev) => [...prev, item]);
+            return;
+        }
+
+        // Otherwise compute totalPrice from available fields.
+        // For extras we only have names in PedidoItem.extras, so fall back to counting them as +1 each
+        const extrasTotal = item.extras.reduce((acc, _) => acc + 1, 0);
         const secondFlavorPrice = item.secondFlavor ? item.secondFlavor.price / 2 : 0;
         const totalPrice = (item.price + secondFlavorPrice + extrasTotal) * item.qtd;
 
