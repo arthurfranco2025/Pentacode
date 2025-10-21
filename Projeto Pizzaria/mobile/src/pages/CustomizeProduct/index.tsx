@@ -193,6 +193,28 @@ export default function CustomizeProduct() {
             const cliente_id = user.id;
 
             let pedido_id = pedidoId;
+
+            // Verifica status do pedido existente no servidor. Se não estiver aberto, cria um novo pedido.
+            if (pedido_id) {
+                try {
+                    const statusResp = await api.get(`/pedidos/${pedido_id}/status`);
+                    const status = statusResp.data.status;
+
+                    if (!status || status !== 'pedido em andamento') {
+                        const pedidoResponse = await api.post("/pedido", { cliente_id });
+                        pedido_id = pedidoResponse.data.id;
+                        console.log('criou novo pedido');
+                        setPedidoId(pedido_id);
+                    }
+                } catch (err) {
+                    // Se não conseguir verificar o status, cria um novo pedido
+                    const pedidoResponse = await api.post("/pedido", { cliente_id });
+                    pedido_id = pedidoResponse.data.id;
+                    console.log('erro ao verificar status, criou novo pedido');
+                    setPedidoId(pedido_id);
+                }
+            }
+
             if (!pedido_id) {
                 const pedidoResponse = await api.post("/pedido", { cliente_id });
                 pedido_id = pedidoResponse.data.id;
@@ -239,7 +261,7 @@ export default function CustomizeProduct() {
 
             navigation.navigate("Order", { product });
         } catch (error: any) {
-            alert(error.message || "Erro ao adicionar item");
+            alert(error.response?.data?.message || error.message || "Erro ao adicionar item");
         }
     };
 

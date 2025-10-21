@@ -67,21 +67,16 @@ export default function OrderTicket() {
       try {
         if (!comanda?.comandaId) return;
 
-        // const response = await api.get('/pedido/listaPorComanda', {
-        //   data: {
-        //     comanda_id: comanda.comandaId
-        //   }
-        // });
-
         const response = await api.get('/pedido/listaPorComanda', {
-          params: { comanda_id: comanda.comandaId }
+          params: { comanda_id: comanda.comandaId } // confirme este nome com a API
         });
 
 
         setPedidos(response.data);
-      } catch (err) {
+      } catch (err: any) {
+        // mostra detalhes do erro para diagnosticar 400
+        console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
         setError("Erro ao carregar pedidos");
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -312,7 +307,7 @@ export default function OrderTicket() {
           style={styles.buttonAddMore}
           onPress={() => navigation.navigate("Home")}
         >
-          <Text style={styles.buttonText}>Adicionar mais itens</Text>
+          <Text style={styles.buttonText}>Adicionar mais pedidos</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
