@@ -4,7 +4,7 @@ interface CreateItemRequest {
   product_id: string;
   pedido_id: string;
   qtd: number;
-  product2_id?: string; 
+  product2_id?: string;
   removidos?: { id: string }[];
   adicionais?: { id: string }[];
   observacoes?: string;
@@ -25,12 +25,43 @@ class CreateItemService {
     if (!product_id) throw new Error("É preciso ter um produto");
     if (!qtd || qtd <= 0) throw new Error("Quantidade inválida");
 
+    // 🔹 Buscar pedido com cliente
+    const pedido = await PrismaClient.pedido.findUnique({
+      where: { id: pedido_id },
+      include: {
+        cliente: {
+          select: { data_nasc: true }
+        }
+      }
+    });
+
+    if (!pedido) throw new Error("Pedido não encontrado");
+    if (!pedido.cliente) throw new Error("Cliente do pedido não encontrado");
+
+    // 🔹 Buscar produto principal (precisamos do produto antes de checar idade para saber
+    // se é necessário exigir a data de nascimento)
     const produto = await PrismaClient.product.findUnique({
       where: { id: product_id },
       include: { category: true }
     });
     if (!produto) throw new Error("O produto não existe");
 
+    // Função utilitária para normalizar nomes de categoria (remove acentos e coloca em lower case)
+    const normalize = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '');
+
+    const isAlcoholCategory = (name: string) => {
+      const n = normalize(name);
+      return (
+        n.includes('bebida') && n.includes('alco') || // cobre 'Bebidas Alcoolicas' / 'Bebidas alcoólicas'
+        n.includes('vinhos') ||
+        n.includes('alcool')
+      );
+    };
+    // 🔹 Meio a meio
     let produto2 = null;
     if (product2_id) {
       produto2 = await PrismaClient.product.findUnique({
@@ -39,39 +70,56 @@ class CreateItemService {
       });
       if (!produto2) throw new Error("O segundo sabor não existe");
 
+      // Meio a meio só é permitido para pizzas
       const categoriasPermitidas = ["Pizzas salgadas", "Pizzas doces"];
       const categorias = [produto.category, produto2.category];
       const todasSaoPizza = categorias.every(c => categoriasPermitidas.includes(c.name));
-      if (!todasSaoPizza) {
-        throw new Error("Meio a meio só é permitido para pizzas salgadas ou doces");
+      if (!todasSaoPizza) throw new Error("Meio a meio só é permitido para pizzas salgadas ou doces");
+
+      // Verificação de bebida alcoólica no segundo sabor será feita abaixo junto com a do primeiro sabor
+    }
+
+    // 🔹 Verificar se precisamos checar idade: somente quando algum dos sabores for alcoólico
+    const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
+    let idade = null as number | null;
+    if (precisaChecarIdade) {
+      const dataNasc = pedido.cliente.data_nasc;
+      if (!dataNasc) throw new Error('Data de nascimento do cliente não encontrada');
+
+      const hoje = new Date();
+      idade = hoje.getFullYear() - dataNasc.getFullYear();
+      const mes = hoje.getMonth() - dataNasc.getMonth();
+      if (mes < 0 || (mes === 0 && hoje.getDate() < dataNasc.getDate())) idade--;
+
+      if (idade < 18) {
+        throw new Error('Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.');
       }
     }
 
-    // Cálculo de preço base
+    // 🔹 Cálculo de preço e pontos
     let precoFinal = produto.price;
     let pontosFinal = produto.points;
 
-    // Se for meio a meio
     if (produto2) {
       precoFinal = (produto.price / 2) + (produto2.price / 2) + 10;
       pontosFinal = (produto.points / 2) + (produto2.points / 2) + 10;
     }
 
-    // Somar os adicionais, se existirem
+    // 🔹 Adicionais
     let adicionaisTotal = 0;
     let adicionaisPontos = 0;
     if (adicionais && adicionais.length > 0) {
-      const ids = adicionais.map((ad) => ad.id);
+      const ids = adicionais.map(ad => ad.id);
       const adicionaisData = await PrismaClient.adicional.findMany({
         where: { id: { in: ids } },
-        select: { price: true, points: true },
+        select: { price: true, points: true }
       });
 
       adicionaisTotal = adicionaisData.reduce((acc, ad) => acc + ad.price, 0);
       adicionaisPontos = adicionaisData.reduce((acc, ad) => acc + ad.points, 0);
     }
 
-    // Multiplica tudo pela quantidade
+    // Multiplicar pela quantidade
     precoFinal = qtd * (precoFinal + adicionaisTotal);
     pontosFinal = qtd * (pontosFinal + adicionaisPontos);
 
@@ -81,7 +129,7 @@ class CreateItemService {
       throw new Error('Pedido não encontrado');
     }
 
-    // Cria o item
+    // 🔹 Criar item
     const item = await PrismaClient.item.create({
       data: {
         pedido: { connect: { id: pedido_id } },
@@ -116,6 +164,11 @@ class CreateItemService {
       }
     });
 
+    // 🔹 Atualizar comanda
+    const comanda = await PrismaClient.comanda.findFirst({
+      where: { cliente_id: pedido.cliente_id },
+      select: { id: true }
+    });
     // Busca o pedido para obter o comanda_id (garante que atualizamos a comanda associada exatamente a esse pedido — evita pegar uma comanda antiga do mesmo cliente)
     const pedidoData = await PrismaClient.pedido.findUnique({
       where: { id: pedido_id },
@@ -137,6 +190,15 @@ class CreateItemService {
         select: { id: true }
       });
 
+    if (comanda) {
+      await PrismaClient.comanda.update({
+        where: { id: comanda.id },
+        data: {
+          price: { increment: precoFinal },
+          points: { increment: pontosFinal },
+        }
+      });
+    }
       if (comanda) {
         await PrismaClient.comanda.update({
           where: { id: comanda.id },

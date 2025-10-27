@@ -1,37 +1,29 @@
 import prismaClient from "../../prisma";
 
 interface FavoritoRequest {
-    id: string
+	id: string;
 }
 
 class RemoveFavoritoService {
-    async execute({ id }: FavoritoRequest) {
+	async execute({ id }: FavoritoRequest) {
+		if (!id) {
+			throw new Error("ID do favorito é obrigatório");
+		}
 
-        if (id) {
-            const idExiste = await prismaClient.favorito.findFirst({
-                where: {
-                    id: id
-                }
-            })
+		const favorito = await prismaClient.favorito.findFirst({
+			where: { id },
+		});
 
-            if (!idExiste) {
-                throw new Error
-            }
+		if (!favorito) {
+			throw new Error("Favorito não encontrado");
+		}
 
-        }
+		await prismaClient.favorito.delete({
+			where: { id },
+		});
 
-        if (!id) {
-            throw new Error
-        }
-
-        const favorito = await prismaClient.favorito.delete({
-            where: {
-                id: id
-            }
-        })
-
-        return favorito
-    }
+		return { message: "Favorito removido com sucesso" };
+	}
 }
 
-export default RemoveFavoritoService
+export default RemoveFavoritoService;

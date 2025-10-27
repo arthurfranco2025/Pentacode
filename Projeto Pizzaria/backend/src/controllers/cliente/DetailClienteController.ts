@@ -17,6 +17,7 @@ class DetailClienteController {
                     email: true,
                     cpf: true,
                     data_nasc: true,
+                    image_url: true,
                     created_at: true,
                     updated_at: true
                 }

@@ -9,14 +9,15 @@ import {
     ActivityIndicator,
     Alert,
     ScrollView,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import * as ImagePicker from 'expo-image-picker';
-import { Platform } from 'react-native';
+import * as ImagePicker from "expo-image-picker";
 
 type RootStackParamList = {
     Home: undefined;
@@ -41,6 +42,7 @@ export default function UserPage() {
     const [avatarUri, setAvatarUri] = useState<string | null>(null);
     const [pickedImage, setPickedImage] = useState<any>(null);
     const [removing, setRemoving] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
 
@@ -48,15 +50,14 @@ export default function UserPage() {
         async function fetchUserData() {
             if (authUser && !isGuest) {
                 try {
-                    const response = await api.get('/me');
+                    const response = await api.get("/me");
                     const userData = response.data;
 
-                    const formattedDate = userData.data_nasc ? formatDateToInput(userData.data_nasc) : "";
+                    const formattedDate = userData.data_nasc
+                        ? formatDateToInput(userData.data_nasc)
+                        : "";
 
-                    // set avatar if backend returns an image url
-                    if (userData.image_url) {
-                        setAvatarUri(userData.image_url);
-                    }
+                    if (userData.image_url) setAvatarUri(userData.image_url);
 
                     setForm({
                         nome: userData.name || "",
@@ -66,7 +67,7 @@ export default function UserPage() {
                         nascimento: formattedDate,
                     });
                 } catch (error) {
-                    console.log('Erro ao buscar dados do usuário:', error);
+                    console.log("Erro ao buscar dados do usuário:", error);
                     setForm({
                         nome: authUser.name || "",
                         email: authUser.email || "",
@@ -80,18 +81,41 @@ export default function UserPage() {
         fetchUserData();
     }, [authUser, isGuest]);
 
-    async function pickImage() {
-        if (isGuest) {
-            Alert.alert('Aviso', 'Convidados não podem editar o perfil.');
-            return;
-        }
+    function formatDateToInput(dateStr: string) {
+        if (!dateStr) return "";
+        const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+        const [year, month, day] = dateOnly.split("-");
+        return `${day}/${month}/${year}`;
+    }
 
+    function parseDateString(dateStr: string) {
+        if (!dateStr) return new Date();
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    function formatDateToDisplay(date: Date) {
+        return date.toLocaleDateString("pt-BR");
+    }
+
+    function formatCPF(cpf: string) {
+        const numbers = cpf.replace(/\D/g, "");
+        return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4").slice(0, 14);
+    }
+
+    function handleChange(field: string, value: string) {
+        let formattedValue = value;
+        if (field === "cpf") formattedValue = formatCPF(value);
+        setForm((prev) => ({ ...prev, [field]: formattedValue }));
+    }
+
+    async function pickImage() {
+        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
         if (loading || removing) return;
 
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
-            return;
+        if (status !== "granted") {
+            return Alert.alert("Permissão negada", "Precisamos de permissão para acessar suas fotos.");
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -101,7 +125,6 @@ export default function UserPage() {
             aspect: [1, 1],
         });
 
-        // expo-image-picker returns assets array
         const asset = (result as any).assets ? (result as any).assets[0] : result;
 
         if (!result.canceled && asset && asset.uri) {
@@ -111,32 +134,26 @@ export default function UserPage() {
     }
 
     async function removePhoto() {
-        if (isGuest) {
-            Alert.alert('Aviso', 'Convidados não podem editar o perfil.');
-            return;
-        }
+        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
 
         Alert.alert(
-            'Remover foto',
-            'Deseja remover a foto de perfil?',
+            "Remover foto",
+            "Deseja remover a foto de perfil?",
             [
-                { text: 'Cancelar', style: 'cancel' },
+                { text: "Cancelar", style: "cancel" },
                 {
-                    text: 'Remover',
-                    style: 'destructive',
+                    text: "Remover",
+                    style: "destructive",
                     onPress: async () => {
                         setRemoving(true);
                         try {
-                            // pedir ao backend para remover a imagem
-                            await api.put('/edit', { removeImage: true });
-                            // limpar preview local
+                            await api.put("/edit", { removeImage: true });
                             setAvatarUri(null);
                             setPickedImage(null);
-
-                            Alert.alert('Sucesso', 'Foto removida.');
+                            Alert.alert("Sucesso", "Foto removida.");
                         } catch (err: any) {
-                            console.log('Erro ao remover foto:', err?.response || err);
-                            Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover foto');
+                            console.log("Erro ao remover foto:", err?.response || err);
+                            Alert.alert("Erro", err?.response?.data?.error || "Erro ao remover foto");
                         } finally {
                             setRemoving(false);
                         }
@@ -146,69 +163,24 @@ export default function UserPage() {
         );
     }
 
-    function formatDateToInput(dateStr: string) {
-        if (!dateStr) return "";
-        const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
-        const [year, month, day] = dateOnly.split("-");
-        return `${day}/${month}/${year}`;
-    }
-
-
-    function formatCPF(cpf: string) {
-        const numbers = cpf.replace(/\D/g, "");
-        return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4").slice(0, 14);
-    }
-
-    function formatDate(date: string) {
-        const numbers = date.replace(/\D/g, "");
-        return numbers.replace(/(\d{2})(\d{2})(\d{4})/, "$1/$2/$3").slice(0, 10);
-    }
-
-    function handleChange(field: string, value: string) {
-        let formattedValue = value;
-        if (field === "cpf") {
-            formattedValue = formatCPF(value);
-        } else if (field === "nascimento") {
-            formattedValue = formatDate(value);
-        }
-        setForm((prev) => ({ ...prev, [field]: formattedValue }));
-    }
-
     async function saveProfile() {
-        if (isGuest) {
-            Alert.alert("Aviso", "Convidados não podem editar o perfil.");
-            return;
-        }
+        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
         setLoading(true);
+
         try {
             const body: any = {};
 
-            if (form.nome && form.nome !== authUser?.name) {
-                body.novoName = form.nome;
-            }
-
+            if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
             if (form.email && form.email !== authUser?.email) {
                 body.novoEmail = form.email;
                 body.confirmEmail = form.email;
             }
-
             if (form.senha) body.novoPassword = form.senha;
-
-            if (form.cpf) body.cpf = form.cpf.replace(/\D/g, "");
-
-            if (form.cpf && form.cpf !== authUser?.cpf) {
-                body.cpf = form.cpf.replace(/\D/g, "");
-            }
-
+            if (form.cpf && form.cpf !== authUser?.cpf) body.cpf = form.cpf.replace(/\D/g, "");
             if (form.nascimento) {
-                if (/^\d{2}\/\d{2}\/\d{4}$/.test(form.nascimento)) {
-                    const [dia, mes, ano] = form.nascimento.split("/");
-                    body.nascimento = `${ano}-${mes}-${dia}`;
-                } else {
-                    body.nascimento = form.nascimento;
-                }
+                const [dia, mes, ano] = form.nascimento.split("/");
+                body.nascimento = `${ano}-${mes}-${dia}`;
             }
-
 
             if (Object.keys(body).length === 0) {
                 Alert.alert("Aviso", "Nenhuma alteração foi feita.");
@@ -216,48 +188,44 @@ export default function UserPage() {
                 return;
             }
 
-            // If user picked an image, send multipart/form-data
             let res;
             if (pickedImage) {
                 const dataForm = new FormData();
+                Object.keys(body).forEach((key) => dataForm.append(key, body[key]));
 
-                // append other fields
-                Object.keys(body).forEach((key) => {
-                    dataForm.append(key, (body as any)[key]);
-                });
-
-                // prepare image file object for React Native
                 const uri = pickedImage.uri;
-                const filename = uri.split('/').pop();
-                // infer the mime type
-                const match = /\.([A-Za-z0-9]+)$/.exec(filename || '');
-                const ext = match ? match[1].toLowerCase() : 'jpg';
-                const mime = ext === 'png' ? 'image/png' : 'image/jpg';
+                const filename = uri.split("/").pop();
+                const match = /\.([A-Za-z0-9]+)$/.exec(filename || "");
+                const ext = match ? match[1].toLowerCase() : "jpg";
+                const mime = ext === "png" ? "image/png" : "image/jpeg";
 
-                const file: any = {
-                    uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri,
-                    name: filename || `photo.${ext}`,
-                    type: mime,
-                };
+                dataForm.append("image", { uri, name: filename || `photo.${ext}`, type: mime } as any);
 
-                dataForm.append('image', file as any);
-
-                res = await api.put('/edit', dataForm, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                res = await api.put("/edit", dataForm, {
+                    headers: { "Content-Type": "multipart/form-data" },
                 });
             } else {
                 res = await api.put("/edit", body);
             }
-            const updated = res.data;
 
+            const updated = res.data;
             await updateLocalUser({
                 id: updated.id,
                 name: updated.name,
                 email: updated.email,
+                image_url: updated.image_url,
             });
 
-            Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-            setIsEditing(false);
+            if (form.email && form.email !== authUser?.email) {
+                Alert.alert(
+                    "Sucesso",
+                    "Email atualizado com sucesso! Você precisa fazer login novamente.",
+                    [{ text: "OK", onPress: async () => await signOut() }]
+                );
+            } else {
+                Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+                setIsEditing(false);
+            }
         } catch (error: any) {
             console.log("Erro ao atualizar perfil:", error?.response || error);
             Alert.alert("Erro", error?.response?.data?.error || "Erro ao atualizar perfil");
@@ -266,10 +234,8 @@ export default function UserPage() {
         }
     }
 
-
     return (
         <View style={styles.container}>
-            {/* HEADER */}
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -279,26 +245,19 @@ export default function UserPage() {
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => {
-                        if (isEditing) {
-                            setIsEditing(false);
-                        } else {
-                            navigation.navigate("Home");
-                        }
+                        if (isEditing) setIsEditing(false);
+                        else navigation.navigate("Home");
                     }}
                 >
                     <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
-
                 <Text style={styles.logoText}>
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                 </Text>
-
                 <View style={{ width: 24 }} />
             </LinearGradient>
 
-            {/* CONTENT */}
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* AVATAR */}
                 <View style={styles.avatarWrapper}>
                     <Image
                         source={avatarUri ? { uri: avatarUri } : require("../../assets/user.png")}
@@ -306,11 +265,23 @@ export default function UserPage() {
                     />
                     {isEditing && (
                         <>
-                            <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>
-                                <Ionicons name="add-circle" size={28} color={loading || removing ? "#777" : "#FF4B4B"} />
+                            <TouchableOpacity
+                                style={styles.addPhotoBtn}
+                                onPress={pickImage}
+                                disabled={loading || removing}
+                            >
+                                <Ionicons
+                                    name="add-circle"
+                                    size={28}
+                                    color={loading || removing ? "#777" : "#FF4B4B"}
+                                />
                             </TouchableOpacity>
                             {avatarUri && (
-                                <TouchableOpacity style={[styles.addPhotoBtn, { right: 40 }]} onPress={removePhoto} disabled={removing || loading}>
+                                <TouchableOpacity
+                                    style={[styles.addPhotoBtn, { right: 40 }]}
+                                    onPress={removePhoto}
+                                    disabled={removing || loading}
+                                >
                                     {removing ? (
                                         <ActivityIndicator size="small" color="#FF4B4B" />
                                     ) : (
@@ -322,39 +293,24 @@ export default function UserPage() {
                     )}
                 </View>
 
-
                 <Text style={styles.welcome}>
-                    Olá,{" "}
-                    <Text style={{ fontWeight: "bold" }}>
-                        {form.nome || authUser?.name || "CONVIDADO"}
-                    </Text>
-                    !
+                    Olá, <Text style={{ fontWeight: "bold" }}>{form.nome || authUser?.name || "CONVIDADO"}</Text>!
                 </Text>
 
-                {/* PERFIL */}
                 {!isEditing ? (
                     <View style={styles.menu}>
                         {!isGuest && (
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => setIsEditing(true)}
-                            >
+                            <TouchableOpacity style={styles.button} onPress={() => setIsEditing(true)}>
                                 <Text style={styles.buttonText}>Editar Perfil</Text>
                             </TouchableOpacity>
                         )}
-
                         <TouchableOpacity style={styles.button}>
                             <Text style={styles.buttonText}>Favoritos</Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity style={styles.button}>
                             <Text style={styles.buttonText}>Histórico</Text>
                         </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.logoutButton}
-                            onPress={signOut}
-                        >
+                        <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
                             <Text style={styles.logoutText}>Sair da conta</Text>
                         </TouchableOpacity>
                     </View>
@@ -382,24 +338,38 @@ export default function UserPage() {
                             value={form.cpf}
                             onChangeText={(t) => handleChange("cpf", t)}
                         />
-                        <TextInput
-                            placeholder="Data de nascimento"
-                            placeholderTextColor="#999"
+                        <TouchableOpacity
                             style={styles.input}
-                            value={form.nascimento}
-                            onChangeText={(t) => handleChange("nascimento", t)}
-                        />
+                            onPress={() => setShowDatePicker(true)}
+                        >
+                            <Text style={{ color: "#fff" }}>
+                                {form.nascimento || "Data de nascimento"}
+                            </Text>
+                        </TouchableOpacity>
+
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={parseDateString(form.nascimento)}
+                                mode="date"
+                                display="calendar"
+                                maximumDate={new Date()}
+                                onChange={(_, selectedDate) => {
+                                    setShowDatePicker(false);
+                                    if (selectedDate)
+                                        setForm((prev) => ({
+                                            ...prev,
+                                            nascimento: formatDateToDisplay(selectedDate),
+                                        }));
+                                }}
+                            />
+                        )}
 
                         <TouchableOpacity
                             style={styles.saveButton}
                             onPress={saveProfile}
                             disabled={loading}
                         >
-                            {loading ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <Text style={styles.saveText}>Salvar</Text>
-                            )}
+                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveText}>Salvar</Text>}
                         </TouchableOpacity>
                     </View>
                 )}

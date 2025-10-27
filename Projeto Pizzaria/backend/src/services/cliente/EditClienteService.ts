@@ -17,6 +17,7 @@ interface EditClienteRequest {
   confirmPassword?: string;
   cpf?: string;
   nascimento?: string;
+  image_url?: string;
 }
 
 class EditClienteService {

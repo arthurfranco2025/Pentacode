@@ -16,7 +16,10 @@ export type StackParamsList = {
   Home: undefined;
   UserPage: undefined;
   ProductInfo: undefined;
-  CustomizeProduct: undefined;
+  CustomizeProduct: {
+    product_id: string;
+    pedido_id: string;
+  };
   Order: undefined;
   ScanQrCode: undefined;
   OrderTicket: {
