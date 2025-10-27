@@ -18,6 +18,7 @@ import { CreateClienteController } from './controllers/cliente/CreateClienteCont
 import { AuthClienteController } from './controllers/cliente/AuthClienteController'
 import { EditClienteController } from './controllers/cliente/EditClienteController'
 import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPasswordClienteController'
+import { DetailClienteController } from './controllers/cliente/DetailClienteController'
 
 import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
 import { RemoveFavoritoController } from './controllers/favorito/removeFavoritoController'
@@ -85,6 +86,7 @@ router.delete("/category/delete", isAuthenticated, new DeleteCategoryController(
 //CLIENTES ROUTE
 router.post('/cadastro', new CreateClienteController().handle)
 router.post('/login', new AuthClienteController().handle)
+router.get('/me', isAuthenticated, new DetailClienteController().handle.bind(new DetailClienteController()))
 router.put("/edit", isAuthenticated, upload.single('image'), new EditClienteController().handle.bind(new EditClienteController()));
 router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
 
