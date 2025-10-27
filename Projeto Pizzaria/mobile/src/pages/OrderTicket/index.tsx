@@ -68,11 +68,12 @@ export default function OrderTicket() {
         if (!comanda?.comandaId) return;
 
         const response = await api.get('/pedido/listaPorComanda', {
-          params: { comanda_id: comanda.comandaId } // confirme este nome com a API
+          params: { comanda_id: comanda.comandaId } 
         });
 
 
         setPedidos(response.data);
+        console.log('ver total da comanda:', response.data)
       } catch (err: any) {
         // mostra detalhes do erro para diagnosticar 400
         console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
@@ -141,6 +142,7 @@ export default function OrderTicket() {
       });
 
       setItensPedido(response.data);
+      console.log('ver os itens do pedido:', response.data)
     } catch (err) {
       console.error("Erro ao carregar itens do pedido:", err);
     } finally {
@@ -290,6 +292,9 @@ export default function OrderTicket() {
           ))
         )}
 
+      </ScrollView>
+
+      <View style={styles.fixedBottomArea}>
         <View style={styles.totalContainer}>
           <Text style={styles.totalText}>
             Valor total:
@@ -300,24 +305,23 @@ export default function OrderTicket() {
             )}
           </Text>
         </View>
-      </ScrollView>
 
-      <View style={styles.buttonsRow}>
-        <TouchableOpacity
-          style={styles.buttonAddMore}
-          onPress={() => navigation.navigate("Home")}
-        >
-          <Text style={styles.buttonText}>Adicionar mais pedidos</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonsRow}>
+          <TouchableOpacity
+            style={styles.buttonAddMore}
+            onPress={() => navigation.navigate("Home")}
+          >
+            <Text style={styles.buttonText}>Adicionar mais pedidos</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonFinish}
-          onPress={handleGoToPayment}
-        >
-          <Text style={styles.buttonText}>Ir para pagamento</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonFinish}
+            onPress={handleGoToPayment}
+          >
+            <Text style={styles.buttonText}>Ir para pagamento</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
     </View>
   );
 }
@@ -342,7 +346,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2
   },
   scrollContent: {
-    paddingBottom: 140,
+    paddingBottom: 200, 
     paddingTop: 10
   },
   title: {
@@ -417,7 +421,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 12,
     padding: 16,
-    marginTop: 10,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
@@ -581,5 +585,13 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontStyle: 'italic',
+  },
+  fixedBottomArea: {
+    backgroundColor: "#1d1d2e",
+    borderTopWidth: 1,
+    borderTopColor: "#2a2a40",
+    paddingTop: 10,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
   },
 })

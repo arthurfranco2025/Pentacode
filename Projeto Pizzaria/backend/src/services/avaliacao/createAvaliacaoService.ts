@@ -41,8 +41,8 @@ class CreateAvalicaoService{
             throw new Error('Essa comanda não existe')
         }
 
-        if(comanda.status !== 'fechada'){
-            throw new Error('Não é possível dar nota a uma comanda aberta ou esperando pagamento')
+        if(comanda.status !== 'fechada' && comanda.status !== 'aguardando pagamento'){
+            throw new Error('Não é possível dar nota a uma comanda aberta ou aguardando pagamento')
         }
 
         const avaliacao = await PrismaCliente.avaliacao.create({
