@@ -15,6 +15,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
 
 type RootStackParamList = {
     Home: undefined;
@@ -36,6 +38,10 @@ export default function UserPage() {
         nascimento: "",
     });
 
+    const [avatarUri, setAvatarUri] = useState<string | null>(null);
+    const [pickedImage, setPickedImage] = useState<any>(null);
+    const [removing, setRemoving] = useState(false);
+
     const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
 
     useEffect(() => {
@@ -46,6 +52,11 @@ export default function UserPage() {
                     const userData = response.data;
 
                     const formattedDate = userData.data_nasc ? formatDateToInput(userData.data_nasc) : "";
+
+                    // set avatar if backend returns an image url
+                    if (userData.image_url) {
+                        setAvatarUri(userData.image_url);
+                    }
 
                     setForm({
                         nome: userData.name || "",
@@ -68,6 +79,72 @@ export default function UserPage() {
         }
         fetchUserData();
     }, [authUser, isGuest]);
+
+    async function pickImage() {
+        if (isGuest) {
+            Alert.alert('Aviso', 'Convidados não podem editar o perfil.');
+            return;
+        }
+
+        if (loading || removing) return;
+
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.8,
+            allowsEditing: true,
+            aspect: [1, 1],
+        });
+
+        // expo-image-picker returns assets array
+        const asset = (result as any).assets ? (result as any).assets[0] : result;
+
+        if (!result.canceled && asset && asset.uri) {
+            setPickedImage(asset);
+            setAvatarUri(asset.uri);
+        }
+    }
+
+    async function removePhoto() {
+        if (isGuest) {
+            Alert.alert('Aviso', 'Convidados não podem editar o perfil.');
+            return;
+        }
+
+        Alert.alert(
+            'Remover foto',
+            'Deseja remover a foto de perfil?',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Remover',
+                    style: 'destructive',
+                    onPress: async () => {
+                        setRemoving(true);
+                        try {
+                            // pedir ao backend para remover a imagem
+                            await api.put('/edit', { removeImage: true });
+                            // limpar preview local
+                            setAvatarUri(null);
+                            setPickedImage(null);
+
+                            Alert.alert('Sucesso', 'Foto removida.');
+                        } catch (err: any) {
+                            console.log('Erro ao remover foto:', err?.response || err);
+                            Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover foto');
+                        } finally {
+                            setRemoving(false);
+                        }
+                    },
+                },
+            ]
+        );
+    }
 
     function formatDateToInput(dateStr: string) {
         if (!dateStr) return "";
@@ -139,7 +216,38 @@ export default function UserPage() {
                 return;
             }
 
-            const res = await api.put("/edit", body);
+            // If user picked an image, send multipart/form-data
+            let res;
+            if (pickedImage) {
+                const dataForm = new FormData();
+
+                // append other fields
+                Object.keys(body).forEach((key) => {
+                    dataForm.append(key, (body as any)[key]);
+                });
+
+                // prepare image file object for React Native
+                const uri = pickedImage.uri;
+                const filename = uri.split('/').pop();
+                // infer the mime type
+                const match = /\.([A-Za-z0-9]+)$/.exec(filename || '');
+                const ext = match ? match[1].toLowerCase() : 'jpg';
+                const mime = ext === 'png' ? 'image/png' : 'image/jpg';
+
+                const file: any = {
+                    uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri,
+                    name: filename || `photo.${ext}`,
+                    type: mime,
+                };
+
+                dataForm.append('image', file as any);
+
+                res = await api.put('/edit', dataForm, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            } else {
+                res = await api.put("/edit", body);
+            }
             const updated = res.data;
 
             await updateLocalUser({
@@ -193,13 +301,24 @@ export default function UserPage() {
                 {/* AVATAR */}
                 <View style={styles.avatarWrapper}>
                     <Image
-                        source={require("../../assets/user.png")}
+                        source={avatarUri ? { uri: avatarUri } : require("../../assets/user.png")}
                         style={styles.avatar}
                     />
                     {isEditing && (
-                        <TouchableOpacity style={styles.addPhotoBtn}>
-                            <Ionicons name="add-circle" size={28} color="#FF4B4B" />
-                        </TouchableOpacity>
+                        <>
+                            <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>
+                                <Ionicons name="add-circle" size={28} color={loading || removing ? "#777" : "#FF4B4B"} />
+                            </TouchableOpacity>
+                            {avatarUri && (
+                                <TouchableOpacity style={[styles.addPhotoBtn, { right: 40 }]} onPress={removePhoto} disabled={removing || loading}>
+                                    {removing ? (
+                                        <ActivityIndicator size="small" color="#FF4B4B" />
+                                    ) : (
+                                        <Ionicons name="trash" size={26} color="#FF4B4B" />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                        </>
                     )}
                 </View>
 
@@ -285,6 +404,15 @@ export default function UserPage() {
                     </View>
                 )}
             </ScrollView>
+
+            {removing && (
+                <View style={styles.removeOverlay} pointerEvents="auto">
+                    <View style={styles.removeBox}>
+                        <ActivityIndicator size="large" color="#fff" />
+                        <Text style={styles.removeText}>Removendo foto...</Text>
+                    </View>
+                </View>
+            )}
         </View>
     );
 }
@@ -365,4 +493,25 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     saveText: { color: "#fff", fontWeight: "700", fontSize: 15 },
+    removeOverlay: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    removeBox: {
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    removeText: {
+        color: '#fff',
+        marginTop: 10,
+        fontSize: 14,
+    },
 });
