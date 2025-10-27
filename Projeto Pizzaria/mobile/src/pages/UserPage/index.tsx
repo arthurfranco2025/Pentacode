@@ -95,7 +95,7 @@ export default function UserPage() {
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ["images"] as ImagePicker.MediaType[],
             quality: 0.8,
             allowsEditing: true,
             aspect: [1, 1],
@@ -232,7 +232,7 @@ export default function UserPage() {
                 // infer the mime type
                 const match = /\.([A-Za-z0-9]+)$/.exec(filename || '');
                 const ext = match ? match[1].toLowerCase() : 'jpg';
-                const mime = ext === 'png' ? 'image/png' : 'image/jpg';
+                const mime = ext === 'png' ? 'image/png' : 'image/jpeg';
 
                 const file: any = {
                     uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri,
@@ -240,7 +240,7 @@ export default function UserPage() {
                     type: mime,
                 };
 
-                dataForm.append('image', file as any);
+                dataForm.append('image', file);
 
                 res = await api.put('/edit', dataForm, {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -254,10 +254,26 @@ export default function UserPage() {
                 id: updated.id,
                 name: updated.name,
                 email: updated.email,
+                image_url: updated.image_url,
             });
 
-            Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-            setIsEditing(false);
+            if (form.email && form.email !== authUser?.email) {
+                Alert.alert(
+                    "Sucesso", 
+                    "Email atualizado com sucesso! Você precisa fazer login novamente.",
+                    [
+                        {
+                            text: "OK",
+                            onPress: async () => {
+                                await signOut();
+                            }
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+                setIsEditing(false);
+            }
         } catch (error: any) {
             console.log("Erro ao atualizar perfil:", error?.response || error);
             Alert.alert("Erro", error?.response?.data?.error || "Erro ao atualizar perfil");
@@ -303,7 +319,7 @@ export default function UserPage() {
                     <Image
                         source={avatarUri ? { uri: avatarUri } : require("../../assets/user.png")}
                         style={styles.avatar}
-                    />
+                    /> 
                     {isEditing && (
                         <>
                             <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>

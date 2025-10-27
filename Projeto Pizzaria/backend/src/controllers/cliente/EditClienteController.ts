@@ -11,20 +11,19 @@ class EditClienteController {
         oldPassword,
         novoPassword,
         confirmPassword,
+        cpf,
+        nascimento,
+        image_url
       } = req.body;
 
-      // Banner enviado via form-data ou URL
       let banner;
-      if (req.file) {
-        banner = req.file; // Multer
-      } else if (req.body.banner) {
-        banner = req.body.banner; // URL
-      }
+      if (req.file) banner = req.file;
+      else if (req.body.banner) banner = req.body.banner;
 
-      // flag para remover a imagem (aceita 'true' ou boolean true)
-      const removeImage = req.body.removeImage === 'true' || req.body.removeImage === true;
+      const removeImage =
+        req.body.removeImage === "true" || req.body.removeImage === true;
 
-      const userId = req.user_id as string; // setado pelo middleware de auth
+      const userId = req.user_id as string;
 
       const editClienteService = new EditClienteService();
 
@@ -38,6 +37,9 @@ class EditClienteController {
         oldPassword,
         novoPassword,
         confirmPassword,
+        cpf,
+        nascimento,
+        image_url
       });
 
       return res.status(200).json(clienteAtualizado);

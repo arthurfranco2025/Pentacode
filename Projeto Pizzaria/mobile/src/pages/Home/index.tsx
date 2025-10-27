@@ -83,7 +83,7 @@ export default function Home() {
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const { comanda } = useComanda();
 	const { totalPedido } = usePedido();
-	const { signOut } = useContext(AuthContext);
+	const { user: authUser, signOut } = useContext(AuthContext);
 
 	const [categories, setCategories] = useState<Categories[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
@@ -186,10 +186,12 @@ export default function Home() {
 			>
 				<TouchableOpacity onPress={() => navigation.navigate("UserPage")}>
 					<Image
-						source={{
-							uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF",
-						}}
-						style={styles.icon24}
+						source={
+							authUser?.image_url
+								? { uri: authUser.image_url }
+								: { uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF" }
+						}
+						style={[styles.icon24, authUser?.image_url && styles.avatarIcon]}
 					/>
 				</TouchableOpacity>
 
@@ -453,5 +455,8 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		textTransform: "uppercase",
 		letterSpacing: 0.8,
+	},
+	avatarIcon: {
+		borderRadius: 12,
 	},
 });
