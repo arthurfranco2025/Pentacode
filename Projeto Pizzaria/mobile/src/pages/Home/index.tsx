@@ -16,7 +16,6 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
-// import { StackParamsList } from "../../routes/app.routes";
 
 interface Categories {
 	id: string;
@@ -37,7 +36,8 @@ type RootStackParamList = {
 	Home: undefined;
 	ProductInfo: { product: Product };
 	Order: undefined;
-	OrderTicket: undefined
+	OrderTicket: undefined;
+	UserPage: undefined;
 };
 
 const CategoryCard = ({ image_url, label }: { image_url: string; label: string }) => (
@@ -83,30 +83,29 @@ export default function Home() {
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const { comanda } = useComanda();
 	const { totalPedido } = usePedido();
+	const { signOut } = useContext(AuthContext);
 
 	const [categories, setCategories] = useState<Categories[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
-	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [showCategories, setShowCategories] = useState(true);
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
-	const { signOut } = useContext(AuthContext);
-
 	const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
 	async function fetchProductsByName(name: string) {
-		if (!name || name.trim() === '') {
+		if (!name || name.trim() === "") {
 			setProducts([]);
 			return;
 		}
 
 		try {
 			setLoadingProducts(true);
-			const res = await api.get('/product/search', { params: { name } });
+			const res = await api.get("/product/search", { params: { name } });
 			setProducts(res.data);
 		} catch (err) {
-			console.error('Error searching products:', err);
+			console.error("Error searching products:", err);
 			setProducts([]);
 		} finally {
 			setLoadingProducts(false);
@@ -123,7 +122,7 @@ export default function Home() {
 		}
 
 		const timer = setTimeout(() => {
-			if (searchTerm && searchTerm.trim() !== '') {
+			if (searchTerm && searchTerm.trim() !== "") {
 				fetchProductsByName(searchTerm);
 			} else {
 				setProducts([]);
@@ -154,10 +153,7 @@ export default function Home() {
 
 	useEffect(() => {
 		const loadProducts = async () => {
-			// if there is a search term, don't load by category
-			if (searchTerm && searchTerm.trim() !== '') {
-				return;
-			}
+			if (searchTerm && searchTerm.trim() !== "") return;
 
 			if (!selectedCategory) {
 				setProducts([]);
@@ -188,7 +184,7 @@ export default function Home() {
 				colors={["#3D1F93", "#1d1d2e"]}
 				style={styles.header}
 			>
-				<TouchableOpacity onPress={signOut}>
+				<TouchableOpacity onPress={() => navigation.navigate("UserPage")}>
 					<Image
 						source={{
 							uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF",
@@ -228,11 +224,10 @@ export default function Home() {
 						style={styles.input}
 						value={searchTerm}
 						onChangeText={(text) => setSearchTerm(text)}
-						onSubmitEditing={() => handleSearch()}
+						onSubmitEditing={handleSearch}
 					/>
 				</View>
 			</View>
-
 
 			{/* CONTENT */}
 			<View style={styles.content}>
@@ -245,16 +240,15 @@ export default function Home() {
 							showsVerticalScrollIndicator={false}
 						>
 							{loadingCategories ? (
-								<ActivityIndicator
-									size="large"
-									color="#391D8A"
-									style={{ marginTop: 20 }}
-								/>
+								<ActivityIndicator size="large" color="#391D8A" style={{ marginTop: 20 }} />
 							) : (
-										categories.map((cat) => (
-											<TouchableOpacity
-												key={cat.id}
-												onPress={() => { setSelectedCategory(cat.id); setSearchTerm(''); }}
+								categories.map((cat) => (
+									<TouchableOpacity
+										key={cat.id}
+										onPress={() => {
+											setSelectedCategory(cat.id);
+											setSearchTerm("");
+										}}
 										style={[
 											styles.categoryItem,
 											selectedCategory === cat.id && styles.selectedCategory,
@@ -282,9 +276,7 @@ export default function Home() {
 										<ItemCard
 											key={prod.id}
 											product={prod}
-											onPress={() =>
-												navigation.navigate("ProductInfo", { product: prod })
-											}
+											onPress={() => navigation.navigate("ProductInfo", { product: prod })}
 											showCategories={showCategories}
 										/>
 									))}
@@ -292,7 +284,7 @@ export default function Home() {
 							</ScrollView>
 						) : (
 							<Text style={styles.emptyText}>
-								{searchTerm && searchTerm.trim() !== ''
+								{searchTerm && searchTerm.trim() !== ""
 									? "Nenhum produto encontrado para sua busca"
 									: selectedCategory
 									? "Nenhum produto nesta categoria"
@@ -332,13 +324,8 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#1d1d2e",
-	},
-	content: {
-		flex: 1,
-	},
+	container: { flex: 1, backgroundColor: "#1d1d2e" },
+	content: { flex: 1 },
 	header: {
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -349,31 +336,16 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: "#ffffff1b",
 	},
-	icon24: {
-		width: 24,
-		height: 24,
-	},
-	logoText: {
-		color: "#fff",
-		fontSize: 22,
-		fontWeight: "700",
-	},
-	mesaText: {
-		color: "#fff",
-		fontSize: 14,
-		fontWeight: "600",
-	},
+	icon24: { width: 24, height: 24 },
+	logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
+	mesaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
 	menuSearchRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		paddingHorizontal: 20,
 		marginVertical: 10,
 	},
-	sideIcon: {
-		width: 40,
-		height: 40,
-		marginRight: 10,
-	},
+	sideIcon: { width: 40, height: 40, marginRight: 10 },
 	searchBox: {
 		flex: 1,
 		flexDirection: "row",
@@ -384,51 +356,17 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		height: 40,
 	},
-	searchIcon: {
-		width: 20,
-		height: 20,
-		marginRight: 8,
-	},
-	input: {
-		flex: 1,
-		color: "#FFF",
-	},
-	mainRow: {
-		flexDirection: "row",
-		width: "100%",
-		height: "100%",
-	},
-	leftColumn: {
-		width: "35%",
-		borderRightWidth: 1,
-		borderRightColor: "#ffffff1b",
-	},
-	rightColumn: {
-		width: "65%",
-		paddingHorizontal: 8,
-	},
-	rightColumnFull: {
-		width: "100%",
-	},
-	categoriesContainer: {
-		paddingVertical: 10,
-	},
-	categoryItem: {
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: "#ffffff1b",
-	},
-	selectedCategory: {
-		backgroundColor: "#3b3b55f7",
-	},
-	categoryBg: {
-		alignItems: "center",
-		paddingHorizontal: 5,
-	},
-	categoryImage: {
-		width: 65,
-		height: 65,
-	},
+	searchIcon: { width: 20, height: 20, marginRight: 8 },
+	input: { flex: 1, color: "#FFF" },
+	mainRow: { flexDirection: "row", width: "100%", height: "100%" },
+	leftColumn: { width: "35%", borderRightWidth: 1, borderRightColor: "#ffffff1b" },
+	rightColumn: { width: "65%", paddingHorizontal: 8 },
+	rightColumnFull: { width: "100%" },
+	categoriesContainer: { paddingVertical: 10 },
+	categoryItem: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
+	selectedCategory: { backgroundColor: "#3b3b55f7" },
+	categoryBg: { alignItems: "center", paddingHorizontal: 5 },
+	categoryImage: { width: 65, height: 65 },
 	categoryText: {
 		color: "#FFF",
 		fontWeight: "600",
@@ -436,10 +374,7 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		textAlign: "center",
 	},
-	productsContainer: {
-		paddingVertical: 10,
-		flexGrow: 1,
-	},
+	productsContainer: { paddingVertical: 10, flexGrow: 1 },
 	productsGrid: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -457,32 +392,16 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		marginBottom: 5,
 	},
-	ThreeCards: {
-		width: "32%",
-	},
+	ThreeCards: { width: "32%" },
 	productImage: {
 		width: "100%",
 		height: 120,
 		borderTopLeftRadius: 12,
 		borderTopRightRadius: 12,
 	},
-	productInfo: {
-		padding: 8,
-		flex: 1,
-		justifyContent: "space-between",
-	},
-	promoText: {
-		color: "#FFF",
-		fontSize: 16,
-		fontWeight: "600",
-		marginBottom: 4,
-	},
-	priceText: {
-		color: "#00C851",
-		fontSize: 14,
-		fontWeight: "700",
-		marginBottom: 8,
-	},
+	productInfo: { padding: 8, flex: 1, justifyContent: "space-between" },
+	promoText: { color: "#FFF", fontSize: 16, fontWeight: "600", marginBottom: 4 },
+	priceText: { color: "#00C851", fontSize: 14, fontWeight: "700", marginBottom: 8 },
 	button: {
 		backgroundColor: "#5A3FFF",
 		borderRadius: 8,
@@ -514,20 +433,9 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: "#ffffff1b",
 	},
-	footerRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	cartIcon: {
-		width: 32,
-		height: 32,
-	},
-	cartText: {
-		color: "#fff",
-		fontSize: 18,
-		fontWeight: "600",
-	},
+	footerRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+	cartIcon: { width: 32, height: 32 },
+	cartText: { color: "#fff", fontSize: 18, fontWeight: "600" },
 	orderButton: {
 		alignItems: "center",
 		justifyContent: "center",

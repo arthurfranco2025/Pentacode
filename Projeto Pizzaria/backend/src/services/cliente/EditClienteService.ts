@@ -7,13 +7,15 @@ type BannerUpload = Express.Multer.File;
 
 interface EditClienteRequest {
   banner?: string | BannerUpload;
-  userId: string; // ID vindo do token
+  userId: string;
   novoName?: string;
   novoEmail?: string;
   confirmEmail?: string;
   oldPassword?: string;
   novoPassword?: string;
   confirmPassword?: string;
+  cpf?: string;
+  nascimento?: string;
 }
 
 class EditClienteService {
@@ -26,10 +28,19 @@ class EditClienteService {
     oldPassword,
     novoPassword,
     confirmPassword,
+    cpf,
+    nascimento,
   }: EditClienteRequest) {
-    const dataToUpdate: { name?: string; email?: string; password?: string; image_url?: string } = {};
+    const dataToUpdate: {
+      name?: string;
+      email?: string;
+      password?: string;
+      image_url?: string;
+      cpf?: string;
+      data_nasc?: Date;
+    } = {};
 
-    // Buscar cliente atual
+    // ===== Buscar cliente atual =====
     const clienteAtual = await prismaClient.cliente.findUnique({
       where: { id: userId },
     });
@@ -40,10 +51,10 @@ class EditClienteService {
 
     // ===== Upload de imagem =====
     if (banner) {
-      if (typeof banner === "string") {
-        dataToUpdate.image_url = banner;
-      } else {
-        try {
+      try {
+        if (typeof banner === "string") {
+          dataToUpdate.image_url = banner;
+        } else {
           let uploadResult;
 
           if (banner.buffer) {
@@ -65,9 +76,9 @@ class EditClienteService {
           }
 
           dataToUpdate.image_url = uploadResult.secure_url;
-        } catch (error) {
-          throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
         }
+      } catch (error) {
+        throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
       }
     }
 
@@ -129,12 +140,29 @@ class EditClienteService {
       dataToUpdate.password = await hash(novoPassword, 8);
     }
 
-    // Se não houver mudanças
+    // ===== Atualizar CPF =====
+    if (cpf && cpf !== clienteAtual.cpf) {
+      if (!/^\d{11}$/.test(cpf)) {
+        throw new Error("CPF inválido. Deve conter 11 números.");
+      }
+      dataToUpdate.cpf = cpf;
+    }
+
+    // ===== Atualizar data de nascimento =====
+    if (nascimento) {
+      const dateObj = new Date(nascimento);
+      if (isNaN(dateObj.getTime())) {
+        throw new Error("Data de nascimento inválida.");
+      }
+      dataToUpdate.data_nasc = dateObj;
+    }
+
+    // ===== Nenhuma alteração =====
     if (Object.keys(dataToUpdate).length === 0) {
       throw new Error("Nenhuma alteração foi realizada. Informe novos dados.");
     }
 
-    // Atualiza o cliente
+    // ===== Atualizar cliente =====
     const clienteAtualizado = await prismaClient.cliente.update({
       where: { id: userId },
       data: dataToUpdate,
@@ -142,6 +170,8 @@ class EditClienteService {
         id: true,
         name: true,
         email: true,
+        cpf: true,
+        data_nasc: true,
         image_url: true,
       },
     });
