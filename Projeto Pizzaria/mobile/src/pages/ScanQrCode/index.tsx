@@ -7,6 +7,7 @@ import { api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useComanda } from "../../contexts/comandaContext";
+import { usePedido } from "../../contexts/pedidoContext";
 
 export default function QRScanner() {
 	const [permission, requestPermission] = useCameraPermissions();
@@ -16,6 +17,7 @@ export default function QRScanner() {
 	const navigation = useNavigation<NavigationProp<StackParamsList>>();
 	const { user, signOut } = useContext(AuthContext);
 	const { setComanda } = useComanda();
+	const { clearPedido } = usePedido();
 
 	useEffect(() => {
 		if (!permission?.granted) {
@@ -50,6 +52,10 @@ export default function QRScanner() {
 				numero_mesa: numeroMesa,
 				pedidos: [],
 			});
+
+			// Limpa o estado do pedido (carrinho e pedidoId) ao abrir uma nova comanda
+			// para evitar que o app continue referenciando um pedido antigo.
+			clearPedido();
 
 			Alert.alert("Sucesso!", `Você está na mesa ${numeroMesa}`, [
 				{

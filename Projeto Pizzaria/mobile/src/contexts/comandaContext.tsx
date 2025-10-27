@@ -90,8 +90,16 @@ export function ComandaProvider({ children }: { children: ReactNode }) {
     return comanda.pedidos.reduce((acc, p) => acc + p.total, 0);
   }
 
-  function limparComanda() {
-    setComanda(null);
+  async function limparComanda() {
+    try {
+        // Limpa o estado local
+        setComanda(null);
+        // Limpa os dados do AsyncStorage
+        await AsyncStorage.removeItem('@comanda');
+        
+    } catch (error) {
+        console.error('Erro ao limpar comanda:', error);
+    }
   }
 
   return (

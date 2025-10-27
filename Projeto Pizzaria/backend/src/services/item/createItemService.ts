@@ -101,12 +101,7 @@ class CreateItemService {
       },
     });
 
-    // Atualiza pedido e comanda
-    const cliente = await PrismaClient.pedido.findFirst({
-      where: { id: pedido_id },
-      select: { cliente_id: true }
-    });
-
+    // Atualiza pedido
     await PrismaClient.pedido.update({
       where: { id: pedido_id },
       data: {
@@ -115,18 +110,37 @@ class CreateItemService {
       }
     });
 
-    const comanda = await PrismaClient.comanda.findFirst({
-      where: { cliente_id: cliente.cliente_id },
-      select: { id: true }
+    // Busca o pedido para obter o comanda_id (garante que atualizamos a comanda associada exatamente a esse pedido — evita pegar uma comanda antiga do mesmo cliente)
+    const pedidoData = await PrismaClient.pedido.findUnique({
+      where: { id: pedido_id },
+      select: { comanda_id: true, cliente_id: true }
     });
 
-    await PrismaClient.comanda.update({
-      where: { id: comanda.id },
-      data: {
-        price: { increment: precoFinal },
-        points: { increment: pontosFinal },
+    if (pedidoData && pedidoData.comanda_id) {
+      await PrismaClient.comanda.update({
+        where: { id: pedidoData.comanda_id },
+        data: {
+          price: { increment: precoFinal },
+          points: { increment: pontosFinal },
+        }
+      });
+    } else if (pedidoData) {
+      // Fallback: se por algum motivo o pedido não tiver comanda_id, tentamos atualizar a comanda aberta do cliente (menos desejável, mas mantém compatibilidade)
+      const comanda = await PrismaClient.comanda.findFirst({
+        where: { cliente_id: pedidoData.cliente_id, status: 'aberta' },
+        select: { id: true }
+      });
+
+      if (comanda) {
+        await PrismaClient.comanda.update({
+          where: { id: comanda.id },
+          data: {
+            price: { increment: precoFinal },
+            points: { increment: pontosFinal },
+          }
+        });
       }
-    });
+    }
 
     return { item, mensagem: "Item criado com sucesso" };
   }

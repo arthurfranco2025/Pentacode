@@ -133,7 +133,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             id: '',
             name: '',
             email: '',
-            token: ''
+            token: '',
         });
         await AsyncStorage.removeItem('@comanda');
     }
