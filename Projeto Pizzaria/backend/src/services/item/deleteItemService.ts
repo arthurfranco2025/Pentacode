@@ -26,7 +26,7 @@ class DeleteItemService {
       }
     })
 
-    if(pedido.status !== 'pedido realizado'){
+    if(pedido.status !== 'pedido em andamento'){
       throw new Error('Não é possível excluir esse item, ele já entrou em produção')
     }
 

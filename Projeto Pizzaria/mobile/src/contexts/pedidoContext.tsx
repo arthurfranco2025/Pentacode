@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { api } from '../services/api'; 
 
 interface PedidoItem {
-    product_id: string;
+    item_id: string;
     name: string;
     image_url: string;
     qtd: number;
@@ -54,8 +54,8 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
         setpedido((prev) => [...prev, { ...item, totalPrice }]);
     };
 
-    const removeItem = (product_id: string) => {
-        setpedido((prev) => prev.filter((i) => i.product_id !== product_id));
+    const removeItem = (item_id: string) => {
+        setpedido((prev) => prev.filter((i) => i.item_id !== item_id));
     };
 
     const clearPedido = () => {

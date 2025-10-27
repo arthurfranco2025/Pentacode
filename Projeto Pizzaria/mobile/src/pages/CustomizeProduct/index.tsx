@@ -221,7 +221,7 @@ export default function CustomizeProduct() {
                 setPedidoId(pedido_id);
             }
 
-            const response = await api.post("/item", {
+            const payload = {
                 product_id: product.id,
                 product2_id: selectedSecondFlavor?.id,
                 pedido_id,
@@ -233,12 +233,16 @@ export default function CustomizeProduct() {
                     .filter(([_, selected]) => selected)
                     .map(([id]) => ({ id })),
                 observacoes: observation
-            });
+            };
+
+            console.log('Criando item com payload:', payload);
+
+            const response = await api.post("/item", payload);
 
             const { item } = response.data;
 
             addItem({
-                product_id: product.id,
+                item_id: item.id,
                 name: product.name,
                 image_url: product.image_url,
                 qtd: quantity,
@@ -261,7 +265,9 @@ export default function CustomizeProduct() {
 
             navigation.navigate("Order", { product });
         } catch (error: any) {
-            alert(error.response?.data?.message || error.message || "Erro ao adicionar item");
+              // debug logs to inspect backend validation error
+              console.error('Erro ao adicionar item - resposta do servidor:', error.response?.data || error.message || error);
+              alert(error.response?.data?.message || error.message || "Erro ao adicionar item");
         }
     };
 

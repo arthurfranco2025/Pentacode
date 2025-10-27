@@ -75,6 +75,12 @@ class CreateItemService {
     precoFinal = qtd * (precoFinal + adicionaisTotal);
     pontosFinal = qtd * (pontosFinal + adicionaisPontos);
 
+    // Verifica se o pedido existe antes de criar o item (mensagem mais clara que um erro de null)
+    const pedidoExiste = await PrismaClient.pedido.findUnique({ where: { id: pedido_id } });
+    if (!pedidoExiste) {
+      throw new Error('Pedido não encontrado');
+    }
+
     // Cria o item
     const item = await PrismaClient.item.create({
       data: {

@@ -20,14 +20,19 @@ class OpenPedidoService {
         }
 
         // Verifica se já existe uma comanda aberta
-        let comanda = await PrismaClient.comanda.findFirst({
+        const comanda = await PrismaClient.comanda.findFirst({
             where: {
                 cliente_id,
                 status: "aberta"
             }
         });
 
-        // Cria o pedido
+        if (!comanda) {
+            // Não faz sentido abrir um pedido sem uma comanda aberta
+            throw new Error("Nenhuma comanda aberta para este cliente");
+        }
+
+        // Cria o pedido e conecta explicitamente à comanda encontrada
         const pedido = await PrismaClient.pedido.create({
             data: {
                 status: "pedido em andamento",

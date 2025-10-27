@@ -74,6 +74,29 @@ export default function Order() {
         }
     }
 
+
+
+    async function handleDeleteItem(item_id: string) {
+        try {
+            // faz requisição para deletar o item no backend
+            await api.delete('/item/delete', {
+                params: { id: item_id }
+            });
+
+            // remove o item também do contexto local
+            removeItem(item_id);
+        } catch (err: any) {
+            if (err.response) {
+                console.log("Erro no servidor:", err.response.data);
+                console.log("Status:", err.response.status);
+            } else {
+                console.error("Erro desconhecido:", err);
+            }
+            alert("Erro ao deletar item. Tente novamente.");
+        }
+    }
+
+
     if (!pedido || pedido.length === 0) {
         return (
             <View style={styles.noProduct}>
@@ -115,63 +138,63 @@ export default function Order() {
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
 
-                {pedido.map((product, index) => (
-                    <View key={index} style={styles.card}>
+                {pedido.map((item, index) => (
+                    <View key={item.item_id || index} style={styles.card}>
                         <Image
-                            source={{ uri: product.image_url }}
+                            source={{ uri: item.image_url }}
                             style={styles.image}
                         />
                         <View style={styles.info}>
-                            <Text style={styles.productName}>{product.name}</Text>
+                            <Text style={styles.productName}>{item.name}</Text>
 
-                            {product.secondFlavor && (
+                            {item.secondFlavor && (
                                 <Text style={[styles.productName, { fontSize: 14, color: "#ccc" }]}>
-                                    + {product.secondFlavor.name} (2º sabor)
+                                    + {item.secondFlavor.name} (2º sabor)
                                 </Text>
                             )}
 
-                            <Text style={styles.quantity}>Quantidade: {product.qtd}</Text>
+                            <Text style={styles.quantity}>Quantidade: {item.qtd}</Text>
 
-                            {product.removedIngredients?.length > 0 && (
+                            {item.removedIngredients?.length > 0 && (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Ingredientes Removidos:</Text>
-                                    {product.removedIngredients.map((ing, idx) => (
+                                    {item.removedIngredients.map((ing, idx) => (
                                         <Text key={idx} style={styles.itemTextRemoved}>- {ing}</Text>
                                     ))}
                                 </View>
                             )}
 
-                            {product.extras?.length > 0 && (
+                            {item.extras?.length > 0 && (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Adicionais:</Text>
-                                    {product.extras.map((extra, idx) => (
+                                    {item.extras.map((extra, idx) => (
                                         <Text key={idx} style={styles.itemTextSelected}>- {extra}</Text>
                                     ))}
                                 </View>
                             )}
 
-                            {product.observation && (
+                            {item.observation && (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Observação:</Text>
-                                    <Text style={styles.textObservation}>{product.observation}</Text>
+                                    <Text style={styles.textObservation}>{item.observation}</Text>
                                 </View>
                             )}
 
                             <Text style={styles.totalValue}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(product.totalPrice ?? 0)}
+                                {formatarPreco(item.totalPrice ?? 0)}
                             </Text>
                         </View>
-
                         <TouchableOpacity
                             style={styles.deleteButton}
-                            onPress={() => removeItem(product.product_id)}
+                            onPress={() => handleDeleteItem(item.item_id)}
                         >
                             <Image
                                 source={{ uri: "https://img.icons8.com/fluency-systems-regular/48/ff3f4b/trash.png" }}
                                 style={{ width: 24, height: 24 }}
                             />
                         </TouchableOpacity>
+
                     </View>
                 ))}
 
