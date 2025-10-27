@@ -9,15 +9,17 @@ import {
     ActivityIndicator,
     Alert,
     ScrollView,
+    Modal,
+    FlatList,
     Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
+import { formatarPreco } from "../../components/utils/formatPrice";
+import * as ImagePicker from 'expo-image-picker';
 
 type RootStackParamList = {
     Home: undefined;
@@ -25,9 +27,64 @@ type RootStackParamList = {
     OrderTicket: undefined;
 };
 
+type ModalProps = {
+    visible: boolean;
+    title?: string;
+    message: string;
+    onClose: () => void;
+    onConfirm?: () => void;
+    confirmText?: string;
+    cancelText?: string;
+};
+
+const InfoModal: React.FC<ModalProps> = ({ visible, title, message, onClose }) => (
+    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
+        <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+                {title && <Text style={styles.modalTitle}>{title}</Text>}
+                <Text style={styles.modalMessage}>{message}</Text>
+                <TouchableOpacity style={styles.modalBtn} onPress={onClose}>
+                    <Text style={styles.modalBtnText}>OK</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    </Modal>
+);
+
+const ConfirmModal: React.FC<ModalProps> = ({
+    visible,
+    title,
+    message,
+    onClose,
+    onConfirm,
+    confirmText = "Confirmar",
+    cancelText = "Cancelar",
+}) => (
+    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
+        <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+                {title && <Text style={styles.modalTitle}>{title}</Text>}
+                <Text style={styles.modalMessage}>{message}</Text>
+                <View style={{ flexDirection: "row", marginTop: 15 }}>
+                    <TouchableOpacity style={[styles.modalBtn, { flex: 1, marginRight: 5 }]} onPress={onClose}>
+                        <Text style={styles.modalBtnText}>{cancelText}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modalBtn, { flex: 1, backgroundColor: "#FF4B4B", marginLeft: 5 }]} onPress={onConfirm}>
+                        <Text style={styles.modalBtnText}>{confirmText}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    </Modal>
+);
+
 export default function UserPage() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { user: authUser, updateLocalUser, signOut } = useContext(AuthContext);
+
+    const [favoritesVisible, setFavoritesVisible] = useState(false);
+    const [favoritesLoading, setFavoritesLoading] = useState(false);
+    const [favoritesList, setFavoritesList] = useState<any[]>([]); // { favorito, product }
 
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -42,44 +99,77 @@ export default function UserPage() {
     const [avatarUri, setAvatarUri] = useState<string | null>(null);
     const [pickedImage, setPickedImage] = useState<any>(null);
     const [removing, setRemoving] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [modal, setModal] = useState<{ type: "info" | "confirm"; props: ModalProps } | null>(null);
 
     const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
 
     useEffect(() => {
         async function fetchUserData() {
-            if (authUser && !isGuest) {
-                try {
-                    const response = await api.get("/me");
-                    const userData = response.data;
-
-                    const formattedDate = userData.data_nasc
-                        ? formatDateToInput(userData.data_nasc)
-                        : "";
-
-                    if (userData.image_url) setAvatarUri(userData.image_url);
-
-                    setForm({
-                        nome: userData.name || "",
-                        email: userData.email || "",
-                        senha: "",
-                        cpf: userData.cpf || "",
-                        nascimento: formattedDate,
-                    });
-                } catch (error) {
-                    console.log("Erro ao buscar dados do usuário:", error);
-                    setForm({
-                        nome: authUser.name || "",
-                        email: authUser.email || "",
-                        senha: "",
-                        cpf: "",
-                        nascimento: "",
-                    });
-                }
+            if (!authUser || isGuest) return;
+            try {
+                const { data } = await api.get('/me');
+                if (data.image_url) setAvatarUri(data.image_url);
+                setForm({
+                    nome: data.name || "",
+                    email: data.email || "",
+                    senha: "",
+                    cpf: data.cpf || "",
+                    nascimento: data.data_nasc ? formatDateToInput(data.data_nasc) : "",
+                });
+            } catch (error) {
+                console.log('Erro ao buscar dados do usuário:', error);
+                setForm({
+                    nome: authUser.name || "",
+                    email: authUser.email || "",
+                    senha: "",
+                    cpf: "",
+                    nascimento: "",
+                });
             }
         }
         fetchUserData();
     }, [authUser, isGuest]);
+
+    async function pickImage() {
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        if (loading || removing) return;
+
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') return showInfo('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
+
+        const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8, allowsEditing: true, aspect: [1, 1] });
+        const asset = (result as any).assets ? (result as any).assets[0] : result;
+        if (!result.canceled && asset?.uri) {
+            setPickedImage(asset);
+            setAvatarUri(asset.uri);
+        }
+    }
+
+    async function removePhoto() {
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        showConfirm('Remover foto', 'Deseja remover a foto de perfil?', async () => {
+            setRemoving(true);
+            try {
+                await api.put('/edit', { removeImage: true });
+                setAvatarUri(null);
+                setPickedImage(null);
+                showInfo('Sucesso', 'Foto removida.');
+            } catch (err: any) {
+                console.log('Erro ao remover foto:', err?.response || err);
+                showInfo('Erro', err?.response?.data?.error || 'Erro ao remover foto');
+            } finally {
+                setRemoving(false);
+            }
+        });
+    }
+
+    function showInfo(title: string, message: string) {
+        setModal({ type: 'info', props: { visible: true, title, message, onClose: () => setModal(null) } });
+    }
+
+    function showConfirm(title: string, message: string, onConfirm: () => void) {
+        setModal({ type: 'confirm', props: { visible: true, title, message, onClose: () => setModal(null), onConfirm: () => { setModal(null); onConfirm(); } } });
+    }
 
     function formatDateToInput(dateStr: string) {
         if (!dateStr) return "";
@@ -88,147 +178,136 @@ export default function UserPage() {
         return `${day}/${month}/${year}`;
     }
 
-    function parseDateString(dateStr: string) {
-        if (!dateStr) return new Date();
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
+    function formatPriceForList(price: any) {
+        try {
+            if (price === undefined || price === null) return "--";
+            // price can be number or string
+            const num = typeof price === 'string' ? parseFloat(price) : price;
+            return formatarPreco(num);
+        } catch (e) {
+            return "--";
+        }
     }
 
-    function formatDateToDisplay(date: Date) {
-        return date.toLocaleDateString("pt-BR");
+    async function openFavorites() {
+        if (isGuest) {
+            Alert.alert('Aviso', 'Convidados não podem ver favoritos.');
+            return;
+        }
+
+        setFavoritesVisible(true);
+        setFavoritesLoading(true);
+
+        try {
+            const favRes = await api.get('/favoritos', { params: { cliente_id: authUser.id } });
+            const favoritos: any[] = favRes.data || [];
+
+            const catRes = await api.get('/category/list');
+            const categorias = catRes.data || [];
+
+            const productsMap: Record<string, any> = {};
+            await Promise.all(categorias.map(async (cat: any) => {
+                try {
+                    const pRes = await api.get('/category/products', { params: { category_id: cat.id } });
+                    const prods: any[] = pRes.data || [];
+                    prods.forEach(p => { productsMap[p.id] = p; });
+                } catch (err) {
+                    // ignore individual category failures
+                    console.log('Erro ao buscar produtos da categoria', cat.id, err);
+                }
+            }));
+
+            const favWithProduct = favoritos.map(fav => ({ favorito: fav, product: productsMap[fav.product_id] || null }));
+            setFavoritesList(favWithProduct);
+        } catch (err) {
+            console.log('Erro ao buscar favoritos:', err);
+            Alert.alert('Erro', 'Não foi possível carregar os favoritos.');
+            setFavoritesList([]);
+        } finally {
+            setFavoritesLoading(false);
+        }
     }
+
+    function handleOpenProduct(product: any) {
+        setFavoritesVisible(false);
+        // navigate to ProductInfo if available
+        navigation.navigate('ProductInfo' as any, { product });
+    }
+
+    async function handleRemoveFavorite(favoritoId: string) {
+        Alert.alert('Remover favorito', 'Deseja remover este favorito?', [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+                text: 'Remover', style: 'destructive', onPress: async () => {
+                    try {
+                        await api.delete('/favorito/delete', { data: { id: favoritoId } });
+                        setFavoritesList(prev => prev.filter(p => p.favorito.id !== favoritoId));
+                        Alert.alert('Sucesso', 'Favorito removido.');
+                    } catch (err: any) {
+                        console.log('Erro ao remover favorito:', err?.response || err);
+                        Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover favorito');
+                    }
+                }
+            }
+        ]);
+    }
+
 
     function formatCPF(cpf: string) {
         const numbers = cpf.replace(/\D/g, "");
         return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4").slice(0, 14);
     }
 
+    function formatDate(date: string) {
+        const numbers = date.replace(/\D/g, "");
+        return numbers.replace(/(\d{2})(\d{2})(\d{4})/, "$1/$2/$3").slice(0, 10);
+    }
+
     function handleChange(field: string, value: string) {
-        let formattedValue = value;
-        if (field === "cpf") formattedValue = formatCPF(value);
-        setForm((prev) => ({ ...prev, [field]: formattedValue }));
-    }
-
-    async function pickImage() {
-        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
-        if (loading || removing) return;
-
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-            return Alert.alert("Permissão negada", "Precisamos de permissão para acessar suas fotos.");
-        }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.8,
-            allowsEditing: true,
-            aspect: [1, 1],
-        });
-
-        const asset = (result as any).assets ? (result as any).assets[0] : result;
-
-        if (!result.canceled && asset && asset.uri) {
-            setPickedImage(asset);
-            setAvatarUri(asset.uri);
-        }
-    }
-
-    async function removePhoto() {
-        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
-
-        Alert.alert(
-            "Remover foto",
-            "Deseja remover a foto de perfil?",
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Remover",
-                    style: "destructive",
-                    onPress: async () => {
-                        setRemoving(true);
-                        try {
-                            await api.put("/edit", { removeImage: true });
-                            setAvatarUri(null);
-                            setPickedImage(null);
-                            Alert.alert("Sucesso", "Foto removida.");
-                        } catch (err: any) {
-                            console.log("Erro ao remover foto:", err?.response || err);
-                            Alert.alert("Erro", err?.response?.data?.error || "Erro ao remover foto");
-                        } finally {
-                            setRemoving(false);
-                        }
-                    },
-                },
-            ]
-        );
+        const format = field === "cpf" ? formatCPF : field === "nascimento" ? formatDate : (v: string) => v;
+        setForm(prev => ({ ...prev, [field]: format(value) }));
     }
 
     async function saveProfile() {
-        if (isGuest) return Alert.alert("Aviso", "Convidados não podem editar o perfil.");
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
         setLoading(true);
-
         try {
             const body: any = {};
-
             if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
-            if (form.email && form.email !== authUser?.email) {
-                body.novoEmail = form.email;
-                body.confirmEmail = form.email;
-            }
+            if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
             if (form.senha) body.novoPassword = form.senha;
-            if (form.cpf && form.cpf !== authUser?.cpf) body.cpf = form.cpf.replace(/\D/g, "");
+            if (form.cpf) body.cpf = form.cpf.replace(/\D/g, '');
             if (form.nascimento) {
-                const [dia, mes, ano] = form.nascimento.split("/");
-                body.nascimento = `${ano}-${mes}-${dia}`;
+                const [d, m, a] = form.nascimento.split('/');
+                body.nascimento = `${a}-${m}-${d}`;
             }
-
-            if (Object.keys(body).length === 0) {
-                Alert.alert("Aviso", "Nenhuma alteração foi feita.");
-                setLoading(false);
-                return;
-            }
+            if (!Object.keys(body).length && !pickedImage) return showInfo('Aviso', 'Nenhuma alteração foi feita.');
 
             let res;
             if (pickedImage) {
                 const dataForm = new FormData();
-                Object.keys(body).forEach((key) => dataForm.append(key, body[key]));
-
+                Object.keys(body).forEach(k => dataForm.append(k, body[k]));
                 const uri = pickedImage.uri;
-                const filename = uri.split("/").pop();
-                const match = /\.([A-Za-z0-9]+)$/.exec(filename || "");
-                const ext = match ? match[1].toLowerCase() : "jpg";
-                const mime = ext === "png" ? "image/png" : "image/jpeg";
-
-                dataForm.append("image", { uri, name: filename || `photo.${ext}`, type: mime } as any);
-
-                res = await api.put("/edit", dataForm, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
+                const filename = uri.split('/').pop() || 'photo.jpg';
+                const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
+                dataForm.append('image', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
+                res = await api.put('/edit', dataForm, { headers: { 'Content-Type': 'multipart/form-data' } });
             } else {
-                res = await api.put("/edit", body);
+                res = await api.put('/edit', body);
             }
 
             const updated = res.data;
-            await updateLocalUser({
-                id: updated.id,
-                name: updated.name,
-                email: updated.email,
-                image_url: updated.image_url,
-            });
+            await updateLocalUser({ id: updated.id, name: updated.name, email: updated.email, image_url: updated.image_url });
 
             if (form.email && form.email !== authUser?.email) {
-                Alert.alert(
-                    "Sucesso",
-                    "Email atualizado com sucesso! Você precisa fazer login novamente.",
-                    [{ text: "OK", onPress: async () => await signOut() }]
-                );
+                showConfirm('Sucesso', 'Email atualizado! Você precisa fazer login novamente.', async () => { await signOut(); });
             } else {
-                Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+                showInfo('Sucesso', 'Perfil atualizado com sucesso!');
                 setIsEditing(false);
             }
-        } catch (error: any) {
-            console.log("Erro ao atualizar perfil:", error?.response || error);
-            Alert.alert("Erro", error?.response?.data?.error || "Erro ao atualizar perfil");
+        } catch (err: any) {
+            console.log('Erro ao atualizar perfil:', err?.response || err);
+            showInfo('Erro', err?.response?.data?.error || 'Erro ao atualizar perfil');
         } finally {
             setLoading(false);
         }
@@ -236,6 +315,7 @@ export default function UserPage() {
 
     return (
         <View style={styles.container}>
+            {/* HEADER */}
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -245,19 +325,26 @@ export default function UserPage() {
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => {
-                        if (isEditing) setIsEditing(false);
-                        else navigation.navigate("Home");
+                        if (isEditing) {
+                            setIsEditing(false);
+                        } else {
+                            navigation.navigate("Home");
+                        }
                     }}
                 >
                     <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
+
                 <Text style={styles.logoText}>
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                 </Text>
+
                 <View style={{ width: 24 }} />
             </LinearGradient>
 
+            {/* CONTENT */}
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* AVATAR */}
                 <View style={styles.avatarWrapper}>
                     <Image
                         source={avatarUri ? { uri: avatarUri } : require("../../assets/user.png")}
@@ -265,23 +352,11 @@ export default function UserPage() {
                     />
                     {isEditing && (
                         <>
-                            <TouchableOpacity
-                                style={styles.addPhotoBtn}
-                                onPress={pickImage}
-                                disabled={loading || removing}
-                            >
-                                <Ionicons
-                                    name="add-circle"
-                                    size={28}
-                                    color={loading || removing ? "#777" : "#FF4B4B"}
-                                />
+                            <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>
+                                <Ionicons name="add-circle" size={28} color={loading || removing ? "#777" : "#FF4B4B"} />
                             </TouchableOpacity>
                             {avatarUri && (
-                                <TouchableOpacity
-                                    style={[styles.addPhotoBtn, { right: 40 }]}
-                                    onPress={removePhoto}
-                                    disabled={removing || loading}
-                                >
+                                <TouchableOpacity style={[styles.addPhotoBtn, { right: 40 }]} onPress={removePhoto} disabled={removing || loading}>
                                     {removing ? (
                                         <ActivityIndicator size="small" color="#FF4B4B" />
                                     ) : (
@@ -293,24 +368,39 @@ export default function UserPage() {
                     )}
                 </View>
 
+
                 <Text style={styles.welcome}>
-                    Olá, <Text style={{ fontWeight: "bold" }}>{form.nome || authUser?.name || "CONVIDADO"}</Text>!
+                    Olá,{" "}
+                    <Text style={{ fontWeight: "bold" }}>
+                        {form.nome || authUser?.name || "CONVIDADO"}
+                    </Text>
+                    !
                 </Text>
 
+                {/* PERFIL */}
                 {!isEditing ? (
                     <View style={styles.menu}>
                         {!isGuest && (
-                            <TouchableOpacity style={styles.button} onPress={() => setIsEditing(true)}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => setIsEditing(true)}
+                            >
                                 <Text style={styles.buttonText}>Editar Perfil</Text>
                             </TouchableOpacity>
                         )}
-                        <TouchableOpacity style={styles.button}>
+
+                        <TouchableOpacity style={styles.button} onPress={() => openFavorites()}>
                             <Text style={styles.buttonText}>Favoritos</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity style={styles.button}>
                             <Text style={styles.buttonText}>Histórico</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+
+                        <TouchableOpacity
+                            style={styles.logoutButton}
+                            onPress={signOut}
+                        >
                             <Text style={styles.logoutText}>Sair da conta</Text>
                         </TouchableOpacity>
                     </View>
@@ -338,42 +428,75 @@ export default function UserPage() {
                             value={form.cpf}
                             onChangeText={(t) => handleChange("cpf", t)}
                         />
-                        <TouchableOpacity
+                        <TextInput
+                            placeholder="Data de nascimento"
+                            placeholderTextColor="#999"
                             style={styles.input}
-                            onPress={() => setShowDatePicker(true)}
-                        >
-                            <Text style={{ color: "#fff" }}>
-                                {form.nascimento || "Data de nascimento"}
-                            </Text>
-                        </TouchableOpacity>
-
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={parseDateString(form.nascimento)}
-                                mode="date"
-                                display="calendar"
-                                maximumDate={new Date()}
-                                onChange={(_, selectedDate) => {
-                                    setShowDatePicker(false);
-                                    if (selectedDate)
-                                        setForm((prev) => ({
-                                            ...prev,
-                                            nascimento: formatDateToDisplay(selectedDate),
-                                        }));
-                                }}
-                            />
-                        )}
+                            value={form.nascimento}
+                            onChangeText={(t) => handleChange("nascimento", t)}
+                        />
 
                         <TouchableOpacity
                             style={styles.saveButton}
                             onPress={saveProfile}
                             disabled={loading}
                         >
-                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveText}>Salvar</Text>}
+                            {loading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.saveText}>Salvar</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
                 )}
             </ScrollView>
+
+            {/* FAVORITOS MODAL */}
+            <Modal visible={favoritesVisible} animationType="slide" onRequestClose={() => setFavoritesVisible(false)}>
+                <View style={styles.favContainer}>
+                    <View style={styles.favHeader}>
+                        <TouchableOpacity onPress={() => setFavoritesVisible(false)}>
+                            <Ionicons name="arrow-back" size={24} color="#fff" />
+                        </TouchableOpacity>
+                        <Text style={styles.favTitle}>Meus Favoritos</Text>
+                        <View style={{ width: 24 }} />
+                    </View>
+
+                    {favoritesLoading ? (
+                        <ActivityIndicator size="large" color="#FF4B4B" style={{ marginTop: 40 }} />
+                    ) : (
+                        <FlatList
+                            data={favoritesList}
+                            keyExtractor={(item) => item.favorito.id}
+                            renderItem={({ item }) => (
+                                <View style={styles.favItem}>
+                                    <Image
+                                        source={item.product ? { uri: item.product.image_url } : { uri: 'https://img.icons8.com/?size=100&id=101158&format=png&color=FFFFFF' }}
+                                        style={styles.favImage}
+                                    />
+                                    <View style={{ flex: 1, marginLeft: 12 }}>
+                                        <Text style={styles.favName}>{item.product?.name || `Produto ${item.favorito.product_id}`}</Text>
+                                        <Text style={styles.favPrice}>{item.product ? formatPriceForList(item.product.price) : "--"}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {item.product && (
+                                            <TouchableOpacity style={styles.favViewBtn} onPress={() => handleOpenProduct(item.product)}>
+                                                <Text style={styles.favViewText}>Ver</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        <TouchableOpacity style={styles.favDelBtn} onPress={() => handleRemoveFavorite(item.favorito.id)}>
+                                            <Ionicons name="trash" size={20} color="#fff" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                            ListEmptyComponent={() => (
+                                <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>Nenhum favorito encontrado.</Text>
+                            )}
+                        />
+                    )}
+                </View>
+            </Modal>
 
             {removing && (
                 <View style={styles.removeOverlay} pointerEvents="auto">
@@ -383,6 +506,8 @@ export default function UserPage() {
                     </View>
                 </View>
             )}
+            {modal?.type === 'info' && <InfoModal {...modal.props} />}
+            {modal?.type === 'confirm' && <ConfirmModal {...modal.props} />}
         </View>
     );
 }
@@ -483,5 +608,47 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginTop: 10,
         fontSize: 14,
+    },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
+    modalBox: { backgroundColor: '#2C2C44', padding: 20, borderRadius: 10, width: '80%', alignItems: 'center' },
+    modalTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginBottom: 10 },
+    modalMessage: { fontSize: 15, color: '#fff', textAlign: 'center' },
+    modalBtn: { backgroundColor: '#4B3FFF', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, marginTop: 15 },
+    modalBtnText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
+    // Modal irado
+    favContainer: { flex: 1, backgroundColor: '#1d1d2e' },
+    favHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 52,
+        paddingBottom: 12,
+        paddingHorizontal: 22,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ffffff1b',
+    },
+    favTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
+    favItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ffffff12',
+    },
+    favImage: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#2C2C44' },
+    favName: { color: '#fff', fontSize: 16, fontWeight: '600' },
+    favPrice: { color: '#00C851', marginTop: 6, fontWeight: '700' },
+    favViewBtn: {
+        backgroundColor: '#5A3FFF',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+    favViewText: { color: '#fff', fontWeight: '700' },
+    favDelBtn: {
+        backgroundColor: '#FF4B4B',
+        padding: 8,
+        borderRadius: 8,
+        marginLeft: 8,
     },
 });
