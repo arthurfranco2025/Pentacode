@@ -7,6 +7,7 @@ type BannerUpload = Express.Multer.File;
 
 interface EditClienteRequest {
   banner?: string | BannerUpload;
+  removeImage?: boolean;
   userId: string;
   novoName?: string;
   novoEmail?: string;
@@ -21,6 +22,7 @@ interface EditClienteRequest {
 class EditClienteService {
   async execute({
     banner,
+    removeImage,
     userId,
     novoName,
     novoEmail,
@@ -50,7 +52,10 @@ class EditClienteService {
     }
 
     // ===== Upload de imagem =====
-    if (banner) {
+    // removeImage tem prioridade: limpa o campo image_url no banco
+    if (removeImage) {
+      dataToUpdate.image_url = null as any;
+    } else if (banner) {
       try {
         if (typeof banner === "string") {
           dataToUpdate.image_url = banner;
@@ -80,7 +85,7 @@ class EditClienteService {
       } catch (error) {
         throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
       }
-    }
+  }
 
     // ===== Atualizar nome =====
     if (novoName && novoName !== clienteAtual.name) {
