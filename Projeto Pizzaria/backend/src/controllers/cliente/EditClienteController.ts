@@ -21,12 +21,16 @@ class EditClienteController {
         banner = req.body.banner; // URL
       }
 
+      // flag para remover a imagem (aceita 'true' ou boolean true)
+      const removeImage = req.body.removeImage === 'true' || req.body.removeImage === true;
+
       const userId = req.user_id as string; // setado pelo middleware de auth
 
       const editClienteService = new EditClienteService();
 
       const clienteAtualizado = await editClienteService.execute({
         banner,
+        removeImage,
         userId,
         novoName,
         novoEmail,
