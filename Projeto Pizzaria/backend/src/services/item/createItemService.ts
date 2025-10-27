@@ -21,20 +21,16 @@ class CreateItemService {
     observacoes,
   }: CreateItemRequest) {
 
-   
     if (!pedido_id) throw new Error("É preciso ter um pedido para criar um item");
     if (!product_id) throw new Error("É preciso ter um produto");
     if (!qtd || qtd <= 0) throw new Error("Quantidade inválida");
-
 
     const produto = await PrismaClient.product.findUnique({
       where: { id: product_id },
       include: { category: true }
     });
-
     if (!produto) throw new Error("O produto não existe");
 
- 
     let produto2 = null;
     if (product2_id) {
       produto2 = await PrismaClient.product.findUnique({
@@ -43,27 +39,43 @@ class CreateItemService {
       });
       if (!produto2) throw new Error("O segundo sabor não existe");
 
-      
       const categoriasPermitidas = ["Pizzas salgadas", "Pizzas doces"];
       const categorias = [produto.category, produto2.category];
       const todasSaoPizza = categorias.every(c => categoriasPermitidas.includes(c.name));
-
       if (!todasSaoPizza) {
         throw new Error("Meio a meio só é permitido para pizzas salgadas ou doces");
       }
     }
 
-    
-    let precoFinal = qtd * produto.price;
-    let pontosFinal = qtd * produto.points;
+    // Cálculo de preço base
+    let precoFinal = produto.price;
+    let pontosFinal = produto.points;
 
+    // Se for meio a meio
     if (produto2) {
-      
-      precoFinal = qtd * ((produto.price / 2) + (produto2.price / 2) + 10);
-      pontosFinal = qtd * ((produto.points / 2) + (produto2.points / 2) + 10);
+      precoFinal = (produto.price / 2) + (produto2.price / 2) + 10;
+      pontosFinal = (produto.points / 2) + (produto2.points / 2) + 10;
     }
 
- 
+    // Somar os adicionais, se existirem
+    let adicionaisTotal = 0;
+    let adicionaisPontos = 0;
+    if (adicionais && adicionais.length > 0) {
+      const ids = adicionais.map((ad) => ad.id);
+      const adicionaisData = await PrismaClient.adicional.findMany({
+        where: { id: { in: ids } },
+        select: { price: true, points: true },
+      });
+
+      adicionaisTotal = adicionaisData.reduce((acc, ad) => acc + ad.price, 0);
+      adicionaisPontos = adicionaisData.reduce((acc, ad) => acc + ad.points, 0);
+    }
+
+    // Multiplica tudo pela quantidade
+    precoFinal = qtd * (precoFinal + adicionaisTotal);
+    pontosFinal = qtd * (pontosFinal + adicionaisPontos);
+
+    // Cria o item
     const item = await PrismaClient.item.create({
       data: {
         pedido: { connect: { id: pedido_id } },
@@ -89,54 +101,34 @@ class CreateItemService {
       },
     });
 
+    // Atualiza pedido e comanda
     const cliente = await PrismaClient.pedido.findFirst({
-      where:{
-        id : pedido_id
-      },
-       select :{
-         cliente_id: true
-       }
-    })
+      where: { id: pedido_id },
+      select: { cliente_id: true }
+    });
 
-     await PrismaClient.pedido.update({
-       where:{
-         id : pedido_id
-       },
-       data:{
-         price: {
-           increment: precoFinal
-         },
-         points:{
-          increment : pontosFinal
-         }
-       }
-     })
-
-     const comanda = await  PrismaClient.comanda.findFirst({
-       where:{
-         cliente_id : cliente.cliente_id
-       },
-       select:{
-        id : true
-       }
-     })
-
-     await PrismaClient.comanda.update({
-      where:{
-        id : comanda.id
-      },
-      data:{
-        price:{
-          increment : precoFinal
-        },
-        points :{
-          increment : pontosFinal
-        }
+    await PrismaClient.pedido.update({
+      where: { id: pedido_id },
+      data: {
+        price: { increment: precoFinal },
+        points: { increment: pontosFinal },
       }
-     })
+    });
+
+    const comanda = await PrismaClient.comanda.findFirst({
+      where: { cliente_id: cliente.cliente_id },
+      select: { id: true }
+    });
+
+    await PrismaClient.comanda.update({
+      where: { id: comanda.id },
+      data: {
+        price: { increment: precoFinal },
+        points: { increment: pontosFinal },
+      }
+    });
 
     return { item, mensagem: "Item criado com sucesso" };
-
   }
 }
 

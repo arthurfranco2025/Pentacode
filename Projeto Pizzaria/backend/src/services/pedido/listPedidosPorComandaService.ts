@@ -33,7 +33,7 @@ class ListPedidoPorComanda {
         const pedidosComTotal = pedidosPorComanda.map((pedido) => {
             const totalCalculado = pedido.items.reduce((acc, item) => {
                 // Ajuste conforme os campos do seu ItemPedido
-                return acc + (item.price * item.qtd);
+                return acc + (item.price);
             }, 0);
 
             return {

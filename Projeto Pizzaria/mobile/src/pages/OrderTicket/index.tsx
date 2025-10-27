@@ -73,6 +73,7 @@ export default function OrderTicket() {
 
 
         setPedidos(response.data);
+        console.log('ver total da comanda:', response.data)
       } catch (err: any) {
         // mostra detalhes do erro para diagnosticar 400
         console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
@@ -141,6 +142,7 @@ export default function OrderTicket() {
       });
 
       setItensPedido(response.data);
+      console.log('ver os itens do pedido:', response.data)
     } catch (err) {
       console.error("Erro ao carregar itens do pedido:", err);
     } finally {
