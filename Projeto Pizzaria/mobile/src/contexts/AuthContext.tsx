@@ -19,6 +19,7 @@ type UserProps = {
     email: string;
     cpf?: string;
     token: string;
+    image_url?: string | null;
 };
 
 type AuthProviderProps = {
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         name: "",
         email: "",
         token: "",
+        image_url: undefined,
     });
 
     const [loadingAuth, setLoadingAuth] = useState(false);
@@ -93,8 +95,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 response = await api.post("/login", loginData);
             }
 
-            const { id, name, email: userEmail, token } = response.data;
-            const data = { id, name, email: userEmail, token };
+            const { id, name, email: userEmail, token, image_url } = response.data;
+            const data: UserProps = { id, name, email: userEmail, token, image_url };
 
             await AsyncStorage.setItem("@sujeitopizzaria", JSON.stringify(data));
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -138,12 +140,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     async function updateLocalUser(newUser: Partial<UserProps>) {
-        const updated = {
+        const updated: UserProps = {
             id: newUser.id ?? user.id,
             name: newUser.name ?? user.name,
             email: newUser.email ?? user.email,
             cpf: newUser.cpf ?? user.cpf,
             token: newUser.token ?? user.token,
+            image_url: newUser.image_url ?? user.image_url ?? undefined,
         } as UserProps;
 
         setUser(updated);
@@ -161,6 +164,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             name: "",
             email: "",
             token: "",
+            image_url: undefined,
         });
     }
 

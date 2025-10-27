@@ -79,6 +79,7 @@ class AuthClienteService {
             name: cliente.name,
             email: cliente.email,
             isGuest: guest || false,
+            image_url: (cliente as any).image_url ?? null,
             token
         };
     }
