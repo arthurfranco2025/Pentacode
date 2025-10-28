@@ -43,7 +43,7 @@ type RootStackParamList = {
 const CategoryCard = ({ image_url, label }: { image_url: string; label: string }) => (
 	<View style={styles.categoryBg}>
 		<Image source={{ uri: image_url }} style={styles.categoryImage} />
-		<Text style={styles.categoryText} numberOfLines={2} ellipsizeMode="tail">
+		<Text style={styles.categoryText} numberOfLines={1} ellipsizeMode="tail">
 			{label}
 		</Text>
 	</View>
@@ -289,8 +289,8 @@ export default function Home() {
 								{searchTerm && searchTerm.trim() !== ""
 									? "Nenhum produto encontrado para sua busca"
 									: selectedCategory
-									? "Nenhum produto nesta categoria"
-									: "Selecione uma categoria"}
+										? "Nenhum produto nesta categoria"
+										: "Selecione uma categoria"}
 							</Text>
 						)}
 					</View>

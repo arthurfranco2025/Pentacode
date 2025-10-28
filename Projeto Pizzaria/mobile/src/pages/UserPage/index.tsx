@@ -112,7 +112,7 @@ export default function UserPage() {
                 setForm({
                     nome: data.name || "",
                     email: data.email || "",
-                    senha: "",
+                    senha: data.senha || "",
                     cpf: data.cpf || "",
                     nascimento: data.data_nasc ? formatDateToInput(data.data_nasc) : "",
                 });
@@ -121,7 +121,7 @@ export default function UserPage() {
                 setForm({
                     nome: authUser.name || "",
                     email: authUser.email || "",
-                    senha: "",
+                    senha: authUser.senha || "",
                     cpf: "",
                     nascimento: "",
                 });
@@ -181,7 +181,7 @@ export default function UserPage() {
     function formatPriceForList(price: any) {
         try {
             if (price === undefined || price === null) return "--";
-            // price can be number or string
+            // Preço pode ser string ou número
             const num = typeof price === 'string' ? parseFloat(price) : price;
             return formatarPreco(num);
         } catch (e) {
@@ -212,7 +212,7 @@ export default function UserPage() {
                     const prods: any[] = pRes.data || [];
                     prods.forEach(p => { productsMap[p.id] = p; });
                 } catch (err) {
-                    // ignore individual category failures
+                    // Ignorar erros de categorias individuais
                     console.log('Erro ao buscar produtos da categoria', cat.id, err);
                 }
             }));
@@ -230,7 +230,7 @@ export default function UserPage() {
 
     function handleOpenProduct(product: any) {
         setFavoritesVisible(false);
-        // navigate to ProductInfo if available
+        // Navegar para a tela de detalhes do produto
         navigation.navigate('ProductInfo' as any, { product });
     }
 
@@ -275,8 +275,7 @@ export default function UserPage() {
             const body: any = {};
             if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
             if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
-            if (form.senha) body.novoPassword = form.senha;
-            if (form.cpf) body.cpf = form.cpf.replace(/\D/g, '');
+            if (form.senha) body.senha = form.senha;
             if (form.nascimento) {
                 const [d, m, a] = form.nascimento.split('/');
                 body.nascimento = `${a}-${m}-${d}`;
@@ -422,11 +421,12 @@ export default function UserPage() {
                             keyboardType="email-address"
                         />
                         <TextInput
-                            placeholder="CPF"
+                            placeholder="Senha antiga"
                             placeholderTextColor="#999"
                             style={styles.input}
-                            value={form.cpf}
-                            onChangeText={(t) => handleChange("cpf", t)}
+                            value={form.senha}
+                            onChangeText={(t) => handleChange("senha", t)}
+                            secureTextEntry={true}
                         />
                         <TextInput
                             placeholder="Data de nascimento"
