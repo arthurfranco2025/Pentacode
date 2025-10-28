@@ -53,6 +53,7 @@ import { CreateItemController } from './controllers/item/createItemController'
 import { DeleteItemController } from './controllers/item/deleteItemController'
 import { EditItemController } from './controllers/item/editItemController'
 import { ListItensPorPedidoController } from './controllers/item/listItensPorPedidoController';
+import { EditItemStatusController } from './controllers/item/editStatusItemController';
 
 
 import { CreateIngredienteController } from './controllers/ingrediente/createIngredienteController'
@@ -131,7 +132,7 @@ router.post('/item', isAuthenticated, new CreateItemController().handle.bind(new
 router.delete('/item/delete', isAuthenticated, new DeleteItemController().handle.bind(new DeleteItemController))
 router.put('/item/edit', isAuthenticated, new EditItemController().handle.bind(new EditItemController))
 router.get('/item/listaPorPedido', isAuthenticated, new ListItensPorPedidoController().handle.bind(new ListItensPorPedidoController))
-
+router.put('/item/editarStatus', isAuthenticated, new EditItemStatusController().handle.bind(new EditItemStatusController()))
 //INGREDIENTE ROUTE
 router.post('/ingrediente', isAuthenticated, new CreateIngredienteController().handle.bind(new CreateIngredienteController()))
 router.delete('/ingrediente/delete', isAuthenticated, new DeleteIngredienteController().handle.bind(new DeleteIngredienteController()))

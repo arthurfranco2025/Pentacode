@@ -34,10 +34,6 @@ export default function SignUp() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
 
-  function handleGoBack() {
-    navigation.goBack();
-  }
-
   function handleSignIn() {
     navigation.navigate("SignIn");
   }
@@ -74,16 +70,6 @@ export default function SignUp() {
 
   return (
     <View style={styles.safeArea}>
-      <TouchableOpacity onPress={handleGoBack} style={styles.GoBack}>
-        <Image
-          source={{
-            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/m6rofw5v_expires_30_days.png",
-          }}
-          resizeMode="stretch"
-          style={styles.backIcon}
-        />
-      </TouchableOpacity>
-
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -282,12 +268,6 @@ const styles = StyleSheet.create({
   backIcon: {
     width: 28,
     height: 28,
-  },
-  GoBack: {
-    position: "absolute",
-    top: 45,
-    left: 25,
-    zIndex: 1,
   },
   errorText: {
     color: "red",
