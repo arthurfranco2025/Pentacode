@@ -15,6 +15,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
+import { Ionicons } from "@expo/vector-icons";
 
 type RootStackParamList = {
   Home: undefined;
@@ -28,7 +29,8 @@ type RouteParams = RouteProp<RootStackParamList, "ProductInfo">;
 interface Product {
   id: string;
   name: string;
-  price: string;
+  price: number;
+  points: number;
   description?: string;
   image_url: string;
   category_id: string;
@@ -39,11 +41,10 @@ export default function ProductInfo() {
   const [isFavorite, setIsFavorite] = useState(false);
   const favoriteAnim = useRef(new Animated.Value(1)).current;
   const { user } = useContext(AuthContext);
-
   const route = useRoute<RouteParams>();
   const { product } = route.params;
 
-  // Busca favoritos ao carregar
+  // Busca favoritos
   useEffect(() => {
     async function fetchFavorites() {
       try {
@@ -56,7 +57,6 @@ export default function ProductInfo() {
         console.log("Erro ao buscar favoritos:", err);
       }
     }
-
     fetchFavorites();
   }, [product.id, user.id]);
 
@@ -78,35 +78,29 @@ export default function ProductInfo() {
 
     try {
       if (!isFavorite) {
-        // Adiciona favorito
         await api.post("/favorito", {
           cliente_id: user.id,
           product_id: product.id,
         });
         setIsFavorite(true);
-        console.log(`Favorito adicionado: Produto ID ${product.id}, Cliente ID ${user.id}`);
       } else {
-        // Remove favorito: busca o favorito real antes de remover
         const response = await api.get("/favoritos", {
           params: { cliente_id: user.id },
         });
-
         const favoritos: any[] = response.data;
-        const favoritoToRemove = favoritos.find(fav => fav.product_id === product.id);
+        const favoritoToRemove = favoritos.find(
+          fav => fav.product_id === product.id
+        );
 
         if (favoritoToRemove) {
           await api.delete("/favorito/delete", {
             data: { id: favoritoToRemove.id },
           });
           setIsFavorite(false);
-          console.log(`Favorito removido: Favorito ID ${favoritoToRemove.id}, Produto ID ${product.id}`);
-        } else {
-          console.log("Favorito não encontrado no banco");
         }
       }
     } catch (err) {
       console.log("Erro ao adicionar/remover favorito:", err);
-      // Reverte estado se der erro
       setIsFavorite(prev => !prev);
     }
   };
@@ -121,20 +115,24 @@ export default function ProductInfo() {
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
+            source={{
+              uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png",
+            }}
             style={{ width: 26, height: 26 }}
           />
         </TouchableOpacity>
-
         <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
-
         <View style={{ width: 26 }} />
       </LinearGradient>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
-        <Image source={{ uri: product.image_url }} resizeMode="cover" style={styles.image} />
+        <Image
+          source={{ uri: product.image_url }}
+          resizeMode="cover"
+          style={styles.image}
+        />
 
         <View style={styles.contentContainer}>
           <View style={styles.titleRow}>
@@ -146,7 +144,10 @@ export default function ProductInfo() {
                     ? "https://img.icons8.com/ios-filled/50/FF3F4B/like.png"
                     : "https://img.icons8.com/ios/50/ffffff/like--v1.png",
                 }}
-                style={[styles.favoriteIcon, { transform: [{ scale: favoriteAnim }] }]}
+                style={[
+                  styles.favoriteIcon,
+                  { transform: [{ scale: favoriteAnim }] },
+                ]}
               />
             </TouchableOpacity>
           </View>
@@ -155,8 +156,16 @@ export default function ProductInfo() {
             {product.description || "Sem descrição disponível."}
           </Text>
 
+          {/* 🔹 PREÇOS (dinheiro e pontos) */}
           <View style={styles.priceRow}>
             <Text style={styles.price}>{formatarPreco(product.price)}</Text>
+
+            <View style={styles.pointsContainer}>
+              <Ionicons name="star" size={21} color="#FFD700" />
+              <Text style={styles.pointsText}>
+                {product.points.toFixed(1)} pts
+              </Text>
+            </View>
           </View>
 
           <TouchableOpacity
@@ -181,11 +190,7 @@ export default function ProductInfo() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#1d1d2e" 
-  },
-
+  container: { flex: 1, backgroundColor: "#1d1d2e" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -196,109 +201,89 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
   },
-
-  logoText: { 
-    color: "#fff", 
-    fontSize: 22, 
-    fontWeight: "700" 
-  },
-
+  logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
   image: {
     width: "100%",
     height: 260,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
   },
-
-  contentContainer: { 
-    paddingHorizontal: 22, 
-    paddingVertical: 20 
+  contentContainer: { paddingHorizontal: 22, paddingVertical: 20 },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
   },
-
-  titleRow: { 
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    marginBottom: 12 
+  title: { fontSize: 24, fontWeight: "700", color: "#fff", flex: 1 },
+  favoriteIcon: { width: 30, height: 30 },
+  desc: { color: "#ccc", fontSize: 15, lineHeight: 22, marginBottom: 20 },
+  priceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 25,
   },
-
-  title: { 
-    fontSize: 24, 
-    fontWeight: "700", 
-    color: "#fff", 
-    flex: 1, 
-    paddingRight: 12 
-  },
-
-  favoriteIcon: { 
-    width: 30, 
-    height: 30 
-  },
-
-  desc: { 
-    color: "#ccc", 
-    fontSize: 15, 
-    lineHeight: 22, 
-    marginBottom: 20 
-  },
-
-  priceRow: { 
-    marginBottom: 25 
-  },
-
   price: { 
     fontSize: 20, 
     fontWeight: "700", 
-    color: "#00C851" 
+    color: "#00C851",
+    flexDirection: "row",
+    alignItems: "center",
+    // backgroundColor: "#2b234a",
+    // paddingHorizontal: 10,
+    // paddingVertical: 6,
+    // borderRadius: 8, 
   },
-
-  addButton: { 
-    backgroundColor: "#5A3FFF", 
-    borderRadius: 12, 
-    paddingVertical: 14, 
-    alignItems: "center", 
-    marginBottom: 15, 
-    elevation: 8, 
-    shadowColor: "#5A3FFF" 
+  pointsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    // backgroundColor: "#2b234a",
+    // paddingHorizontal: 10,
+    // paddingVertical: 6,
+    // borderRadius: 8,
   },
-
-  addButtonText: { 
-    color: "#fff", 
-    fontWeight: "700", 
-    fontSize: 16, 
-    textTransform: "uppercase", 
-    letterSpacing: 0.8 
+  pointsText: {
+    color: "#FFD700",
+    fontWeight: "700",
+    marginLeft: 6,
+    fontSize: 20,
   },
-
-  footer: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    justifyContent: "space-between", 
-    paddingHorizontal: 16, 
-    paddingVertical: 12 
+  addButton: {
+    backgroundColor: "#5A3FFF",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginBottom: 15,
   },
-
-  orderButton: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center", 
-    backgroundColor: "#FF3F4B", 
-    borderRadius: 10, 
-    paddingVertical: 12, 
-    elevation: 8, 
-    shadowColor: "#FF3F4B" 
+  addButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
   },
-
-  orderText: { 
-    color: "#fff", 
-    fontSize: 18, 
-    fontWeight: "bold", 
-    textTransform: "uppercase", 
-    letterSpacing: 0.8 
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  orderButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF3F4B",
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  orderText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
   },
 });
