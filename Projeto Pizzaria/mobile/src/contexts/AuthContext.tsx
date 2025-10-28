@@ -20,6 +20,7 @@ type UserProps = {
     cpf?: string;
     token: string;
     image_url?: string | null;
+    guest?: boolean;
 };
 
 type AuthProviderProps = {
@@ -95,8 +96,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 response = await api.post("/login", loginData);
             }
 
-            const { id, name, email: userEmail, token, image_url } = response.data;
-            const data: UserProps = { id, name, email: userEmail, token, image_url };
+            const { id, name, email: userEmail, token, image_url} = response.data;
+            const data: UserProps = { id, name, email: userEmail, token, image_url, guest };
 
             await AsyncStorage.setItem("@sujeitopizzaria", JSON.stringify(data));
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;

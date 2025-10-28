@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { api } from '../../services/api';
 import {
     View,
@@ -70,6 +70,8 @@ export default function CustomizeProduct() {
     const [ingredientsExpanded, setIngredientsExpanded] = useState(false);
     const [selectedIngredients, setSelectedIngredients] = useState<{ [key: string]: boolean }>({});
     const [selectedExtras, setSelectedExtras] = useState<{ [key: string]: boolean }>({});
+    const [error, setError] = useState("");
+    const [isAdding, setIsAdding] = useState(false);
 
     // 2º Sabor
     const [showSecondFlavorModal, setShowSecondFlavorModal] = useState(false);
@@ -153,6 +155,7 @@ export default function CustomizeProduct() {
 
     const handleIngredientToggle = (id: string) => {
         setSelectedIngredients(prev => ({ ...prev, [id]: !prev[id] }));
+        setError("");
     };
 
     const toggleExtras = () => {
@@ -162,9 +165,10 @@ export default function CustomizeProduct() {
 
     const handleExtrasToggle = (id: string) => {
         setSelectedExtras(prev => ({ ...prev, [id]: !prev[id] }));
+        setError("");
     };
 
-    const handleQuantityChange = (newQuantity: number) => { if (newQuantity > 0) setQuantity(newQuantity); };
+    const handleQuantityChange = (newQuantity: number) => { if (newQuantity > 0) { setQuantity(newQuantity); setError(""); } };
 
     // Funções do 2º sabor
     const openSecondFlavor = async () => {
@@ -188,6 +192,8 @@ export default function CustomizeProduct() {
     };
 
     const handleAddToPedido = async () => {
+        setIsAdding(true);
+        setError("");
         try {
             if (!user?.id) throw new Error("Cliente não logado");
             const cliente_id = user.id;
@@ -265,9 +271,16 @@ export default function CustomizeProduct() {
 
             navigation.navigate("Order", { product });
         } catch (error: any) {
-              // debug logs to inspect backend validation error
-              console.error('Erro ao adicionar item - resposta do servidor:', error.response?.data || error.message || error);
-              alert(error.response?.data?.message || error.message || "Erro ao adicionar item");
+            // debug logs to inspect backend validation error
+            // console.error('Erro ao adicionar item - resposta do servidor:', error.response?.data || error.message || error);
+            const mensagem =
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                error.message ||
+                "Erro ao adicionar item";
+            setError(mensagem);
+        } finally {
+            setIsAdding(false);
         }
     };
 
@@ -376,6 +389,14 @@ export default function CustomizeProduct() {
                     onChangeText={setObservation}
                 />
             </ScrollView>
+
+            {error !== "" && <Text style={styles.errorText}>
+                {error}
+                {user.guest && <Text style={styles.errorText}> Você está como convidado. Para pedir bebidas alcoolicas, é necessário se registrar e ser maior de 18. </Text>
+                }
+                </Text>
+                
+            }
 
             <TouchableOpacity style={styles.confirmButton} onPress={handleAddToPedido}>
                 <Text style={styles.confirmText}>
@@ -526,5 +547,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 16,
         maxHeight: "80%"
+    },
+    errorText: {
+        color: "red",
+        marginBottom: 12,
+        fontWeight: "bold",
+        textAlign: "center",
     },
 });
