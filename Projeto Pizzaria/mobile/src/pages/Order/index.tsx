@@ -47,7 +47,7 @@ export default function Order() {
 
         try {
             // marca como realizado
-            await api.put("/pedido/editarStatus", { pedido_id: pedidoId, status: "pedido realizado" });
+            await api.put("/pedido/editarStatus", { pedido_id: pedidoId, status: "Pedido realizado" });
 
             // solicita o status atualizado do servidor (garante valor correto)
             const statusResp = await api.get(`/pedidos/${pedidoId}/status`);

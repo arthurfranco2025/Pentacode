@@ -40,15 +40,6 @@ class EditItemStatusService {
             }
         })
 
-        if(item.status === 'Em produção'){
-            await PrismaClient.pedido.update({
-                where: { id: item.pedido_id },
-                data: {
-                    status: 'Pedido em preparo'
-                }
-            })
-        }
-
         const pedido = await PrismaClient.pedido.findUnique({
             where: { id: item.pedido_id }
         })
@@ -62,6 +53,15 @@ class EditItemStatusService {
                 where: { id: pedido.id },
                 data: {
                     status: 'Pedido pronto'
+                }
+            })
+        }
+
+        if( item.status === 'Em produção') {
+            await PrismaClient.pedido.update({
+                where: { id: pedido.id },
+                data: {
+                    status: 'Pedido em preparo'
                 }
             })
         }
