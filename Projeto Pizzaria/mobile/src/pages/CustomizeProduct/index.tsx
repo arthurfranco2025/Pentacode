@@ -73,7 +73,6 @@ export default function CustomizeProduct() {
     const [error, setError] = useState("");
     const [isAdding, setIsAdding] = useState(false);
 
-    // 2º Sabor
     const [showSecondFlavorModal, setShowSecondFlavorModal] = useState(false);
     const [secondFlavorProducts, setSecondFlavorProducts] = useState<Product[]>([]);
     const [selectedSecondFlavor, setSelectedSecondFlavor] = useState<Product | null>(null);
@@ -85,8 +84,9 @@ export default function CustomizeProduct() {
                 const response = await api.get('produto_ingrediente/lista', {
                     params: { product_id: product.id }
                 });
-                setIngredients(response.data);
-                const initialSelection = response.data.reduce((acc: { [key: string]: boolean }, ing: Ingrediente) => {
+                const sortedIngredients = response.data.sort((a: Ingrediente, b: Ingrediente) => a.nome.localeCompare(b.nome));
+                setIngredients(sortedIngredients);
+                const initialSelection = sortedIngredients.reduce((acc: { [key: string]: boolean }, ing: Ingrediente) => {
                     acc[ing.id] = true;
                     return acc;
                 }, {});
@@ -105,10 +105,20 @@ export default function CustomizeProduct() {
         async function loadExtras() {
             try {
                 const response = await api.get('/adicionais/lista');
-                setExtras(response.data);
+
+                const bordas = response.data
+                    .filter((ex: Adicional) => ex.nome.toLowerCase().startsWith("borda"))
+                    .sort((a: Adicional, b: Adicional) => a.nome.localeCompare(b.nome));
+
+                const outros = response.data
+                    .filter((ex: Adicional) => !ex.nome.toLowerCase().startsWith("borda"))
+                    .sort((a: Adicional, b: Adicional) => a.nome.localeCompare(b.nome));
+
+                setExtras([...bordas, ...outros]);
+
                 const initialAdSelection: { [key: string]: boolean } = {};
-                response.data.forEach((ad: Adicional, index: number) => {
-                    initialAdSelection[ad.id || `extra-${index}`] = false;
+                [...bordas, ...outros].forEach((ad: Adicional) => {
+                    initialAdSelection[ad.id] = ad.nome.toLowerCase() === "borda tradicional";
                 });
                 setSelectedExtras(initialAdSelection);
                 setLoading(false);
@@ -122,13 +132,50 @@ export default function CustomizeProduct() {
         }
     }, [product.id]);
 
-    // Calcula preço total
+    // 2º sabor - ordenado
+    const openSecondFlavor = async () => {
+        try {
+            const response = await api.get("/category/products", {
+                params: { category_id: "1da0ee77-2a79-4a91-a3a4-863857d9691c" }
+            });
+            const filteredProducts = response.data
+                .filter((p: Product) => p.id !== product.id)
+                .sort((a: Product, b: Product) => a.name.localeCompare(b.name));
+            setSecondFlavorProducts(filteredProducts);
+            setShowSecondFlavorModal(true);
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao carregar os sabores de pizza");
+        }
+    };
+
+    const handleExtrasToggle = (id: string, nome: string) => {
+        setSelectedExtras(prev => {
+            const isBorder = nome.toLowerCase().startsWith("borda");
+            if (isBorder) {
+                const newState = { ...prev };
+                extras.filter(e => e.nome.toLowerCase().startsWith("borda")).forEach(e => newState[e.id] = false);
+                newState[id] = !prev[id];
+                return newState;
+            }
+            return { ...prev, [id]: !prev[id] };
+        });
+        setError("");
+    };
+
+    const handleQuantityChange = (newQuantity: number) => {
+        if (newQuantity > 0) {
+            setQuantity(newQuantity);
+            setError("");
+        }
+    };
+
+    // Cálculo de preço
     useEffect(() => {
         const qtd = quantity;
         const price1 = Number(product.price);
         const price2 = selectedSecondFlavor ? Number(selectedSecondFlavor.price) : 0;
 
-        // Extras selecionados
         const extrasPrice = Object.entries(selectedExtras).reduce((acc, [extraId, isSelected]) => {
             if (isSelected) {
                 const extra = extras.find(e => e.id === extraId);
@@ -138,7 +185,6 @@ export default function CustomizeProduct() {
         }, 0);
 
         let finalPrice = 0;
-
         if (selectedSecondFlavor) {
             finalPrice = ((price1 / 2 + price2 / 2 + 10) + extrasPrice) * qtd;
         } else {
@@ -148,49 +194,7 @@ export default function CustomizeProduct() {
         setTotalPrice(finalPrice);
     }, [quantity, selectedExtras, extras, selectedSecondFlavor, product.price]);
 
-    const toggleIngredients = () => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setIngredientsExpanded(prev => !prev);
-    };
-
-    const handleIngredientToggle = (id: string) => {
-        setSelectedIngredients(prev => ({ ...prev, [id]: !prev[id] }));
-        setError("");
-    };
-
-    const toggleExtras = () => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setExtrasExpanded(prev => !prev);
-    };
-
-    const handleExtrasToggle = (id: string) => {
-        setSelectedExtras(prev => ({ ...prev, [id]: !prev[id] }));
-        setError("");
-    };
-
-    const handleQuantityChange = (newQuantity: number) => { if (newQuantity > 0) { setQuantity(newQuantity); setError(""); } };
-
-    // Funções do 2º sabor
-    const openSecondFlavor = async () => {
-        try {
-            const response = await api.get("/category/products", {
-                params: { category_id: "1da0ee77-2a79-4a91-a3a4-863857d9691c" }
-            });
-
-            const filteredProducts = response.data.filter((p: Product) => p.id !== product.id);
-            setSecondFlavorProducts(filteredProducts);
-            setShowSecondFlavorModal(true);
-        } catch (error) {
-            console.error(error);
-            alert("Erro ao carregar os sabores de pizza");
-        }
-    };
-
-    const selectSecondFlavor = (product: Product) => {
-        setSelectedSecondFlavor(product);
-        setShowSecondFlavorModal(false);
-    };
-
+    // Função de adicionar ao pedido
     const handleAddToPedido = async () => {
         setIsAdding(true);
         setError("");
@@ -200,23 +204,18 @@ export default function CustomizeProduct() {
 
             let pedido_id = pedidoId;
 
-            // Verifica status do pedido existente no servidor. Se não estiver aberto, cria um novo pedido.
             if (pedido_id) {
                 try {
                     const statusResp = await api.get(`/pedidos/${pedido_id}/status`);
                     const status = statusResp.data.status;
-
                     if (!status || status !== 'pedido em andamento') {
                         const pedidoResponse = await api.post("/pedido", { cliente_id });
                         pedido_id = pedidoResponse.data.id;
-                        console.log('criou novo pedido');
                         setPedidoId(pedido_id);
                     }
-                } catch (err) {
-                    // Se não conseguir verificar o status, cria um novo pedido
+                } catch {
                     const pedidoResponse = await api.post("/pedido", { cliente_id });
                     pedido_id = pedidoResponse.data.id;
-                    console.log('erro ao verificar status, criou novo pedido');
                     setPedidoId(pedido_id);
                 }
             }
@@ -241,10 +240,7 @@ export default function CustomizeProduct() {
                 observacoes: observation
             };
 
-            console.log('Criando item com payload:', payload);
-
             const response = await api.post("/item", payload);
-
             const { item } = response.data;
 
             addItem({
@@ -271,8 +267,6 @@ export default function CustomizeProduct() {
 
             navigation.navigate("Order", { product });
         } catch (error: any) {
-            // debug logs to inspect backend validation error
-            // console.error('Erro ao adicionar item - resposta do servidor:', error.response?.data || error.message || error);
             const mensagem =
                 error.response?.data?.message ||
                 error.response?.data?.error ||
@@ -284,9 +278,23 @@ export default function CustomizeProduct() {
         }
     };
 
+    const toggleIngredients = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIngredientsExpanded(prev => !prev);
+    };
+
+    const toggleExtras = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setExtrasExpanded(prev => !prev);
+    };
+
+    const handleIngredientToggle = (id: string) => {
+        setSelectedIngredients(prev => ({ ...prev, [id]: !prev[id] }));
+        setError("");
+    };
+
     return (
         <View style={styles.container}>
-            {/* Header */}
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -305,8 +313,8 @@ export default function CustomizeProduct() {
                 <View style={{ width: 26 }} />
             </LinearGradient>
 
-            {/* Conteúdo */}
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                {/* Card do produto */}
                 <View style={styles.card}>
                     <Image source={{ uri: product.image_url }} style={styles.productImage} />
                     <View style={styles.productInfo}>
@@ -324,60 +332,72 @@ export default function CustomizeProduct() {
                     </View>
                 </View>
 
-                {/* Ingredientes e Adicionais */}
-                {product.category_id === "1da0ee77-2a79-4a91-a3a4-863857d9691c" && (
-                    <>
-                        {/* Ingredientes */}
-                        <TouchableOpacity style={styles.ingredientHeader} onPress={toggleIngredients}>
-                            <Text style={styles.ingredientHeaderText}>Ingredientes</Text>
-                            <Ionicons name={ingredientsExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
+                {/* Ingredientes */}
+                <TouchableOpacity style={styles.ingredientHeader} onPress={toggleIngredients}>
+                    <Text style={styles.ingredientHeaderText}>Ingredientes</Text>
+                    <Ionicons name={ingredientsExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
+                </TouchableOpacity>
+                {loading ? <ActivityIndicator color="#FF3F4B" /> : (
+                    ingredientsExpanded && ingredients.map((ing) => (
+                        <TouchableOpacity key={ing.id} style={styles.ingredientItem} onPress={() => handleIngredientToggle(ing.id)}>
+                            <Text style={styles.ingredientName}>{ing.nome}</Text>
+                            {selectedIngredients[ing.id] ? <Ionicons name="checkbox" size={24} color="#FF3F4B" /> : <Ionicons name="square-outline" size={24} color="#FF3F4B" />}
                         </TouchableOpacity>
-                        {loading ? <ActivityIndicator color="#FF3F4B" /> : (
-                            ingredientsExpanded && ingredients.map((ing) => (
-                                <TouchableOpacity key={ing.id} style={styles.ingredientItem} onPress={() => handleIngredientToggle(ing.id)}>
-                                    <Text style={styles.ingredientName}>{ing.nome}</Text>
-                                    {selectedIngredients[ing.id] ? <Ionicons name="checkbox" size={24} color="#FF3F4B" /> : <Ionicons name="square-outline" size={24} color="#FF3F4B" />}
-                                </TouchableOpacity>
-                            ))
-                        )}
+                    ))
+                )}
 
-                        {/* Adicionais */}
-                        <TouchableOpacity style={styles.ingredientHeader} onPress={toggleExtras}>
-                            <Text style={styles.ingredientHeaderText}>Adicionais</Text>
-                            <Ionicons name={extrasExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
-                        </TouchableOpacity>
-                        {loading ? <ActivityIndicator color="#FF3F4B" /> : (
-                            extrasExpanded && extras.map((ex) => (
-                                <TouchableOpacity key={ex.id} style={styles.ingredientItem} onPress={() => handleExtrasToggle(ex.id)}>
+                {/* Adicionais */}
+                <TouchableOpacity style={styles.ingredientHeader} onPress={toggleExtras}>
+                    <Text style={styles.ingredientHeaderText}>Adicionais</Text>
+                    <Ionicons name={extrasExpanded ? "chevron-up" : "chevron-down"} size={20} color="#fff" />
+                </TouchableOpacity>
+                {loading ? <ActivityIndicator color="#FF3F4B" /> : (
+                    extrasExpanded && (
+                        <>
+                            {/* Bordas */}
+                            {extras.filter(ex => ex.nome.toLowerCase().startsWith("borda")).length > 0 && (
+                                <>
+                                    {extras.filter(ex => ex.nome.toLowerCase().startsWith("borda")).map((ex) => (
+                                        <TouchableOpacity key={ex.id} style={styles.ingredientItem} onPress={() => handleExtrasToggle(ex.id, ex.nome)}>
+                                            <Text style={styles.ingredientName}>{ex.nome} {formatarPreco(ex.price)}</Text>
+                                            {selectedExtras[ex.id] ? <Ionicons name="checkbox" size={24} color="#FF3F4B" /> : <Ionicons name="square-outline" size={24} color="#FF3F4B" />}
+                                        </TouchableOpacity>
+                                    ))}
+                                    <View style={{ borderBottomWidth: 1, borderBottomColor: "#555", marginVertical: 8 }} />
+                                </>
+                            )}
+                            {/* Outros adicionais */}
+                            {extras.filter(ex => !ex.nome.toLowerCase().startsWith("borda")).map((ex) => (
+                                <TouchableOpacity key={ex.id} style={styles.ingredientItem} onPress={() => handleExtrasToggle(ex.id, ex.nome)}>
                                     <Text style={styles.ingredientName}>{ex.nome} {formatarPreco(ex.price)}</Text>
                                     {selectedExtras[ex.id] ? <Ionicons name="checkbox" size={24} color="#FF3F4B" /> : <Ionicons name="square-outline" size={24} color="#FF3F4B" />}
                                 </TouchableOpacity>
-                            ))
-                        )}
-
-                        {/* 2º Sabor */}
-                        <TouchableOpacity style={styles.ingredientHeader} onPress={openSecondFlavor}>
-                            <Text style={styles.ingredientHeaderText}>
-                                {selectedSecondFlavor ? `2º Sabor: ${selectedSecondFlavor.name}` : "Adicionar 2º Sabor"}
-                            </Text>
-                            <Ionicons name={selectedSecondFlavor ? "checkmark" : "add"} size={20} color="#fff" />
-                        </TouchableOpacity>
-                        <Modal visible={showSecondFlavorModal} animationType="slide" transparent>
-                            <View style={styles.modalContainer}>
-                                <ScrollView style={styles.modalContent}>
-                                    {secondFlavorProducts.map((p) => (
-                                        <TouchableOpacity key={p.id} onPress={() => selectSecondFlavor(p)} style={styles.ingredientItem}>
-                                            <Text style={styles.ingredientName}>{p.name} - {formatarPreco(p.price)}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                    <TouchableOpacity onPress={() => setShowSecondFlavorModal(false)} style={[styles.ingredientItem, { justifyContent: "center", backgroundColor: "#FF3F4B" }]}>
-                                        <Text style={{ color: "#fff", fontWeight: "700" }}>Fechar</Text>
-                                    </TouchableOpacity>
-                                </ScrollView>
-                            </View>
-                        </Modal>
-                    </>
+                            ))}
+                        </>
+                    )
                 )}
+
+                {/* 2º Sabor */}
+                <TouchableOpacity style={styles.ingredientHeader} onPress={openSecondFlavor}>
+                    <Text style={styles.ingredientHeaderText}>
+                        {selectedSecondFlavor ? `2º Sabor: ${selectedSecondFlavor.name}` : "Adicionar 2º Sabor"}
+                    </Text>
+                    <Ionicons name={selectedSecondFlavor ? "checkmark" : "add"} size={20} color="#fff" />
+                </TouchableOpacity>
+                <Modal visible={showSecondFlavorModal} animationType="slide" transparent>
+                    <View style={styles.modalContainer}>
+                        <ScrollView style={styles.modalContent}>
+                            {secondFlavorProducts.map((p) => (
+                                <TouchableOpacity key={p.id} onPress={() => { setSelectedSecondFlavor(p); setShowSecondFlavorModal(false); }} style={styles.ingredientItem}>
+                                    <Text style={styles.ingredientName}>{p.name} - {formatarPreco(p.price)}</Text>
+                                </TouchableOpacity>
+                            ))}
+                            <TouchableOpacity onPress={() => setShowSecondFlavorModal(false)} style={[styles.ingredientItem, { justifyContent: "center", backgroundColor: "#FF3F4B" }]}>
+                                <Text style={{ color: "#fff", fontWeight: "700" }}>Fechar</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    </View>
+                </Modal>
 
                 <TextInput
                     style={styles.textArea}
@@ -390,20 +410,14 @@ export default function CustomizeProduct() {
                 />
             </ScrollView>
 
-            {error !== "" && <Text style={styles.errorText}>
-                {error}
-                {user.guest && <Text style={styles.errorText}> Você está como convidado. Para pedir bebidas alcoolicas, é necessário se registrar e ser maior de 18. </Text>
-                }
-                </Text>
-                
-            }
+            {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
             <TouchableOpacity style={styles.confirmButton} onPress={handleAddToPedido}>
                 <Text style={styles.confirmText}>
                     Adicionar ao Pedido - {formatarPreco(totalPrice)}
                 </Text>
             </TouchableOpacity>
-        </View >
+        </View>
     );
 }
 
@@ -412,6 +426,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#1d1d2e"
     },
+
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -420,11 +435,13 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingHorizontal: 30
     },
+
     logoText: {
         color: "#fff",
         fontSize: 22,
         fontWeight: "700"
     },
+
     card: {
         flexDirection: "row",
         backgroundColor: "#2a2a40",
@@ -434,31 +451,37 @@ const styles = StyleSheet.create({
         margin: 15,
         alignItems: "center"
     },
+
     productImage: {
         width: 100,
         height: 100,
         borderRadius: 12
     },
+
     productInfo: {
         flex: 1,
         marginLeft: 12
     },
+
     productName: {
         fontSize: 18,
         fontWeight: "700",
         color: "#FFF"
     },
+
     price: {
         fontSize: 16,
         marginVertical: 5,
         color: "#00C851",
         fontWeight: "700"
     },
+
     quantityContainer: {
         flexDirection: "row",
         alignItems: "center",
         marginTop: 8
     },
+
     button: {
         width: 32,
         height: 32,
@@ -467,16 +490,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+
     buttonText: {
         color: "#FFF",
         fontWeight: "bold",
         fontSize: 16
     },
+
     quantity: {
         marginHorizontal: 12,
         fontSize: 16,
         color: "#FFF"
     },
+
     ingredientHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -489,11 +515,13 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 5
     },
+
     ingredientHeaderText: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#FFF"
     },
+
     ingredientItem: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -505,11 +533,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginBottom: 15
     },
+
     ingredientName: {
         fontSize: 16,
         fontWeight: "600",
         color: "#FFF"
     },
+
     textArea: {
         borderColor: "#3b3b55f7",
         borderWidth: 1,
@@ -520,6 +550,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#FFF"
     },
+
     confirmButton: {
         paddingVertical: 16,
         borderRadius: 12,
@@ -529,6 +560,7 @@ const styles = StyleSheet.create({
         elevation: 8,
         shadowColor: "#FF3F4B"
     },
+
     confirmText: {
         color: "#FFF",
         fontSize: 18,
@@ -536,22 +568,25 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
         letterSpacing: 0.8
     },
+
     modalContainer: {
         flex: 1,
         backgroundColor: "#000000aa",
         justifyContent: "center",
         paddingHorizontal: 20
     },
+
     modalContent: {
         backgroundColor: "#1d1d2e",
         borderRadius: 12,
         padding: 16,
         maxHeight: "80%"
     },
+
     errorText: {
         color: "red",
         marginBottom: 12,
         fontWeight: "bold",
-        textAlign: "center",
+        textAlign: "center"
     },
 });
