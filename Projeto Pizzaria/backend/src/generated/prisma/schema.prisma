@@ -21,21 +21,20 @@ model Funcionario {
 }
 
 model Cliente {
-  id         String    @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   email      String
   password   String
   cpf        String
   data_nasc  DateTime?
+  created_at DateTime?   @default(now())
+  updated_at DateTime?   @default(now())
+  points     Float       @default(0)
   image_url  String?
-  points     Float     @default(0)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  avaliacao Avaliacao[]
-  favoritos Favorito[]
-  comandas  Comanda[]
-  pedidos   Pedido[]
+  avaliacao  Avaliacao[]
+  comandas   Comanda[]
+  favoritos  Favorito[]
+  pedidos    Pedido[]
 
   @@map("clientes")
 }
@@ -44,12 +43,10 @@ model Favorito {
   id         String    @id @default(uuid())
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
-
-  product    Product @relation(fields: [product_id], references: [id])
   product_id String
-
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
+  cliente    Cliente   @relation(fields: [cliente_id], references: [id])
+  product    Product   @relation(fields: [product_id], references: [id])
 
   @@map("favorites")
 }
@@ -57,32 +54,30 @@ model Favorito {
 model Category {
   id         String    @id @default(uuid())
   name       String
-  image_url  String?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
-
-  products Product[]
+  image_url  String?
+  products   Product[]
 
   @@map("categories")
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  name        String
-  price       Float
-  points      Float
-  description String
-  promocao    Boolean
-  image_url   String?
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @default(now())
-
-  category            Category              @relation(fields: [category_id], references: [id])
+  id                  String                @id @default(uuid())
+  name                String
+  price               Float
+  points              Float
+  description         String
+  promocao            Boolean
+  created_at          DateTime?             @default(now())
+  updated_at          DateTime?             @default(now())
   category_id         String
-  sabor1_items        Item[]                @relation("Sabor1")
-  sabor2_items        Item[]                @relation("Sabor2")
+  image_url           String?
   favoritos           Favorito[]
+  sabor2_items        Item[]                @relation("Sabor2")
+  sabor1_items        Item[]                @relation("Sabor1")
   product_ingrediente Product_ingrediente[]
+  category            Category              @relation(fields: [category_id], references: [id])
 
   @@map("products")
 }
@@ -94,35 +89,30 @@ model Pedido {
   points     Float
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
-
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
   cliente_id String
-  comanda    Comanda @relation(fields: [comanda_id], references: [id])
   comanda_id String
-
-  items Item[]
+  items      Item[]
+  cliente    Cliente   @relation(fields: [cliente_id], references: [id])
+  comanda    Comanda   @relation(fields: [comanda_id], references: [id])
 
   @@map("pedidos")
 }
 
 model Comanda {
-  id            String    @id @default(uuid())
+  id            String      @id @default(uuid())
   status        String
   price         Float
   points        Float
-  tipoPagamento String?
+  created_at    DateTime?   @default(now())
+  updated_at    DateTime?   @default(now())
+  cliente_id    String
+  mesa_id       String?
   pagoEm        DateTime?
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @default(now())
-
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
-  cliente_id String
-
-  mesa    Mesa?   @relation(fields: [mesa_id], references: [id])
-  mesa_id String?
-
-  avaliacao Avaliacao[]
-  pedido    Pedido[]
+  tipoPagamento String?
+  avaliacao     Avaliacao[]
+  cliente       Cliente     @relation(fields: [cliente_id], references: [id])
+  mesa          Mesa?       @relation(fields: [mesa_id], references: [id])
+  pedido        Pedido[]
 
   @@map("comandas")
 }
@@ -132,101 +122,91 @@ model Avaliacao {
   nota       Int
   descricao  String
   created_at DateTime? @default(now())
-
-  cliente    Cliente @relation(fields: [cliente_id], references: [id])
-  comanda    Comanda @relation(fields: [comanda_id], references: [id])
   cliente_id String
   comanda_id String
+  cliente    Cliente   @relation(fields: [cliente_id], references: [id])
+  comanda    Comanda   @relation(fields: [comanda_id], references: [id])
 
   @@map("avaliacoes")
 }
 
 model Item {
-  id           String    @id @default(uuid())
-  qtd          Int
-  price        Float
-  points       Float     @default(0)
-  removidos    Json?
-  adicionais   Json?
-  observacoes  String?
-  dois_sabores Boolean   @default(false)
-  created_at   DateTime? @default(now())
-  updated_at   DateTime? @default(now())
-
-  pedido   Pedido   @relation(fields: [pedido_id], references: [id])
-  product  Product  @relation("Sabor1", fields: [product_id], references: [id])
-  product2 Product? @relation("Sabor2", fields: [product2_id], references: [id])
-
-  pedido_id      String
+  id             String           @id @default(uuid())
+  qtd            Int
+  created_at     DateTime?        @default(now())
+  updated_at     DateTime?        @default(now())
   product_id     String
+  pedido_id      String
+  price          Float
+  points         Float            @default(0)
+  removidos      Json?
+  adicionais     Json?
+  observacoes    String?
+  dois_sabores   Boolean          @default(false)
   product2_id    String?
+  status         String           @default("")
   Item_adicional Item_adicional[]
+  pedido         Pedido           @relation(fields: [pedido_id], references: [id])
+  product2       Product?         @relation("Sabor2", fields: [product2_id], references: [id])
+  product        Product          @relation("Sabor1", fields: [product_id], references: [id])
 
   @@map("items")
 }
 
 model Ingrediente {
-  id         String    @id @default(uuid())
-  nome       String
-  price      Float
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
+  id                  String                @id @default(uuid())
+  nome                String
+  price               Float
+  created_at          DateTime?             @default(now())
+  updated_at          DateTime?             @default(now())
   Product_ingrediente Product_ingrediente[]
 
   @@map("ingredientes")
 }
 
 model Product_ingrediente {
-  id         String    @id @default(uuid())
-  qtd        Boolean   @default(true)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  product    Product @relation(fields: [product_id], references: [id])
-  product_id String
-
-  ingrediente    Ingrediente @relation(fields: [ingrediente_id], references: [id])
+  id             String      @id @default(uuid())
+  created_at     DateTime?   @default(now())
+  updated_at     DateTime?   @default(now())
+  product_id     String
   ingrediente_id String
+  qtd            Boolean     @default(true)
+  ingrediente    Ingrediente @relation(fields: [ingrediente_id], references: [id])
+  product        Product     @relation(fields: [product_id], references: [id])
 
   @@map("product_ingrediente")
 }
 
 model Adicional {
-  id         String    @id @default(uuid())
-  nome       String
-  price      Float
-  points     Float     @default(0)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
+  id             String           @id @default(uuid())
+  nome           String
+  price          Float
+  created_at     DateTime?        @default(now())
+  updated_at     DateTime?        @default(now())
+  points         Float            @default(0)
   Item_adicional Item_adicional[]
 
   @@map("adicionais")
 }
 
 model Item_adicional {
-  id  String @id @default(uuid())
-  qtd Int    @default(1)
-
-  item    Item   @relation(fields: [item_id], references: [id])
-  item_id String
-
-  adicional    Adicional @relation(fields: [adicional_id], references: [id])
+  id           String    @id @default(uuid())
+  item_id      String
   adicional_id String
+  qtd          Int       @default(1)
+  adicional    Adicional @relation(fields: [adicional_id], references: [id])
+  item         Item      @relation(fields: [item_id], references: [id])
 
   @@map("item_adicional")
 }
 
 model Mesa {
-  id          String @id @default(uuid())
-  numero_mesa Int    @unique
-  url         String @default("")
-
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  Comanda Comanda[]
+  id          String    @id @default(uuid())
+  numero_mesa Int       @unique
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
+  url         String    @default("")
+  Comanda     Comanda[]
 
   @@map("mesas")
 }
