@@ -20,6 +20,7 @@ import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type RootStackParamList = {
     Home: undefined;
@@ -84,7 +85,7 @@ export default function UserPage() {
 
     const [favoritesVisible, setFavoritesVisible] = useState(false);
     const [favoritesLoading, setFavoritesLoading] = useState(false);
-    const [favoritesList, setFavoritesList] = useState<any[]>([]); // { favorito, product }
+    const [favoritesList, setFavoritesList] = useState<any[]>([]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -100,6 +101,8 @@ export default function UserPage() {
     const [pickedImage, setPickedImage] = useState<any>(null);
     const [removing, setRemoving] = useState(false);
     const [modal, setModal] = useState<{ type: "info" | "confirm"; props: ModalProps } | null>(null);
+
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
 
@@ -121,7 +124,7 @@ export default function UserPage() {
                 setForm({
                     nome: authUser.name || "",
                     email: authUser.email || "",
-                    senha: authUser.senha || "",
+                    senha: "",
                     cpf: "",
                     nascimento: "",
                 });
@@ -181,7 +184,6 @@ export default function UserPage() {
     function formatPriceForList(price: any) {
         try {
             if (price === undefined || price === null) return "--";
-            // Preço pode ser string ou número
             const num = typeof price === 'string' ? parseFloat(price) : price;
             return formatarPreco(num);
         } catch (e) {
@@ -212,7 +214,6 @@ export default function UserPage() {
                     const prods: any[] = pRes.data || [];
                     prods.forEach(p => { productsMap[p.id] = p; });
                 } catch (err) {
-                    // Ignorar erros de categorias individuais
                     console.log('Erro ao buscar produtos da categoria', cat.id, err);
                 }
             }));
@@ -230,7 +231,6 @@ export default function UserPage() {
 
     function handleOpenProduct(product: any) {
         setFavoritesVisible(false);
-        // Navegar para a tela de detalhes do produto
         navigation.navigate('ProductInfo' as any, { product });
     }
 
@@ -252,20 +252,24 @@ export default function UserPage() {
         ]);
     }
 
-
     function formatCPF(cpf: string) {
         const numbers = cpf.replace(/\D/g, "");
         return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4").slice(0, 14);
     }
 
-    function formatDate(date: string) {
-        const numbers = date.replace(/\D/g, "");
-        return numbers.replace(/(\d{2})(\d{2})(\d{4})/, "$1/$2/$3").slice(0, 10);
+    function handleChange(field: string, value: string) {
+        const format = field === "cpf" ? formatCPF : (v: string) => v;
+        setForm(prev => ({ ...prev, [field]: format(value) }));
     }
 
-    function handleChange(field: string, value: string) {
-        const format = field === "cpf" ? formatCPF : field === "nascimento" ? formatDate : (v: string) => v;
-        setForm(prev => ({ ...prev, [field]: format(value) }));
+    function handleDateChange(event: any, selectedDate?: Date) {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const year = selectedDate.getFullYear();
+            setForm(prev => ({ ...prev, nascimento: `${day}/${month}/${year}` }));
+        }
     }
 
     async function saveProfile() {
@@ -341,7 +345,6 @@ export default function UserPage() {
                 <View style={{ width: 24 }} />
             </LinearGradient>
 
-            {/* CONTENT */}
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* AVATAR */}
                 <View style={styles.avatarWrapper}>
@@ -367,13 +370,8 @@ export default function UserPage() {
                     )}
                 </View>
 
-
                 <Text style={styles.welcome}>
-                    Olá,{" "}
-                    <Text style={{ fontWeight: "bold" }}>
-                        {form.nome || authUser?.name || "CONVIDADO"}
-                    </Text>
-                    !
+                    Olá, <Text style={{ fontWeight: "bold" }}>{form.nome || authUser?.name || "CONVIDADO"}</Text>!
                 </Text>
 
                 {/* PERFIL */}
@@ -424,17 +422,33 @@ export default function UserPage() {
                             placeholder="Senha antiga"
                             placeholderTextColor="#999"
                             style={styles.input}
-                            value={form.senha}
-                            onChangeText={(t) => handleChange("senha", t)}
-                            secureTextEntry={true}
+                            value={form.cpf}
+                            onChangeText={(t) => handleChange("cpf", t)}
                         />
-                        <TextInput
-                            placeholder="Data de nascimento"
+
+                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { justifyContent: 'center' }]}>
+                            <Text style={{ color: form.nascimento ? '#fff' : '#999' }}>
+                                {form.nascimento || "Data de nascimento"}
+                            </Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={form.nascimento ? new Date(form.nascimento.split('/').reverse().join('-')) : new Date()}
+                                mode="date"
+                                display="default"
+                                maximumDate={new Date()}
+                                onChange={handleDateChange}
+                            />
+                        )}
+
+                        {/* <TextInput
+                            placeholder="Senha"
                             placeholderTextColor="#999"
                             style={styles.input}
-                            value={form.nascimento}
-                            onChangeText={(t) => handleChange("nascimento", t)}
-                        />
+                            value={form.senha}
+                            onChangeText={(t) => handleChange("senha", t)}
+                            secureTextEntry
+                        /> */}
 
                         <TouchableOpacity
                             style={styles.saveButton}
@@ -524,131 +538,39 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#ffffff1b",
     },
-    backButton: {
-        width: 24,
-        height: 24,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    logoText: {
-        color: "#fff",
-        fontSize: 22,
-        fontWeight: "700",
-    },
+    backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
+    logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
     scrollContent: { alignItems: "center", paddingVertical: 20 },
     avatarWrapper: { position: "relative", marginBottom: 10 },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#2C2C44",
-    },
+    avatar: { width: 100, height: 100, borderRadius: 50, backgroundColor: "#2C2C44" },
     addPhotoBtn: { position: "absolute", bottom: 5, right: 5 },
     welcome: { color: "#fff", fontSize: 16, marginBottom: 20 },
     menu: { width: "80%", alignItems: "center", gap: 10 },
-    button: {
-        backgroundColor: "#2a2a40",
-        paddingVertical: 14,
-        borderRadius: 10,
-        width: "100%",
-        alignItems: "center",
-    },
+    button: { backgroundColor: "#2a2a40", paddingVertical: 14, borderRadius: 10, width: "100%", alignItems: "center" },
     buttonText: { color: "#fff", fontWeight: "600", fontSize: 15 },
-    disabledButton: { opacity: 0.5 },
-    logoutButton: {
-        backgroundColor: "#FF4B4B",
-        paddingVertical: 14,
-        borderRadius: 10,
-        marginTop: 20,
-        width: "80%",
-        alignItems: "center",
-    },
-    logoutText: {
-        color: "#fff",
-        fontWeight: "700",
-        fontSize: 15,
-    },
+    logoutButton: { backgroundColor: "#FF4B4B", paddingVertical: 14, borderRadius: 10, marginTop: 20, width: "80%", alignItems: "center" },
+    logoutText: { color: "#fff", fontWeight: "700", fontSize: 15 },
     form: { width: "90%", alignItems: "center", gap: 10 },
-    input: {
-        backgroundColor: "#1E1E2F",
-        color: "#fff",
-        width: "100%",
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: "#343450",
-    },
-    saveButton: {
-        backgroundColor: "#4B3FFF",
-        width: "100%",
-        paddingVertical: 14,
-        borderRadius: 10,
-        alignItems: "center",
-        marginTop: 5,
-    },
+    input: { backgroundColor: "#1E1E2F", color: "#fff", width: "100%", paddingVertical: 14, paddingHorizontal: 16, borderRadius: 10, borderWidth: 1, borderColor: "#343450" },
+    saveButton: { backgroundColor: "#4B3FFF", width: "100%", paddingVertical: 14, borderRadius: 10, alignItems: "center", marginTop: 5 },
     saveText: { color: "#fff", fontWeight: "700", fontSize: 15 },
-    removeOverlay: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    removeBox: {
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center',
-    },
-    removeText: {
-        color: '#fff',
-        marginTop: 10,
-        fontSize: 14,
-    },
+    removeOverlay: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+    removeBox: { backgroundColor: 'rgba(0,0,0,0.6)', padding: 20, borderRadius: 10, alignItems: 'center' },
+    removeText: { color: '#fff', marginTop: 10, fontSize: 14 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
     modalBox: { backgroundColor: '#2C2C44', padding: 20, borderRadius: 10, width: '80%', alignItems: 'center' },
     modalTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginBottom: 10 },
     modalMessage: { fontSize: 15, color: '#fff', textAlign: 'center' },
     modalBtn: { backgroundColor: '#4B3FFF', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, marginTop: 15 },
     modalBtnText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
-    // Modal irado
     favContainer: { flex: 1, backgroundColor: '#1d1d2e' },
-    favHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingTop: 52,
-        paddingBottom: 12,
-        paddingHorizontal: 22,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ffffff1b',
-    },
+    favHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 52, paddingBottom: 12, paddingHorizontal: 22, borderBottomWidth: 1, borderBottomColor: '#ffffff1b' },
     favTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-    favItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ffffff12',
-    },
+    favItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderBottomColor: '#ffffff12' },
     favImage: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#2C2C44' },
     favName: { color: '#fff', fontSize: 16, fontWeight: '600' },
     favPrice: { color: '#00C851', marginTop: 6, fontWeight: '700' },
-    favViewBtn: {
-        backgroundColor: '#5A3FFF',
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderRadius: 8,
-    },
+    favViewBtn: { backgroundColor: '#5A3FFF', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 8 },
     favViewText: { color: '#fff', fontWeight: '700' },
-    favDelBtn: {
-        backgroundColor: '#FF4B4B',
-        padding: 8,
-        borderRadius: 8,
-        marginLeft: 8,
-    },
+    favDelBtn: { backgroundColor: '#FF4B4B', padding: 8, borderRadius: 8, marginLeft: 8 },
 });

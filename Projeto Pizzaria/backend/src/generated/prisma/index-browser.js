@@ -137,10 +137,10 @@ exports.Prisma.ClienteScalarFieldEnum = {
   password: 'password',
   cpf: 'cpf',
   data_nasc: 'data_nasc',
-  image_url: 'image_url',
-  points: 'points',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  points: 'points',
+  image_url: 'image_url'
 };
 
 exports.Prisma.FavoritoScalarFieldEnum = {
@@ -154,9 +154,9 @@ exports.Prisma.FavoritoScalarFieldEnum = {
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  image_url: 'image_url',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  image_url: 'image_url'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -166,10 +166,10 @@ exports.Prisma.ProductScalarFieldEnum = {
   points: 'points',
   description: 'description',
   promocao: 'promocao',
-  image_url: 'image_url',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  category_id: 'category_id'
+  category_id: 'category_id',
+  image_url: 'image_url'
 };
 
 exports.Prisma.PedidoScalarFieldEnum = {
@@ -188,12 +188,12 @@ exports.Prisma.ComandaScalarFieldEnum = {
   status: 'status',
   price: 'price',
   points: 'points',
-  tipoPagamento: 'tipoPagamento',
-  pagoEm: 'pagoEm',
   created_at: 'created_at',
   updated_at: 'updated_at',
   cliente_id: 'cliente_id',
-  mesa_id: 'mesa_id'
+  mesa_id: 'mesa_id',
+  pagoEm: 'pagoEm',
+  tipoPagamento: 'tipoPagamento'
 };
 
 exports.Prisma.AvaliacaoScalarFieldEnum = {
@@ -208,17 +208,18 @@ exports.Prisma.AvaliacaoScalarFieldEnum = {
 exports.Prisma.ItemScalarFieldEnum = {
   id: 'id',
   qtd: 'qtd',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  product_id: 'product_id',
+  pedido_id: 'pedido_id',
   price: 'price',
   points: 'points',
   removidos: 'removidos',
   adicionais: 'adicionais',
   observacoes: 'observacoes',
   dois_sabores: 'dois_sabores',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  pedido_id: 'pedido_id',
-  product_id: 'product_id',
-  product2_id: 'product2_id'
+  product2_id: 'product2_id',
+  status: 'status'
 };
 
 exports.Prisma.IngredienteScalarFieldEnum = {
@@ -231,35 +232,35 @@ exports.Prisma.IngredienteScalarFieldEnum = {
 
 exports.Prisma.Product_ingredienteScalarFieldEnum = {
   id: 'id',
-  qtd: 'qtd',
   created_at: 'created_at',
   updated_at: 'updated_at',
   product_id: 'product_id',
-  ingrediente_id: 'ingrediente_id'
+  ingrediente_id: 'ingrediente_id',
+  qtd: 'qtd'
 };
 
 exports.Prisma.AdicionalScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
   price: 'price',
-  points: 'points',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  points: 'points'
 };
 
 exports.Prisma.Item_adicionalScalarFieldEnum = {
   id: 'id',
-  qtd: 'qtd',
   item_id: 'item_id',
-  adicional_id: 'adicional_id'
+  adicional_id: 'adicional_id',
+  qtd: 'qtd'
 };
 
 exports.Prisma.MesaScalarFieldEnum = {
   id: 'id',
   numero_mesa: 'numero_mesa',
-  url: 'url',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  url: 'url'
 };
 
 exports.Prisma.SortOrder = {
