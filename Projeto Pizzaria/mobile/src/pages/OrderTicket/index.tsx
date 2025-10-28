@@ -68,7 +68,7 @@ export default function OrderTicket() {
         if (!comanda?.comandaId) return;
 
         const response = await api.get('/pedido/listaPorComanda', {
-          params: { comanda_id: comanda.comandaId } 
+          params: { comanda_id: comanda.comandaId }
         });
 
 
@@ -138,7 +138,7 @@ export default function OrderTicket() {
       setPedidoAberto(pedidoId);
 
       const response = await api.get('/item/listaPorPedido', {
-        params: {pedido_id: pedidoId }
+        params: { pedido_id: pedidoId }
       });
 
       setItensPedido(response.data);
@@ -160,12 +160,6 @@ export default function OrderTicket() {
         colors={["#3D1F93", "#1d1d2e"]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-            style={{ width: 26, height: 26 }}
-          />
-        </TouchableOpacity>
         <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
@@ -192,8 +186,8 @@ export default function OrderTicket() {
           </View>
         ) : (
           pedidos.map((pedido, index) => (
-            <TouchableOpacity 
-              key={pedido.id} 
+            <TouchableOpacity
+              key={pedido.id}
               style={styles.card}
               onPress={() => handleTogglePedido(pedido.id)}
             >
@@ -332,12 +326,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#1d1d2e"
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingTop: 52,
     paddingBottom: 14,
-    paddingHorizontal: 20, elevation: 5
   },
   logoText: {
     color: "#FFF",
@@ -346,7 +337,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2
   },
   scrollContent: {
-    paddingBottom: 200, 
+    paddingBottom: 200,
     paddingTop: 10
   },
   title: {

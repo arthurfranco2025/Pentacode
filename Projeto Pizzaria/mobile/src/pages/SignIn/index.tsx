@@ -27,27 +27,23 @@ export default function SignIn() {
 
   const [login, setLogin] = useState(""); // pode ser email ou CPF
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const backAction = () => {
-        navigation.goBack();
-        return true;
-      };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const backAction = () => {
+  //       navigation.goBack();
+  //       return true;
+  //     };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+  //     const backHandler = BackHandler.addEventListener(
+  //       "hardwareBackPress",
+  //       backAction
+  //     );
 
-      return () => backHandler.remove();
-    }, [navigation])
-  );
-
-  function handleGoBack() {
-    navigation.goBack();
-  }
+  //     return () => backHandler.remove();
+  //   }, [navigation])
+  // );
 
   function handleSignUp() {
     navigation.navigate("SignUp");
@@ -78,16 +74,6 @@ export default function SignIn() {
 
   return (
     <View style={styles.safeArea}>
-      <TouchableOpacity onPress={handleGoBack} style={styles.GoBack}>
-        <Image
-          source={{
-            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/m6rofw5v_expires_30_days.png",
-          }}
-          resizeMode="stretch"
-          style={styles.backIcon}
-        />
-      </TouchableOpacity>
-
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -242,16 +228,10 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
   },
-  GoBack: {
-    position: "absolute",
-    top: 45,
-    left: 25,
-    zIndex: 1,
-  },
-  errorText: { 
-    color: "red", 
-    marginBottom: 12, 
-    fontWeight: "bold", 
-    textAlign: "center" 
+  errorText: {
+    color: "red",
+    marginBottom: 12,
+    fontWeight: "bold",
+    textAlign: "center"
   },
 });

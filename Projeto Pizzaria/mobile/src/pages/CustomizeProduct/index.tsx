@@ -390,13 +390,29 @@ export default function CustomizeProduct() {
                 />
             </ScrollView>
 
-            {error !== "" && <Text style={styles.errorText}>
-                {error}
-                {user.guest && <Text style={styles.errorText}> Você está como convidado. Para pedir bebidas alcoolicas, é necessário se registrar e ser maior de 18. </Text>
-                }
-                </Text>
-                
-            }
+            <Modal visible={error !== ""} animationType="fade" transparent>
+                <View style={styles.errorModalOverlay}>
+                    <View style={styles.errorModalBox}>
+                        <Ionicons name="alert-circle" size={60} color="#FF3F4B" style={{ marginBottom: 12 }} />
+                        <Text style={styles.errorTitle}>Ops!</Text>
+                        <Text style={styles.errorMessage}>{error}</Text>
+
+                        {user?.guest && (
+                            <Text style={styles.errorGuestMessage}>
+                                Você está como convidado. Para pedir bebidas alcoólicas, é necessário se registrar e ter mais de 18 anos.
+                            </Text>
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.errorButton}
+                            onPress={() => setError("")}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.errorButtonText}>Fechar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal >
 
             <TouchableOpacity style={styles.confirmButton} onPress={handleAddToPedido}>
                 <Text style={styles.confirmText}>
@@ -553,5 +569,66 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         fontWeight: "bold",
         textAlign: "center",
+    },
+    errorModalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    errorModalBox: {
+        width: "100%",
+        maxWidth: 360,
+        backgroundColor: "#2a2a40",
+        borderRadius: 16,
+        paddingVertical: 28,
+        paddingHorizontal: 20,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+    },
+    errorTitle: {
+        color: "#fff",
+        fontSize: 20,
+        fontWeight: "700",
+        marginBottom: 15,
+    },
+    errorMessage: {
+        color: "#DDD",
+        fontSize: 16,
+        textAlign: "center",
+        marginBottom: 10,
+        fontWeight: "500",
+    },
+    errorGuestMessage: {
+        color: "#DDD",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 20,
+        lineHeight: 20,
+    },
+    errorButton: {
+        alignItems: "center",
+        justifyContent: "center",
+        width: "50%",
+        height: 40,
+        borderRadius: 10,
+        backgroundColor: "#FF3F4B",
+        shadowColor: "#FF3F4B",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    errorButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "700",
+        textTransform: "uppercase",
+        letterSpacing: 0.6,
     },
 });

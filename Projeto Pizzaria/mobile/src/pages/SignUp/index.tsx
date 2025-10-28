@@ -136,7 +136,7 @@ export default function SignUp() {
               onPress={() => setShowDatePicker(true)}
               style={[styles.input, { justifyContent: "center" }]}
             >
-              <Text style={{ color: "#F0F0F0" }}>
+              <Text style={{ color: "#8A8A8A" }}>
                 {dataNasc.toLocaleDateString("pt-BR")}
               </Text>
             </TouchableOpacity>

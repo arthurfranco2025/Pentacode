@@ -84,7 +84,7 @@ class CreateItemService {
     let idade = null as number | null;
     if (precisaChecarIdade) {
       const dataNasc = pedido.cliente.data_nasc;
-      if (!dataNasc) throw new Error('Data de nascimento do cliente não encontrada');
+      if (!dataNasc) throw new Error('Data de nascimento não encontrada...');
 
       const hoje = new Date();
       idade = hoje.getFullYear() - dataNasc.getFullYear();
@@ -191,15 +191,15 @@ class CreateItemService {
         select: { id: true }
       });
 
-    if (comanda) {
-      await PrismaClient.comanda.update({
-        where: { id: comanda.id },
-        data: {
-          price: { increment: precoFinal },
-          points: { increment: pontosFinal },
-        }
-      });
-    }
+      if (comanda) {
+        await PrismaClient.comanda.update({
+          where: { id: comanda.id },
+          data: {
+            price: { increment: precoFinal },
+            points: { increment: pontosFinal },
+          }
+        });
+      }
       if (comanda) {
         await PrismaClient.comanda.update({
           where: { id: comanda.id },
