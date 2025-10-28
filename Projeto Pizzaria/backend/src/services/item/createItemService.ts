@@ -142,6 +142,7 @@ class CreateItemService {
         removidos: removidos && removidos.length > 0 ? removidos : null,
         adicionais: adicionais && adicionais.length > 0 ? adicionais : null,
         observacoes: observacoes || null,
+        status: 'Na fila'
       },
       select: {
         id: true,
