@@ -108,8 +108,8 @@ export default function ProductInfo() {
 
   const handlePointsInfo = () => {
     Alert.alert(
-      "Como funciona a mecânica de pontos",
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin euismod."
+      "Como funciona nossa mecânica de pontos?",
+      "Na PentaPizza, todo produto possui um valor em pontos. Você pode pagar seu pedido com os pontos que voce adquirir no nosso aplicativo, sem gastar dinheiro real! Adquira seus pontos fazendo compras no app."
     );
   };
 
@@ -181,7 +181,7 @@ export default function ProductInfo() {
                 style={{ marginLeft: 8 }}
                 onPress={handlePointsInfo}
               >
-                <MaterialIcons name="help-outline" size={22} color="#FFD700" />
+                <MaterialIcons name="help-outline" size={22} color="#cdcdcdff" />
               </TouchableOpacity>
             </View>
           </View>
