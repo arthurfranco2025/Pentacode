@@ -373,10 +373,19 @@ export default function CustomizeProduct() {
                 />
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-                <TouchableOpacity style={styles.confirmButton} onPress={handleAddToPedido} disabled={isAdding}>
-                    <Text style={styles.confirmText}>{isAdding ? "Adicionando..." : `Adicionar ${formatarPreco(totalPrice)}`}</Text>
+                <TouchableOpacity
+                    style={[
+                        styles.confirmButton,
+                        isAdding && { backgroundColor: "#888" } // muda cor quando desativado
+                    ]}
+                    onPress={handleAddToPedido}
+                    disabled={isAdding} // Tornando botão disabled para evitar dobrar os pedidos
+                >
+                    <Text style={styles.confirmText}>
+                        {isAdding ? "Adicionando..." : `Adicionar ${formatarPreco(totalPrice)}`}
+                    </Text>
                 </TouchableOpacity>
+
             </ScrollView>
 
             {/* Modal 2º Sabor */}
