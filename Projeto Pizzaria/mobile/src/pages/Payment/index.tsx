@@ -134,30 +134,30 @@ export default function Payment() {
   // };
 
   const handleEnviarAvaliacao = async () => {
-  if (nota === 0) {
-    alert("Dê uma nota de 1 a 5 estrelas antes de enviar.");
-    return;
-  }
+    if (nota === 0) {
+      alert("Dê uma nota de 1 a 5 estrelas antes de enviar.");
+      return;
+    }
 
-  try {
-    setEnviandoAvaliacao(true);
+    try {
+      setEnviandoAvaliacao(true);
 
-    await api.post("/avaliacao", { comanda_id: comandaId, nota, descricao });
+      await api.post("/avaliacao", { comanda_id: comandaId, nota, descricao });
 
-    alert("Obrigado pela sua avaliação!");
-    setAvaliacaoModalVisible(false);
+      alert("Obrigado pela sua avaliação!");
+      setAvaliacaoModalVisible(false);
 
-    //TENTANDO FAZER LOGOUT AUTOMÁTICO APÓS A AVALIAÇÃO 
-    setTimeout(() => {
-      signOut();
-    }, 800); // pequeno delay pra dar tempo de o alerta sumir
-  } catch (error: any) {
-    console.log("Erro ao enviar avaliação:", error.response?.data || error.message);
-    alert(error.response?.data?.error || "Erro ao enviar avaliação.");
-  } finally {
-    setEnviandoAvaliacao(false);
-  }
-};
+      //TENTANDO FAZER LOGOUT AUTOMÁTICO APÓS A AVALIAÇÃO 
+      setTimeout(() => {
+        signOut();
+      }, 800); // pequeno delay pra dar tempo de o alerta sumir
+    } catch (error: any) {
+      console.log("Erro ao enviar avaliação:", error.response?.data || error.message);
+      alert(error.response?.data?.error || "Erro ao enviar avaliação.");
+    } finally {
+      setEnviandoAvaliacao(false);
+    }
+  };
 
 
   return (
@@ -335,7 +335,7 @@ export default function Payment() {
               </Text>
             </Text>
             <View style={{ flexDirection: "row", marginVertical: 10 }}>
-              {[1,2,3,4,5].map((n) => (
+              {[1, 2, 3, 4, 5].map((n) => (
                 <TouchableOpacity key={n} onPress={() => setNota(n)}>
                   <Ionicons
                     name={n <= nota ? "star" : "star-outline"}
@@ -364,10 +364,16 @@ export default function Payment() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalButtonCancel}
-                onPress={() => setAvaliacaoModalVisible(false)}
+                onPress={() => {
+                  setAvaliacaoModalVisible(false);
+                  setTimeout(() => {
+                    signOut();
+                  }, 800); // pequeno delay para o modal fechar antes do logout
+                }}
               >
                 <Text style={styles.modalButtonText}>Sair sem avaliar</Text>
               </TouchableOpacity>
+
             </View>
           </View>
         </View>
@@ -430,10 +436,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800"
   },
-  headerAvaliation: { 
-    color: "#FFF", 
-    fontSize: 20, 
-    fontWeight: "700" 
+  headerAvaliation: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "700"
   },
   sectionTitle: {
     fontSize: 24,
