@@ -158,11 +158,11 @@ export default function SignIn() {
             </Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity onPress={""}>
+          <TouchableOpacity onPress={""}>
             <Text style={styles.loginText}>
               Esqueceu sua senha? <Text style={styles.linkText}>Clique aqui</Text>
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -258,7 +258,7 @@ loginText: {
   color: "#fff",
   fontSize: 13,
   fontWeight: "600",
-  // marginBottom: 20
+  marginBottom: 20
 },
 linkText: {
   textDecorationLine: "underline",
