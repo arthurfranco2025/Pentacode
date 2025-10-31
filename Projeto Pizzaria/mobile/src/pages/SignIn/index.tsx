@@ -20,13 +20,14 @@ import { AuthContext } from "../../contexts/AuthContext";
 type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
 };
 
 export default function SignIn() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { signIn, loadingAuth } = useContext(AuthContext);
 
-  const [login, setLogin] = useState(""); // email ou CPF
+  const [login, setLogin] = useState(""); 
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(""); 
@@ -53,6 +54,10 @@ export default function SignIn() {
 
   function handleSignUp() {
     navigation.navigate("SignUp");
+  }
+
+  function handleForgotPassword() {
+    navigation.navigate("ForgotPassword");
   }
 
   async function handleLogin() {
@@ -158,12 +163,11 @@ export default function SignIn() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={""}>
+          <TouchableOpacity onPress={handleForgotPassword}>
             <Text style={styles.loginText}>
               Esqueceu sua senha? <Text style={styles.linkText}>Clique aqui</Text>
             </Text>
           </TouchableOpacity>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -172,113 +176,109 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   safeArea: {
-  flex: 1,
-  backgroundColor: "#1d1d2e"
-},
-scrollContent: {
-  paddingHorizontal: 28,
-  paddingVertical: 40
-},
-logo: {
-  marginTop: 30,
-  marginBottom: 10,
-  fontSize: 58,
-  fontWeight: "bold",
-  textAlign: "center"
-},
-white: {
-  color: "#fff"
-},
-red: {
-  color: "#E32636"
-},
-title: {
-  color: "#fff",
-  fontSize: 34,
-  fontWeight: "bold",
-  textAlign: "center",
-  marginBottom: 30
-},
-inputGroup: {
-  marginBottom: 18
-},
-inputLabel: {
-  color: "#fff",
-  fontSize: 13,
-  fontWeight: "600",
-  marginBottom: 6
-},
-inputWrapper: {
-  flexDirection: "row",
-  alignItems: "center",
-  borderWidth: 1,
-  borderColor: "#8A8A8A",
-  borderRadius: 8,
-  paddingHorizontal: 10,
-  backgroundColor: "#101026",
-  height: 45
-},
-icon: {
-  marginRight: 8
-},
-input: {
-  flex: 1,
-  color: "#F0F0F0",
-  fontSize: 14
-},
-button: {
-  backgroundColor: "#FF3F4B",
-  borderRadius: 6,
-  paddingVertical: 14,
-  alignItems: "center",
-  marginTop: 10,
-  marginBottom: 14
-},
-guestButton: {
-  backgroundColor: "#391D8A",
-  borderRadius: 6,
-  paddingVertical: 14,
-  alignItems: "center",
-  marginBottom: 20
-},
-buttonText: {
-  color: "#fff",
-  fontSize: 15,
-  fontWeight: "bold"
-},
-dividerText: {
-  textAlign: "center",
-  color: "#fff",
-  fontSize: 13,
-  fontWeight: "bold",
-  marginBottom: 18
-},
-loginText: {
-  textAlign: "center",
-  color: "#fff",
-  fontSize: 13,
-  fontWeight: "600",
-  marginBottom: 20
-},
-linkText: {
-  textDecorationLine: "underline",
-  fontWeight: "bold",
-  color: "#FF3F4B"
-},
-backIcon: {
-  width: 28,
-  height: 28
-},
-GoBack: {
-  position: "absolute",
-  top: 45,
-  left: 25,
-  zIndex: 1
-},
-errorText: {
-  color: "red",
-  marginBottom: 12,
-  fontWeight: "bold",
-  textAlign: "center"
-}
+    flex: 1,
+    backgroundColor: "#1d1d2e",
+  },
+  scrollContent: {
+    paddingHorizontal: 28,
+    paddingVertical: 40,
+  },
+  logo: {
+    marginTop: 30,
+    marginBottom: 10,
+    fontSize: 58,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  white: { color: "#fff" },
+  red: { color: "#E32636" },
+  title: {
+    color: "#fff",
+    fontSize: 34,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 30,
+  },
+  inputGroup: {
+    marginBottom: 18,
+  },
+  inputLabel: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#8A8A8A",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "#101026",
+    height: 45,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    color: "#F0F0F0",
+    fontSize: 14,
+  },
+  button: {
+    backgroundColor: "#FF3F4B",
+    borderRadius: 6,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 14,
+  },
+  guestButton: {
+    backgroundColor: "#391D8A",
+    borderRadius: 6,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  dividerText: {
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "bold",
+    marginBottom: 18,
+  },
+  loginText: {
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 20,
+  },
+  linkText: {
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+    color: "#FF3F4B",
+  },
+  backIcon: {
+    width: 28,
+    height: 28,
+  },
+  GoBack: {
+    position: "absolute",
+    top: 45,
+    left: 25,
+    zIndex: 1,
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
