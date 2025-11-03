@@ -318,50 +318,6 @@ export default function UserPage() {
         }
     }
 
-    // async function saveProfile() {
-    //     if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
-    //     setLoading(true);
-    //     try {
-    //         const body: any = {};
-    //         if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
-    //         if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
-    //         if (form.senha) body.novoPassword = form.senha;
-
-    //         const [d, m, a] = form.nascimento.split('/');
-    //         const date = new Date(parseInt(a), parseInt(m) - 1, parseInt(d));
-    //         date.setDate(date.getDate() + 1); // Gambiarra para ajustar a data
-    //         const nextDay = date.getDate().toString().padStart(2, '0');
-    //         const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    //         const year = date.getFullYear();
-    //         body.nascimento = `${year}-${month}-${nextDay}`;
-    //         // console.log('Enviando data (compensada):', body.nascimento);
-    //         if (!Object.keys(body).length && !pickedImage) return showInfo('Aviso', 'Nenhuma alteração foi feita.');
-
-    //         let res;
-    //         if (pickedImage) {
-    //             const dataForm = new FormData();
-    //             Object.keys(body).forEach(k => dataForm.append(k, body[k]));
-    //             const uri = pickedImage.uri;
-    //             const filename = uri.split('/').pop() || 'photo.jpg';
-    //             const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
-    //             dataForm.append('banner', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
-    //             res = await api.put('/edit', dataForm, { headers: { 'Content-Type': 'multipart/form-data' } });
-    //         } else {
-    //             res = await api.put('/edit', body);
-    //         }
-
-    //         const updated = res.data;
-    //         await updateLocalUser({ id: updated.id, name: updated.name, email: updated.email, image_url: updated.image_url });
-
-    //         showInfo('Sucesso', 'Perfil atualizado com sucesso!');
-    //         setIsEditing(false);
-    //     } catch {
-    //         showInfo('Erro', 'Erro ao atualizar perfil.');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }
-
     async function openFavorites() {
         if (isGuest) {
             Alert.alert('Aviso', 'Convidados não podem ver favoritos.');

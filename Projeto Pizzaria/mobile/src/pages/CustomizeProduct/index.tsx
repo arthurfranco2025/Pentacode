@@ -316,6 +316,7 @@ export default function CustomizeProduct() {
     };
 
     const handleAddWithPoints = async () => {
+        setIsAdding(true)
         try {
             if (!user?.id) throw new Error("Cliente não logado");
 
@@ -377,6 +378,7 @@ export default function CustomizeProduct() {
             const mensagem = error.response?.data?.message || error.message || "Erro ao adicionar item";
             setError(mensagem);
         }
+        setIsAdding(false)
     };
 
     return (
@@ -523,21 +525,22 @@ export default function CustomizeProduct() {
 
                 {/* Botões */}
                 <TouchableOpacity style={[styles.confirmButton, isAdding && { backgroundColor: "#888" }]} onPress={handleAddToPedido} disabled={isAdding} >
-                    <Text style={styles.confirmText}> {isAdding ? "Adicionando..." : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
+                    <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>
 
                 {/* 🔸 Botão de pontos */}
                 <TouchableOpacity
-                    style={styles.pointsButton}
-                    onPress={() => handleAddWithPoints()}
+                    style={[styles.pointsButton, isAdding && { backgroundColor: "#888" }]}
+                    onPress={handleAddWithPoints}
+                    disabled={isAdding}
                 >
                     <Text style={styles.pointsButtonText}>
-                        Adicionar com Pontos ({totalPoints.toFixed(1)} pts)
+                        {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar com Pontos (${totalPoints.toFixed(1)} pts)`}
                     </Text>
                 </TouchableOpacity>
 
-            </ScrollView>
-        </View>
+        </ScrollView>
+        </View >
     )
 }
 
