@@ -16,6 +16,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Categories {
 	id: string;
@@ -184,6 +185,7 @@ export default function Home() {
 				colors={["#3D1F93", "#1d1d2e"]}
 				style={styles.header}
 			>
+				{/* Botão de usuário */}
 				<TouchableOpacity onPress={() => navigation.navigate("UserPage")}>
 					<Image
 						source={
@@ -195,12 +197,36 @@ export default function Home() {
 					/>
 				</TouchableOpacity>
 
+				{/* Logo */}
 				<Text style={styles.logoText}>
 					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 				</Text>
 
-				<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
+				{/* Lado direito do header */}
+				<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+					<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
+
+					{/* Botão para a comanda */}
+					<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
+						<Ionicons name="reader-sharp" size={18} color={"white"}/>
+						{/* Exemplo: pequeno indicador vermelho se tiver itens no pedido */}
+						{totalPedido > 0 && (
+							<View
+								style={{
+									position: "absolute",
+									top: -4,
+									right: -4,
+									backgroundColor: "#FF3F4B",
+									width: 10,
+									height: 10,
+									borderRadius: 5,
+								}}
+							/>
+						)}
+					</TouchableOpacity>
+				</View>
 			</LinearGradient>
+
 
 			{/* SEARCH ROW */}
 			<View style={styles.menuSearchRow}>
@@ -316,9 +342,9 @@ export default function Home() {
 
 				<TouchableOpacity
 					style={styles.orderButton}
-					onPress={() => navigation.navigate("OrderTicket")}
+					onPress={() => navigation.navigate("Order")}
 				>
-					<Text style={styles.orderText}>Pedido</Text>
+					<Text style={styles.orderText}>Pedido atual</Text>
 				</TouchableOpacity>
 			</LinearGradient>
 		</View>

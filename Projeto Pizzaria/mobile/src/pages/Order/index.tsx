@@ -104,7 +104,7 @@ export default function Order() {
                     source={{ uri: 'https://img.icons8.com/?size=100&id=rX7GcyLQDDjE&format=png&color=FFFFFF' }}
                     style={styles.cart}
                 />
-                <Text style={{ color: "#FFF", fontSize: 16 }}>Nenhum produto no carrinho.</Text>
+                <Text style={{ color: "#FFF", fontSize: 16, textAlign: "center" }}>Nenhum produto no carrinho.</Text>
                 <TouchableOpacity
                     style={styles.returnButton}
                     onPress={() => navigation.navigate('Home')}

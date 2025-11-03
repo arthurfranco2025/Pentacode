@@ -315,11 +315,13 @@ export default function OrderTicket() {
                 })}
               </Text>
 
-              {/* Show items when pedido is open */}
+              {/* Mostra os itens quando pedido está aberto */}
               {pedidoAberto === pedido.id && (
                 <View style={styles.itensContainer}>
                   {loadingItens ? (
                     <ActivityIndicator size="small" color="#FF3F4B" />
+                  ) : itensPedido.length === 0 ? (
+                    <Text style={styles.emptyPedidoText}>Seu pedido está vazio.</Text>
                   ) : (
                     itensPedido.map((item: ItemPedido) => (
                       <View key={item.id} style={styles.itemContainer}>
@@ -412,7 +414,7 @@ export default function OrderTicket() {
             style={styles.buttonAddMore}
             onPress={() => navigation.navigate("Home")}
           >
-            <Text style={styles.buttonText}>Adicionar mais pedidos</Text>
+            <Text style={styles.buttonText}>Voltar para o cardápio</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -711,5 +713,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 20,
     paddingHorizontal: 20,
+  },
+  emptyPedidoText: {
+    textAlign: "center",
+    color: "#aaa",
+    fontSize: 16,
+    marginVertical: 12,
+    fontStyle: "italic",
   },
 })
