@@ -195,10 +195,6 @@ export default function ProductInfo() {
           <TouchableOpacity
             style={styles.addButton}
             onPress={() => {
-              if (isGuest) {
-                Alert.alert("Aviso", "Convidados não podem adicionar produtos ao pedido.");
-                return;
-              }
               navigation.navigate("CustomizeProduct", { product });
             }}
           >
