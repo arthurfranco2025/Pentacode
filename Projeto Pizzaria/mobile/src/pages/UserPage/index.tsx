@@ -7,18 +7,16 @@ import {
     StyleSheet,
     Image,
     ActivityIndicator,
-    Alert,
     ScrollView,
     Modal,
-    FlatList,
     Platform,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { formatarPreco } from "../../components/utils/formatPrice";
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -83,10 +81,6 @@ export default function UserPage() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { user: authUser, updateLocalUser, signOut } = useContext(AuthContext);
 
-    const [favoritesVisible, setFavoritesVisible] = useState(false);
-    const [favoritesLoading, setFavoritesLoading] = useState(false);
-    const [favoritesList, setFavoritesList] = useState<any[]>([]);
-
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({
@@ -101,12 +95,11 @@ export default function UserPage() {
     const [pickedImage, setPickedImage] = useState<any>(null);
     const [removing, setRemoving] = useState(false);
     const [modal, setModal] = useState<{ type: "info" | "confirm"; props: ModalProps } | null>(null);
-
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
+    const isGuest = authUser?.guest || !authUser?.email;
 
-    // Proteção contra edição por convidados
+    // Bloqueia edição ao ser convidado
     useEffect(() => {
         if (isGuest && isEditing) {
             setIsEditing(false);
@@ -123,12 +116,11 @@ export default function UserPage() {
                 setForm({
                     nome: data.name || "",
                     email: data.email || "",
-                    senha: data.senha || "",
+                    senha: "",
                     cpf: data.cpf || "",
                     nascimento: data.data_nasc ? formatDateToInput(data.data_nasc) : "",
                 });
-            } catch (error) {
-                console.log('Erro ao buscar dados do usuário:', error);
+            } catch {
                 setForm({
                     nome: authUser.name || "",
                     email: authUser.email || "",
@@ -141,39 +133,7 @@ export default function UserPage() {
         fetchUserData();
     }, [authUser, isGuest]);
 
-    async function pickImage() {
-        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
-        if (loading || removing) return;
-
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') return showInfo('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
-
-        const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8, allowsEditing: true, aspect: [1, 1] });
-        const asset = (result as any).assets ? (result as any).assets[0] : result;
-        if (!result.canceled && asset?.uri) {
-            setPickedImage(asset);
-            setAvatarUri(asset.uri);
-        }
-    }
-
-    async function removePhoto() {
-        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
-        showConfirm('Remover foto', 'Deseja remover a foto de perfil?', async () => {
-            setRemoving(true);
-            try {
-                await api.put('/edit', { removeImage: true });
-                setAvatarUri(null);
-                setPickedImage(null);
-                showInfo('Sucesso', 'Foto removida.');
-            } catch (err: any) {
-                console.log('Erro ao remover foto:', err?.response || err);
-                showInfo('Erro', err?.response?.data?.error || 'Erro ao remover foto');
-            } finally {
-                setRemoving(false);
-            }
-        });
-    }
-
+    // Funções para modais
     function showInfo(title: string, message: string) {
         setModal({ type: 'info', props: { visible: true, title, message, onClose: () => setModal(null) } });
     }
@@ -203,25 +163,57 @@ export default function UserPage() {
         }
     }
 
-    function handleSetEditing(value: boolean) {
-        if (isGuest) {
-            showInfo('Aviso', 'Convidados não podem editar o perfil.');
-            return;
+    async function pickImage() {
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        if (loading || removing) return;
+
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') return showInfo('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.8,
+            allowsEditing: true,
+            aspect: [1, 1],
+        });
+
+        const asset = (result as any).assets ? (result as any).assets[0] : result;
+        if (!result.canceled && asset?.uri) {
+            setPickedImage(asset);
+            setAvatarUri(asset.uri);
         }
+    }
+
+    async function removePhoto() {
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        showConfirm('Remover foto', 'Deseja remover a foto de perfil?', async () => {
+            setRemoving(true);
+            try {
+                await api.put('/edit', { removeImage: true });
+                setAvatarUri(null);
+                setPickedImage(null);
+                showInfo('Sucesso', 'Foto removida.');
+            } catch {
+                showInfo('Erro', 'Erro ao remover foto.');
+            } finally {
+                setRemoving(false);
+            }
+        });
+    }
+
+    function handleSetEditing(value: boolean) {
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
         setIsEditing(value);
     }
 
     async function saveProfile() {
-        if (isGuest) {
-            setIsEditing(false);
-            return showInfo('Aviso', 'Convidados não podem editar o perfil.');
-        }
+        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
         setLoading(true);
         try {
             const body: any = {};
             if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
             if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
-            if (form.senha) body.senha = form.senha;
+            if (form.senha) body.novoPassword = form.senha;
             if (form.nascimento) {
                 const [d, m, a] = form.nascimento.split('/');
                 body.nascimento = `${a}-${m}-${d}`;
@@ -235,7 +227,7 @@ export default function UserPage() {
                 const uri = pickedImage.uri;
                 const filename = uri.split('/').pop() || 'photo.jpg';
                 const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
-                dataForm.append('image', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
+                dataForm.append('banner', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
                 res = await api.put('/edit', dataForm, { headers: { 'Content-Type': 'multipart/form-data' } });
             } else {
                 res = await api.put('/edit', body);
@@ -244,15 +236,10 @@ export default function UserPage() {
             const updated = res.data;
             await updateLocalUser({ id: updated.id, name: updated.name, email: updated.email, image_url: updated.image_url });
 
-            if (form.email && form.email !== authUser?.email) {
-                showConfirm('Sucesso', 'Email atualizado! Você precisa fazer login novamente.', async () => { await signOut(); });
-            } else {
-                showInfo('Sucesso', 'Perfil atualizado com sucesso!');
-                setIsEditing(false);
-            }
-        } catch (err: any) {
-            console.log('Erro ao atualizar perfil:', err?.response || err);
-            showInfo('Erro', err?.response?.data?.error || 'Erro ao atualizar perfil');
+            showInfo('Sucesso', 'Perfil atualizado com sucesso!');
+            setIsEditing(false);
+        } catch {
+            showInfo('Erro', 'Erro ao atualizar perfil.');
         } finally {
             setLoading(false);
         }
@@ -278,11 +265,9 @@ export default function UserPage() {
                 >
                     <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
-
                 <Text style={styles.logoText}>
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                 </Text>
-
                 <View style={{ width: 24 }} />
             </LinearGradient>
 
@@ -299,11 +284,7 @@ export default function UserPage() {
                             </TouchableOpacity>
                             {avatarUri && (
                                 <TouchableOpacity style={[styles.addPhotoBtn, { right: 40 }]} onPress={removePhoto} disabled={removing || loading}>
-                                    {removing ? (
-                                        <ActivityIndicator size="small" color="#FF4B4B" />
-                                    ) : (
-                                        <Ionicons name="trash" size={26} color="#FF4B4B" />
-                                    )}
+                                    {removing ? <ActivityIndicator size="small" color="#FF4B4B" /> : <Ionicons name="trash" size={26} color="#FF4B4B" />}
                                 </TouchableOpacity>
                             )}
                         </>
@@ -314,7 +295,6 @@ export default function UserPage() {
                     Olá, <Text style={{ fontWeight: "bold" }}>{form.nome || authUser?.name || "CONVIDADO"}</Text>!
                 </Text>
 
-                {/* MENU OU FORMULÁRIO */}
                 {!isEditing || isGuest ? (
                     <View style={styles.menu}>
                         <TouchableOpacity
@@ -327,7 +307,7 @@ export default function UserPage() {
                             </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Favoritos', 'Convidados não possuem favoritos.')}>
+                        <TouchableOpacity style={styles.button} onPress={() => showInfo("Aviso", "Convidados não possuem favoritos.")}>
                             <Text style={styles.buttonText}>Favoritos</Text>
                         </TouchableOpacity>
 
@@ -335,10 +315,7 @@ export default function UserPage() {
                             <Text style={styles.buttonText}>Histórico</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.logoutButton}
-                            onPress={signOut}
-                        >
+                        <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
                             <Text style={styles.logoutText}>Sair da conta</Text>
                         </TouchableOpacity>
                     </View>
@@ -359,7 +336,6 @@ export default function UserPage() {
                             onChangeText={(t) => handleChange("email", t)}
                             keyboardType="email-address"
                         />
-
                         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { justifyContent: 'center' }]}>
                             <Text style={{ color: form.nascimento ? '#fff' : '#999' }}>
                                 {form.nascimento || "Data de nascimento"}
@@ -374,24 +350,15 @@ export default function UserPage() {
                                 onChange={handleDateChange}
                             />
                         )}
-
-                        <TouchableOpacity
-                            style={styles.saveButton}
-                            onPress={saveProfile}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <Text style={styles.saveText}>Salvar</Text>
-                            )}
+                        <TouchableOpacity style={styles.saveButton} onPress={saveProfile} disabled={loading}>
+                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveText}>Salvar</Text>}
                         </TouchableOpacity>
                     </View>
                 )}
             </ScrollView>
 
             {removing && (
-                <View style={styles.removeOverlay} pointerEvents="auto">
+                <View style={styles.removeOverlay}>
                     <View style={styles.removeBox}>
                         <ActivityIndicator size="large" color="#fff" />
                         <Text style={styles.removeText}>Removendo foto...</Text>
@@ -406,16 +373,7 @@ export default function UserPage() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#1d1d2e" },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingTop: 52,
-        paddingBottom: 10,
-        paddingHorizontal: 30,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ffffff1b",
-    },
+    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 10, paddingHorizontal: 30, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
     disabledButton: { opacity: 0.5 },
     backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
@@ -442,14 +400,4 @@ const styles = StyleSheet.create({
     modalMessage: { fontSize: 15, color: '#fff', textAlign: 'center' },
     modalBtn: { backgroundColor: '#4B3FFF', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, marginTop: 15 },
     modalBtnText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
-    favContainer: { flex: 1, backgroundColor: '#1d1d2e' },
-    favHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 52, paddingBottom: 12, paddingHorizontal: 22, borderBottomWidth: 1, borderBottomColor: '#ffffff1b' },
-    favTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-    favItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderBottomColor: '#ffffff12' },
-    favImage: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#2C2C44' },
-    favName: { color: '#fff', fontSize: 16, fontWeight: '600' },
-    favPrice: { color: '#00C851', marginTop: 6, fontWeight: '700' },
-    favViewBtn: { backgroundColor: '#5A3FFF', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 8 },
-    favViewText: { color: '#fff', fontWeight: '700' },
-    favDelBtn: { backgroundColor: '#FF4B4B', padding: 8, borderRadius: 8, marginLeft: 8 },
 });

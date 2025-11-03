@@ -97,7 +97,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
 
             const { id, name, email: userEmail, token, image_url} = response.data;
-            const data: UserProps = { id, name, email: userEmail, token, image_url, guest };
+            const data: UserProps = { 
+                id, 
+                name, 
+                email: userEmail, 
+                token, 
+                image_url, 
+                guest: guest || false  
+            };
 
             await AsyncStorage.setItem("@sujeitopizzaria", JSON.stringify(data));
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
