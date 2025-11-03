@@ -648,7 +648,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     textAlignVertical: "top",
     fontSize: 16,
-    color: "#FFF"
+    color: "#FFF",
+    marginTop: 10,
   },
   confirmButton: {
     paddingVertical: 16,

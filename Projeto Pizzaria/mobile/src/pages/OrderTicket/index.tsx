@@ -99,35 +99,35 @@ export default function OrderTicket() {
   const [loadingItens, setLoadingItens] = useState(false);
 
 
-useEffect(() => {
-  if (!comanda?.comandaId) return;
+  useEffect(() => {
+    if (!comanda?.comandaId) return;
 
-  let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
 
-  async function loadPedidos() {
-    try {
-      const response = await api.get('/pedido/listaPorComanda', {
-        params: { comanda_id: comanda?.comandaId }
-      });
-      setPedidos(response.data);
-      setError('');
-    } catch (err: any) {
-      console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
-      setError("Erro ao carregar pedidos");
-    } finally {
-      setLoading(false);
+    async function loadPedidos() {
+      try {
+        const response = await api.get('/pedido/listaPorComanda', {
+          params: { comanda_id: comanda?.comandaId }
+        });
+        setPedidos(response.data);
+        setError('');
+      } catch (err: any) {
+        console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
+        setError("Erro ao carregar pedidos");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  // 🔹 Carrega assim que o componente monta
-  loadPedidos();
+    // 🔹 Carrega assim que o componente monta
+    loadPedidos();
 
-  // 🔹 Recarrega automaticamente a cada 10 segundos
-  interval = setInterval(loadPedidos, 5000);
+    // 🔹 Recarrega automaticamente a cada 10 segundos
+    interval = setInterval(loadPedidos, 5000);
 
-  // 🔹 Limpa o intervalo quando o componente for desmontado
-  return () => clearInterval(interval);
-}, [comanda]);
+    // 🔹 Limpa o intervalo quando o componente for desmontado
+    return () => clearInterval(interval);
+  }, [comanda]);
 
   // useEffect(() => {
   //   async function loadPedidos() {
@@ -309,7 +309,10 @@ useEffect(() => {
               </View>
 
               <Text style={styles.dateText}>
-                {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
+                Feito às {new Date(pedido.created_at).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </Text>
 
               {/* Show items when pedido is open */}
