@@ -184,22 +184,22 @@ export default function UserPage() {
         }
     }
 
-    async function removePhoto() {
-        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
-        showConfirm('Remover foto', 'Deseja remover a foto de perfil?', async () => {
-            setRemoving(true);
-            try {
-                await api.put('/edit', { removeImage: true });
-                setAvatarUri(null);
-                setPickedImage(null);
-                showInfo('Sucesso', 'Foto removida.');
-            } catch {
-                showInfo('Erro', 'Erro ao remover foto.');
-            } finally {
-                setRemoving(false);
-            }
-        });
-    }
+    // async function removePhoto() {
+    //     if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+    //     showConfirm('Remover foto', 'Deseja remover a foto de perfil?', async () => {
+    //         setRemoving(true);
+    //         try {
+    //             await api.put('/edit', { removeImage: true });
+    //             setAvatarUri(null);
+    //             setPickedImage(null);
+    //             showInfo('Sucesso', 'Foto removida.');
+    //         } catch {
+    //             showInfo('Erro', 'Erro ao remover foto.');
+    //         } finally {
+    //             setRemoving(false);
+    //         }
+    //     });
+    // }
 
     function handleSetEditing(value: boolean) {
         if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
@@ -214,10 +214,15 @@ export default function UserPage() {
             if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
             if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
             if (form.senha) body.novoPassword = form.senha;
-            if (form.nascimento) {
-                const [d, m, a] = form.nascimento.split('/');
-                body.nascimento = `${a}-${m}-${d}`;
-            }
+
+            const [d, m, a] = form.nascimento.split('/');
+            const date = new Date(parseInt(a), parseInt(m) - 1, parseInt(d));
+            date.setDate(date.getDate() + 1); // Gambiarra para ajustar a data
+            const nextDay = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            body.nascimento = `${year}-${month}-${nextDay}`;
+            // console.log('Enviando data (compensada):', body.nascimento);
             if (!Object.keys(body).length && !pickedImage) return showInfo('Aviso', 'Nenhuma alteração foi feita.');
 
             let res;
@@ -282,11 +287,6 @@ export default function UserPage() {
                             <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>
                                 <Ionicons name="add-circle" size={28} color={loading || removing ? "#777" : "#FF4B4B"} />
                             </TouchableOpacity>
-                            {avatarUri && (
-                                <TouchableOpacity style={[styles.addPhotoBtn, { right: 40 }]} onPress={removePhoto} disabled={removing || loading}>
-                                    {removing ? <ActivityIndicator size="small" color="#FF4B4B" /> : <Ionicons name="trash" size={26} color="#FF4B4B" />}
-                                </TouchableOpacity>
-                            )}
                         </>
                     )}
                 </View>
