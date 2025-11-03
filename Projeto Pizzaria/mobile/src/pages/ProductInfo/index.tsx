@@ -179,7 +179,7 @@ export default function ProductInfo() {
                 style={styles.pointsContainer}
                 onPress={handlePointsInfo}
               >
-                <Ionicons name="star" size={21} color="#FFD700" />
+                <Ionicons name="star" size={21} color="#ffde09ff" />
                 <Text style={styles.pointsText}>{product.points.toFixed(1)} pts</Text>
               </TouchableOpacity>
 
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pointsText: {
-    color: "#FFD700",
+    color: "#ffde09ff",
     fontWeight: "700",
     marginLeft: 6,
     fontSize: 20,
