@@ -316,7 +316,7 @@ export default function Payment() {
               O garçom está a caminho com sua comanda!
             </Text>
             <TouchableOpacity
-              style={styles.modalButtonConfirm}
+              style={styles.modalButtonConfirm2}
               onPress={handleFecharGarcom}
             >
               <Text style={styles.modalButtonText}>Fechar</Text>
@@ -520,6 +520,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#00C851",
     paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5
+  },
+  modalButtonConfirm2: {
+    // flex: 1,
+    backgroundColor: "#00C851",
+    padding: 12,
     borderRadius: 10,
     alignItems: "center",
     marginHorizontal: 5
