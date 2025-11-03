@@ -52,8 +52,12 @@ class EditClienteService {
       throw new Error("Cliente não encontrado.");
     }
 
+    // ===== Bloquear guest =====
+    if ((clienteAtual as any).isGuest) {
+      throw new Error("O usuário não pode ser alterado. Faça login para continuar.");
+    }
+
     // ===== Upload de imagem =====
-    // removeImage tem prioridade: limpa o campo image_url no banco
     if (removeImage) {
       dataToUpdate.image_url = null as any;
     } else if (banner) {
@@ -86,7 +90,7 @@ class EditClienteService {
       } catch (error) {
         throw new Error("Falha ao enviar a imagem para o Cloudinary: " + error);
       }
-  }
+    }
 
     // ===== Atualizar nome =====
     if (novoName && novoName !== clienteAtual.name) {
