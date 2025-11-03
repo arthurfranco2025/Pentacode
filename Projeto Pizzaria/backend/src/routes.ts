@@ -88,7 +88,7 @@ router.delete("/category/delete", isAuthenticated, new DeleteCategoryController(
 router.post('/cadastro', new CreateClienteController().handle)
 router.post('/login', new AuthClienteController().handle)
 router.get('/me', isAuthenticated, new DetailClienteController().handle.bind(new DetailClienteController()))
-router.put("/edit", isAuthenticated, upload.single('image'), new EditClienteController().handle.bind(new EditClienteController()));
+router.put("/edit", isAuthenticated, upload.single('banner'), new EditClienteController().handle.bind(new EditClienteController()));
 router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
 
 //FAVORITOS ROUTE

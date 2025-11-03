@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
     ScrollView,
     Modal,
+    FlatList,
     Platform,
     Alert,
 } from "react-native";
@@ -18,6 +19,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import { formatarPreco } from "../../components/utils/formatPrice";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 type RootStackParamList = {
@@ -80,6 +82,10 @@ const ConfirmModal: React.FC<ModalProps> = ({
 export default function UserPage() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { user: authUser, updateLocalUser, signOut } = useContext(AuthContext);
+
+    const [favoritesVisible, setFavoritesVisible] = useState(false);
+    const [favoritesLoading, setFavoritesLoading] = useState(false);
+    const [favoritesList, setFavoritesList] = useState<any[]>([]); // { favorito, product }
 
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -149,6 +155,17 @@ export default function UserPage() {
         return `${day}/${month}/${year}`;
     }
 
+    function formatPriceForList(price: any) {
+        try {
+            if (price === undefined || price === null) return "--";
+            // price can be number or string
+            const num = typeof price === 'string' ? parseFloat(price) : price;
+            return formatarPreco(num);
+        } catch (e) {
+            return "--";
+        }
+    }
+
     function handleChange(field: string, value: string) {
         setForm(prev => ({ ...prev, [field]: value }));
     }
@@ -207,48 +224,206 @@ export default function UserPage() {
     }
 
     async function saveProfile() {
-        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        if (isGuest) {
+            console.log("[saveProfile] Usuário convidado — edição bloqueada.");
+            return showInfo("Aviso", "Convidados não podem editar o perfil.");
+        }
+
+        console.log("[saveProfile] Iniciando atualização de perfil...");
         setLoading(true);
+
         try {
             const body: any = {};
+
+            console.log("[saveProfile] Form recebido:", form);
+            console.log("[saveProfile] Usuário autenticado:", authUser);
+
             if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
-            if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
+            if (form.email && form.email !== authUser?.email) {
+                body.novoEmail = form.email;
+                body.confirmEmail = form.email;
+            }
             if (form.senha) body.novoPassword = form.senha;
 
-            const [d, m, a] = form.nascimento.split('/');
+            // Log de validação de data
+            console.log("[saveProfile] Data digitada:", form.nascimento);
+            const [d, m, a] = form.nascimento.split("/");
             const date = new Date(parseInt(a), parseInt(m) - 1, parseInt(d));
-            date.setDate(date.getDate() + 1); // Gambiarra para ajustar a data
-            const nextDay = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            date.setDate(date.getDate() + 1); // ajuste
+            const nextDay = date.getDate().toString().padStart(2, "0");
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
             const year = date.getFullYear();
             body.nascimento = `${year}-${month}-${nextDay}`;
-            // console.log('Enviando data (compensada):', body.nascimento);
-            if (!Object.keys(body).length && !pickedImage) return showInfo('Aviso', 'Nenhuma alteração foi feita.');
+            console.log("[saveProfile] Data formatada para envio:", body.nascimento);
 
-            let res;
-            if (pickedImage) {
-                const dataForm = new FormData();
-                Object.keys(body).forEach(k => dataForm.append(k, body[k]));
-                const uri = pickedImage.uri;
-                const filename = uri.split('/').pop() || 'photo.jpg';
-                const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
-                dataForm.append('banner', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
-                res = await api.put('/edit', dataForm, { headers: { 'Content-Type': 'multipart/form-data' } });
-            } else {
-                res = await api.put('/edit', body);
+            if (!Object.keys(body).length && !pickedImage) {
+                console.log("[saveProfile] Nenhuma alteração detectada.");
+                return showInfo("Aviso", "Nenhuma alteração foi feita.");
             }
 
-            const updated = res.data;
-            await updateLocalUser({ id: updated.id, name: updated.name, email: updated.email, image_url: updated.image_url });
+            let res;
 
-            showInfo('Sucesso', 'Perfil atualizado com sucesso!');
+            if (pickedImage) {
+                console.log("[saveProfile] Enviando com imagem:", pickedImage.uri);
+                const dataForm = new FormData();
+
+                Object.keys(body).forEach((k) => dataForm.append(k, body[k]));
+                const uri = pickedImage.uri;
+                const filename = uri.split("/").pop() || "photo.jpg";
+                const ext = filename.split(".").pop()?.toLowerCase() || "jpg";
+
+                console.log("[saveProfile] Arquivo:", { filename, ext });
+
+                dataForm.append(
+                    "banner",
+                    {
+                        uri:
+                            Platform.OS === "ios" && uri.startsWith("file://")
+                                ? uri
+                                : uri,
+                        name: filename,
+                        type: ext === "png" ? "image/png" : "image/jpeg",
+                    } as any
+                );
+
+                console.log("[saveProfile] Corpo final (FormData):", dataForm);
+                res = await api.put("/edit", dataForm, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+            } else {
+                console.log("[saveProfile] Enviando sem imagem. Body:", body);
+                res = await api.put("/edit", body);
+            }
+
+            console.log("[saveProfile] Resposta da API:", res.data);
+
+            const updated = res.data;
+            await updateLocalUser({
+                id: updated.id,
+                name: updated.name,
+                email: updated.email,
+                image_url: updated.image_url,
+            });
+
+            console.log("[saveProfile] Usuário local atualizado com sucesso.");
+            showInfo("Sucesso", "Perfil atualizado com sucesso!");
             setIsEditing(false);
-        } catch {
-            showInfo('Erro', 'Erro ao atualizar perfil.');
+        } catch (error: any) {
+            console.error("[saveProfile] Erro ao atualizar perfil:", error);
+            console.log("[saveProfile] Erro detalhado:", error.response?.data || error.message);
+            showInfo("Erro", "Erro ao atualizar perfil.");
         } finally {
+            console.log("[saveProfile] Finalizando (loading = false)");
             setLoading(false);
         }
     }
+
+    // async function saveProfile() {
+    //     if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+    //     setLoading(true);
+    //     try {
+    //         const body: any = {};
+    //         if (form.nome && form.nome !== authUser?.name) body.novoName = form.nome;
+    //         if (form.email && form.email !== authUser?.email) { body.novoEmail = form.email; body.confirmEmail = form.email; }
+    //         if (form.senha) body.novoPassword = form.senha;
+
+    //         const [d, m, a] = form.nascimento.split('/');
+    //         const date = new Date(parseInt(a), parseInt(m) - 1, parseInt(d));
+    //         date.setDate(date.getDate() + 1); // Gambiarra para ajustar a data
+    //         const nextDay = date.getDate().toString().padStart(2, '0');
+    //         const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    //         const year = date.getFullYear();
+    //         body.nascimento = `${year}-${month}-${nextDay}`;
+    //         // console.log('Enviando data (compensada):', body.nascimento);
+    //         if (!Object.keys(body).length && !pickedImage) return showInfo('Aviso', 'Nenhuma alteração foi feita.');
+
+    //         let res;
+    //         if (pickedImage) {
+    //             const dataForm = new FormData();
+    //             Object.keys(body).forEach(k => dataForm.append(k, body[k]));
+    //             const uri = pickedImage.uri;
+    //             const filename = uri.split('/').pop() || 'photo.jpg';
+    //             const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
+    //             dataForm.append('banner', { uri: Platform.OS === 'ios' && uri.startsWith('file://') ? uri : uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
+    //             res = await api.put('/edit', dataForm, { headers: { 'Content-Type': 'multipart/form-data' } });
+    //         } else {
+    //             res = await api.put('/edit', body);
+    //         }
+
+    //         const updated = res.data;
+    //         await updateLocalUser({ id: updated.id, name: updated.name, email: updated.email, image_url: updated.image_url });
+
+    //         showInfo('Sucesso', 'Perfil atualizado com sucesso!');
+    //         setIsEditing(false);
+    //     } catch {
+    //         showInfo('Erro', 'Erro ao atualizar perfil.');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }
+
+    async function openFavorites() {
+        if (isGuest) {
+            Alert.alert('Aviso', 'Convidados não podem ver favoritos.');
+            return;
+        }
+        setFavoritesVisible(true);
+        setFavoritesLoading(true);
+
+        try {
+            const favRes = await api.get('/favoritos', { params: { cliente_id: authUser.id } });
+            const favoritos: any[] = favRes.data || [];
+
+            const catRes = await api.get('/category/list');
+            const categorias = catRes.data || [];
+
+            const productsMap: Record<string, any> = {};
+            await Promise.all(categorias.map(async (cat: any) => {
+                try {
+                    const pRes = await api.get('/category/products', { params: { category_id: cat.id } });
+                    const prods: any[] = pRes.data || [];
+                    prods.forEach(p => { productsMap[p.id] = p; });
+                } catch (err) {
+                    // ignore individual category failures
+                    console.log('Erro ao buscar produtos da categoria', cat.id, err);
+                }
+            }));
+
+            const favWithProduct = favoritos.map(fav => ({ favorito: fav, product: productsMap[fav.product_id] || null }));
+            setFavoritesList(favWithProduct);
+        } catch (err) {
+            console.log('Erro ao buscar favoritos:', err);
+            Alert.alert('Erro', 'Não foi possível carregar os favoritos.');
+            setFavoritesList([]);
+        } finally {
+            setFavoritesLoading(false);
+        }
+    }
+
+    function handleOpenProduct(product: any) {
+        setFavoritesVisible(false);
+        // navegar para o ProductInfo
+        navigation.navigate('ProductInfo' as any, { product });
+    }
+
+    async function handleRemoveFavorite(favoritoId: string) {
+        Alert.alert('Remover favorito', 'Deseja remover este favorito?', [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+                text: 'Remover', style: 'destructive', onPress: async () => {
+                    try {
+                        await api.delete('/favorito/delete', { data: { id: favoritoId } });
+                        setFavoritesList(prev => prev.filter(p => p.favorito.id !== favoritoId));
+                        Alert.alert('Sucesso', 'Favorito removido.');
+                    } catch (err: any) {
+                        console.log('Erro ao remover favorito:', err?.response || err);
+                        Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover favorito');
+                    }
+                }
+            }
+        ]);
+    }
+
 
     return (
         <View style={styles.container}>
@@ -307,7 +482,7 @@ export default function UserPage() {
                             </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={() => showInfo("Aviso", "Convidados não possuem favoritos.")}>
+                        <TouchableOpacity style={styles.button} onPress={() => openFavorites()}>
                             <Text style={styles.buttonText}>Favoritos</Text>
                         </TouchableOpacity>
 
@@ -357,14 +532,61 @@ export default function UserPage() {
                 )}
             </ScrollView>
 
-            {removing && (
+            {/* FAVORITOS MODAL */}
+            <Modal visible={favoritesVisible} animationType="slide" onRequestClose={() => setFavoritesVisible(false)}>
+                <View style={styles.favContainer}>
+                    <View style={styles.favHeader}>
+                        <TouchableOpacity onPress={() => setFavoritesVisible(false)}>
+                            <Ionicons name="arrow-back" size={24} color="#fff" />
+                        </TouchableOpacity>
+                        <Text style={styles.favTitle}>Meus Favoritos</Text>
+                        <View style={{ width: 24 }} />
+                    </View>
+
+                    {favoritesLoading ? (
+                        <ActivityIndicator size="large" color="#FF4B4B" style={{ marginTop: 40 }} />
+                    ) : (
+                        <FlatList
+                            data={favoritesList}
+                            keyExtractor={(item) => item.favorito.id}
+                            renderItem={({ item }) => (
+                                <View style={styles.favItem}>
+                                    <Image
+                                        source={item.product ? { uri: item.product.image_url } : { uri: 'https://img.icons8.com/?size=100&id=101158&format=png&color=FFFFFF' }}
+                                        style={styles.favImage}
+                                    />
+                                    <View style={{ flex: 1, marginLeft: 12 }}>
+                                        <Text style={styles.favName}>{item.product?.name || `Produto ${item.favorito.product_id}`}</Text>
+                                        <Text style={styles.favPrice}>{item.product ? formatPriceForList(item.product.price) : "--"}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {item.product && (
+                                            <TouchableOpacity style={styles.favViewBtn} onPress={() => handleOpenProduct(item.product)}>
+                                                <Text style={styles.favViewText}>Ver</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        <TouchableOpacity style={styles.favDelBtn} onPress={() => handleRemoveFavorite(item.favorito.id)}>
+                                            <Ionicons name="trash" size={20} color="#fff" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                            ListEmptyComponent={() => (
+                                <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>Nenhum favorito encontrado.</Text>
+                            )}
+                        />
+                    )}
+                </View>
+            </Modal>
+
+            {/* {removing && (
                 <View style={styles.removeOverlay}>
                     <View style={styles.removeBox}>
                         <ActivityIndicator size="large" color="#fff" />
                         <Text style={styles.removeText}>Removendo foto...</Text>
                     </View>
                 </View>
-            )}
+            )} */}
             {modal?.type === 'info' && <InfoModal {...modal.props} />}
             {modal?.type === 'confirm' && <ConfirmModal {...modal.props} />}
         </View>
@@ -400,4 +622,40 @@ const styles = StyleSheet.create({
     modalMessage: { fontSize: 15, color: '#fff', textAlign: 'center' },
     modalBtn: { backgroundColor: '#4B3FFF', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, marginTop: 15 },
     modalBtnText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
+    favContainer: { flex: 1, backgroundColor: '#1d1d2e' },
+    favHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 52,
+        paddingBottom: 12,
+        paddingHorizontal: 22,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ffffff1b',
+    },
+    favTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
+    favItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ffffff12',
+    },
+    favImage: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#2C2C44' },
+    favName: { color: '#fff', fontSize: 16, fontWeight: '600', marginRight: 5 },
+    favPrice: { color: '#00C851', marginTop: 6, fontWeight: '700' },
+    favViewBtn: {
+        backgroundColor: '#5A3FFF',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+    favViewText: { color: '#fff', fontWeight: '700' },
+    favDelBtn: {
+        backgroundColor: '#FF4B4B',
+        padding: 8,
+        borderRadius: 8,
+        marginLeft: 8,
+    },
+
 });
