@@ -106,6 +106,14 @@ export default function UserPage() {
 
     const isGuest = !authUser?.email || authUser?.name?.startsWith("CONVIDADO");
 
+    // Proteção contra edição por convidados
+    useEffect(() => {
+        if (isGuest && isEditing) {
+            setIsEditing(false);
+            showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        }
+    }, [isGuest, isEditing]);
+
     useEffect(() => {
         async function fetchUserData() {
             if (!authUser || isGuest) return;
@@ -181,85 +189,8 @@ export default function UserPage() {
         return `${day}/${month}/${year}`;
     }
 
-    function formatPriceForList(price: any) {
-        try {
-            if (price === undefined || price === null) return "--";
-            const num = typeof price === 'string' ? parseFloat(price) : price;
-            return formatarPreco(num);
-        } catch (e) {
-            return "--";
-        }
-    }
-
-    async function openFavorites() {
-        if (isGuest) {
-            Alert.alert('Aviso', 'Convidados não podem ver favoritos.');
-            return;
-        }
-
-        setFavoritesVisible(true);
-        setFavoritesLoading(true);
-
-        try {
-            const favRes = await api.get('/favoritos', { params: { cliente_id: authUser.id } });
-            const favoritos: any[] = favRes.data || [];
-
-            const catRes = await api.get('/category/list');
-            const categorias = catRes.data || [];
-
-            const productsMap: Record<string, any> = {};
-            await Promise.all(categorias.map(async (cat: any) => {
-                try {
-                    const pRes = await api.get('/category/products', { params: { category_id: cat.id } });
-                    const prods: any[] = pRes.data || [];
-                    prods.forEach(p => { productsMap[p.id] = p; });
-                } catch (err) {
-                    console.log('Erro ao buscar produtos da categoria', cat.id, err);
-                }
-            }));
-
-            const favWithProduct = favoritos.map(fav => ({ favorito: fav, product: productsMap[fav.product_id] || null }));
-            setFavoritesList(favWithProduct);
-        } catch (err) {
-            console.log('Erro ao buscar favoritos:', err);
-            Alert.alert('Erro', 'Não foi possível carregar os favoritos.');
-            setFavoritesList([]);
-        } finally {
-            setFavoritesLoading(false);
-        }
-    }
-
-    function handleOpenProduct(product: any) {
-        setFavoritesVisible(false);
-        navigation.navigate('ProductInfo' as any, { product });
-    }
-
-    async function handleRemoveFavorite(favoritoId: string) {
-        Alert.alert('Remover favorito', 'Deseja remover este favorito?', [
-            { text: 'Cancelar', style: 'cancel' },
-            {
-                text: 'Remover', style: 'destructive', onPress: async () => {
-                    try {
-                        await api.delete('/favorito/delete', { data: { id: favoritoId } });
-                        setFavoritesList(prev => prev.filter(p => p.favorito.id !== favoritoId));
-                        Alert.alert('Sucesso', 'Favorito removido.');
-                    } catch (err: any) {
-                        console.log('Erro ao remover favorito:', err?.response || err);
-                        Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover favorito');
-                    }
-                }
-            }
-        ]);
-    }
-
-    function formatCPF(cpf: string) {
-        const numbers = cpf.replace(/\D/g, "");
-        return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4").slice(0, 14);
-    }
-
     function handleChange(field: string, value: string) {
-        const format = field === "cpf" ? formatCPF : (v: string) => v;
-        setForm(prev => ({ ...prev, [field]: format(value) }));
+        setForm(prev => ({ ...prev, [field]: value }));
     }
 
     function handleDateChange(event: any, selectedDate?: Date) {
@@ -272,8 +203,19 @@ export default function UserPage() {
         }
     }
 
+    function handleSetEditing(value: boolean) {
+        if (isGuest) {
+            showInfo('Aviso', 'Convidados não podem editar o perfil.');
+            return;
+        }
+        setIsEditing(value);
+    }
+
     async function saveProfile() {
-        if (isGuest) return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        if (isGuest) {
+            setIsEditing(false);
+            return showInfo('Aviso', 'Convidados não podem editar o perfil.');
+        }
         setLoading(true);
         try {
             const body: any = {};
@@ -318,7 +260,6 @@ export default function UserPage() {
 
     return (
         <View style={styles.container}>
-            {/* HEADER */}
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -329,7 +270,7 @@ export default function UserPage() {
                     style={styles.backButton}
                     onPress={() => {
                         if (isEditing) {
-                            setIsEditing(false);
+                            handleSetEditing(false);
                         } else {
                             navigation.navigate("Home");
                         }
@@ -346,13 +287,12 @@ export default function UserPage() {
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* AVATAR */}
                 <View style={styles.avatarWrapper}>
                     <Image
                         source={avatarUri ? { uri: avatarUri } : require("../../assets/user.png")}
                         style={styles.avatar}
                     />
-                    {isEditing && (
+                    {isEditing && !isGuest && (
                         <>
                             <TouchableOpacity style={styles.addPhotoBtn} onPress={pickImage} disabled={loading || removing}>
                                 <Ionicons name="add-circle" size={28} color={loading || removing ? "#777" : "#FF4B4B"} />
@@ -374,19 +314,20 @@ export default function UserPage() {
                     Olá, <Text style={{ fontWeight: "bold" }}>{form.nome || authUser?.name || "CONVIDADO"}</Text>!
                 </Text>
 
-                {/* PERFIL */}
-                {!isEditing ? (
+                {/* MENU OU FORMULÁRIO */}
+                {!isEditing || isGuest ? (
                     <View style={styles.menu}>
-                        {!isGuest && (
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => setIsEditing(true)}
-                            >
-                                <Text style={styles.buttonText}>Editar Perfil</Text>
-                            </TouchableOpacity>
-                        )}
+                        <TouchableOpacity
+                            style={[styles.button, isGuest && styles.disabledButton]}
+                            onPress={() => handleSetEditing(true)}
+                            disabled={isGuest}
+                        >
+                            <Text style={[styles.buttonText, isGuest && { color: "#aaa" }]}>
+                                {isGuest ? "Convidado" : "Editar Perfil"}
+                            </Text>
+                        </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={() => openFavorites()}>
+                        <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Favoritos', 'Convidados não possuem favoritos.')}>
                             <Text style={styles.buttonText}>Favoritos</Text>
                         </TouchableOpacity>
 
@@ -418,13 +359,6 @@ export default function UserPage() {
                             onChangeText={(t) => handleChange("email", t)}
                             keyboardType="email-address"
                         />
-                        <TextInput
-                            placeholder="Senha antiga"
-                            placeholderTextColor="#999"
-                            style={styles.input}
-                            value={form.cpf}
-                            onChangeText={(t) => handleChange("cpf", t)}
-                        />
 
                         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { justifyContent: 'center' }]}>
                             <Text style={{ color: form.nascimento ? '#fff' : '#999' }}>
@@ -441,15 +375,6 @@ export default function UserPage() {
                             />
                         )}
 
-                        {/* <TextInput
-                            placeholder="Senha"
-                            placeholderTextColor="#999"
-                            style={styles.input}
-                            value={form.senha}
-                            onChangeText={(t) => handleChange("senha", t)}
-                            secureTextEntry
-                        /> */}
-
                         <TouchableOpacity
                             style={styles.saveButton}
                             onPress={saveProfile}
@@ -464,53 +389,6 @@ export default function UserPage() {
                     </View>
                 )}
             </ScrollView>
-
-            {/* FAVORITOS MODAL */}
-            <Modal visible={favoritesVisible} animationType="slide" onRequestClose={() => setFavoritesVisible(false)}>
-                <View style={styles.favContainer}>
-                    <View style={styles.favHeader}>
-                        <TouchableOpacity onPress={() => setFavoritesVisible(false)}>
-                            <Ionicons name="arrow-back" size={24} color="#fff" />
-                        </TouchableOpacity>
-                        <Text style={styles.favTitle}>Meus Favoritos</Text>
-                        <View style={{ width: 24 }} />
-                    </View>
-
-                    {favoritesLoading ? (
-                        <ActivityIndicator size="large" color="#FF4B4B" style={{ marginTop: 40 }} />
-                    ) : (
-                        <FlatList
-                            data={favoritesList}
-                            keyExtractor={(item) => item.favorito.id}
-                            renderItem={({ item }) => (
-                                <View style={styles.favItem}>
-                                    <Image
-                                        source={item.product ? { uri: item.product.image_url } : { uri: 'https://img.icons8.com/?size=100&id=101158&format=png&color=FFFFFF' }}
-                                        style={styles.favImage}
-                                    />
-                                    <View style={{ flex: 1, marginLeft: 12 }}>
-                                        <Text style={styles.favName}>{item.product?.name || `Produto ${item.favorito.product_id}`}</Text>
-                                        <Text style={styles.favPrice}>{item.product ? formatPriceForList(item.product.price) : "--"}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {item.product && (
-                                            <TouchableOpacity style={styles.favViewBtn} onPress={() => handleOpenProduct(item.product)}>
-                                                <Text style={styles.favViewText}>Ver</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                        <TouchableOpacity style={styles.favDelBtn} onPress={() => handleRemoveFavorite(item.favorito.id)}>
-                                            <Ionicons name="trash" size={20} color="#fff" />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            )}
-                            ListEmptyComponent={() => (
-                                <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>Nenhum favorito encontrado.</Text>
-                            )}
-                        />
-                    )}
-                </View>
-            </Modal>
 
             {removing && (
                 <View style={styles.removeOverlay} pointerEvents="auto">
@@ -538,6 +416,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#ffffff1b",
     },
+    disabledButton: { opacity: 0.5 },
     backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
     scrollContent: { alignItems: "center", paddingVertical: 20 },

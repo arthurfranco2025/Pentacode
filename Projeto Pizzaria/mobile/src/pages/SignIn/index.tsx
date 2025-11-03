@@ -32,25 +32,21 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(""); 
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const backAction = () => {
-        navigation.goBack();
-        return true;
-      };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const backAction = () => {
+  //       navigation.goBack();
+  //       return true;
+  //     };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+  //     const backHandler = BackHandler.addEventListener(
+  //       "hardwareBackPress",
+  //       backAction
+  //     );
 
-      return () => backHandler.remove();
-    }, [navigation])
-  );
-
-  function handleGoBack() {
-    navigation.goBack();
-  }
+  //     return () => backHandler.remove();
+  //   }, [navigation])
+  // );
 
   function handleSignUp() {
     navigation.navigate("SignUp");
@@ -85,16 +81,6 @@ export default function SignIn() {
 
   return (
     <View style={styles.safeArea}>
-      <TouchableOpacity onPress={handleGoBack} style={styles.GoBack}>
-        <Image
-          source={{
-            uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/YqbjNbi1fC/m6rofw5v_expires_30_days.png",
-          }}
-          resizeMode="stretch"
-          style={styles.backIcon}
-        />
-      </TouchableOpacity>
-
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}

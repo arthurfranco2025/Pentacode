@@ -254,12 +254,6 @@ useEffect(() => {
         colors={["#3D1F93", "#1d1d2e"]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-            style={{ width: 26, height: 26 }}
-          />
-        </TouchableOpacity>
         <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
@@ -436,12 +430,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#1d1d2e"
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingTop: 52,
     paddingBottom: 14,
-    paddingHorizontal: 20, elevation: 5
   },
   logoText: {
     color: "#FFF",

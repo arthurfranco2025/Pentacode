@@ -98,7 +98,7 @@ export default function QRScanner() {
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0, y: 1 }}
-				colors={["#391D8A", "#1d1d2e"]}
+				colors={["#3D1F93", "#1d1d2e"]}
 				style={[styles.header, startCamera && styles.headerCameraOpen]}
 			>
 				<Text style={styles.logoText}>
