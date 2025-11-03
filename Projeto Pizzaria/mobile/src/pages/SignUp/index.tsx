@@ -197,7 +197,7 @@ export default function SignUp() {
               style={[styles.inputWrapper, { justifyContent: "flex-start" }]}
             >
               <Ionicons name="calendar-outline" size={20} color="#8A8A8A" style={styles.icon} />
-              <Text style={{ color: "#8A8A8A" }}>
+              <Text style={{ color: "#F0F0F0" }}>
                 {dataNasc.toLocaleDateString("pt-BR")}
               </Text>
             </TouchableOpacity>

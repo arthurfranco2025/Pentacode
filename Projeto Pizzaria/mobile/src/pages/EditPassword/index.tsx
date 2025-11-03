@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { SafeAreaView, View, ScrollView, Text, TextInput, StyleSheet, } from "react-native";
 export default () => {
 	const [textInput1, onChangeTextInput1] = useState('');
 	const [textInput2, onChangeTextInput2] = useState('');
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView  style={styles.scrollView}>
+			<ScrollView style={styles.scrollView}>
 				<View style={styles.view}>
 					<View style={styles.column}>
 						<View style={styles.view2}>
