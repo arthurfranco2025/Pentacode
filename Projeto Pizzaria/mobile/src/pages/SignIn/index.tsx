@@ -27,10 +27,10 @@ export default function SignIn() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { signIn, loadingAuth } = useContext(AuthContext);
 
-  const [login, setLogin] = useState(""); 
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -131,6 +131,12 @@ export default function SignIn() {
             </View>
           </View>
 
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text style={styles.forgotPassword}>
+              Esqueceu sua senha? <Text style={styles.linkText}>Clique aqui</Text>
+            </Text>
+          </TouchableOpacity>
+
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loadingAuth}>
@@ -146,12 +152,6 @@ export default function SignIn() {
           <TouchableOpacity onPress={handleSignUp}>
             <Text style={styles.loginText}>
               Não tem uma conta? <Text style={styles.linkText}>Cadastre-se</Text>
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={handleForgotPassword}>
-            <Text style={styles.loginText}>
-              Esqueceu sua senha? <Text style={styles.linkText}>Clique aqui</Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   inputGroup: {
-    marginBottom: 18,
+    marginBottom: 15,
   },
   inputLabel: {
     color: "#fff",
@@ -250,6 +250,12 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontWeight: "bold",
     color: "#FF3F4B",
+  },
+  forgotPassword: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 20,
   },
   backIcon: {
     width: 28,
