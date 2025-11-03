@@ -18,6 +18,7 @@ import { CreateClienteController } from './controllers/cliente/CreateClienteCont
 import { AuthClienteController } from './controllers/cliente/AuthClienteController'
 import { EditClienteController } from './controllers/cliente/EditClienteController'
 import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPasswordClienteController'
+import { RequestPasswordResetController } from './controllers/cliente/RequestPasswordResetController'
 import { DetailClienteController } from './controllers/cliente/DetailClienteController'
 
 import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
@@ -90,6 +91,8 @@ router.post('/login', new AuthClienteController().handle)
 router.get('/me', isAuthenticated, new DetailClienteController().handle.bind(new DetailClienteController()))
 router.put("/edit", isAuthenticated, upload.single('banner'), new EditClienteController().handle.bind(new EditClienteController()));
 router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
+// Rota para solicitar envio de email de redefinição (envia link/token por email)
+router.post('/login/solicitarRedefinicaoSenha', new RequestPasswordResetController().handle.bind(new RequestPasswordResetController()));
 
 //FAVORITOS ROUTE
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)

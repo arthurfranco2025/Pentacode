@@ -9,7 +9,7 @@ import { AuthProvider } from './src/contexts/AuthContext';
 export default function App() {
   useEffect(() => {
     NavigationBar.setVisibilityAsync('hidden');
-    NavigationBar.setBehaviorAsync('overlay-swipe');
+    // NavigationBar.setBehaviorAsync('overlay-swipe');
   }, []);
 
   return (

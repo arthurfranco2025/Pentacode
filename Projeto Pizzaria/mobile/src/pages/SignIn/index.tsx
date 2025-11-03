@@ -103,6 +103,8 @@ export default function SignIn() {
                 placeholderTextColor="#8A8A8A"
                 value={login}
                 onChangeText={(text) => { setLogin(text); setError(""); }}
+                keyboardType="email-address"
+                autoCapitalize="none"
                 style={styles.input}
               />
             </View>

@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { api } from "../../services/api";
 
 type RootStackParamList = {
   SignIn: undefined;
@@ -27,6 +28,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+
   async function handleForgotPassword() {
     if (!email) {
       setError("Por favor, insira seu email");
@@ -35,15 +37,20 @@ export default function ForgotPassword() {
 
     try {
       setLoading(true);
-      // Aqui você faria a requisição real para o backend futuramente.
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // simula envio
-      setLoading(false);
       setError("");
-      alert("Link de redefinição enviado para o seu email!");
-      navigation.navigate("SignIn");
-    } catch (err) {
+
+      await api.post('/login/solicitarRedefinicaoSenha', { email });
+
       setLoading(false);
-      setError("Erro ao enviar email. Tente novamente.");
+      alert('Email enviado! Verifique sua caixa de entrada para instruções.');
+      navigation.navigate('SignIn');
+    } catch (err: any) {
+      setLoading(false);
+      console.error('Erro completo:', err);
+      console.error('Status:', err?.response?.status);
+      console.error('Dados:', err?.response?.data);
+      const msg = err?.response?.data?.message || err?.message || 'Erro ao solicitar redefinição. Tente novamente.';
+      setError(msg);
     }
   }
 
@@ -52,7 +59,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -96,7 +103,6 @@ export default function ForgotPassword() {
               />
             </View>
           </View>
-
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity
@@ -116,7 +122,7 @@ export default function ForgotPassword() {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 

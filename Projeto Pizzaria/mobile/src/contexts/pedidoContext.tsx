@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { api } from '../services/api'; 
+import { api } from '../services/api';
 
 interface PedidoItem {
     item_id: string;
@@ -17,6 +17,9 @@ interface PedidoItem {
         price: number;
         image_url?: string;
     };
+    paidWithPoints?: boolean;
+    pointsUsed?: number;
+    totalPoints?: number;
 }
 
 interface pedidoContextType {

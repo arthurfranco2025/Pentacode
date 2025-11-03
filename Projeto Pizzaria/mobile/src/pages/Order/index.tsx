@@ -15,6 +15,7 @@ import { usePedido } from "../../contexts/pedidoContext";
 import { useComanda } from "../../contexts/comandaContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamsList } from "../../routes/app.routes";
+import { Ionicons } from '@expo/vector-icons';
 
 type OrderScreenNavigationProp = NativeStackNavigationProp<
     StackParamsList,
@@ -37,6 +38,9 @@ export default function Order() {
     const comandaId = comanda?.comandaId ?? null;
     const mesaId = comanda?.mesaId ?? null;
     const numero_mesa = comanda?.numero_mesa ?? null;
+
+    const totalPoints = pedido.reduce((acc, item) => acc + (item.pointsUsed ?? 0), 0);
+    const totalMoney = pedido.reduce((acc, item) => acc + (item.paidWithPoints ? 0 : (item.totalPrice ?? 0)), 0);
 
     async function handleFinishPedido() {
         if (!pedidoId) {
@@ -180,10 +184,18 @@ export default function Order() {
                                 </View>
                             )}
 
-                            <Text style={styles.totalValue}>
+                            <Text style={[styles.totalValue, { color: item.paidWithPoints ? "#ffde09ff" : "#00C851" }]}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {formatarPreco(item.totalPrice ?? 0)}
+                                {item.paidWithPoints ? (
+                                    <>
+                                        <Ionicons name="star" size={16} color="#ffde09ff" />{" "}
+                                        {(item.pointsUsed ?? 0).toFixed(1)} pts
+                                    </>
+                                ) : (
+                                    formatarPreco(item.totalPrice ?? 0)
+                                )}
                             </Text>
+
                         </View>
                         <TouchableOpacity
                             style={styles.deleteButton}
@@ -194,14 +206,31 @@ export default function Order() {
                                 style={{ width: 24, height: 24 }}
                             />
                         </TouchableOpacity>
-
                     </View>
                 ))}
 
-                <Text style={[styles.totalValue, { textAlign: 'center', fontSize: 18 }]}>
-                    <Text style={{ color: "#FFFFFF" }}>Valor total do pedido: </Text>
-                    <Text>{formatarPreco(totalPedido)}</Text>
-                </Text>
+
+                <View style={{ alignItems: 'center', marginTop: 10 }}>
+                    <Text style={[styles.totalValue, { fontSize: 18, color: '#FFFFFF' }]}>
+                        Valor total do pedido:
+                    </Text>
+
+                    {totalMoney > 0 && (
+                        <Text style={[styles.totalValue, { color: '#00C851', fontSize: 18 }]}>
+                            {formatarPreco(totalMoney)}
+                        </Text>
+                    )}
+
+                    {totalPoints > 0 && (
+                        <Text style={[styles.totalValue, { color: '#ffde09ff', fontSize: 18, flexDirection: 'row', alignItems: 'center' }]}>
+                            <Ionicons name="star" size={16} color="#ffde09ff" />{" "}
+                            {totalPoints.toFixed(1)} pts
+                        </Text>
+                    )}
+                </View>
+
+
+
             </ScrollView>
 
             <View style={styles.buttonsRow}>

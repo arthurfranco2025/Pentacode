@@ -179,7 +179,7 @@ export default function ProductInfo() {
                 style={styles.pointsContainer}
                 onPress={handlePointsInfo}
               >
-                <Ionicons name="star" size={21} color="#FFD700" />
+                <Ionicons name="star" size={21} color="#ffde09ff" />
                 <Text style={styles.pointsText}>{product.points.toFixed(1)} pts</Text>
               </TouchableOpacity>
 
@@ -195,10 +195,6 @@ export default function ProductInfo() {
           <TouchableOpacity
             style={styles.addButton}
             onPress={() => {
-              if (isGuest) {
-                Alert.alert("Aviso", "Convidados não podem adicionar produtos ao pedido.");
-                return;
-              }
               navigation.navigate("CustomizeProduct", { product });
             }}
           >
@@ -265,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pointsText: {
-    color: "#FFD700",
+    color: "#ffde09ff",
     fontWeight: "700",
     marginLeft: 6,
     fontSize: 20,
