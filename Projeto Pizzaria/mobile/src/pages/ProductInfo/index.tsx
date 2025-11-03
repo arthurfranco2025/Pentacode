@@ -45,8 +45,11 @@ export default function ProductInfo() {
   const route = useRoute<RouteParams>();
   const { product } = route.params;
 
-  // Busca favoritos
+  const isGuest = user?.guest || !user?.email;
+
+  // Busca favoritos (só se não for guest)
   useEffect(() => {
+    if (isGuest) return;
     async function fetchFavorites() {
       try {
         const response = await api.get("/favoritos", {
@@ -59,9 +62,14 @@ export default function ProductInfo() {
       }
     }
     fetchFavorites();
-  }, [product.id, user.id]);
+  }, [product.id, user.id, isGuest]);
 
   const handleFavoritePress = async () => {
+    if (isGuest) {
+      Alert.alert("Aviso", "Convidados não podem adicionar favoritos.");
+      return;
+    }
+
     Animated.sequence([
       Animated.timing(favoriteAnim, {
         toValue: 1.5,
@@ -92,7 +100,6 @@ export default function ProductInfo() {
         const favoritoToRemove = favoritos.find(
           fav => fav.product_id === product.id
         );
-
         if (favoritoToRemove) {
           await api.delete("/favorito/delete", {
             data: { id: favoritoToRemove.id },
@@ -145,26 +152,25 @@ export default function ProductInfo() {
         <View style={styles.contentContainer}>
           <View style={styles.titleRow}>
             <Text style={styles.title}>{product.name}</Text>
-            <TouchableOpacity onPress={handleFavoritePress}>
-              <Animated.Image
-                source={{
-                  uri: isFavorite
-                    ? "https://img.icons8.com/ios-filled/50/FF3F4B/like.png"
-                    : "https://img.icons8.com/ios/50/ffffff/like--v1.png",
-                }}
-                style={[
-                  styles.favoriteIcon,
-                  { transform: [{ scale: favoriteAnim }] },
-                ]}
-              />
-            </TouchableOpacity>
+            {/* 🔹 Favorito: só mostra se não for guest */}
+            {!isGuest && (
+              <TouchableOpacity onPress={handleFavoritePress}>
+                <Animated.Image
+                  source={{
+                    uri: isFavorite
+                      ? "https://img.icons8.com/ios-filled/50/FF3F4B/like.png"
+                      : "https://img.icons8.com/ios/50/ffffff/like--v1.png",
+                  }}
+                  style={[styles.favoriteIcon, { transform: [{ scale: favoriteAnim }] }]}
+                />
+              </TouchableOpacity>
+            )}
           </View>
 
           <Text style={styles.desc}>
             {product.description || "Sem descrição disponível."}
           </Text>
 
-          {/* 🔹 PREÇOS (dinheiro e pontos com botão) */}
           <View style={styles.priceRow}>
             <Text style={styles.price}>{formatarPreco(product.price)}</Text>
 
@@ -173,7 +179,7 @@ export default function ProductInfo() {
                 style={styles.pointsContainer}
                 onPress={handlePointsInfo}
               >
-                <Ionicons name="star" size={21} color="#FFD700" />
+                <Ionicons name="star" size={21} color="#ffde09ff" />
                 <Text style={styles.pointsText}>{product.points.toFixed(1)} pts</Text>
               </TouchableOpacity>
 
@@ -188,7 +194,9 @@ export default function ProductInfo() {
 
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => navigation.navigate("CustomizeProduct", { product })}
+            onPress={() => {
+              navigation.navigate("CustomizeProduct", { product });
+            }}
           >
             <Text style={styles.addButtonText}>Adicionar ao Pedido</Text>
           </TouchableOpacity>
@@ -253,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pointsText: {
-    color: "#FFD700",
+    color: "#ffde09ff",
     fontWeight: "700",
     marginLeft: 6,
     fontSize: 20,

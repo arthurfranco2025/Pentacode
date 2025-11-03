@@ -47,6 +47,7 @@ interface Adicional {
     id: string;
     nome: string;
     price: string;
+    points?: number; // Adiciona pontos aos extras, se existirem
 }
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -170,11 +171,12 @@ export default function CustomizeProduct() {
         setError("");
     };
 
-    // Atualiza preço e pontos conforme quantidade e adicionais
+    // Atualiza preço e pontos conforme quantidade, 2º sabor e adicionais
     useEffect(() => {
         const qtd = quantity;
         const price1 = Number(product.price);
         const price2 = selectedSecondFlavor ? Number(selectedSecondFlavor.price) : 0;
+
         const extrasPrice = Object.entries(selectedExtras).reduce((acc, [extraId, isSelected]) => {
             if (isSelected) {
                 const extra = extras.find(e => e.id === extraId);
@@ -189,9 +191,19 @@ export default function CustomizeProduct() {
         } else {
             finalPrice = (price1 + extrasPrice) * qtd;
         }
-
         setTotalPrice(finalPrice);
-        setTotalPoints((product.points || 0) * qtd);
+
+        // 🔹 PONTOS: produto base + 2º sabor + extras
+        const extrasPoints = Object.entries(selectedExtras).reduce((acc, [extraId, isSelected]) => {
+            if (isSelected) {
+                const extra = extras.find(e => e.id === extraId);
+                return acc + (extra?.points || 0);
+            }
+            return acc;
+        }, 0);
+
+        const secondFlavorPoints = selectedSecondFlavor?.points || 0;
+        setTotalPoints((product.points + secondFlavorPoints + extrasPoints) * qtd);
     }, [quantity, selectedExtras, extras, selectedSecondFlavor, product.price, product.points]);
 
     // Função de adicionar ao pedido
@@ -303,6 +315,70 @@ export default function CustomizeProduct() {
         setError("");
     };
 
+    const handleAddWithPoints = async () => {
+        try {
+            if (!user?.id) throw new Error("Cliente não logado");
+
+            let pedido_id = pedidoId;
+
+            // Cria pedido se não existir
+            if (!pedido_id) {
+                const pedidoResponse = await api.post("/pedido", { cliente_id: user.id });
+                pedido_id = pedidoResponse.data.id;
+                setPedidoId(pedido_id);
+            }
+
+            const payload = {
+                product_id: product.id,
+                product2_id: selectedSecondFlavor?.id,
+                pedido_id,
+                qtd: quantity,
+                removidos: Object.entries(selectedIngredients)
+                    .filter(([_, selected]) => !selected)
+                    .map(([id]) => ({ id })),
+                adicionais: Object.entries(selectedExtras)
+                    .filter(([_, selected]) => selected)
+                    .map(([id]) => ({ id })),
+                observacoes: observation,
+                paidWithPoints: true, // 🔹 Indica pagamento com pontos
+                pointsUsed: totalPoints   // 🔹 Quantidade de pontos
+            };
+
+            const response = await api.post("/item", payload);
+            const { item } = response.data;
+
+            addItem({
+                item_id: item.id,
+                name: product.name,
+                image_url: product.image_url,
+                qtd: quantity,
+                price: 0, // como é pago com pontos, preço em dinheiro é 0
+                totalPrice: 0,
+                totalPoints,
+                removedIngredients: Object.entries(selectedIngredients)
+                    .filter(([_, selected]) => !selected)
+                    .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),
+                extras: Object.entries(selectedExtras)
+                    .filter(([_, selected]) => selected)
+                    .map(([id]) => extras.find(e => e.id === id)?.nome || id),
+                observation,
+                secondFlavor: selectedSecondFlavor ? {
+                    id: selectedSecondFlavor.id,
+                    name: selectedSecondFlavor.name,
+                    price: Number(selectedSecondFlavor.price),
+                    image_url: selectedSecondFlavor.image_url
+                } : undefined,
+                paidWithPoints: true,
+                pointsUsed: totalPoints
+            });
+
+            navigation.navigate("Order", { product });
+        } catch (error: any) {
+            const mensagem = error.response?.data?.message || error.message || "Erro ao adicionar item";
+            setError(mensagem);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} colors={["#3D1F93", "#1d1d2e"]} style={styles.header} >
@@ -322,7 +398,7 @@ export default function CustomizeProduct() {
                         <Text style={styles.price}>{formatarPreco(totalPrice)}</Text>
                         {/* 🔸 PONTOS */}
                         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
-                            <Ionicons name="star" size={20} color="#FFD700" />
+                            <Ionicons name="star" size={20} color="#ffde09ff" />
                             <Text style={styles.pointsText}>{totalPoints.toFixed(1)} pts</Text>
                             <TouchableOpacity onPress={handlePointsInfo} style={{ marginLeft: 8 }}>
                                 <MaterialIcons name="help-outline" size={20} color="#ccc" />
@@ -451,187 +527,193 @@ export default function CustomizeProduct() {
                 </TouchableOpacity>
 
                 {/* 🔸 Botão de pontos */}
-                <TouchableOpacity style={styles.pointsButton}>
-                    <Text style={styles.pointsButtonText}> Adicionar com Pontos ({totalPoints.toFixed(1)} pts) </Text>
+                <TouchableOpacity
+                    style={styles.pointsButton}
+                    onPress={() => handleAddWithPoints()}
+                >
+                    <Text style={styles.pointsButtonText}>
+                        Adicionar com Pontos ({totalPoints.toFixed(1)} pts)
+                    </Text>
                 </TouchableOpacity>
+
             </ScrollView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: "#1d1d2e" 
+    container: {
+        flex: 1,
+        backgroundColor: "#1d1d2e"
     },
-    header: { 
-        flexDirection: "row", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        paddingTop: 52, 
-        paddingBottom: 10, 
-        paddingHorizontal: 30 
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingTop: 52,
+        paddingBottom: 10,
+        paddingHorizontal: 30
     },
-    logoText: { 
-        color: "#fff", 
-        fontSize: 22, 
-        fontWeight: "700" 
+    logoText: {
+        color: "#fff",
+        fontSize: 22,
+        fontWeight: "700"
     },
-    card: { 
-        flexDirection: "row", 
-        backgroundColor: "#2a2a40", 
-        borderRadius: 12, 
-        padding: 12, 
-        marginHorizontal: 20, 
-        margin: 15, 
-        alignItems: "center" 
+    card: {
+        flexDirection: "row",
+        backgroundColor: "#2a2a40",
+        borderRadius: 12,
+        padding: 12,
+        marginHorizontal: 20,
+        margin: 15,
+        alignItems: "center"
     },
-    productImage: { 
-        width: 100, 
-        height: 100, 
-        borderRadius: 12 
+    productImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 12
     },
-    productInfo: { 
-        flex: 1, 
-        marginLeft: 12 
+    productInfo: {
+        flex: 1,
+        marginLeft: 12
     },
-    productName: { 
-        fontSize: 18, 
-        fontWeight: "700", 
-        color: "#FFF" 
+    productName: {
+        fontSize: 18,
+        fontWeight: "700",
+        color: "#FFF"
     },
-    price: { 
-        fontSize: 16, 
-        marginVertical: 5, 
-        color: "#00C851", 
-        fontWeight: "700" 
+    price: {
+        fontSize: 16,
+        marginVertical: 5,
+        color: "#00C851",
+        fontWeight: "700"
     },
-    pointsText: { 
-        color: "#FFD700", 
-        fontWeight: "700", 
-        marginLeft: 6, 
-        fontSize: 16 
+    pointsText: {
+        color: "#ffde09ff",
+        fontWeight: "700",
+        marginLeft: 6,
+        fontSize: 16
     },
-    quantityContainer: { 
-        flexDirection: "row", 
-        alignItems: "center", 
-        marginTop: 8 
+    quantityContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 8
     },
-    button: { 
-        width: 32, 
-        height: 32, 
-        borderRadius: 8, 
-        backgroundColor: "#5A3FFF", 
-        justifyContent: "center", 
-        alignItems: "center" 
+    button: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        backgroundColor: "#5A3FFF",
+        justifyContent: "center",
+        alignItems: "center"
     },
-    buttonText: { 
-        color: "#FFF", 
-        fontWeight: "bold", 
-        fontSize: 16 
+    buttonText: {
+        color: "#FFF",
+        fontWeight: "bold",
+        fontSize: 16
     },
-    quantity: { 
-        marginHorizontal: 12, 
-        fontSize: 16, 
-        color: "#FFF" 
+    quantity: {
+        marginHorizontal: 12,
+        fontSize: 16,
+        color: "#FFF"
     },
-    ingredientHeader: { 
-        flexDirection: "row", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        backgroundColor: "#3b3b55f7", 
-        paddingVertical: 14, 
-        paddingHorizontal: 20, 
-        borderRadius: 12, 
-        marginHorizontal: 20, 
-        marginTop: 10, 
-        marginBottom: 5 
+    ingredientHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#3b3b55f7",
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginHorizontal: 20,
+        marginTop: 10,
+        marginBottom: 5
     },
-    ingredientHeaderText: { 
-        fontSize: 18, 
-        fontWeight: "bold", 
-        color: "#FFF" 
+    ingredientHeaderText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#FFF"
     },
-    ingredientItem: { 
-        flexDirection: "row", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        backgroundColor: "#2a2a40", 
-        paddingVertical: 12, 
-        paddingHorizontal: 20, 
-        borderRadius: 12, 
-        marginHorizontal: 20, 
-        marginBottom: 15 
+    ingredientItem: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#2a2a40",
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        marginHorizontal: 20,
+        marginBottom: 15
     },
-    ingredientName: { 
-        fontSize: 16, 
-        fontWeight: "600", 
-        color: "#FFF" 
+    ingredientName: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#FFF"
     },
-    textArea: { 
-        borderColor: "#3b3b55f7", 
-        borderWidth: 1, 
-        borderRadius: 12, 
-        padding: 14, 
-        marginHorizontal: 20, 
-        textAlignVertical: "top", 
-        fontSize: 16, 
+    textArea: {
+        borderColor: "#3b3b55f7",
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 14,
+        marginHorizontal: 20,
+        textAlignVertical: "top",
+        fontSize: 16,
         color: "#FFF",
         marginTop: 10
     },
-    confirmButton: { 
-        paddingVertical: 16, 
-        borderRadius: 12, 
-        alignItems: "center", 
-        justifyContent: "center", 
-        backgroundColor: "#FF3F4B", 
-        elevation: 8, 
-        shadowColor: "#FF3F4B", 
-        marginHorizontal: 20, 
-        marginTop: 20 
+    confirmButton: {
+        paddingVertical: 16,
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FF3F4B",
+        elevation: 8,
+        shadowColor: "#FF3F4B",
+        marginHorizontal: 20,
+        marginTop: 20
     },
-    confirmText: { 
-        color: "#FFF", 
-        fontSize: 18, 
-        fontWeight: "bold", 
-        textTransform: "uppercase", 
-        letterSpacing: 0.8 
+    confirmText: {
+        color: "#FFF",
+        fontSize: 18,
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: 0.8
     },
-    modalContainer: { 
-        flex: 1, 
-        backgroundColor: "#000000aa", 
-        justifyContent: "center", 
-        paddingHorizontal: 20 
+    modalContainer: {
+        flex: 1,
+        backgroundColor: "#000000aa",
+        justifyContent: "center",
+        paddingHorizontal: 20
     },
-    modalContent: { 
-        backgroundColor: "#1d1d2e", 
-        borderRadius: 12, 
-        padding: 16, 
-        maxHeight: "80%" 
+    modalContent: {
+        backgroundColor: "#1d1d2e",
+        borderRadius: 12,
+        padding: 16,
+        maxHeight: "80%"
     },
-    errorText: { 
-        color: "red", 
-        marginBottom: 12, 
-        fontWeight: "bold", 
-        textAlign: "center" 
+    errorText: {
+        color: "red",
+        marginBottom: 12,
+        fontWeight: "bold",
+        textAlign: "center"
     },
-    pointsButton: { 
-        paddingVertical: 16, 
-        borderRadius: 12, 
-        alignItems: "center", 
-        justifyContent: "center", 
-        backgroundColor: "#c9b84aff", 
-        elevation: 8, 
-        shadowColor: "#c9b84aff", 
-        marginHorizontal: 20, 
-        marginTop: 20, 
-        marginBottom: 20 
+    pointsButton: {
+        paddingVertical: 16,
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#dec41bff",
+        elevation: 8,
+        shadowColor: "#dec41bff",
+        marginHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 20
     },
-    pointsButtonText: { 
-        color: "#1d1d2e", 
-        fontSize: 18, 
-        fontWeight: "bold", 
-        textTransform: "uppercase", 
-        letterSpacing: 0.6 
+    pointsButtonText: {
+        color: "#1d1d2e",
+        fontSize: 18,
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: 0.6
     }
 });

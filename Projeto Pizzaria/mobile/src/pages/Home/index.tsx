@@ -203,11 +203,11 @@ export default function Home() {
 				</Text>
 
 				{/* Lado direito do header */}
+					<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
 					<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
 
 					{/* Botão para a comanda */}
-					<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
 						<Ionicons name="reader-sharp" size={18} color={"white"}/>
 						{/* Exemplo: pequeno indicador vermelho se tiver itens no pedido */}
 						{totalPedido > 0 && (
@@ -223,8 +223,8 @@ export default function Home() {
 								}}
 							/>
 						)}
-					</TouchableOpacity>
 				</View>
+					</TouchableOpacity>
 			</LinearGradient>
 
 
