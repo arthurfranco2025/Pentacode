@@ -93,6 +93,8 @@ export default function OrderTicket() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { pedidoStatus, pedidoId, setPedidoId } = usePedido();
+  const [disabledPagar, setDisabledPagar] = useState<boolean>(true);
+
 
   const [pedidoAberto, setPedidoAberto] = useState<string | null>(null);
   const [itensPedido, setItensPedido] = useState<any[]>([]);
@@ -122,36 +124,43 @@ export default function OrderTicket() {
     // 🔹 Carrega assim que o componente monta
     loadPedidos();
 
-    // 🔹 Recarrega automaticamente a cada 10 segundos
+    // 🔹 Recarrega automaticamente a cada 5 segundos
     interval = setInterval(loadPedidos, 5000);
 
     // 🔹 Limpa o intervalo quando o componente for desmontado
     return () => clearInterval(interval);
   }, [comanda]);
 
-  // useEffect(() => {
-  //   async function loadPedidos() {
-  //     try {
-  //       if (!comanda?.comandaId) return;
+  useEffect(() => {
+    async function checkPedidos() {
+      try {
+        // Se não há pedidos, já desabilita
+        if (!pedidos || pedidos.length === 0) {
+          setDisabledPagar(true);
+          return;
+        }
 
-  //       const response = await api.get('/pedido/listaPorComanda', {
-  //         params: { comanda_id: comanda.comandaId }
-  //       });
+        // Verifica se existe ao menos um pedido com itens
+        const resultados = await Promise.all(
+          pedidos.map(async (pedido) => {
+            const response = await api.get('/item/listaPorPedido', {
+              params: { pedido_id: pedido.id },
+            });
+            return response.data.length > 0; // true se tem itens
+          })
+        );
 
+        const temItens = resultados.some((r) => r === true);
+        setDisabledPagar(!temItens); // habilita se há algum pedido com itens
+      } catch (err) {
+        console.error('Erro ao verificar itens dos pedidos:', err);
+        setDisabledPagar(true);
+      }
+    }
 
-  //       setPedidos(response.data);
-  //       // console.log('ver total da comanda:', response.data)
-  //     } catch (err: any) {
-  //       // mostra detalhes do erro para diagnosticar 400
-  //       console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
-  //       setError("Erro ao carregar pedidos");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
+    checkPedidos();
+  }, [pedidos]);
 
-  //   loadPedidos();
-  // }, [comanda]);
 
   useEffect(() => {
     if (pedidos.length > 0 && !pedidoId) {
@@ -418,10 +427,11 @@ export default function OrderTicket() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.buttonFinish}
-            onPress={handleGoToPayment}
+            style={[styles.buttonFinish, disabledPagar && { opacity: 0.5}]}
+            onPress={!disabledPagar ? handleGoToPayment : undefined}
+            disabled={disabledPagar}
           >
-            <Text style={styles.buttonText}>Ir para pagamento</Text>
+            <Text style={[styles.buttonText, disabledPagar && { opacity: 0.5 }]}>Ir para pagamento</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -720,5 +730,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 12,
     fontStyle: "italic",
+  },
+  buttonDisabled: {
+    backgroundColor: "#555",
+    shadowColor: "transparent",
   },
 })
