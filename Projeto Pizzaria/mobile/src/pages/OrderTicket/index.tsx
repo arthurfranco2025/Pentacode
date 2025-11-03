@@ -25,6 +25,43 @@ interface PedidoResponse {
   created_at: string;
   updated_at: string;
 }
+// Helper: formatar label de status para exibição
+const formatStatusLabel = (status?: string) => {
+  if (!status) return '';
+  const s = status.toLowerCase();
+
+  if (s === 'na fila') return 'Na fila';
+  if (s === 'em produção') return 'Em produção';
+  if (s === 'parcialmente pronto') return 'Parcialmente pronto';
+  if (s === 'pronto') return 'Pronto';
+  if (s === 'entregue') return 'Entregue';
+  if (s === 'cancelado') return 'Cancelado';
+
+  // fallback: capitaliza a primeira letra
+  return status.charAt(0).toUpperCase() + status.slice(1);
+};
+
+// Helper: retorna cor baseada no status do item
+const getStatusColor = (status?: string) => {
+  if (!status) return '#777';
+  switch (status.toLowerCase()) {
+    case 'na fila':
+      return '#999'; // cinza neutro
+    case 'em produção':
+      return '#FFBB33'; // amarelo/laranja
+    case 'parcialmente pronto':
+      return '#FFA000'; // laranja mais forte
+    case 'pronto':
+      return '#00C851'; // verde
+    case 'entregue':
+      return '#007E33'; // verde escuro
+    case 'cancelado':
+      return '#DD2C00'; // vermelho escuro
+    default:
+      return '#777'; // fallback cinza
+  }
+};
+
 
 interface ItemPedido {
   id: string;
@@ -34,6 +71,7 @@ interface ItemPedido {
   product2?: {  // Segundo sabor é opcional
     name: string;
   };
+  status?: string; // status do item (ex: 'preparando', 'pronto', 'cancelado')
   qtd: number;
   price: number;
   observacao?: string;
@@ -61,30 +99,59 @@ export default function OrderTicket() {
   const [loadingItens, setLoadingItens] = useState(false);
 
 
+useEffect(() => {
+  if (!comanda?.comandaId) return;
 
-  useEffect(() => {
-    async function loadPedidos() {
-      try {
-        if (!comanda?.comandaId) return;
+  let interval: NodeJS.Timeout;
 
-        const response = await api.get('/pedido/listaPorComanda', {
-          params: { comanda_id: comanda.comandaId }
-        });
-
-
-        setPedidos(response.data);
-        console.log('ver total da comanda:', response.data)
-      } catch (err: any) {
-        // mostra detalhes do erro para diagnosticar 400
-        console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
-        setError("Erro ao carregar pedidos");
-      } finally {
-        setLoading(false);
-      }
+  async function loadPedidos() {
+    try {
+      const response = await api.get('/pedido/listaPorComanda', {
+        params: { comanda_id: comanda?.comandaId }
+      });
+      setPedidos(response.data);
+      setError('');
+    } catch (err: any) {
+      console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
+      setError("Erro ao carregar pedidos");
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadPedidos();
-  }, [comanda]);
+  // 🔹 Carrega assim que o componente monta
+  loadPedidos();
+
+  // 🔹 Recarrega automaticamente a cada 10 segundos
+  interval = setInterval(loadPedidos, 5000);
+
+  // 🔹 Limpa o intervalo quando o componente for desmontado
+  return () => clearInterval(interval);
+}, [comanda]);
+
+  // useEffect(() => {
+  //   async function loadPedidos() {
+  //     try {
+  //       if (!comanda?.comandaId) return;
+
+  //       const response = await api.get('/pedido/listaPorComanda', {
+  //         params: { comanda_id: comanda.comandaId }
+  //       });
+
+
+  //       setPedidos(response.data);
+  //       // console.log('ver total da comanda:', response.data)
+  //     } catch (err: any) {
+  //       // mostra detalhes do erro para diagnosticar 400
+  //       console.error("Erro ao carregar pedidos:", err?.response?.status, err?.response?.data);
+  //       setError("Erro ao carregar pedidos");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+
+  //   loadPedidos();
+  // }, [comanda]);
 
   useEffect(() => {
     if (pedidos.length > 0 && !pedidoId) {
@@ -142,13 +209,40 @@ export default function OrderTicket() {
       });
 
       setItensPedido(response.data);
-      console.log('ver os itens do pedido:', response.data)
+      // console.log('ver os itens do pedido:', response.data)
     } catch (err) {
       console.error("Erro ao carregar itens do pedido:", err);
     } finally {
       setLoadingItens(false);
     }
   };
+
+  // Função reutilizável para buscar itens de um pedido (usada em polling)
+  const fetchItens = async (pedidoId: string | null) => {
+    if (!pedidoId) return;
+    try {
+      const response = await api.get('/item/listaPorPedido', {
+        params: { pedido_id: pedidoId }
+      });
+      setItensPedido(response.data);
+    } catch (err) {
+      console.error('Erro ao buscar itens (polling):', err);
+    }
+  };
+
+  // Quando um pedido é aberto, inicia polling para atualizar seus itens automaticamente.
+  useEffect(() => {
+    if (!pedidoAberto) return;
+
+    // busca imediata
+    fetchItens(pedidoAberto);
+
+    const interval = setInterval(() => {
+      fetchItens(pedidoAberto);
+    }, 3000); // atualiza a cada 3s (ajuste conforme necessário)
+
+    return () => clearInterval(interval);
+  }, [pedidoAberto]);
 
 
   return (
@@ -227,8 +321,8 @@ export default function OrderTicket() {
                     itensPedido.map((item: ItemPedido) => (
                       <View key={item.id} style={styles.itemContainer}>
                         <View style={styles.itemRow}>
-                          <View style={styles.nameContainer}>
-                            <Text style={styles.itemName}>
+                          <View style={styles.leftColumn}>
+                            <Text style={styles.itemName} numberOfLines={2} ellipsizeMode="tail">
                               {item.product.name}
                               {item.product2 && (
                                 <>
@@ -237,11 +331,21 @@ export default function OrderTicket() {
                                 </>
                               )}
                             </Text>
+
+                            {/* Status badge abaixo do nome para legibilidade */}
+                            {item.status && (
+                              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                                <Text style={styles.statusBadgeText}>{formatStatusLabel(item.status)}</Text>
+                              </View>
+                            )}
                           </View>
-                          <Text style={styles.itemQtd}>x{item.qtd}</Text>
-                          <Text style={styles.itemPrice}>
-                            {formatarPreco(item.price)}
-                          </Text>
+
+                          <View style={styles.rightColumn}>
+                            <Text style={styles.itemQtd}>x{item.qtd}</Text>
+                            <Text style={styles.itemPrice}>
+                              {formatarPreco(item.price)}
+                            </Text>
+                          </View>
                         </View>
 
                         {/* Removidos */}
@@ -525,6 +629,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
+  leftColumn: {
+    flex: 1,
+    marginRight: 8,
+  },
+  rightColumn: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
   itemName: {
     color: '#FFF',
     fontSize: 14,
@@ -576,6 +688,18 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontStyle: 'italic',
+  },
+  statusBadge: {
+    marginTop: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  statusBadgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
   },
   fixedBottomArea: {
     backgroundColor: "#1d1d2e",

@@ -10,11 +10,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  BackHandler,
-  Image,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../../contexts/AuthContext";
 
 type RootStackParamList = {
@@ -29,6 +28,9 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [cpf, setCpf] = useState("");
   const [dataNasc, setDataNasc] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -48,8 +50,13 @@ export default function SignUp() {
   }
 
   async function handleSignUp() {
-    if (!name || !email || !password || !cpf || !dataNasc) {
+    if (!name || !email || !password || !confirmPassword || !cpf || !dataNasc) {
       setError("Preencha todos os campos");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem");
       return;
     }
 
@@ -82,61 +89,115 @@ export default function SignUp() {
 
           <Text style={styles.title}>Cadastro</Text>
 
+          {/* Nome */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Nome</Text>
-            <TextInput
-              placeholder="Digite seu nome"
-              placeholderTextColor="#8A8A8A"
-              value={name}
-              onChangeText={(text) => { setName(text); setError(""); }}
-              style={styles.input}
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="person-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Digite seu nome"
+                placeholderTextColor="#8A8A8A"
+                value={name}
+                onChangeText={(text) => { setName(text); setError(""); }}
+                style={styles.input}
+              />
+            </View>
           </View>
 
+          {/* Email */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Email</Text>
-            <TextInput
-              placeholder="Digite seu email"
-              placeholderTextColor="#8A8A8A"
-              value={email}
-              onChangeText={(text) => { setEmail(text); setError(""); }}
-              style={styles.input}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="mail-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Digite seu email"
+                placeholderTextColor="#8A8A8A"
+                value={email}
+                onChangeText={(text) => { setEmail(text); setError(""); }}
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
           </View>
 
+          {/* Senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Senha</Text>
-            <TextInput
-              placeholder="Digite sua senha"
-              placeholderTextColor="#8A8A8A"
-              value={password}
-              onChangeText={(text) => { setPassword(text); setError(""); }}
-              style={styles.input}
-              secureTextEntry
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="lock-closed-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Digite sua senha"
+                placeholderTextColor="#8A8A8A"
+                value={password}
+                onChangeText={(text) => { setPassword(text); setError(""); }}
+                style={styles.input}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={{ marginLeft: 8 }}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#8A8A8A"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
+          {/* Confirmar Senha */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Confirmar Senha</Text>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="lock-closed-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Confirme sua senha"
+                placeholderTextColor="#8A8A8A"
+                value={confirmPassword}
+                onChangeText={(text) => { setConfirmPassword(text); setError(""); }}
+                style={styles.input}
+                secureTextEntry={!showConfirmPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{ marginLeft: 8 }}
+              >
+                <Ionicons
+                  name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#8A8A8A"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* CPF */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>CPF</Text>
-            <TextInput
-              placeholder="000.000.000-00"
-              placeholderTextColor="#8A8A8A"
-              value={cpf}
-              onChangeText={(text) => { setCpf(formatarCPF(text)); setError(""); }}
-              style={styles.input}
-              keyboardType="numeric"
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="id-card" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="000.000.000-00"
+                placeholderTextColor="#8A8A8A"
+                value={cpf}
+                onChangeText={(text) => { setCpf(formatarCPF(text)); setError(""); }}
+                style={styles.input}
+                keyboardType="numeric"
+              />
+            </View>
           </View>
 
+          {/* Data de Nascimento */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Data de Nascimento</Text>
             <TouchableOpacity
               onPress={() => setShowDatePicker(true)}
-              style={[styles.input, { justifyContent: "center" }]}
+              style={[styles.inputWrapper, { justifyContent: "flex-start" }]}
             >
-              <Text style={{ color: "#8A8A8A" }}>
+              <Ionicons name="calendar-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <Text style={{ color: "#F0F0F0" }}>
                 {dataNasc.toLocaleDateString("pt-BR")}
               </Text>
             </TouchableOpacity>
@@ -216,15 +277,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 6,
   },
-  input: {
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#8A8A8A",
+    borderRadius: 8,
+    paddingHorizontal: 10,
     backgroundColor: "#101026",
+    height: 45,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
     color: "#F0F0F0",
     fontSize: 14,
-    borderColor: "#8A8A8A",
-    borderRadius: 5,
-    borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
   },
   button: {
     backgroundColor: "#FF3F4B",
@@ -233,13 +302,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     marginBottom: 14,
-  },
-  guestButton: {
-    backgroundColor: "#391D8A",
-    borderRadius: 6,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginBottom: 20,
   },
   buttonText: {
     color: "#fff",
@@ -264,10 +326,6 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontWeight: "bold",
     color: "#FF3F4B",
-  },
-  backIcon: {
-    width: 28,
-    height: 28,
   },
   errorText: {
     color: "red",

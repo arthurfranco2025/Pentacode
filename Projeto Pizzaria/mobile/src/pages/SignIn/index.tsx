@@ -14,20 +14,23 @@ import {
   Image,
 } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../../contexts/AuthContext";
 
 type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
 };
 
 export default function SignIn() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { signIn, loadingAuth } = useContext(AuthContext);
 
-  const [login, setLogin] = useState(""); // pode ser email ou CPF
+  const [login, setLogin] = useState(""); 
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(""); 
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -49,6 +52,10 @@ export default function SignIn() {
     navigation.navigate("SignUp");
   }
 
+  function handleForgotPassword() {
+    navigation.navigate("ForgotPassword");
+  }
+
   async function handleLogin() {
     if (login === "" || password === "") {
       setError("Preencha todos os campos");
@@ -56,7 +63,7 @@ export default function SignIn() {
     }
 
     try {
-      await signIn({ email: login, password }); // backend trata email ou CPF
+      await signIn({ email: login, password });
       setError("");
     } catch (err: any) {
       setError(err.message);
@@ -86,46 +93,52 @@ export default function SignIn() {
 
           <Text style={styles.title}>Login</Text>
 
+          {/* Email ou CPF */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Email ou CPF</Text>
-            <TextInput
-              placeholder="Digite seu email ou CPF"
-              placeholderTextColor="#8A8A8A"
-              value={login}
-              onChangeText={(text) => { setLogin(text); setError(""); }}
-              style={styles.input}
-              keyboardType="default"
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="person-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Digite seu email ou CPF"
+                placeholderTextColor="#8A8A8A"
+                value={login}
+                onChangeText={(text) => { setLogin(text); setError(""); }}
+                style={styles.input}
+              />
+            </View>
           </View>
 
+          {/* Senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Senha</Text>
-            <TextInput
-              placeholder="Digite sua senha"
-              placeholderTextColor="#8A8A8A"
-              secureTextEntry
-              value={password}
-              onChangeText={(text) => { setPassword(text); setError(""); }}
-              style={styles.input}
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="lock-closed-outline" size={20} color="#8A8A8A" style={styles.icon} />
+              <TextInput
+                placeholder="Digite sua senha"
+                placeholderTextColor="#8A8A8A"
+                value={password}
+                onChangeText={(text) => { setPassword(text); setError(""); }}
+                style={styles.input}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ marginLeft: 8 }}>
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#8A8A8A"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {error !== "" && <Text style={styles.errorText}>{error}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loadingAuth}>
-            {loadingAuth ? (
-              <ActivityIndicator size={25} color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Acessar</Text>
-            )}
+            {loadingAuth ? <ActivityIndicator size={25} color="#fff" /> : <Text style={styles.buttonText}>Acessar</Text>}
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.guestButton} onPress={handleGuestLogin} disabled={loadingAuth}>
-            {loadingAuth ? (
-              <ActivityIndicator size={25} color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Entrar como convidado</Text>
-            )}
+            {loadingAuth ? <ActivityIndicator size={25} color="#fff" /> : <Text style={styles.buttonText}>Entrar como convidado</Text>}
           </TouchableOpacity>
 
           <Text style={styles.dividerText}>ou</Text>
@@ -133,6 +146,12 @@ export default function SignIn() {
           <TouchableOpacity onPress={handleSignUp}>
             <Text style={styles.loginText}>
               Não tem uma conta? <Text style={styles.linkText}>Cadastre-se</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text style={styles.loginText}>
+              Esqueceu sua senha? <Text style={styles.linkText}>Clique aqui</Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -175,15 +194,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 6,
   },
-  input: {
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#8A8A8A",
+    borderRadius: 8,
+    paddingHorizontal: 10,
     backgroundColor: "#101026",
+    height: 45,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
     color: "#F0F0F0",
     fontSize: 14,
-    borderColor: "#8A8A8A",
-    borderRadius: 5,
-    borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
   },
   button: {
     backgroundColor: "#FF3F4B",
@@ -217,7 +244,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 13,
     fontWeight: "600",
-    marginBottom: 60,
+    marginBottom: 20,
   },
   linkText: {
     textDecorationLine: "underline",
@@ -228,10 +255,16 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
   },
+  GoBack: {
+    position: "absolute",
+    top: 45,
+    left: 25,
+    zIndex: 1,
+  },
   errorText: {
     color: "red",
     marginBottom: 12,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
   },
 });

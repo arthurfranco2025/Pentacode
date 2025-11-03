@@ -153,6 +153,7 @@ class CreateItemService {
         pedido_id: true,
         dois_sabores: true,
         removidos: true,
+        status: true
       },
     });
 

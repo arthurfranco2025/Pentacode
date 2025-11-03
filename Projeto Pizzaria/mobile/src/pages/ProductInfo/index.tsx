@@ -8,6 +8,7 @@ import {
   Animated,
   Easing,
   ScrollView,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -15,7 +16,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 type RootStackParamList = {
   Home: undefined;
@@ -105,6 +106,13 @@ export default function ProductInfo() {
     }
   };
 
+  const handlePointsInfo = () => {
+    Alert.alert(
+      "Como funciona nossa mecânica de pontos?",
+      "Na PentaPizza, todo produto possui um valor em pontos. Você pode pagar seu pedido com os pontos que voce adquirir no nosso aplicativo, sem gastar dinheiro real! Adquira seus pontos fazendo compras no app."
+    );
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -156,15 +164,25 @@ export default function ProductInfo() {
             {product.description || "Sem descrição disponível."}
           </Text>
 
-          {/* 🔹 PREÇOS (dinheiro e pontos) */}
+          {/* 🔹 PREÇOS (dinheiro e pontos com botão) */}
           <View style={styles.priceRow}>
             <Text style={styles.price}>{formatarPreco(product.price)}</Text>
 
-            <View style={styles.pointsContainer}>
-              <Ionicons name="star" size={21} color="#FFD700" />
-              <Text style={styles.pointsText}>
-                {product.points.toFixed(1)} pts
-              </Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity
+                style={styles.pointsContainer}
+                onPress={handlePointsInfo}
+              >
+                <Ionicons name="star" size={21} color="#FFD700" />
+                <Text style={styles.pointsText}>{product.points.toFixed(1)} pts</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{ marginLeft: 8 }}
+                onPress={handlePointsInfo}
+              >
+                <MaterialIcons name="help-outline" size={22} color="#cdcdcdff" />
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -229,20 +247,10 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: "700", 
     color: "#00C851",
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: "#2b234a",
-    // paddingHorizontal: 10,
-    // paddingVertical: 6,
-    // borderRadius: 8, 
   },
   pointsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: "#2b234a",
-    // paddingHorizontal: 10,
-    // paddingVertical: 6,
-    // borderRadius: 8,
   },
   pointsText: {
     color: "#FFD700",
