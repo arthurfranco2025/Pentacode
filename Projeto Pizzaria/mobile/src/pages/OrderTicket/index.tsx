@@ -16,6 +16,7 @@ import { useComanda } from "../../contexts/comandaContext";
 import { api } from "../../services/api";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext"
+import sendNotificationStatus from "../Notification/status";
 
 interface PedidoResponse {
   id: string;
@@ -174,6 +175,17 @@ export default function OrderTicket() {
   // Atualiza o status do pedido quando o pedidoStatus mudar
   useEffect(() => {
     if (pedidoStatus && pedidoId) {
+
+      // 1. Encontra o pedido antigo ANTES de atualizar
+      // Note: Para esta linha funcionar, você PRECISARÁ de 'pedidos' no array
+      // SE você quiser acessar o status ANTERIOR para a notificação.
+      // Se você NÃO precisar do status anterior, apenas remova 'pedidos'.
+
+      // Se você precisa da lógica de status anterior para a notificação:
+      const oldPedido = pedidos.find(p => p.id === pedidoId);
+      const oldStatus = oldPedido?.status;
+
+      // 2. Atualiza o status
       setPedidos(currentPedidos =>
         currentPedidos.map(pedido =>
           pedido.id === pedidoId
@@ -181,8 +193,16 @@ export default function OrderTicket() {
             : pedido
         )
       );
+
+      // 3. Lógica da notificação (usando a função que você criou anteriormente)
+      if (oldStatus && oldStatus !== pedidoStatus) {
+        // ... (sua lógica de notificação)
+        sendNotificationStatus(pedidoStatus);
+      }
     }
-  }, [pedidoStatus, pedidoId]);
+    // Remova 'pedidos' daqui para que a própria atualização do estado
+    // não cause um novo loop.
+  }, [pedidoStatus, pedidoId]); // <<-- CORRIGIDO: Removido 'pedidos'
 
 
   // Calcula totais por pedido e totais da comanda (dinheiro + pontos)
