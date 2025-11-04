@@ -109,6 +109,7 @@ model Comanda {
   mesa_id       String?
   pagoEm        DateTime?
   tipoPagamento String?
+  pontosPagos   Float?
   avaliacao     Avaliacao[]
   cliente       Cliente     @relation(fields: [cliente_id], references: [id])
   mesa          Mesa?       @relation(fields: [mesa_id], references: [id])

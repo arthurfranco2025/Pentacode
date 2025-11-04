@@ -9257,11 +9257,13 @@ export namespace Prisma {
   export type ComandaAvgAggregateOutputType = {
     price: number | null
     points: number | null
+    pontosPagos: number | null
   }
 
   export type ComandaSumAggregateOutputType = {
     price: number | null
     points: number | null
+    pontosPagos: number | null
   }
 
   export type ComandaMinAggregateOutputType = {
@@ -9275,6 +9277,7 @@ export namespace Prisma {
     mesa_id: string | null
     pagoEm: Date | null
     tipoPagamento: string | null
+    pontosPagos: number | null
   }
 
   export type ComandaMaxAggregateOutputType = {
@@ -9288,6 +9291,7 @@ export namespace Prisma {
     mesa_id: string | null
     pagoEm: Date | null
     tipoPagamento: string | null
+    pontosPagos: number | null
   }
 
   export type ComandaCountAggregateOutputType = {
@@ -9301,6 +9305,7 @@ export namespace Prisma {
     mesa_id: number
     pagoEm: number
     tipoPagamento: number
+    pontosPagos: number
     _all: number
   }
 
@@ -9308,11 +9313,13 @@ export namespace Prisma {
   export type ComandaAvgAggregateInputType = {
     price?: true
     points?: true
+    pontosPagos?: true
   }
 
   export type ComandaSumAggregateInputType = {
     price?: true
     points?: true
+    pontosPagos?: true
   }
 
   export type ComandaMinAggregateInputType = {
@@ -9326,6 +9333,7 @@ export namespace Prisma {
     mesa_id?: true
     pagoEm?: true
     tipoPagamento?: true
+    pontosPagos?: true
   }
 
   export type ComandaMaxAggregateInputType = {
@@ -9339,6 +9347,7 @@ export namespace Prisma {
     mesa_id?: true
     pagoEm?: true
     tipoPagamento?: true
+    pontosPagos?: true
   }
 
   export type ComandaCountAggregateInputType = {
@@ -9352,6 +9361,7 @@ export namespace Prisma {
     mesa_id?: true
     pagoEm?: true
     tipoPagamento?: true
+    pontosPagos?: true
     _all?: true
   }
 
@@ -9452,6 +9462,7 @@ export namespace Prisma {
     mesa_id: string | null
     pagoEm: Date | null
     tipoPagamento: string | null
+    pontosPagos: number | null
     _count: ComandaCountAggregateOutputType | null
     _avg: ComandaAvgAggregateOutputType | null
     _sum: ComandaSumAggregateOutputType | null
@@ -9484,6 +9495,7 @@ export namespace Prisma {
     mesa_id?: boolean
     pagoEm?: boolean
     tipoPagamento?: boolean
+    pontosPagos?: boolean
     avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
     mesa?: boolean | Comanda$mesaArgs<ExtArgs>
@@ -9502,6 +9514,7 @@ export namespace Prisma {
     mesa_id?: boolean
     pagoEm?: boolean
     tipoPagamento?: boolean
+    pontosPagos?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
     mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }, ExtArgs["result"]["comanda"]>
@@ -9517,6 +9530,7 @@ export namespace Prisma {
     mesa_id?: boolean
     pagoEm?: boolean
     tipoPagamento?: boolean
+    pontosPagos?: boolean
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
     mesa?: boolean | Comanda$mesaArgs<ExtArgs>
   }, ExtArgs["result"]["comanda"]>
@@ -9532,9 +9546,10 @@ export namespace Prisma {
     mesa_id?: boolean
     pagoEm?: boolean
     tipoPagamento?: boolean
+    pontosPagos?: boolean
   }
 
-  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id" | "mesa_id" | "pagoEm" | "tipoPagamento", ExtArgs["result"]["comanda"]>
+  export type ComandaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "price" | "points" | "created_at" | "updated_at" | "cliente_id" | "mesa_id" | "pagoEm" | "tipoPagamento" | "pontosPagos", ExtArgs["result"]["comanda"]>
   export type ComandaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     avaliacao?: boolean | Comanda$avaliacaoArgs<ExtArgs>
     cliente?: boolean | ClienteDefaultArgs<ExtArgs>
@@ -9570,6 +9585,7 @@ export namespace Prisma {
       mesa_id: string | null
       pagoEm: Date | null
       tipoPagamento: string | null
+      pontosPagos: number | null
     }, ExtArgs["result"]["comanda"]>
     composites: {}
   }
@@ -10007,6 +10023,7 @@ export namespace Prisma {
     readonly mesa_id: FieldRef<"Comanda", 'String'>
     readonly pagoEm: FieldRef<"Comanda", 'DateTime'>
     readonly tipoPagamento: FieldRef<"Comanda", 'String'>
+    readonly pontosPagos: FieldRef<"Comanda", 'Float'>
   }
     
 
@@ -18488,7 +18505,8 @@ export namespace Prisma {
     cliente_id: 'cliente_id',
     mesa_id: 'mesa_id',
     pagoEm: 'pagoEm',
-    tipoPagamento: 'tipoPagamento'
+    tipoPagamento: 'tipoPagamento',
+    pontosPagos: 'pontosPagos'
   };
 
   export type ComandaScalarFieldEnum = (typeof ComandaScalarFieldEnum)[keyof typeof ComandaScalarFieldEnum]
@@ -19161,6 +19179,7 @@ export namespace Prisma {
     mesa_id?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
+    pontosPagos?: FloatNullableFilter<"Comanda"> | number | null
     avaliacao?: AvaliacaoListRelationFilter
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
     mesa?: XOR<MesaNullableScalarRelationFilter, MesaWhereInput> | null
@@ -19178,6 +19197,7 @@ export namespace Prisma {
     mesa_id?: SortOrderInput | SortOrder
     pagoEm?: SortOrderInput | SortOrder
     tipoPagamento?: SortOrderInput | SortOrder
+    pontosPagos?: SortOrderInput | SortOrder
     avaliacao?: AvaliacaoOrderByRelationAggregateInput
     cliente?: ClienteOrderByWithRelationInput
     mesa?: MesaOrderByWithRelationInput
@@ -19198,6 +19218,7 @@ export namespace Prisma {
     mesa_id?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
+    pontosPagos?: FloatNullableFilter<"Comanda"> | number | null
     avaliacao?: AvaliacaoListRelationFilter
     cliente?: XOR<ClienteScalarRelationFilter, ClienteWhereInput>
     mesa?: XOR<MesaNullableScalarRelationFilter, MesaWhereInput> | null
@@ -19215,6 +19236,7 @@ export namespace Prisma {
     mesa_id?: SortOrderInput | SortOrder
     pagoEm?: SortOrderInput | SortOrder
     tipoPagamento?: SortOrderInput | SortOrder
+    pontosPagos?: SortOrderInput | SortOrder
     _count?: ComandaCountOrderByAggregateInput
     _avg?: ComandaAvgOrderByAggregateInput
     _max?: ComandaMaxOrderByAggregateInput
@@ -19236,6 +19258,7 @@ export namespace Prisma {
     mesa_id?: StringNullableWithAggregatesFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableWithAggregatesFilter<"Comanda"> | Date | string | null
     tipoPagamento?: StringNullableWithAggregatesFilter<"Comanda"> | string | null
+    pontosPagos?: FloatNullableWithAggregatesFilter<"Comanda"> | number | null
   }
 
   export type AvaliacaoWhereInput = {
@@ -20198,6 +20221,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     cliente: ClienteCreateNestedOneWithoutComandasInput
     mesa?: MesaCreateNestedOneWithoutComandaInput
@@ -20215,6 +20239,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -20228,6 +20253,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
     mesa?: MesaUpdateOneWithoutComandaNestedInput
@@ -20245,6 +20271,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
@@ -20260,6 +20287,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
   }
 
   export type ComandaUpdateManyMutationInput = {
@@ -20271,6 +20299,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ComandaUncheckedUpdateManyInput = {
@@ -20284,6 +20313,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AvaliacaoCreateInput = {
@@ -21212,6 +21242,17 @@ export namespace Prisma {
     points?: SortOrder
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type MesaNullableScalarRelationFilter = {
     is?: MesaWhereInput | null
     isNot?: MesaWhereInput | null
@@ -21228,11 +21269,13 @@ export namespace Prisma {
     mesa_id?: SortOrder
     pagoEm?: SortOrder
     tipoPagamento?: SortOrder
+    pontosPagos?: SortOrder
   }
 
   export type ComandaAvgOrderByAggregateInput = {
     price?: SortOrder
     points?: SortOrder
+    pontosPagos?: SortOrder
   }
 
   export type ComandaMaxOrderByAggregateInput = {
@@ -21246,6 +21289,7 @@ export namespace Prisma {
     mesa_id?: SortOrder
     pagoEm?: SortOrder
     tipoPagamento?: SortOrder
+    pontosPagos?: SortOrder
   }
 
   export type ComandaMinOrderByAggregateInput = {
@@ -21259,11 +21303,29 @@ export namespace Prisma {
     mesa_id?: SortOrder
     pagoEm?: SortOrder
     tipoPagamento?: SortOrder
+    pontosPagos?: SortOrder
   }
 
   export type ComandaSumOrderByAggregateInput = {
     price?: SortOrder
     points?: SortOrder
+    pontosPagos?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -22198,6 +22260,14 @@ export namespace Prisma {
     connect?: PedidoWhereUniqueInput | PedidoWhereUniqueInput[]
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type AvaliacaoUpdateManyWithoutComandaNestedInput = {
     create?: XOR<AvaliacaoCreateWithoutComandaInput, AvaliacaoUncheckedCreateWithoutComandaInput> | AvaliacaoCreateWithoutComandaInput[] | AvaliacaoUncheckedCreateWithoutComandaInput[]
     connectOrCreate?: AvaliacaoCreateOrConnectWithoutComandaInput | AvaliacaoCreateOrConnectWithoutComandaInput[]
@@ -22729,6 +22799,33 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -22816,6 +22913,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     mesa?: MesaCreateNestedOneWithoutComandaInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
@@ -22831,6 +22929,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -22959,6 +23058,7 @@ export namespace Prisma {
     mesa_id?: StringNullableFilter<"Comanda"> | string | null
     pagoEm?: DateTimeNullableFilter<"Comanda"> | Date | string | null
     tipoPagamento?: StringNullableFilter<"Comanda"> | string | null
+    pontosPagos?: FloatNullableFilter<"Comanda"> | number | null
   }
 
   export type FavoritoUpsertWithWhereUniqueWithoutClienteInput = {
@@ -23631,6 +23731,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     cliente: ClienteCreateNestedOneWithoutComandasInput
     mesa?: MesaCreateNestedOneWithoutComandaInput
@@ -23647,6 +23748,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -23734,6 +23836,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
     mesa?: MesaUpdateOneWithoutComandaNestedInput
@@ -23750,6 +23853,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
@@ -24017,6 +24121,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     cliente: ClienteCreateNestedOneWithoutComandasInput
     mesa?: MesaCreateNestedOneWithoutComandaInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
@@ -24033,6 +24138,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
 
@@ -24104,6 +24210,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
     mesa?: MesaUpdateOneWithoutComandaNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
@@ -24120,6 +24227,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
 
@@ -24748,6 +24856,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoCreateNestedManyWithoutComandaInput
     cliente: ClienteCreateNestedOneWithoutComandasInput
     pedido?: PedidoCreateNestedManyWithoutComandaInput
@@ -24763,6 +24872,7 @@ export namespace Prisma {
     cliente_id: string
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
     avaliacao?: AvaliacaoUncheckedCreateNestedManyWithoutComandaInput
     pedido?: PedidoUncheckedCreateNestedManyWithoutComandaInput
   }
@@ -24811,6 +24921,7 @@ export namespace Prisma {
     mesa_id?: string | null
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
   }
 
   export type FavoritoCreateManyClienteInput = {
@@ -24863,6 +24974,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     mesa?: MesaUpdateOneWithoutComandaNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
@@ -24878,6 +24990,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
@@ -24892,6 +25005,7 @@ export namespace Prisma {
     mesa_id?: NullableStringFieldUpdateOperationsInput | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type FavoritoUpdateWithoutClienteInput = {
@@ -25437,6 +25551,7 @@ export namespace Prisma {
     cliente_id: string
     pagoEm?: Date | string | null
     tipoPagamento?: string | null
+    pontosPagos?: number | null
   }
 
   export type ComandaUpdateWithoutMesaInput = {
@@ -25448,6 +25563,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUpdateManyWithoutComandaNestedInput
     cliente?: ClienteUpdateOneRequiredWithoutComandasNestedInput
     pedido?: PedidoUpdateManyWithoutComandaNestedInput
@@ -25463,6 +25579,7 @@ export namespace Prisma {
     cliente_id?: StringFieldUpdateOperationsInput | string
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
     avaliacao?: AvaliacaoUncheckedUpdateManyWithoutComandaNestedInput
     pedido?: PedidoUncheckedUpdateManyWithoutComandaNestedInput
   }
@@ -25477,6 +25594,7 @@ export namespace Prisma {
     cliente_id?: StringFieldUpdateOperationsInput | string
     pagoEm?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tipoPagamento?: NullableStringFieldUpdateOperationsInput | string | null
+    pontosPagos?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
 
