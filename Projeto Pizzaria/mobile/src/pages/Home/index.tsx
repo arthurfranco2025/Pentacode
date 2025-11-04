@@ -203,12 +203,12 @@ export default function Home() {
 				</Text>
 
 				{/* Lado direito do header */}
-					<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
-				<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-					<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
+				<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
+					<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+						<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
 
-					{/* Botão para a comanda */}
-						<Ionicons name="reader-sharp" size={18} color={"white"}/>
+						{/* Botão para a comanda */}
+						<Ionicons name="reader-sharp" size={18} color={"white"} />
 						{/* Exemplo: pequeno indicador vermelho se tiver itens no pedido */}
 						{totalPedido > 0 && (
 							<View
@@ -223,8 +223,8 @@ export default function Home() {
 								}}
 							/>
 						)}
-				</View>
-					</TouchableOpacity>
+					</View>
+				</TouchableOpacity>
 			</LinearGradient>
 
 
@@ -484,5 +484,7 @@ const styles = StyleSheet.create({
 	},
 	avatarIcon: {
 		borderRadius: 12,
+		borderWidth: 0.5,
+		borderColor: "#FFF"
 	},
 });

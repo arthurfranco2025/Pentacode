@@ -128,13 +128,10 @@ export default function ProductInfo() {
         colors={["#3D1F93", "#1d1d2e"]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={{
-              uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png",
-            }}
-            style={{ width: 26, height: 26 }}
-          />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
@@ -208,7 +205,7 @@ export default function ProductInfo() {
           style={styles.orderButton}
           onPress={() => navigation.navigate("Order")}
         >
-          <Text style={styles.orderText}>Pedido</Text>
+          <Text style={styles.orderText}>Pedido atual</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -217,6 +214,7 @@ export default function ProductInfo() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1d1d2e" },
+  backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -251,9 +249,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 25,
   },
-  price: { 
-    fontSize: 20, 
-    fontWeight: "700", 
+  price: {
+    fontSize: 20,
+    fontWeight: "700",
     color: "#00C851",
   },
   pointsContainer: {

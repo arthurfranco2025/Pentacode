@@ -382,8 +382,10 @@ export default function CustomizeProduct() {
     return (
         <View style={styles.container}>
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} colors={["#3D1F93", "#1d1d2e"]} style={styles.header} >
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="chevron-back" size={24} color="#fff" />
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.logoText}> Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text> </Text>
                 <View style={{ width: 24 }} />
@@ -554,6 +556,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingHorizontal: 30
     },
+    backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: {
         color: "#fff",
         fontSize: 22,

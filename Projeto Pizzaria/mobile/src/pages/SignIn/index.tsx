@@ -122,6 +122,7 @@ export default function SignIn() {
                 onChangeText={(text) => { setPassword(text); setError(""); }}
                 style={styles.input}
                 secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ marginLeft: 8 }}>
                 <Ionicons
