@@ -398,8 +398,9 @@ export default function CustomizeProduct() {
                 } : undefined,
                 payWithPoints: true,
                 pointsUsed: totalPoints
+                
             });
-
+            sendNotificationOrder()
             navigation.navigate("Order");
         } catch (error: any) {
             console.log("Erro completo:", error);
