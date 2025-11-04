@@ -264,7 +264,8 @@ export default function OrderTicket() {
       mesaId,
       numero_mesa,
       // envia apenas o total em dinheiro (pontos são tratados separadamente)
-      total: comandaTotals.money,
+      totalPrice: comandaTotals.money,
+      totalPoints: comandaTotals.points
     });
   };
 

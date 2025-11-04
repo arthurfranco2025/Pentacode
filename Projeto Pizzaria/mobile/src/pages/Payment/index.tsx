@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { formatarPreco } from "../../components/utils/formatPrice";
 import {
   View,
   ScrollView,
@@ -27,13 +28,14 @@ type PaymentRouteProps = {
   comandaId: string;
   mesaId: string;
   numero_mesa: number;
-  total: number;
+  totalPrice: number;
+  totalPoints: number;
 };
 
 export default function Payment() {
   const navigation = useNavigation<PaymentScreenNavigationProp>();
   const route = useRoute();
-  const { comandaId } = route.params as PaymentRouteProps;
+  const { comandaId, totalPoints, totalPrice } = route.params as PaymentRouteProps;
   const { signOut } = useContext(AuthContext);
 
   const [selectedCard, setSelectedCard] = useState("");
@@ -44,6 +46,9 @@ export default function Payment() {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [garcomClosed, setGarcomClosed] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Valor da Comanda
+
 
   // Avaliação
   const [avaliacaoModalVisible, setAvaliacaoModalVisible] = useState(false);
@@ -113,6 +118,10 @@ export default function Payment() {
     setGarcomClosed(true);
     setAvaliacaoModalVisible(true);
   };
+
+  function ganhoPontos() {
+    return totalPrice * 0.25
+  }
 
   // const handleEnviarAvaliacao = async () => {
   //   if (nota === 0) {
@@ -240,28 +249,45 @@ export default function Payment() {
           ))}
         </View>
 
-        {/* Botão confirmar */}
-        <LinearGradient
-          colors={garcomClosed ? ["#777", "#555"] : ["#FF3F4B", "#e83640"]}
-          style={styles.confirmButtonGradient}
-        >
-          <TouchableOpacity
-            onPress={handleConfirmPayment}
-            disabled={garcomClosed || loading}
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryBox}>
+            <Text style={styles.summaryLabel}>Total a pagar</Text>
+            <Text style={styles.summaryMoney}>{formatarPreco(totalPrice)}</Text>
+
+            <View style={styles.pointsRow}>
+              <Ionicons
+                name="star"
+                size={16}
+                color="#FFD700"
+                style={{ marginRight: 5 }}
+              />
+              <Text style={styles.summaryPoints}>{totalPoints} pts a gastar</Text>
+            </View>
+          </View>
+
+          {/* Botão confirmar */}
+          <LinearGradient
+            colors={garcomClosed ? ["#777", "#555"] : ["#FF3F4B", "#e83640"]}
+            style={styles.confirmButtonGradient}
           >
-            {loading ? (
-              <ActivityIndicator size="small" color="#FFF" />
-            ) : (
-              <Text style={styles.confirmButtonText}>
-                {paymentConfirmed
-                  ? garcomClosed
-                    ? "Pagamento Finalizado"
-                    : "Forma de Pagamento Confirmada"
-                  : "Confirmar Pagamento"}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </LinearGradient>
+            <TouchableOpacity
+              onPress={handleConfirmPayment}
+              disabled={garcomClosed || loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#FFF" />
+              ) : (
+                <Text style={styles.confirmButtonText}>
+                  {paymentConfirmed
+                    ? garcomClosed
+                      ? "Pagamento Finalizado"
+                      : "Forma de Pagamento Confirmada"
+                    : "Confirmar Pagamento"}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
 
         {garcomClosed && (
           <TouchableOpacity
@@ -313,6 +339,9 @@ export default function Payment() {
             </Text>
             <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center", marginBottom: 20 }}>
               O garçom está a caminho com sua comanda!
+            </Text>
+            <Text style={{ color: "#FFD700", fontSize: 16, textAlign: "center", marginBottom: 12 }}>
+              Você ganhará {ganhoPontos().toFixed(2)} pts quando o garçom fechar a comanda.
             </Text>
             <TouchableOpacity
               style={styles.modalButtonConfirm2}
@@ -416,7 +445,7 @@ export default function Payment() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1d1d2e"
+    backgroundColor: "#1d1d2e",
   },
   header: {
     flexDirection: "row",
@@ -428,20 +457,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
   },
-  backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
-  headerIcon: {
-    width: 26,
-    height: 26
+  backButton: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     color: "#FFF",
     fontSize: 22,
-    fontWeight: "800"
+    fontWeight: "800",
   },
   headerAvaliation: {
     color: "#FFF",
     fontSize: 20,
-    fontWeight: "700"
+    fontWeight: "700",
   },
   sectionTitle: {
     fontSize: 24,
@@ -454,35 +484,78 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 8,
-    marginRight: 14
+    marginRight: 14,
   },
   paymentLabel: {
     color: "#FFF",
     fontSize: 17,
     fontWeight: "600",
-    flex: 1
+    flex: 1,
+  },
+  summaryContainer: {
+    marginTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  summaryBox: {
+    backgroundColor: "#1f1f33",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  summaryLabel: {
+    color: "#AAA",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  summaryMoney: {
+    color: "#00C851",
+    fontSize: 26,
+    fontWeight: "900",
+    marginBottom: 6,
+  },
+  pointsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  summaryPoints: {
+    color: "#FFD700",
+    fontWeight: "700",
+    fontSize: 15,
   },
   confirmButtonGradient: {
-    marginHorizontal: 20,
-    marginTop: 30,
-    marginBottom: 30,
     borderRadius: 14,
-    paddingVertical: 16
+    paddingVertical: 16,
+    marginTop: 10,
+    shadowColor: "#FF3F4B",
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 5,
   },
   confirmButtonText: {
     color: "#FFF",
     textAlign: "center",
-    fontWeight: "700",
+    fontWeight: "800",
     fontSize: 18,
     letterSpacing: 0.8,
-    textTransform: "uppercase"
+    textTransform: "uppercase",
   },
   logoutButton: {
     backgroundColor: "#FF3F4B",
     marginHorizontal: 20,
     marginBottom: 40,
     borderRadius: 14,
-    paddingVertical: 16
+    paddingVertical: 16,
   },
   logoutButtonText: {
     color: "#FFF",
@@ -490,33 +563,33 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
     letterSpacing: 0.8,
-    textTransform: "uppercase"
+    textTransform: "uppercase",
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   modalBox: {
     backgroundColor: "#2a2a40",
     padding: 24,
     borderRadius: 16,
     width: "80%",
-    alignItems: "center"
+    alignItems: "center",
   },
   modalTitle: {
     color: "#FFF",
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
   modalSubtitle: {
     color: "#AAA",
     fontSize: 15,
     textAlign: "center",
-    marginBottom: 20
+    marginBottom: 20,
   },
   modalButtonConfirm: {
     flex: 1,
@@ -524,15 +597,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   modalButtonConfirm2: {
-    // flex: 1,
     backgroundColor: "#00C851",
     padding: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   modalButtonCancel: {
     flex: 1,
@@ -540,11 +612,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   modalButtonText: {
     color: "#FFF",
-    fontWeight: "700"
+    fontWeight: "700",
   },
   textInput: {
     backgroundColor: "#1d1d2e",
@@ -554,6 +626,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 20,
-    textAlignVertical: "top"
-  }
+    textAlignVertical: "top",
+  },
 });
