@@ -84,7 +84,7 @@ class CreateItemService {
     let idade = null as number | null;
     if (precisaChecarIdade) {
       const dataNasc = pedido.cliente.data_nasc;
-      if (!dataNasc) throw new Error('Data de nascimento não encontrada...');
+      if (!dataNasc) throw new Error('Você precisa estar logado para adicionar bebidas alcoólicas à comanda.');
 
       const hoje = new Date();
       idade = hoje.getFullYear() - dataNasc.getFullYear();
