@@ -270,8 +270,10 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingTop: 52,
-        paddingBottom: 12,
-        paddingHorizontal: 20,
+        paddingBottom: 10,
+        paddingHorizontal: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ffffff1b",
     },
     backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: {
@@ -285,6 +287,7 @@ const styles = StyleSheet.create({
         color: "#FFF",
         paddingHorizontal: 20,
         marginBottom: 10,
+        marginTop: 10,
     },
     card: {
         flexDirection: "row",

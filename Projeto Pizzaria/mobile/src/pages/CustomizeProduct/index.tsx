@@ -554,7 +554,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 52,
         paddingBottom: 10,
-        paddingHorizontal: 30
+        paddingHorizontal: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ffffff1b",
     },
     backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: {

@@ -423,8 +423,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingTop: 52,
-    paddingBottom: 14,
-    paddingHorizontal: 20
+    paddingBottom: 10,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
   },
   backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
   headerIcon: {
@@ -446,7 +448,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFF",
     paddingHorizontal: 20,
-    marginBottom: 20
+    marginBottom: 15,
   },
   paymentIcon: {
     width: 50,

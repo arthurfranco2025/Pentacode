@@ -427,7 +427,7 @@ export default function OrderTicket() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.buttonFinish, disabledPagar && { opacity: 0.5}]}
+            style={[styles.buttonFinish, disabledPagar && { opacity: 0.5 }]}
             onPress={!disabledPagar ? handleGoToPayment : undefined}
             disabled={disabledPagar}
           >
@@ -447,7 +447,10 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingTop: 52,
-    paddingBottom: 14,
+    paddingBottom: 10,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
   },
   logoText: {
     color: "#FFF",
