@@ -382,8 +382,30 @@ export default function CustomizeProduct() {
 
             navigation.navigate("Order", { product });
         } catch (error: any) {
-            const mensagem = error.response?.data?.message || error.message || "Erro ao adicionar item";
-            setError(mensagem);
+            console.log("Erro completo:", error);
+
+            const status = error.response?.status;
+            const data = error.response?.data;
+            const mensagem =
+                data?.message ||
+                data?.error ||
+                error.message ||
+                "Erro ao adicionar item";
+
+            // 🔹 Verifica mensagens relacionadas a idade/álcool, mesmo que genéricas
+            if (
+                mensagem.toLowerCase().includes("menor") ||
+                mensagem.toLowerCase().includes("idade") ||
+                mensagem.toLowerCase().includes("álcool") ||
+                mensagem.toLowerCase().includes("alcool") ||
+                status === 400 && data && !data.message // caso backend só retorne 400 genérico
+            ) {
+                setError("underageAlcohol");
+            } else if (mensagem.toLowerCase().includes("convidado") && mensagem.toLowerCase().includes("ponto")) {
+                setError("guestPoints");
+            } else {
+                setError(mensagem);
+            }
         } finally {
             setIsAdding(false);
         }
@@ -569,7 +591,7 @@ export default function CustomizeProduct() {
                             {error === "underageAlcohol" && (
                                 <>
                                     <Text style={styles.errorMessage}>
-                                        Você precisa ter mais de 18 anos para pedir bebidas alcoólicas.
+                                        Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.
                                     </Text>
                                 </>
                             )}

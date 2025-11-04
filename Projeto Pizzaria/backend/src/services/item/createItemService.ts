@@ -79,7 +79,6 @@ class CreateItemService {
       // Verificação de bebida alcoólica no segundo sabor será feita abaixo junto com a do primeiro sabor
     }
 
-    // 🔹 Verificar se precisamos checar idade: somente quando algum dos sabores for alcoólico
     const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
     let idade = null as number | null;
     if (precisaChecarIdade) {
