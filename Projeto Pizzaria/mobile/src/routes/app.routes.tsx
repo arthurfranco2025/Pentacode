@@ -32,7 +32,8 @@ export type StackParamsList = {
     comandaId: string;
     mesaId: string;
     numero_mesa: number;
-    total: number;
+    totalPrice: number;
+    totalPoints: number;
   };
   SignIn: undefined;
 };

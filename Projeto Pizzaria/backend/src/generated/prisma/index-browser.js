@@ -193,7 +193,8 @@ exports.Prisma.ComandaScalarFieldEnum = {
   cliente_id: 'cliente_id',
   mesa_id: 'mesa_id',
   pagoEm: 'pagoEm',
-  tipoPagamento: 'tipoPagamento'
+  tipoPagamento: 'tipoPagamento',
+  pontosPagos: 'pontosPagos'
 };
 
 exports.Prisma.AvaliacaoScalarFieldEnum = {

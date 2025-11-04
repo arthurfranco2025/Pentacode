@@ -13,7 +13,7 @@ import {
     Platform,
     Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
@@ -596,7 +596,7 @@ export default function UserPage() {
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <View style={styles.historyItem}>
-                                    <View style={{ flex: 1 }}>
+                                    <View style={styles.historyLeft}>
                                         <Text style={styles.historyTitle}>
                                             {item.mesa ? `Mesa ${item.mesa}` : "Pedido PentaPizza"}
                                         </Text>
@@ -607,26 +607,43 @@ export default function UserPage() {
                                             Status: {item.status}
                                         </Text>
 
-                                        {/* Botão para abrir detalhes */}
-                                        <TouchableOpacity
-                                            style={{
-                                                backgroundColor: '#5A3FFF',
-                                                paddingHorizontal: 10,
-                                                paddingVertical: 6,
-                                                borderRadius: 6,
-                                                marginTop: 5,
-                                                alignSelf: 'flex-start'
-                                            }}
-                                            onPress={() => openDetails(item)}
-                                        >
-                                            <Text style={{ color: '#fff', fontWeight: '700' }}>Ver detalhes</Text>
-                                        </TouchableOpacity>
+                                        {/* Container dos botões */}
+                                        <View style={styles.buttonsContainer}>
+                                            {/* Botão Ver detalhes */}
+                                            <TouchableOpacity
+                                                style={styles.detailButton}
+                                                onPress={() => openDetails(item)}
+                                            >
+                                                <Text style={styles.detailButtonText}>Ver detalhes</Text>
+                                            </TouchableOpacity>
+
+                                            {/* Botão de Pontos */}
+                                            <TouchableOpacity
+                                                style={styles.pointsButton}
+                                                onPress={() => {
+                                                    if (!item?.price) return;
+                                                    const pontos = (item.price * 0.25).toFixed(2);
+                                                    Alert.alert(
+                                                        "Você ganhou pontos!",
+                                                        `Você recebeu ${pontos} pontos neste pedido. Todas as vezes que efetuar um pagamento na PentaPizza, você é recompensado com pontos para trocar por produtos! Aproveite!`
+                                                    );
+                                                }}
+                                            >
+                                                <Ionicons name="star" size={18} color="#ffde09" />
+                                                <Text style={styles.pointsText}>
+                                                    {item?.price ? `Você ganhou ${(item.price * 0.25).toFixed(2)} pts` : 'Sem pontos'}
+                                                </Text>
+                                                <MaterialIcons name="help-outline" size={18} color="#cdcdcd" />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    <View style={{ alignItems: 'flex-end' }}>
+
+                                    <View style={styles.historyRight}>
                                         <Text style={styles.historyPrice}>{formatarPreco(item.price)}</Text>
                                         <Text style={styles.historyPoints}>{item.points} pts</Text>
                                     </View>
                                 </View>
+
                             )}
                             ListEmptyComponent={() => (
                                 <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>
@@ -1002,4 +1019,48 @@ const styles = StyleSheet.create({
         fontSize: 13,
         marginTop: 4,
     },
+    historyRight: {
+        alignItems: "flex-end",
+        justifyContent: "space-between",
+    },
+    historyLeft: {
+        flex: 1,
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 8,
+        gap: 10,
+        // justifyContent: '',
+    },
+
+    detailButton: {
+        backgroundColor: '#5A3FFF',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+
+    detailButtonText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 14,
+    },
+
+    pointsButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        // backgroundColor: '#FFD70022',
+        borderRadius: 8,
+    },
+    pointsText: {
+        color: '#ffde09',
+        fontWeight: '700',
+        fontSize: 14,
+        marginHorizontal: 6,
+        // marginLeft: 10,
+    },
+
 })
