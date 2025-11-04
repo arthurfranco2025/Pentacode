@@ -5,12 +5,14 @@ interface ItemPedido {
   id: string;
   price: number;
   points: number; // Adicionando points
+  payWithPoints?: boolean;
   removidos?: { id: string; nome: string }[];
   adicionais?: { id: string; nome: string; price: number }[];
   product: { name: string };
   product2?: { name: string };
   status?: string;
   observacao?: string;
+  qtd: number;
 }
 
 interface ListarItensRequest {
@@ -34,10 +36,10 @@ class ListItensPorPedidoService {
     const listaDeItens = await PrismaClient.item.findMany({
       where: { pedido_id },
       include: {
-        product: { select: { name: true } },
-        product2: { select: { name: true } },
+        product: { select: { name: true, price: true, points: true } },
+        product2: { select: { name: true, price: true, points: true } },
         Item_adicional: {
-          include: { adicional: { select: { nome: true, price: true } } },
+          include: { adicional: { select: { nome: true, price: true, points: true } } },
         },
       },
     });
@@ -49,10 +51,12 @@ class ListItensPorPedidoService {
           id: item.id,
           price: item.price,
           points: item.points || 0, // pega points se existir
+          payWithPoints: item.payWithPoints ?? false,
           product: item.product,
           product2: item.product2 || undefined,
           status: item.status || undefined,
           observacao: item.observacoes || undefined,
+          qtd: item.qtd
         };
 
         // Removidos

@@ -17,15 +17,11 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp, RouteProp, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
 import { AuthContext } from "../../contexts/AuthContext";
 
-type RootStackParamList = {
-    CustomizeProduct: { product: Product };
-    Order: { product: Product };
-};
 
 interface Product {
     id: string;
@@ -57,8 +53,8 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 export default function CustomizeProduct() {
     const { addItem, pedidoId, setPedidoId } = usePedido();
     const { user } = useContext(AuthContext);
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const route = useRoute<RouteProp<RootStackParamList, "CustomizeProduct">>();
+    const navigation = useNavigation<any>();
+    const route = useRoute<any>();
     const { product } = route.params;
 
     const [quantity, setQuantity] = useState(1);
@@ -249,7 +245,11 @@ export default function CustomizeProduct() {
                 adicionais: Object.entries(selectedExtras)
                     .filter(([_, selected]) => selected)
                     .map(([id]) => ({ id })),
-                observacoes: observation
+                observacoes: observation,
+                // Este fluxo é para adicionar o item pagando com DINHEIRO,
+                // portanto não marcamos como pago com pontos e não consumimos pontos.
+                payWithPoints: false,
+                pointsUsed: 0
             };
 
             const response = await api.post("/item", payload);
@@ -262,6 +262,7 @@ export default function CustomizeProduct() {
                 qtd: quantity,
                 price: item.price,
                 totalPrice: totalPrice,
+                totalPoints: 0, // como é pago com dinheiro, o preço em pontos será 0
                 removedIngredients: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
                     .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),
@@ -274,10 +275,12 @@ export default function CustomizeProduct() {
                     name: selectedSecondFlavor.name,
                     price: Number(selectedSecondFlavor.price),
                     image_url: selectedSecondFlavor.image_url
-                } : undefined
+                } : undefined,
+                payWithPoints: false,
+                pointsUsed: 0
             });
 
-            navigation.navigate("Order", { product });
+            navigation.navigate("Order");
         } catch (error: any) {
             const mensagem = error.response?.data?.message || error.response?.data?.error || error.message || "Erro ao adicionar item";
             setError(mensagem);
@@ -341,7 +344,7 @@ export default function CustomizeProduct() {
                     .filter(([_, selected]) => selected)
                     .map(([id]) => ({ id })),
                 observacoes: observation,
-                paidWithPoints: true, // 🔹 Indica pagamento com pontos
+                payWithPoints: true, // 🔹 Indica pagamento com pontos
                 pointsUsed: totalPoints   // 🔹 Quantidade de pontos
             };
 
@@ -369,11 +372,11 @@ export default function CustomizeProduct() {
                     price: Number(selectedSecondFlavor.price),
                     image_url: selectedSecondFlavor.image_url
                 } : undefined,
-                paidWithPoints: true,
+                payWithPoints: true,
                 pointsUsed: totalPoints
             });
 
-            navigation.navigate("Order", { product });
+            navigation.navigate("Order");
         } catch (error: any) {
             const mensagem = error.response?.data?.message || error.message || "Erro ao adicionar item";
             setError(mensagem);
@@ -524,13 +527,13 @@ export default function CustomizeProduct() {
                 <TextInput style={styles.textArea} placeholder="Observações... " placeholderTextColor="#aaa" value={observation} onChangeText={setObservation} />
 
                 {/* Botões */}
-                <TouchableOpacity style={[styles.confirmButton, isAdding && { backgroundColor: "#888" }]} onPress={handleAddToPedido} disabled={isAdding} >
+                <TouchableOpacity style={[styles.confirmButton, isAdding && { opacity: 0.5 }]} onPress={handleAddToPedido} disabled={isAdding} >
                     <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>
 
                 {/* 🔸 Botão de pontos */}
                 <TouchableOpacity
-                    style={[styles.pointsButton, isAdding && { backgroundColor: "#888" }]}
+                    style={[styles.pointsButton, isAdding && { opacity: 0.5 }]}
                     onPress={handleAddWithPoints}
                     disabled={isAdding}
                 >
@@ -539,7 +542,7 @@ export default function CustomizeProduct() {
                     </Text>
                 </TouchableOpacity>
 
-        </ScrollView>
+            </ScrollView>
         </View >
     )
 }

@@ -8,6 +8,8 @@ interface CreateItemRequest {
   removidos?: { id: string }[];
   adicionais?: { id: string }[];
   observacoes?: string;
+  payWithPoints?: boolean;
+  pointsUsed?: number;
 }
 
 class CreateItemService {
@@ -19,6 +21,8 @@ class CreateItemService {
     removidos,
     adicionais,
     observacoes,
+    payWithPoints,
+    pointsUsed
   }: CreateItemRequest) {
 
     if (!pedido_id) throw new Error("É preciso ter um pedido para criar um item");
@@ -123,6 +127,22 @@ class CreateItemService {
     precoFinal = qtd * (precoFinal + adicionaisTotal);
     pontosFinal = qtd * (pontosFinal + adicionaisPontos);
 
+    // Se o cliente pagar com pontos, sobrescrever:
+    if (payWithPoints) {
+      // preço em dinheiro fica 0
+      precoFinal = 0;
+      // pontos armazenados no item representam os pontos consumidos
+      pontosFinal = pointsUsed || 0;
+
+      // reduzir pontos do cliente
+      await PrismaClient.cliente.update({
+        where: { id: pedido.cliente_id },
+        data: { points: { decrement: pontosFinal } },
+      });
+
+      // Ao atualizar pedido/comanda, incrementamos price com 0, e provavelmente NÃO incrementamos pontos (pontos ganhos), então usamos valores apropriados abaixo.
+    }
+
     // Verifica se o pedido existe antes de criar o item (mensagem mais clara que um erro de null)
     const pedidoExiste = await PrismaClient.pedido.findUnique({ where: { id: pedido_id } });
     if (!pedidoExiste) {
@@ -138,6 +158,7 @@ class CreateItemService {
         qtd,
         price: precoFinal,
         points: pontosFinal,
+        payWithPoints: payWithPoints ?? false,
         dois_sabores: !!produto2,
         removidos: removidos && removidos.length > 0 ? removidos : null,
         adicionais: adicionais && adicionais.length > 0 ? adicionais : null,
@@ -162,7 +183,7 @@ class CreateItemService {
       where: { id: pedido_id },
       data: {
         price: { increment: precoFinal },
-        points: { increment: pontosFinal },
+        points: { increment: payWithPoints ? 0 : pontosFinal }, // se você não quer que gasto com pontos some em points do pedido
       }
     });
 

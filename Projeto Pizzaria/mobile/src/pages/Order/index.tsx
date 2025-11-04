@@ -40,7 +40,7 @@ export default function Order() {
     const numero_mesa = comanda?.numero_mesa ?? null;
 
     const totalPoints = pedido.reduce((acc, item) => acc + (item.pointsUsed ?? 0), 0);
-    const totalMoney = pedido.reduce((acc, item) => acc + (item.paidWithPoints ? 0 : (item.totalPrice ?? 0)), 0);
+    const totalMoney = pedido.reduce((acc, item) => acc + (item.payWithPoints ? 0 : (item.totalPrice ?? 0)), 0);
 
     async function handleFinishPedido() {
         if (!pedidoId) {
@@ -184,9 +184,9 @@ export default function Order() {
                                 </View>
                             )}
 
-                            <Text style={[styles.totalValue, { color: item.paidWithPoints ? "#ffde09ff" : "#00C851" }]}>
+                            <Text style={[styles.totalValue, { color: item.payWithPoints ? "#ffde09ff" : "#00C851" }]}>
                                 <Text style={{ color: "#FFFFFF" }}>Total: </Text>
-                                {item.paidWithPoints ? (
+                                {item.payWithPoints ? (
                                     <>
                                         <Ionicons name="star" size={16} color="#ffde09ff" />{" "}
                                         {(item.pointsUsed ?? 0).toFixed(1)} pts
