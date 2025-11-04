@@ -145,6 +145,7 @@ model Item {
   dois_sabores   Boolean          @default(false)
   product2_id    String?
   status         String           @default("")
+  payWithPoints  Boolean?         @default(false)
   Item_adicional Item_adicional[]
   pedido         Pedido           @relation(fields: [pedido_id], references: [id])
   product2       Product?         @relation("Sabor2", fields: [product2_id], references: [id])

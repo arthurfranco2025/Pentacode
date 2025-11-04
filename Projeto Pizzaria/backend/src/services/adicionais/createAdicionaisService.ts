@@ -13,11 +13,11 @@ class CreateAdicionalService {
             throw new Error("Insira o nome do ingrediente");
         }
 
-        if (!price) {
+        if (price === undefined || price === null) {
             throw new Error("Insira o preço do ingrediente");
         }
 
-        if(!points){
+        if (points === undefined || points === null) {
             throw new Error('Insira os pontos do produto')
         }
 

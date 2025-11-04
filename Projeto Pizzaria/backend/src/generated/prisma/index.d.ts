@@ -11638,6 +11638,7 @@ export namespace Prisma {
     dois_sabores: boolean | null
     product2_id: string | null
     status: string | null
+    payWithPoints: boolean | null
   }
 
   export type ItemMaxAggregateOutputType = {
@@ -11653,6 +11654,7 @@ export namespace Prisma {
     dois_sabores: boolean | null
     product2_id: string | null
     status: string | null
+    payWithPoints: boolean | null
   }
 
   export type ItemCountAggregateOutputType = {
@@ -11670,6 +11672,7 @@ export namespace Prisma {
     dois_sabores: number
     product2_id: number
     status: number
+    payWithPoints: number
     _all: number
   }
 
@@ -11699,6 +11702,7 @@ export namespace Prisma {
     dois_sabores?: true
     product2_id?: true
     status?: true
+    payWithPoints?: true
   }
 
   export type ItemMaxAggregateInputType = {
@@ -11714,6 +11718,7 @@ export namespace Prisma {
     dois_sabores?: true
     product2_id?: true
     status?: true
+    payWithPoints?: true
   }
 
   export type ItemCountAggregateInputType = {
@@ -11731,6 +11736,7 @@ export namespace Prisma {
     dois_sabores?: true
     product2_id?: true
     status?: true
+    payWithPoints?: true
     _all?: true
   }
 
@@ -11835,6 +11841,7 @@ export namespace Prisma {
     dois_sabores: boolean
     product2_id: string | null
     status: string
+    payWithPoints: boolean | null
     _count: ItemCountAggregateOutputType | null
     _avg: ItemAvgAggregateOutputType | null
     _sum: ItemSumAggregateOutputType | null
@@ -11871,6 +11878,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: boolean
     status?: boolean
+    payWithPoints?: boolean
     Item_adicional?: boolean | Item$Item_adicionalArgs<ExtArgs>
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product2?: boolean | Item$product2Args<ExtArgs>
@@ -11893,6 +11901,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: boolean
     status?: boolean
+    payWithPoints?: boolean
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product2?: boolean | Item$product2Args<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -11913,6 +11922,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: boolean
     status?: boolean
+    payWithPoints?: boolean
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
     product2?: boolean | Item$product2Args<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -11933,9 +11943,10 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: boolean
     status?: boolean
+    payWithPoints?: boolean
   }
 
-  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "created_at" | "updated_at" | "product_id" | "pedido_id" | "price" | "points" | "removidos" | "adicionais" | "observacoes" | "dois_sabores" | "product2_id" | "status", ExtArgs["result"]["item"]>
+  export type ItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "qtd" | "created_at" | "updated_at" | "product_id" | "pedido_id" | "price" | "points" | "removidos" | "adicionais" | "observacoes" | "dois_sabores" | "product2_id" | "status" | "payWithPoints", ExtArgs["result"]["item"]>
   export type ItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Item_adicional?: boolean | Item$Item_adicionalArgs<ExtArgs>
     pedido?: boolean | PedidoDefaultArgs<ExtArgs>
@@ -11977,6 +11988,7 @@ export namespace Prisma {
       dois_sabores: boolean
       product2_id: string | null
       status: string
+      payWithPoints: boolean | null
     }, ExtArgs["result"]["item"]>
     composites: {}
   }
@@ -12418,6 +12430,7 @@ export namespace Prisma {
     readonly dois_sabores: FieldRef<"Item", 'Boolean'>
     readonly product2_id: FieldRef<"Item", 'String'>
     readonly status: FieldRef<"Item", 'String'>
+    readonly payWithPoints: FieldRef<"Item", 'Boolean'>
   }
     
 
@@ -18507,7 +18520,8 @@ export namespace Prisma {
     observacoes: 'observacoes',
     dois_sabores: 'dois_sabores',
     product2_id: 'product2_id',
-    status: 'status'
+    status: 'status',
+    payWithPoints: 'payWithPoints'
   };
 
   export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
@@ -19307,6 +19321,7 @@ export namespace Prisma {
     dois_sabores?: BoolFilter<"Item"> | boolean
     product2_id?: StringNullableFilter<"Item"> | string | null
     status?: StringFilter<"Item"> | string
+    payWithPoints?: BoolNullableFilter<"Item"> | boolean | null
     Item_adicional?: Item_adicionalListRelationFilter
     pedido?: XOR<PedidoScalarRelationFilter, PedidoWhereInput>
     product2?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
@@ -19328,6 +19343,7 @@ export namespace Prisma {
     dois_sabores?: SortOrder
     product2_id?: SortOrderInput | SortOrder
     status?: SortOrder
+    payWithPoints?: SortOrderInput | SortOrder
     Item_adicional?: Item_adicionalOrderByRelationAggregateInput
     pedido?: PedidoOrderByWithRelationInput
     product2?: ProductOrderByWithRelationInput
@@ -19352,6 +19368,7 @@ export namespace Prisma {
     dois_sabores?: BoolFilter<"Item"> | boolean
     product2_id?: StringNullableFilter<"Item"> | string | null
     status?: StringFilter<"Item"> | string
+    payWithPoints?: BoolNullableFilter<"Item"> | boolean | null
     Item_adicional?: Item_adicionalListRelationFilter
     pedido?: XOR<PedidoScalarRelationFilter, PedidoWhereInput>
     product2?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
@@ -19373,6 +19390,7 @@ export namespace Prisma {
     dois_sabores?: SortOrder
     product2_id?: SortOrderInput | SortOrder
     status?: SortOrder
+    payWithPoints?: SortOrderInput | SortOrder
     _count?: ItemCountOrderByAggregateInput
     _avg?: ItemAvgOrderByAggregateInput
     _max?: ItemMaxOrderByAggregateInput
@@ -19398,6 +19416,7 @@ export namespace Prisma {
     dois_sabores?: BoolWithAggregatesFilter<"Item"> | boolean
     product2_id?: StringNullableWithAggregatesFilter<"Item"> | string | null
     status?: StringWithAggregatesFilter<"Item"> | string
+    payWithPoints?: BoolNullableWithAggregatesFilter<"Item"> | boolean | null
   }
 
   export type IngredienteWhereInput = {
@@ -20340,6 +20359,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
     pedido: PedidoCreateNestedOneWithoutItemsInput
     product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
@@ -20361,6 +20381,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -20376,6 +20397,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
     product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
@@ -20397,6 +20419,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -20415,6 +20438,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
   }
 
   export type ItemUpdateManyMutationInput = {
@@ -20429,6 +20453,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type ItemUncheckedUpdateManyInput = {
@@ -20446,6 +20471,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type IngredienteCreateInput = {
@@ -21325,6 +21351,11 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type BoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
   export type Item_adicionalListRelationFilter = {
     every?: Item_adicionalWhereInput
     some?: Item_adicionalWhereInput
@@ -21360,6 +21391,7 @@ export namespace Prisma {
     dois_sabores?: SortOrder
     product2_id?: SortOrder
     status?: SortOrder
+    payWithPoints?: SortOrder
   }
 
   export type ItemAvgOrderByAggregateInput = {
@@ -21381,6 +21413,7 @@ export namespace Prisma {
     dois_sabores?: SortOrder
     product2_id?: SortOrder
     status?: SortOrder
+    payWithPoints?: SortOrder
   }
 
   export type ItemMinOrderByAggregateInput = {
@@ -21396,6 +21429,7 @@ export namespace Prisma {
     dois_sabores?: SortOrder
     product2_id?: SortOrder
     status?: SortOrder
+    payWithPoints?: SortOrder
   }
 
   export type ItemSumOrderByAggregateInput = {
@@ -21428,6 +21462,14 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type IngredienteCountOrderByAggregateInput = {
@@ -22298,6 +22340,10 @@ export namespace Prisma {
     connect?: Item_adicionalWhereUniqueInput | Item_adicionalWhereUniqueInput[]
   }
 
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
+  }
+
   export type Item_adicionalUpdateManyWithoutItemNestedInput = {
     create?: XOR<Item_adicionalCreateWithoutItemInput, Item_adicionalUncheckedCreateWithoutItemInput> | Item_adicionalCreateWithoutItemInput[] | Item_adicionalUncheckedCreateWithoutItemInput[]
     connectOrCreate?: Item_adicionalCreateOrConnectWithoutItemInput | Item_adicionalCreateOrConnectWithoutItemInput[]
@@ -22698,6 +22744,11 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
+
+  export type NestedBoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -22720,6 +22771,14 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type AvaliacaoCreateWithoutClienteInput = {
@@ -23229,6 +23288,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
     pedido: PedidoCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutSabor1_itemsInput
@@ -23248,6 +23308,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -23273,6 +23334,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
     pedido: PedidoCreateNestedOneWithoutItemsInput
     product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
@@ -23292,6 +23354,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -23402,6 +23465,7 @@ export namespace Prisma {
     dois_sabores?: BoolFilter<"Item"> | boolean
     product2_id?: StringNullableFilter<"Item"> | string | null
     status?: StringFilter<"Item"> | string
+    payWithPoints?: BoolNullableFilter<"Item"> | boolean | null
   }
 
   export type ItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -23487,6 +23551,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalCreateNestedManyWithoutItemInput
     product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
     product: ProductCreateNestedOneWithoutSabor1_itemsInput
@@ -23506,6 +23571,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
     Item_adicional?: Item_adicionalUncheckedCreateNestedManyWithoutItemInput
   }
 
@@ -24568,6 +24634,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
     pedido: PedidoCreateNestedOneWithoutItemsInput
     product2?: ProductCreateNestedOneWithoutSabor2_itemsInput
     product: ProductCreateNestedOneWithoutSabor1_itemsInput
@@ -24588,6 +24655,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
   }
 
   export type ItemCreateOrConnectWithoutItem_adicionalInput = {
@@ -24647,6 +24715,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
     product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
     product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
@@ -24667,6 +24736,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type ComandaCreateWithoutMesaInput = {
@@ -24954,6 +25024,7 @@ export namespace Prisma {
     observacoes?: string | null
     dois_sabores?: boolean
     status?: string
+    payWithPoints?: boolean | null
   }
 
   export type ItemCreateManyProductInput = {
@@ -24970,6 +25041,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
   }
 
   export type Product_ingredienteCreateManyProductInput = {
@@ -25013,6 +25085,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
@@ -25032,6 +25105,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -25049,6 +25123,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type ItemUpdateWithoutProductInput = {
@@ -25063,6 +25138,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
     pedido?: PedidoUpdateOneRequiredWithoutItemsNestedInput
     product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
@@ -25082,6 +25158,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -25099,6 +25176,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type Product_ingredienteUpdateWithoutProductInput = {
@@ -25139,6 +25217,7 @@ export namespace Prisma {
     dois_sabores?: boolean
     product2_id?: string | null
     status?: string
+    payWithPoints?: boolean | null
   }
 
   export type ItemUpdateWithoutPedidoInput = {
@@ -25153,6 +25232,7 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUpdateManyWithoutItemNestedInput
     product2?: ProductUpdateOneWithoutSabor2_itemsNestedInput
     product?: ProductUpdateOneRequiredWithoutSabor1_itemsNestedInput
@@ -25172,6 +25252,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
     Item_adicional?: Item_adicionalUncheckedUpdateManyWithoutItemNestedInput
   }
 
@@ -25189,6 +25270,7 @@ export namespace Prisma {
     dois_sabores?: BoolFieldUpdateOperationsInput | boolean
     product2_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    payWithPoints?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type AvaliacaoCreateManyComandaInput = {
