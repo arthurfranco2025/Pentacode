@@ -21,6 +21,7 @@ import { useNavigation, NavigationProp, RouteProp, useRoute } from "@react-navig
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
 import { AuthContext } from "../../contexts/AuthContext";
+import sendNotificationOrder from "../Notification/order";
 
 type RootStackParamList = {
     CustomizeProduct: { product: Product };
@@ -556,7 +557,10 @@ export default function CustomizeProduct() {
                 <TextInput style={styles.textArea} placeholder="Observações... " placeholderTextColor="#aaa" value={observation} onChangeText={setObservation} />
 
                 {/* Botões */}
-                <TouchableOpacity style={[styles.confirmButton, isAdding && { backgroundColor: "#888" }]} onPress={handleAddToPedido} disabled={isAdding} >
+                <TouchableOpacity style={[styles.confirmButton, isAdding && { backgroundColor: "#888" }]} onPress={() => {
+                    handleAddToPedido();
+                    sendNotificationOrder();
+                }} disabled={isAdding} >
                     <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>
 
