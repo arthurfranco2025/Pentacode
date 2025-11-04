@@ -35,6 +35,7 @@ type PaymentRouteProps = {
 export default function Payment() {
   const navigation = useNavigation<PaymentScreenNavigationProp>();
   const route = useRoute();
+  const { user } = useContext(AuthContext)
   const { comandaId, totalPoints, totalPrice } = route.params as PaymentRouteProps;
   const { signOut } = useContext(AuthContext);
 
@@ -340,9 +341,9 @@ export default function Payment() {
             <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center", marginBottom: 20 }}>
               O garçom está a caminho com sua comanda!
             </Text>
-            <Text style={{ color: "#FFD700", fontSize: 16, textAlign: "center", marginBottom: 12 }}>
+            {user?.guest && <Text style={{ color: "#FFD700", fontSize: 16, textAlign: "center", marginBottom: 12 }}>
               Você ganhará {ganhoPontos().toFixed(2)} pts quando o garçom fechar a comanda.
-            </Text>
+            </Text>}
             <TouchableOpacity
               style={styles.modalButtonConfirm2}
               onPress={handleFecharGarcom}

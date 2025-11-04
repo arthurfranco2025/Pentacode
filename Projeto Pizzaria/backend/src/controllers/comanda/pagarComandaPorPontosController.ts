@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PagarComandaPorPontosService } from "../../services/comanda/pagarComandaPorPontosService";
+import { PagarComandaService } from "../../services/comanda/pagarComandaService";
 
 class PagarComandaPorPontosController {
     async handle(req: Request, res: Response) {
@@ -10,11 +10,11 @@ class PagarComandaPorPontosController {
                 return res.status(400).json({ error: "O id da comanda é obrigatório" });
             }
 
-            const pagarComandaService = new PagarComandaPorPontosService();
+            const pagarComandaService = new PagarComandaService();
 
-            await pagarComandaService.execute({ comanda_id });
+            const result = await pagarComandaService.execute({ comanda_id, payWithPoints: true });
 
-            return res.status(200).json({ message: "Comanda paga com sucesso usando pontos" });
+            return res.status(200).json(result);
         } catch (err: any) {
             return res.status(400).json({ error: err.message || "Erro ao pagar a comanda" });
         }
