@@ -198,33 +198,46 @@ export default function Home() {
 				</TouchableOpacity>
 
 				{/* Logo */}
-				<Text style={styles.logoText}>
-					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-				</Text>
+				<View style={{ flex: 1, alignItems: "center" }}>
+					<Text style={styles.logoText}>
+						Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+					</Text>
+				</View>
+
 
 				{/* Lado direito do header */}
-				<TouchableOpacity onPress={() => navigation.navigate("OrderTicket")}>
-					<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-						<Text style={styles.mesaText}>Mesa {comanda?.numero_mesa}</Text>
-
-						{/* Botão para a comanda */}
-						<Ionicons name="reader-sharp" size={18} color={"white"} />
-						{/* Exemplo: pequeno indicador vermelho se tiver itens no pedido */}
-						{totalPedido > 0 && (
-							<View
-								style={{
-									position: "absolute",
-									top: -4,
-									right: -4,
-									backgroundColor: "#FF3F4B",
-									width: 10,
-									height: 10,
-									borderRadius: 5,
-								}}
-							/>
-						)}
-					</View>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("OrderTicket")}
+					style={{
+						backgroundColor: "rgba(255,255,255,0.15)",
+						paddingHorizontal: 10,
+						paddingVertical: 5,
+						borderRadius: 10,
+						flexDirection: "row",
+						alignItems: "center",
+						gap: 8,
+					}}
+					activeOpacity={0.8}
+				>
+					<Text style={[styles.mesaText, { fontWeight: "bold", color: "#fff" }]}>
+						Mesa {comanda?.numero_mesa}
+					</Text>
+					<Ionicons name="reader-sharp" size={18} color="#fff" />
+					{totalPedido > 0 && (
+						<View
+							style={{
+								position: "absolute",
+								top: -3,
+								right: -3,
+								backgroundColor: "#FF3F4B",
+								width: 10,
+								height: 10,
+								borderRadius: 5,
+							}}
+						/>
+					)}
 				</TouchableOpacity>
+
 			</LinearGradient>
 
 
@@ -365,7 +378,17 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#ffffff1b",
 	},
 	icon24: { width: 24, height: 24 },
-	logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
+	logoText: {
+		color: "#fff",
+		fontSize: 22,
+		fontWeight: "700",
+
+		//tentando centralizar a logo abaixo e falhando miseravelmente
+		//   textAlign: "center", 
+
+		// alignItems: "center",
+		// justifyContent: "space-around",
+	},
 	mesaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
 	menuSearchRow: {
 		flexDirection: "row",
@@ -485,6 +508,7 @@ const styles = StyleSheet.create({
 	avatarIcon: {
 		borderRadius: 12,
 		borderWidth: 0.5,
-		borderColor: "#FFF"
+		borderColor: "#FFF",
+		// marginLeft: 25,
 	},
 });
