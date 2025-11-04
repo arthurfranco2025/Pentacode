@@ -588,7 +588,10 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingTop: 52,
-    paddingBottom: 14,
+    paddingBottom: 10,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
   },
   totalPointsText: {
     color: '#00C851',

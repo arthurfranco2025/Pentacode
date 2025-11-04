@@ -127,11 +127,10 @@ export default function Order() {
                 colors={["#3D1F93", "#1d1d2e"]}
                 style={styles.header}
             >
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Image
-                        source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-                        style={{ width: 26, height: 26 }}
-                    />
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.logoText}>
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
@@ -271,9 +270,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingTop: 52,
-        paddingBottom: 12,
-        paddingHorizontal: 20,
+        paddingBottom: 10,
+        paddingHorizontal: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ffffff1b",
     },
+    backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: {
         color: "#FFF",
         fontSize: 22,
@@ -285,6 +287,7 @@ const styles = StyleSheet.create({
         color: "#FFF",
         paddingHorizontal: 20,
         marginBottom: 10,
+        marginTop: 10,
     },
     card: {
         flexDirection: "row",

@@ -83,12 +83,11 @@ class CreateItemService {
       // Verificação de bebida alcoólica no segundo sabor será feita abaixo junto com a do primeiro sabor
     }
 
-    // 🔹 Verificar se precisamos checar idade: somente quando algum dos sabores for alcoólico
     const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
     let idade = null as number | null;
     if (precisaChecarIdade) {
       const dataNasc = pedido.cliente.data_nasc;
-      if (!dataNasc) throw new Error('Data de nascimento não encontrada...');
+      if (!dataNasc) throw new Error('Você precisa estar logado para adicionar bebidas alcoólicas à comanda.');
 
       const hoje = new Date();
       idade = hoje.getFullYear() - dataNasc.getFullYear();

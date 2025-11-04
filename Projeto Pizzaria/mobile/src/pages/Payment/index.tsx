@@ -169,11 +169,10 @@ export default function Payment() {
         colors={["#3D1F93", "#1d1d2e"]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/left.png" }}
-            style={styles.headerIcon}
-          />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
@@ -424,9 +423,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingTop: 52,
-    paddingBottom: 14,
-    paddingHorizontal: 20
+    paddingBottom: 10,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
   },
+  backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
   headerIcon: {
     width: 26,
     height: 26
@@ -446,7 +448,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFF",
     paddingHorizontal: 20,
-    marginBottom: 20
+    marginBottom: 15,
   },
   paymentIcon: {
     width: 50,
