@@ -8,6 +8,8 @@ interface CreateItemRequest {
   removidos?: { id: string }[];
   adicionais?: { id: string }[];
   observacoes?: string;
+  payWithPoints?: boolean;
+  pointsUsed?: number;
 }
 
 class CreateItemService {
@@ -19,6 +21,8 @@ class CreateItemService {
     removidos,
     adicionais,
     observacoes,
+    payWithPoints,
+    pointsUsed
   }: CreateItemRequest) {
 
     if (!pedido_id) throw new Error("É preciso ter um pedido para criar um item");
@@ -79,12 +83,11 @@ class CreateItemService {
       // Verificação de bebida alcoólica no segundo sabor será feita abaixo junto com a do primeiro sabor
     }
 
-    // 🔹 Verificar se precisamos checar idade: somente quando algum dos sabores for alcoólico
     const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
     let idade = null as number | null;
     if (precisaChecarIdade) {
       const dataNasc = pedido.cliente.data_nasc;
-      if (!dataNasc) throw new Error('Data de nascimento não encontrada...');
+      if (!dataNasc) throw new Error('Você precisa estar logado para adicionar bebidas alcoólicas à comanda.');
 
       const hoje = new Date();
       idade = hoje.getFullYear() - dataNasc.getFullYear();
@@ -123,6 +126,22 @@ class CreateItemService {
     precoFinal = qtd * (precoFinal + adicionaisTotal);
     pontosFinal = qtd * (pontosFinal + adicionaisPontos);
 
+    // Se o cliente pagar com pontos, sobrescrever:
+    if (payWithPoints) {
+      // preço em dinheiro fica 0
+      precoFinal = 0;
+      // pontos armazenados no item representam os pontos consumidos
+      pontosFinal = pointsUsed || 0;
+
+      // reduzir pontos do cliente
+      await PrismaClient.cliente.update({
+        where: { id: pedido.cliente_id },
+        data: { points: { decrement: pontosFinal } },
+      });
+
+      // Ao atualizar pedido/comanda, incrementamos price com 0, e provavelmente NÃO incrementamos pontos (pontos ganhos), então usamos valores apropriados abaixo.
+    }
+
     // Verifica se o pedido existe antes de criar o item (mensagem mais clara que um erro de null)
     const pedidoExiste = await PrismaClient.pedido.findUnique({ where: { id: pedido_id } });
     if (!pedidoExiste) {
@@ -138,6 +157,7 @@ class CreateItemService {
         qtd,
         price: precoFinal,
         points: pontosFinal,
+        payWithPoints: payWithPoints ?? false,
         dois_sabores: !!produto2,
         removidos: removidos && removidos.length > 0 ? removidos : null,
         adicionais: adicionais && adicionais.length > 0 ? adicionais : null,
@@ -150,6 +170,7 @@ class CreateItemService {
         product2_id: true,
         qtd: true,
         price: true,
+        points: true,
         pedido_id: true,
         dois_sabores: true,
         removidos: true,
@@ -158,11 +179,12 @@ class CreateItemService {
     });
 
     // Atualiza pedido
+    // Atualiza valores do pedido: preço e pontos (registramos em pedidos apenas os pontos GASTOS pelo cliente)
     await PrismaClient.pedido.update({
       where: { id: pedido_id },
       data: {
         price: { increment: precoFinal },
-        points: { increment: pontosFinal },
+        points: { increment: payWithPoints ? pontosFinal : 0 },
       }
     });
 
@@ -182,7 +204,7 @@ class CreateItemService {
         where: { id: pedidoData.comanda_id },
         data: {
           price: { increment: precoFinal },
-          points: { increment: pontosFinal },
+          points: { increment: payWithPoints ? pontosFinal : 0 },
         }
       });
     } else if (pedidoData) {
@@ -197,7 +219,7 @@ class CreateItemService {
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: pontosFinal },
+            points: { increment: payWithPoints ? pontosFinal : 0 },
           }
         });
       }
@@ -206,7 +228,7 @@ class CreateItemService {
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: pontosFinal },
+            points: { increment: payWithPoints ? pontosFinal : 0 },
           }
         });
       }

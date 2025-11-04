@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -62,15 +63,20 @@ const getStatusColor = (status?: string) => {
   }
 };
 
+// Helper: detecta se item foi pago com pontos (compatível com vários formatos)
+const isItemPaidWithPoints = (item: any) => {
+  return item.paidWithPoints ?? item.payWithPoints ?? ((item.price === 0) && (item.points && item.points > 0));
+};
+
 
 interface ItemPedido {
   id: string;
-  product: { name: string };
-  product2?: { name: string };
+  product: { name: string; price?: number; points?: number };
+  product2?: { name: string; price?: number; points?: number };
   status?: string;
   qtd: number;
   price: number;
-  paidWithPoints?: boolean;
+  payWithPoints?: boolean;
   pointsUsed?: number; // pontos do item principal
   totalPoints?: number; // pontos do item + adicionais
   points?: number; // pontos por unidade
@@ -84,6 +90,8 @@ export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
   const { comanda } = useComanda();
   const [pedidos, setPedidos] = useState<PedidoResponse[]>([]);
+  const [pedidoTotalsMap, setPedidoTotalsMap] = useState<Record<string, { money: number; points: number }>>({});
+  const [comandaTotals, setComandaTotals] = useState<{ money: number; points: number }>({ money: 0, points: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { pedidoStatus, pedidoId, setPedidoId } = usePedido();
@@ -93,6 +101,7 @@ export default function OrderTicket() {
   const [pedidoAberto, setPedidoAberto] = useState<string | null>(null);
   const [itensPedido, setItensPedido] = useState<any[]>([]);
   const [loadingItens, setLoadingItens] = useState(false);
+  const [loadingTotals, setLoadingTotals] = useState(false);
 
 
   useEffect(() => {
@@ -176,6 +185,68 @@ export default function OrderTicket() {
   }, [pedidoStatus, pedidoId]);
 
 
+  // Calcula totais por pedido e totais da comanda (dinheiro + pontos)
+  useEffect(() => {
+    let mounted = true;
+    async function calcTotals() {
+      if (!pedidos || pedidos.length === 0) {
+        if (!mounted) return;
+        setPedidoTotalsMap({});
+        setComandaTotals({ money: 0, points: 0 });
+        return;
+      }
+
+      setLoadingTotals(true);
+
+      try {
+        const results = await Promise.all(
+          pedidos.map(async (pedido) => {
+            const resp = await api.get('/item/listaPorPedido', { params: { pedido_id: pedido.id } });
+            const items = resp.data || [];
+
+            let money = 0;
+            let points = 0;
+
+            items.forEach((it: any) => {
+              const isPaidWithPoints = it.paidWithPoints ?? it.payWithPoints ?? ((it.price === 0) && (it.points && it.points > 0));
+              if (isPaidWithPoints) {
+                points += Number(it.points || 0);
+              } else {
+                money += Number(it.price || 0);
+              }
+            });
+
+            return { pedidoId: pedido.id, money, points };
+          })
+        );
+
+        if (!mounted) return;
+
+        const map: Record<string, { money: number; points: number }> = {};
+        let totalMoney = 0;
+        let totalPoints = 0;
+
+        results.forEach(r => {
+          map[r.pedidoId] = { money: r.money, points: r.points };
+          totalMoney += r.money;
+          totalPoints += r.points;
+        });
+
+        setPedidoTotalsMap(map);
+        setComandaTotals({ money: totalMoney, points: totalPoints });
+      } catch (err) {
+        console.error('Erro ao calcular totais da comanda:', err);
+      } finally {
+        if (mounted) setLoadingTotals(false);
+      }
+    }
+
+    calcTotals();
+
+    return () => { mounted = false; };
+  }, [pedidos]);
+
+
 
   if (!comanda) {
     return (
@@ -192,7 +263,9 @@ export default function OrderTicket() {
       comandaId,
       mesaId,
       numero_mesa,
-      total: pedidos.reduce((acc, pedido) => acc + pedido.total, 0),
+      // envia apenas o total em dinheiro (pontos são tratados separadamente)
+      totalPrice: comandaTotals.money,
+      totalPoints: comandaTotals.points
     });
   };
 
@@ -210,7 +283,7 @@ export default function OrderTicket() {
       const response = await api.get('/item/listaPorPedido', {
         params: { pedido_id: pedidoId }
       });
-
+      // console.log(response.data)
       setItensPedido(response.data);
       // console.log('ver os itens do pedido:', response.data)
     } catch (err) {
@@ -290,10 +363,63 @@ export default function OrderTicket() {
             >
               <View style={styles.cardHeader}>
                 <Text style={styles.pedidoNumber}>Pedido #{index + 1}</Text>
-                <Text style={styles.priceTag}>
-                  {formatarPreco(pedido.total)}
-                </Text>
+
+                <View style={styles.priceRow}>
+                  {(() => {
+                    const totals = pedidoTotalsMap[pedido.id];
+
+                    if (totals) {
+                      const showMoney = totals.money > 0;
+                      const showPoints = totals.points > 0;
+
+                      return (
+                        <>
+                          {showMoney && (
+                            <Text style={styles.moneyText}>
+                              {formatarPreco(totals.money)}
+                            </Text>
+                          )}
+
+                          {showMoney && showPoints && (
+                            <Text style={styles.separator}> / </Text>
+                          )}
+
+                          {showPoints && (
+                            <View style={styles.pointsContainer}>
+                              <Ionicons
+                                name="star"
+                                size={14}
+                                color="#FFD700"
+                                style={{ marginRight: 3 }}
+                              />
+                              <Text style={styles.pointsText}>{totals.points} pts</Text>
+                            </View>
+                          )}
+                        </>
+                      );
+                    }
+
+                    // fallback
+                    return <Text style={styles.moneyText}>{formatarPreco(pedido.total)}</Text>;
+                  })()}
+                </View>
               </View>
+              {/* <View style={styles.cardHeader}>
+                <Text style={styles.pedidoNumber}>Pedido #{index + 1}</Text>
+                <Text style={styles.priceTag}>
+                  {(() => {
+                    const totals = pedidoTotalsMap[pedido.id];
+                    if (totals) {
+                      if (totals.money > 0 && totals.points > 0) {
+                        return `${formatarPreco(totals.money)} / ${totals.points} pts`;
+                      }
+                      if (totals.points > 0) return `${totals.points} pts`;
+                      return formatarPreco(totals.money);
+                    }
+                    return formatarPreco(pedido.total);
+                  })()}
+                </Text>
+              </View> */}
 
               <View style={styles.statusContainer}>
                 <Text style={styles.statusLabel}>Status:</Text>
@@ -350,11 +476,8 @@ export default function OrderTicket() {
                           <View style={styles.rightColumn}>
                             <Text style={styles.itemQtd}>x{item.qtd}</Text>
 
-                            {item.paidWithPoints ? (
+                            {isItemPaidWithPoints(item) ? (
                               <>
-                                <Text style={[styles.itemPrice, { color: "#888" }]}>
-                                  {formatarPreco(0)}
-                                </Text>
                                 <Text style={{ color: "#FFD700", fontSize: 13, fontWeight: "700" }}>
                                   {item.totalPoints
                                     ? `${item.totalPoints * item.qtd} pts`
@@ -366,14 +489,17 @@ export default function OrderTicket() {
                             ) : (
                               <>
                                 <Text style={styles.itemPrice}>
-                                  {formatarPreco(
-                                    item.qtd *
-                                    (item.price +
-                                      (item.adicionais?.reduce((acc, a) => acc + a.price, 0) || 0))
-                                  )}
-                                </Text>
-                                <Text style={{ color: "#FFD700", fontSize: 12, fontWeight: "600" }}>
-                                  {item.points ? `${item.points} pts` : ""}
+                                  {(() => {
+                                    const adicionaisTotal = item.adicionais?.reduce((acc: number, a: any) => acc + (a.price || 0), 0) || 0;
+                                    // Se o backend retornou item.price (total já calculado), usamos diretamente
+                                    if (typeof item.price === 'number' && item.price > 0) {
+                                      return formatarPreco(item.price);
+                                    }
+
+                                    // Fallback: usar preço unitário do produto (se disponível) + adicionais, multiplicado pela quantidade
+                                    const unit = item.product?.price ?? 0;
+                                    return formatarPreco((unit + adicionaisTotal) * (item.qtd || 1));
+                                  })()}
                                 </Text>
                               </>
                             )}
@@ -427,34 +553,11 @@ export default function OrderTicket() {
       <View style={styles.fixedBottomArea}>
         <View style={styles.totalContainer}>
           <Text style={styles.totalValue}>
-            {formatarPreco(
-              pedidos.reduce((accPedido, pedido) => {
-                return accPedido + pedido.total; // já inclui price dos itens
-              }, 0)
-            )}
+            {formatarPreco(comandaTotals.money)}
           </Text>
           <Text style={{ color: "#FFD700", fontWeight: "700", marginTop: 2 }}>
-            Total de pontos: {itensPedido.reduce((acc, item) => acc + (item.paidWithPoints ? (item.pointsUsed || 0) * item.qtd : 0), 0)} pts
+            Total de pontos: {comandaTotals.points} pts
           </Text>
-
-          <Text style={styles.totalValue}>
-            {formatarPreco(
-              itensPedido.reduce((acc, item) => {
-                // Soma apenas os itens que não foram pagos com pontos
-                if (item.paidWithPoints) return acc;
-
-                const totalAdicionais =
-                  item.adicionais?.reduce(
-                    (a: number, b: { price: number }) => a + b.price,
-                    0
-                  ) || 0;
-
-                return acc + (item.price + totalAdicionais) * item.qtd;
-              }, 0)
-            )}
-          </Text>
-
-
         </View>
 
         <View style={styles.buttonsRow}>
@@ -486,7 +589,10 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingTop: 52,
-    paddingBottom: 14,
+    paddingBottom: 10,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
   },
   totalPointsText: {
     color: '#00C851',
@@ -779,5 +885,31 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: "#555",
     shadowColor: "transparent",
+  },
+  priceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  moneyText: {
+    color: "#00C851",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+
+  pointsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  pointsText: {
+    color: "#FFD700",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+  separator: {
+    color: "#FFF",
+    marginHorizontal: 4,
+    fontWeight: "600",
   },
 });

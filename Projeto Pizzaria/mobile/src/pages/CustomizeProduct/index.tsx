@@ -17,15 +17,12 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, NavigationProp, RouteProp, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
 import { AuthContext } from "../../contexts/AuthContext";
+import sendNotificationOrder from "../Notification/order";
 
-type RootStackParamList = {
-    CustomizeProduct: { product: Product };
-    Order: { product: Product };
-};
 
 interface Product {
     id: string;
@@ -57,8 +54,8 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 export default function CustomizeProduct() {
     const { addItem, pedidoId, setPedidoId } = usePedido();
     const { user } = useContext(AuthContext);
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const route = useRoute<RouteProp<RootStackParamList, "CustomizeProduct">>();
+    const navigation = useNavigation<any>();
+    const route = useRoute<any>();
     const { product } = route.params;
 
     const [quantity, setQuantity] = useState(1);
@@ -249,7 +246,11 @@ export default function CustomizeProduct() {
                 adicionais: Object.entries(selectedExtras)
                     .filter(([_, selected]) => selected)
                     .map(([id]) => ({ id })),
-                observacoes: observation
+                observacoes: observation,
+                // Este fluxo é para adicionar o item pagando com DINHEIRO,
+                // portanto não marcamos como pago com pontos e não consumimos pontos.
+                payWithPoints: false,
+                pointsUsed: 0
             };
 
             const response = await api.post("/item", payload);
@@ -262,6 +263,7 @@ export default function CustomizeProduct() {
                 qtd: quantity,
                 price: item.price,
                 totalPrice: totalPrice,
+                totalPoints: 0, // como é pago com dinheiro, o preço em pontos será 0
                 removedIngredients: Object.entries(selectedIngredients)
                     .filter(([_, selected]) => !selected)
                     .map(([id]) => ingredients.find(i => i.id === id)?.nome || id),
@@ -274,10 +276,12 @@ export default function CustomizeProduct() {
                     name: selectedSecondFlavor.name,
                     price: Number(selectedSecondFlavor.price),
                     image_url: selectedSecondFlavor.image_url
-                } : undefined
+                } : undefined,
+                payWithPoints: false,
+                pointsUsed: 0
             });
 
-            navigation.navigate("Order", { product });
+            navigation.navigate("Order");
         } catch (error: any) {
             const mensagem = error.response?.data?.message || error.response?.data?.error || error.message || "Erro ao adicionar item";
             setError(mensagem);
@@ -316,13 +320,36 @@ export default function CustomizeProduct() {
     };
 
     const handleAddWithPoints = async () => {
-        setIsAdding(true)
+
+        if (user?.guest) {
+            setError("guestPoints");
+            return;
+        }
+
+        setIsAdding(true);
+        setError("");
         try {
             if (!user?.id) throw new Error("Cliente não logado");
 
+            const cliente_id = user.id
             let pedido_id = pedidoId;
 
-            // Cria pedido se não existir
+            if (pedido_id) {
+                try {
+                    const statusResp = await api.get(`/pedidos/${pedido_id}/status`);
+                    const status = statusResp.data.status;
+                    if (!status || status !== 'pedido em andamento') {
+                        const pedidoResponse = await api.post("/pedido", { cliente_id: user.id });
+                        pedido_id = pedidoResponse.data.id;
+                        setPedidoId(pedido_id);
+                    }
+                } catch {
+                    const pedidoResponse = await api.post("/pedido", { cliente_id });
+                    pedido_id = pedidoResponse.data.id;
+                    setPedidoId(pedido_id);
+                }
+            }
+
             if (!pedido_id) {
                 const pedidoResponse = await api.post("/pedido", { cliente_id: user.id });
                 pedido_id = pedidoResponse.data.id;
@@ -341,7 +368,7 @@ export default function CustomizeProduct() {
                     .filter(([_, selected]) => selected)
                     .map(([id]) => ({ id })),
                 observacoes: observation,
-                paidWithPoints: true, // 🔹 Indica pagamento com pontos
+                payWithPoints: true, // 🔹 Indica pagamento com pontos
                 pointsUsed: totalPoints   // 🔹 Quantidade de pontos
             };
 
@@ -369,23 +396,48 @@ export default function CustomizeProduct() {
                     price: Number(selectedSecondFlavor.price),
                     image_url: selectedSecondFlavor.image_url
                 } : undefined,
-                paidWithPoints: true,
+                payWithPoints: true,
                 pointsUsed: totalPoints
             });
 
-            navigation.navigate("Order", { product });
+            navigation.navigate("Order");
         } catch (error: any) {
-            const mensagem = error.response?.data?.message || error.message || "Erro ao adicionar item";
-            setError(mensagem);
+            console.log("Erro completo:", error);
+
+            const status = error.response?.status;
+            const data = error.response?.data;
+            const mensagem =
+                data?.message ||
+                data?.error ||
+                error.message ||
+                "Erro ao adicionar item";
+
+            // 🔹 Verifica mensagens relacionadas a idade/álcool, mesmo que genéricas
+            if (
+                mensagem.toLowerCase().includes("menor") ||
+                mensagem.toLowerCase().includes("idade") ||
+                mensagem.toLowerCase().includes("álcool") ||
+                mensagem.toLowerCase().includes("alcool") ||
+                status === 400 && data && !data.message // caso backend só retorne 400 genérico
+            ) {
+                setError("underageAlcohol");
+            } else if (mensagem.toLowerCase().includes("convidado") && mensagem.toLowerCase().includes("ponto")) {
+                setError("guestPoints");
+            } else {
+                setError(mensagem);
+            }
+        } finally {
+            setIsAdding(false);
         }
-        setIsAdding(false)
     };
 
     return (
         <View style={styles.container}>
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} colors={["#3D1F93", "#1d1d2e"]} style={styles.header} >
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="chevron-back" size={24} color="#fff" />
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.logoText}> Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text> </Text>
                 <View style={{ width: 24 }} />
@@ -524,13 +576,16 @@ export default function CustomizeProduct() {
                 <TextInput style={styles.textArea} placeholder="Observações... " placeholderTextColor="#aaa" value={observation} onChangeText={setObservation} />
 
                 {/* Botões */}
-                <TouchableOpacity style={[styles.confirmButton, isAdding && { backgroundColor: "#888" }]} onPress={handleAddToPedido} disabled={isAdding} >
+                <TouchableOpacity style={[styles.confirmButton, isAdding && { opacity: 0.5 }]} onPress={() => {
+                    handleAddToPedido();
+                    sendNotificationOrder();
+                }} disabled={isAdding} >
                     <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>
 
                 {/* 🔸 Botão de pontos */}
                 <TouchableOpacity
-                    style={[styles.pointsButton, isAdding && { backgroundColor: "#888" }]}
+                    style={[styles.pointsButton, isAdding && { opacity: 0.5 }]}
                     onPress={handleAddWithPoints}
                     disabled={isAdding}
                 >
@@ -538,8 +593,60 @@ export default function CustomizeProduct() {
                         {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar com Pontos (${totalPoints.toFixed(1)} pts)`}
                     </Text>
                 </TouchableOpacity>
+                <Modal visible={error !== ""} animationType="fade" transparent>
+                    <View style={styles.errorModalOverlay}>
+                        <View style={styles.errorModalBox}>
+                            <Ionicons name="alert-circle" size={60} color="#FF3F4B" style={{ marginBottom: 12 }} />
+                            <Text style={styles.errorTitle}>Ops!</Text>
 
-        </ScrollView>
+                            {/* MENSAGEM PERSONALIZADA */}
+                            {error === "guestAlcohol" && (
+                                <>
+                                    <Text style={styles.errorMessage}>
+                                        Convidados não podem pedir bebidas alcoólicas.
+                                    </Text>
+                                    <Text style={styles.errorGuestMessage}>
+                                        Crie uma conta e confirme sua idade para desbloquear esta opção.
+                                    </Text>
+                                </>
+                            )}
+
+                            {error === "underageAlcohol" && (
+                                <>
+                                    <Text style={styles.errorMessage}>
+                                        Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.
+                                    </Text>
+                                </>
+                            )}
+
+                            {error === "guestPoints" && (
+                                <>
+                                    <Text style={styles.errorMessage}>
+                                        Convidados não podem usar pontos.
+                                    </Text>
+                                    <Text style={styles.errorGuestMessage}>
+                                        Crie uma conta para acumular e utilizar pontos em seus pedidos!
+                                    </Text>
+                                </>
+                            )}
+
+                            {/* fallback padrão */}
+                            {error !== "guestAlcohol" && error !== "underageAlcohol" && error !== "guestPoints" && (
+                                <Text style={styles.errorMessage}>{error}</Text>
+                            )}
+
+                            <TouchableOpacity
+                                style={styles.errorButton}
+                                onPress={() => setError("")}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={styles.errorButtonText}>Fechar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                </ScrollView>
         </View >
     )
 }
@@ -555,8 +662,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 52,
         paddingBottom: 10,
-        paddingHorizontal: 30
+        paddingHorizontal: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ffffff1b",
     },
+    backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
     logoText: {
         color: "#fff",
         fontSize: 22,
@@ -718,5 +828,66 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: 0.6
-    }
+    },
+    errorModalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    errorModalBox: {
+        width: "100%",
+        maxWidth: 360,
+        backgroundColor: "#2a2a40",
+        borderRadius: 16,
+        paddingVertical: 28,
+        paddingHorizontal: 20,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+    },
+    errorTitle: {
+        color: "#fff",
+        fontSize: 20,
+        fontWeight: "700",
+        marginBottom: 15,
+    },
+    errorMessage: {
+        color: "#DDD",
+        fontSize: 16,
+        textAlign: "center",
+        marginBottom: 10,
+        fontWeight: "500",
+    },
+    errorGuestMessage: {
+        color: "#DDD",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 20,
+        lineHeight: 20,
+    },
+    errorButton: {
+        alignItems: "center",
+        justifyContent: "center",
+        width: "50%",
+        height: 40,
+        borderRadius: 10,
+        backgroundColor: "#FF3F4B",
+        shadowColor: "#FF3F4B",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    errorButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "700",
+        textTransform: "uppercase",
+        letterSpacing: 0.6,
+    },
 });

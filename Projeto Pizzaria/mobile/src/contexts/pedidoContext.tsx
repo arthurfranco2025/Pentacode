@@ -17,7 +17,7 @@ interface PedidoItem {
         price: number;
         image_url?: string;
     };
-    paidWithPoints?: boolean;
+    payWithPoints?: boolean;
     pointsUsed?: number;
     totalPoints?: number;
 }
