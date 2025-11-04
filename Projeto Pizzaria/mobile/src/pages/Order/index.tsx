@@ -16,6 +16,7 @@ import { useComanda } from "../../contexts/comandaContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamsList } from "../../routes/app.routes";
 import { Ionicons } from '@expo/vector-icons';
+import sendNotificationFinishedOrder from "../Notification/finishedOrder";
 
 type OrderScreenNavigationProp = NativeStackNavigationProp<
     StackParamsList,
@@ -59,6 +60,7 @@ export default function Order() {
 
             // limpa o contexto local (pedido, id, status)
             clearPedido();
+            sendNotificationFinishedOrder()
 
             // navega passando o status retornado pelo servidor
             navigation.navigate("OrderTicket", {

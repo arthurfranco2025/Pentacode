@@ -280,7 +280,7 @@ export default function CustomizeProduct() {
                 payWithPoints: false,
                 pointsUsed: 0
             });
-
+            sendNotificationOrder()
             navigation.navigate("Order");
         } catch (error: any) {
             const mensagem = error.response?.data?.message || error.response?.data?.error || error.message || "Erro ao adicionar item";
@@ -578,7 +578,6 @@ export default function CustomizeProduct() {
                 {/* Botões */}
                 <TouchableOpacity style={[styles.confirmButton, isAdding && { opacity: 0.5 }]} onPress={() => {
                     handleAddToPedido();
-                    sendNotificationOrder();
                 }} disabled={isAdding} >
                     <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>

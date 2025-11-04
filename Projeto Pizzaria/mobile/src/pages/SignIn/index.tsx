@@ -16,6 +16,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../../contexts/AuthContext";
+import sendNotificationLogin from "../Notification/login";
 
 type RootStackParamList = {
   SignIn: undefined;
@@ -65,6 +66,7 @@ export default function SignIn() {
     try {
       await signIn({ email: login, password });
       setError("");
+      sendNotificationLogin()
     } catch (err: any) {
       setError(err.message);
     }
