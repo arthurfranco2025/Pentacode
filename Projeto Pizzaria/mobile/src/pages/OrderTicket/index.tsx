@@ -65,26 +65,20 @@ const getStatusColor = (status?: string) => {
 
 interface ItemPedido {
   id: string;
-  product: {
-    name: string;
-  };
-  product2?: {  // Segundo sabor é opcional
-    name: string;
-  };
-  status?: string; // status do item (ex: 'preparando', 'pronto', 'cancelado')
+  product: { name: string };
+  product2?: { name: string };
+  status?: string;
   qtd: number;
   price: number;
+  paidWithPoints?: boolean;
+  pointsUsed?: number; // pontos do item principal
+  totalPoints?: number; // pontos do item + adicionais
+  points?: number; // pontos por unidade
   observacao?: string;
-  removidos?: Array<{
-    id: string;
-    nome: string;
-  }>;
-  adicionais?: Array<{
-    id: string;
-    nome: string;
-    price: number;
-  }>;
+  removidos?: Array<{ id: string; nome: string }>;
+  adicionais?: Array<{ id: string; nome: string; price: number; points?: number }>;
 }
+
 
 export default function OrderTicket() {
   const navigation = useNavigation<NavigationProp<StackParamsList, "OrderTicket">>();
@@ -346,7 +340,6 @@ export default function OrderTicket() {
                               )}
                             </Text>
 
-                            {/* Status badge abaixo do nome para legibilidade */}
                             {item.status && (
                               <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
                                 <Text style={styles.statusBadgeText}>{formatStatusLabel(item.status)}</Text>
@@ -356,9 +349,34 @@ export default function OrderTicket() {
 
                           <View style={styles.rightColumn}>
                             <Text style={styles.itemQtd}>x{item.qtd}</Text>
-                            <Text style={styles.itemPrice}>
-                              {formatarPreco(item.price)}
-                            </Text>
+
+                            {item.paidWithPoints ? (
+                              <>
+                                <Text style={[styles.itemPrice, { color: "#888" }]}>
+                                  {formatarPreco(0)}
+                                </Text>
+                                <Text style={{ color: "#FFD700", fontSize: 13, fontWeight: "700" }}>
+                                  {item.totalPoints
+                                    ? `${item.totalPoints * item.qtd} pts`
+                                    : item.pointsUsed
+                                      ? `${item.pointsUsed * item.qtd} pts`
+                                      : `${item.points || 0} pts`}
+                                </Text>
+                              </>
+                            ) : (
+                              <>
+                                <Text style={styles.itemPrice}>
+                                  {formatarPreco(
+                                    item.qtd *
+                                    (item.price +
+                                      (item.adicionais?.reduce((acc, a) => acc + a.price, 0) || 0))
+                                  )}
+                                </Text>
+                                <Text style={{ color: "#FFD700", fontSize: 12, fontWeight: "600" }}>
+                                  {item.points ? `${item.points} pts` : ""}
+                                </Text>
+                              </>
+                            )}
                           </View>
                         </View>
 
@@ -408,14 +426,35 @@ export default function OrderTicket() {
 
       <View style={styles.fixedBottomArea}>
         <View style={styles.totalContainer}>
-          <Text style={styles.totalText}>
-            Valor total:
-          </Text>
           <Text style={styles.totalValue}>
             {formatarPreco(
-              pedidos.reduce((acc, pedido) => acc + pedido.total, 0)
+              pedidos.reduce((accPedido, pedido) => {
+                return accPedido + pedido.total; // já inclui price dos itens
+              }, 0)
             )}
           </Text>
+          <Text style={{ color: "#FFD700", fontWeight: "700", marginTop: 2 }}>
+            Total de pontos: {itensPedido.reduce((acc, item) => acc + (item.paidWithPoints ? (item.pointsUsed || 0) * item.qtd : 0), 0)} pts
+          </Text>
+
+          <Text style={styles.totalValue}>
+            {formatarPreco(
+              itensPedido.reduce((acc, item) => {
+                // Soma apenas os itens que não foram pagos com pontos
+                if (item.paidWithPoints) return acc;
+
+                const totalAdicionais =
+                  item.adicionais?.reduce(
+                    (a: number, b: { price: number }) => a + b.price,
+                    0
+                  ) || 0;
+
+                return acc + (item.price + totalAdicionais) * item.qtd;
+              }, 0)
+            )}
+          </Text>
+
+
         </View>
 
         <View style={styles.buttonsRow}>
@@ -451,6 +490,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
+  },
+  totalPointsText: {
+    color: '#00C851',
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
   },
   logoText: {
     color: "#FFF",
@@ -738,4 +783,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#555",
     shadowColor: "transparent",
   },
-})
+});

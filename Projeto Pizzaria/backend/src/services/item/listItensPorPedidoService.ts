@@ -1,11 +1,24 @@
 import PrismaClient from "../../prisma";
 
+// Tipagem clara para o item retornado pelo Prisma
+interface ItemPedido {
+  id: string;
+  price: number;
+  points: number; // Adicionando points
+  removidos?: { id: string; nome: string }[];
+  adicionais?: { id: string; nome: string; price: number }[];
+  product: { name: string };
+  product2?: { name: string };
+  status?: string;
+  observacao?: string;
+}
+
 interface ListarItensRequest {
   pedido_id: string;
 }
 
 class ListItensPorPedidoService {
-  async execute({ pedido_id }: ListarItensRequest) {
+  async execute({ pedido_id }: ListarItensRequest): Promise<ItemPedido[]> {
     if (!pedido_id) {
       throw new Error("Insira um pedido pra selecionar seus itens");
     }
@@ -15,7 +28,7 @@ class ListItensPorPedidoService {
     });
 
     if (!pedidoExiste) {
-      throw new Error("O pedido não existe");
+      throw new Error("O pedido nÃ£o existe");
     }
 
     const listaDeItens = await PrismaClient.item.findMany({
@@ -24,41 +37,51 @@ class ListItensPorPedidoService {
         product: { select: { name: true } },
         product2: { select: { name: true } },
         Item_adicional: {
-          include: {
-            adicional: { select: { nome: true, price: true } },
-          },
+          include: { adicional: { select: { nome: true, price: true } } },
         },
       },
     });
 
+    // Corrige removidos e adicionais e adiciona points
     const itensComNomes = await Promise.all(
       listaDeItens.map(async (item) => {
+        const novoItem: ItemPedido = {
+          id: item.id,
+          price: item.price,
+          points: item.points || 0, // pega points se existir
+          product: item.product,
+          product2: item.product2 || undefined,
+          status: item.status || undefined,
+          observacao: item.observacoes || undefined,
+        };
 
-
-        if (item.removidos && Array.isArray(item.removidos)) {
+        // Removidos
+        if (Array.isArray(item.removidos)) {
           const idsRemovidos = item.removidos.map((r: any) => r.id);
           const ingredientes = await PrismaClient.ingrediente.findMany({
             where: { id: { in: idsRemovidos } },
             select: { id: true, nome: true },
           });
-          item.removidos = ingredientes;
+          novoItem.removidos = ingredientes;
         }
 
-        if (item.adicionais && Array.isArray(item.adicionais)) {
+        // Adicionais
+        if (Array.isArray(item.adicionais)) {
           const idsAdicionais = item.adicionais.map((a: any) => a.id);
           const adicionais = await PrismaClient.adicional.findMany({
             where: { id: { in: idsAdicionais } },
             select: { id: true, nome: true, price: true },
           });
-          item.adicionais = adicionais;
+          novoItem.adicionais = adicionais;
         }
 
-        return item;
+        return novoItem;
       })
     );
 
     return itensComNomes;
   }
 }
+
 
 export { ListItensPorPedidoService };

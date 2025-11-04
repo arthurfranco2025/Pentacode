@@ -219,7 +219,8 @@ exports.Prisma.ItemScalarFieldEnum = {
   observacoes: 'observacoes',
   dois_sabores: 'dois_sabores',
   product2_id: 'product2_id',
-  status: 'status'
+  status: 'status',
+  payWithPoints: 'payWithPoints'
 };
 
 exports.Prisma.IngredienteScalarFieldEnum = {
