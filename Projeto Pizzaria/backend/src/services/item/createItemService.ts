@@ -171,6 +171,7 @@ class CreateItemService {
         product2_id: true,
         qtd: true,
         price: true,
+        points: true,
         pedido_id: true,
         dois_sabores: true,
         removidos: true,
@@ -179,11 +180,12 @@ class CreateItemService {
     });
 
     // Atualiza pedido
+    // Atualiza valores do pedido: preço e pontos (registramos em pedidos apenas os pontos GASTOS pelo cliente)
     await PrismaClient.pedido.update({
       where: { id: pedido_id },
       data: {
         price: { increment: precoFinal },
-        points: { increment: payWithPoints ? 0 : pontosFinal }, // se você não quer que gasto com pontos some em points do pedido
+        points: { increment: payWithPoints ? pontosFinal : 0 },
       }
     });
 
@@ -203,7 +205,7 @@ class CreateItemService {
         where: { id: pedidoData.comanda_id },
         data: {
           price: { increment: precoFinal },
-          points: { increment: pontosFinal },
+          points: { increment: payWithPoints ? pontosFinal : 0 },
         }
       });
     } else if (pedidoData) {
@@ -218,7 +220,7 @@ class CreateItemService {
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: pontosFinal },
+            points: { increment: payWithPoints ? pontosFinal : 0 },
           }
         });
       }
@@ -227,7 +229,7 @@ class CreateItemService {
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: pontosFinal },
+            points: { increment: payWithPoints ? pontosFinal : 0 },
           }
         });
       }
