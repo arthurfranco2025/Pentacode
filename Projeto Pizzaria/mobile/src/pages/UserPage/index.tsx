@@ -985,60 +985,75 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ffffff12",
+        padding: 16,
+        borderBottomWidth: 0,
+        backgroundColor: "#25253b",
+        borderRadius: 14,
+        marginVertical: 6,
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 3,
     },
 
     historyTitle: {
         color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
+        fontSize: 17,
+        fontWeight: "700",
     },
 
     historyDate: {
-        color: "#aaa",
+        color: "#b3b3c4",
         fontSize: 13,
         marginTop: 2,
     },
 
     historyStatus: {
-        color: "#ccc",
+        color: "#9c9cb8",
         fontSize: 13,
         marginTop: 2,
     },
 
     historyPrice: {
         color: "#00C851",
-        fontWeight: "700",
+        fontWeight: "800",
         fontSize: 16,
+        marginBottom: 4,
     },
 
     historyPoints: {
         color: "#FFD700",
-        fontSize: 13,
+        fontSize: 14,
         marginTop: 4,
+        fontWeight: "600",
     },
+
     historyRight: {
         alignItems: "flex-end",
         justifyContent: "space-between",
     },
+
     historyLeft: {
         flex: 1,
+        paddingRight: 10,
     },
+
     buttonsContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 8,
         gap: 10,
-        // justifyContent: '',
     },
 
     detailButton: {
         backgroundColor: '#5A3FFF',
         paddingHorizontal: 14,
         paddingVertical: 8,
-        borderRadius: 8,
+        borderRadius: 10,
+        shadowColor: '#5A3FFF',
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 3,
     },
 
     detailButtonText: {
@@ -1052,15 +1067,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 12,
         paddingVertical: 8,
-        // backgroundColor: '#FFD70022',
-        borderRadius: 8,
+        borderRadius: 10,
+        backgroundColor: '#FFD70015',
     },
+
     pointsText: {
-        color: '#ffde09',
+        color: '#FFD700',
         fontWeight: '700',
         fontSize: 14,
         marginHorizontal: 6,
-        // marginLeft: 10,
     },
-
 })
