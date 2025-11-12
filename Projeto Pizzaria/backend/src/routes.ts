@@ -39,7 +39,6 @@ import { ListComandaController } from './controllers/comanda/listComandasControl
 import { PagarComandaController } from './controllers/comanda/pagarComandaController';
 import { PagarComandaPorPontosController } from './controllers/comanda/pagarComandaPorPontosController';
 
-
 import { OpenPedidoController } from './controllers/pedido/openPedidoController'
 import { ListPedidoPorComandaController } from './controllers/pedido/listPedidosPorComandaController';
 import { PagarPedidoController } from './controllers/pedido/pagarPedidoSeparadoController';
