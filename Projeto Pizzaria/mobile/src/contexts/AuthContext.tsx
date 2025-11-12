@@ -21,6 +21,7 @@ type UserProps = {
     token: string;
     image_url?: string | null;
     guest?: boolean;
+    // points?: number; 
 };
 
 type AuthProviderProps = {

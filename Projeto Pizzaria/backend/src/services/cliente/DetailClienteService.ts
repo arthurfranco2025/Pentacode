@@ -10,6 +10,7 @@ class DetailClienteService {
                 id: true,
                 name: true,
                 email: true,
+                points: true,
                 cpf: true,
                 data_nasc: true,
                 created_at: true,
