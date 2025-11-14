@@ -221,7 +221,7 @@ export default function Home() {
 				{/* Ícone de pontos */}
 				<View style={styles.pointsContainer}>
 					<Ionicons name="star" size={24} color="#FFD700" />
-					<Text style={styles.pointsText}>{pontos}</Text>
+					<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
 				</View>
 
 				{/* Lado direito do header */}

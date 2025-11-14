@@ -118,13 +118,21 @@ export default function Payment() {
     setConfirmModalVisible(false);
     setGarcomClosed(true);
 
+    // Se for convidado - NÃO GANHA PONTOS e pula direto para avaliação
+    if (user?.guest === true) {
+      setAvaliacaoModalVisible(true);
+      return;
+    }
+
+    // Usuário normal - abre modal de pontos
     const pontos = ganhoPontos();
     if (pontos > 0) {
-      setPontosModalVisible(true); // abrir modal de pontos
+      setPontosModalVisible(true);
     } else {
-      setAvaliacaoModalVisible(true); // abrir avaliação direto
+      setAvaliacaoModalVisible(true);
     }
   };
+
 
   const handleFecharPontosModal = () => {
     setPontosModalVisible(false);
