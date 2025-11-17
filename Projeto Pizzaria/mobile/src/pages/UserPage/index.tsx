@@ -13,7 +13,7 @@ import {
     Platform,
     Alert,
 } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
@@ -169,6 +169,41 @@ export default function UserPage() {
             return formatarPreco(num);
         } catch (e) {
             return "--";
+        }
+    }
+
+    // Helpers para exibir status e cores (reuso da lógica de OrderTicket)
+    function formatStatusLabel(status?: string) {
+        if (!status) return '';
+        const s = status.toLowerCase();
+
+        if (s === 'na fila') return 'Na fila';
+        if (s === 'em produção') return 'Em produção';
+        if (s === 'parcialmente pronto') return 'Parcialmente pronto';
+        if (s === 'pronto') return 'Pronto';
+        if (s === 'entregue') return 'Entregue';
+        if (s === 'cancelado') return 'Cancelado';
+
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    function getStatusColor(status?: string) {
+        if (!status) return '#777';
+        switch (status.toLowerCase()) {
+            case 'na fila':
+                return '#999';
+            case 'em produção':
+                return '#FFBB33';
+            case 'parcialmente pronto':
+                return '#FFA000';
+            case 'pronto':
+                return '#00C851';
+            case 'entregue':
+                return '#007E33';
+            case 'cancelado':
+                return '#DD2C00';
+            default:
+                return '#ff0000ff';
         }
     }
 
@@ -387,9 +422,45 @@ export default function UserPage() {
         }
     }
 
-    function openDetails(comanda: any) {
-        setSelectedComanda(comanda);
-        setDetailsVisible(true);
+    async function openDetails(comanda: any) {
+        // Ao abrir detalhes, buscamos a versão completa das comandas para o cliente
+        // (o backend retorna comandas com pedido -> items -> product e adicionais).
+        try {
+            setDetailsVisible(true);
+
+            // Puxar todas as comandas do cliente e encontrar a que foi clicada
+            const { data } = await api.get("/comanda/listarComandaPorCliente", {
+                params: { cliente_id: authUser.id },
+            });
+
+            const comandas: any[] = data?.comandas || [];
+            const full = comandas.find((c) => c.id === comanda.id) || comandas.find((c) => String(c.id) === String(comanda.id));
+
+            if (full) {
+                // Normalizar itens: backend traz comanda.pedido[].items[]
+                const itens: any[] = [];
+                (full.pedido || []).forEach((pedido: any) => {
+                    (pedido.items || []).forEach((it: any) => {
+                        // Mapear adicionais (se vierem como Item_adicional)
+                        const adicionais = (it.Item_adicional || it.adicionais || []).map((ia: any) => ia.adicional || ia);
+                        // Calcular price/points caso não existam
+                        const price = it.price ?? it.product?.price ?? 0;
+                        const points = it.points ?? Math.round((price * 0.25) * 100) / 100;
+                        itens.push({ ...it, adicionais, price, points });
+                    });
+                });
+
+                setSelectedComanda({ ...full, itens });
+            } else {
+                // fallback: usar o objeto recebido
+                setSelectedComanda(comanda);
+            }
+        } catch (err: any) {
+            console.log('Erro ao buscar detalhes da comanda:', err?.response || err);
+            // fallback para exibir algo
+            setSelectedComanda(comanda);
+            setDetailsVisible(true);
+        }
     }
 
 
@@ -609,31 +680,12 @@ export default function UserPage() {
 
                                         {/* Container dos botões */}
                                         <View style={styles.buttonsContainer}>
-                                            {/* Botão Ver detalhes */}
+                                            {/* Botão Ver detalhes (busca detalhes da comanda no backend) */}
                                             <TouchableOpacity
                                                 style={styles.detailButton}
                                                 onPress={() => openDetails(item)}
                                             >
                                                 <Text style={styles.detailButtonText}>Ver detalhes</Text>
-                                            </TouchableOpacity>
-
-                                            {/* Botão de Pontos */}
-                                            <TouchableOpacity
-                                                style={styles.pointsButton}
-                                                onPress={() => {
-                                                    if (!item?.price) return;
-                                                    const pontos = (item.price * 0.25).toFixed(2);
-                                                    Alert.alert(
-                                                        "Você ganhou pontos!",
-                                                        `Você recebeu ${pontos} pontos neste pedido. Todas as vezes que efetuar um pagamento na PentaPizza, você é recompensado com pontos para trocar por produtos! Aproveite!`
-                                                    );
-                                                }}
-                                            >
-                                                <Ionicons name="star" size={18} color="#ffde09" />
-                                                <Text style={styles.pointsText}>
-                                                    {item?.price ? `Você ganhou ${(item.price * 0.25).toFixed(2)} pts` : 'Sem pontos'}
-                                                </Text>
-                                                <MaterialIcons name="help-outline" size={18} color="#cdcdcd" />
                                             </TouchableOpacity>
                                         </View>
                                     </View>
@@ -670,17 +722,47 @@ export default function UserPage() {
                         <View style={{ width: 24 }} />
                     </View>
 
+                    {selectedComanda && (
+                        <View style={{ padding: 16 }}>
+                            <Text style={styles.historyDate}>{selectedComanda.mesa ? `Mesa ${selectedComanda.mesa}` : 'Pedido PentaPizza'}</Text>
+
+                            {/* Data da comanda */}
+                            {selectedComanda.created_at && (
+                                <Text style={styles.historyDate}>
+                                    {new Date(selectedComanda.created_at).toLocaleDateString('pt-BR')} {new Date(selectedComanda.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                </Text>
+                            )}
+
+                            {/* Status da comanda (com cor) */}
+                            {selectedComanda.status && (
+                                <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={{ backgroundColor: getStatusColor(selectedComanda.status), paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
+                                        <Text style={{ color: '#fff', fontWeight: '700' }}>{formatStatusLabel(selectedComanda.status)}</Text>
+                                    </View>
+                                </View>
+                            )}
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                                <Text style={styles.historyPrice}>{formatarPreco(selectedComanda.price ?? selectedComanda.total_price ?? (selectedComanda.itens?.reduce((a:any,b:any)=>a+(b.price||0),0) || 0))}</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Ionicons name="star" size={18} color="#ffde09" />
+                                    <Text style={[styles.historyPoints, { marginLeft: 8 }]}>{(selectedComanda.itens?.reduce((a:any,b:any)=>a + (b.points ?? Math.round(((b.price||0) * 0.25) * 100) / 100), 0) || 0)} pts</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )}
+
                     <FlatList
                         data={selectedComanda?.itens || []}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
                             <View style={styles.historyItem}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.historyTitle}>{item.product?.name || "Produto"}</Text>
-                                    <Text style={styles.historyDate}>Qtd: {item.quantity}</Text>
+                                            <Text style={styles.historyTitle}>{item.product?.name || item.product2?.name || "Produto"}</Text>
+                                            <Text style={styles.historyDate}>Qtd: {item.qtd ?? item.quantity ?? item.quantity ?? 1}</Text>
                                     {item.adicionais && item.adicionais.length > 0 && (
                                         <Text style={{ color: '#FFD700', fontSize: 13, marginTop: 2 }}>
-                                            Adicionais: {item.adicionais.map((a: any) => a.name).join(', ')}
+                                            Adicionais: {item.adicionais.map((a: any) => a.nome || a.name).join(', ')}
                                         </Text>
                                     )}
                                 </View>
@@ -689,6 +771,14 @@ export default function UserPage() {
                                     {item.points !== undefined && (
                                         <Text style={styles.historyPoints}>{item.points} pts</Text>
                                     )}
+                                            {/* badge de status do item (se existir) */}
+                                            {item.status && (
+                                                <View style={{ marginTop: 6, alignItems: 'flex-end' }}>
+                                                    <View style={{ backgroundColor: getStatusColor(item.status), paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
+                                                        <Text style={{ color: '#fff', fontWeight: '700' }}>{formatStatusLabel(item.status)}</Text>
+                                                    </View>
+                                                </View>
+                                            )}
                                 </View>
                             </View>
                         )}
@@ -984,9 +1074,10 @@ const styles = StyleSheet.create({
     historyItem: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        // alignItems: "center",
         padding: 16,
-        borderBottomWidth: 0,
+        borderBottomWidth: 1,
+        // borderColor: "#3a3a5cff",
         backgroundColor: "#25253b",
         borderRadius: 14,
         marginVertical: 6,
@@ -1000,37 +1091,38 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 17,
         fontWeight: "700",
+        marginBottom: 5,
     },
 
     historyDate: {
         color: "#b3b3c4",
         fontSize: 13,
-        marginTop: 2,
+        marginBottom: 5,
     },
 
     historyStatus: {
         color: "#9c9cb8",
         fontSize: 13,
-        marginTop: 2,
+        marginBottom: 5,
     },
 
     historyPrice: {
         color: "#00C851",
         fontWeight: "800",
         fontSize: 16,
-        marginBottom: 4,
+        marginBottom: 5,
     },
 
     historyPoints: {
         color: "#FFD700",
         fontSize: 14,
-        marginTop: 4,
+        marginBottom: 5,
         fontWeight: "600",
     },
 
     historyRight: {
         alignItems: "flex-end",
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
     },
 
     historyLeft: {
@@ -1040,9 +1132,9 @@ const styles = StyleSheet.create({
 
     buttonsContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'flex-end',
+        // justifyContent: 'space-between',
         marginTop: 8,
-        gap: 10,
     },
 
     detailButton: {
