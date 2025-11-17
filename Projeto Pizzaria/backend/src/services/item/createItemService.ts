@@ -184,7 +184,7 @@ class CreateItemService {
       where: { id: pedido_id },
       data: {
         price: { increment: precoFinal },
-        points: { increment: payWithPoints ? pontosFinal : 0 },
+        points: { increment: pontosFinal },
       }
     });
 
@@ -193,6 +193,7 @@ class CreateItemService {
       where: { cliente_id: pedido.cliente_id },
       select: { id: true }
     });
+
     // Busca o pedido para obter o comanda_id (garante que atualizamos a comanda associada exatamente a esse pedido — evita pegar uma comanda antiga do mesmo cliente)
     const pedidoData = await PrismaClient.pedido.findUnique({
       where: { id: pedido_id },
@@ -204,7 +205,7 @@ class CreateItemService {
         where: { id: pedidoData.comanda_id },
         data: {
           price: { increment: precoFinal },
-          points: { increment: payWithPoints ? pontosFinal : 0 },
+          points: { increment: pontosFinal},
         }
       });
     } else if (pedidoData) {
@@ -213,22 +214,13 @@ class CreateItemService {
         where: { cliente_id: pedidoData.cliente_id, status: 'aberta' },
         select: { id: true }
       });
-
+      
       if (comanda) {
         await PrismaClient.comanda.update({
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: payWithPoints ? pontosFinal : 0 },
-          }
-        });
-      }
-      if (comanda) {
-        await PrismaClient.comanda.update({
-          where: { id: comanda.id },
-          data: {
-            price: { increment: precoFinal },
-            points: { increment: payWithPoints ? pontosFinal : 0 },
+            points: { increment: pontosFinal },
           }
         });
       }

@@ -94,6 +94,20 @@ export default function Home() {
 	const [loadingCategories, setLoadingCategories] = useState(false);
 	const [loadingProducts, setLoadingProducts] = useState(false);
 	const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+	const [pontos, setPontos] = useState(0)
+
+	useEffect(() => {
+		const loadPontos = async () => {
+			try {
+				const res = await api.get("/me");
+				setPontos(res.data.points || 0);
+			} catch (err) {
+				console.log("Erro ao carregar pontos:", err);
+			}
+		};
+
+		loadPontos();
+	}, []);
 
 	async function fetchProductsByName(name: string) {
 		if (!name || name.trim() === "") {
@@ -204,6 +218,11 @@ export default function Home() {
 					</Text>
 				</View>
 
+				{/* Ícone de pontos */}
+				<View style={styles.pointsContainer}>
+					<Ionicons name="star" size={24} color="#FFD700" />
+					<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
+				</View>
 
 				{/* Lado direito do header */}
 				<TouchableOpacity
@@ -365,6 +384,19 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+	pointsContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "rgba(0,0,0,0.3)",
+		paddingHorizontal: 8,
+		paddingVertical: 4,
+		borderRadius: 12,
+	},
+	pointsText: {
+		color: "#FFD700",
+		fontWeight: "700",
+		marginLeft: 4,
+	},
 	container: { flex: 1, backgroundColor: "#1d1d2e" },
 	content: { flex: 1 },
 	header: {

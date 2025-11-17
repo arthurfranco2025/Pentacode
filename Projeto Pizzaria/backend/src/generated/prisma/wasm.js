@@ -291,7 +291,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\SENAI\\Downloads\\tcc\\Projeto Pizzaria\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\Marlene\\Documents\\COISAS DO PEDRO\\tcc\\Projeto Pizzaria\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -305,7 +305,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\SENAI\\Downloads\\tcc\\Projeto Pizzaria\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Marlene\\Documents\\COISAS DO PEDRO\\tcc\\Projeto Pizzaria\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

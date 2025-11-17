@@ -33,7 +33,7 @@ class PagarComandaPorPontosService{
             throw new Error('Essa comanda está fechada')
         }
 
-        if(Cliente.points > comanda.points || Cliente.points === comanda.points){
+        if(Cliente.points >= comanda.points || Cliente.points === comanda.points){
 
             await PrismaClient.cliente.update({
                 where:{

@@ -15,6 +15,7 @@ class DetailClienteController {
                     id: true,
                     name: true,
                     email: true,
+                    points: true,
                     cpf: true,
                     data_nasc: true,
                     image_url: true,

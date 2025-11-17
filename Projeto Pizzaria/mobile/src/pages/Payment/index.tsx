@@ -35,9 +35,8 @@ type PaymentRouteProps = {
 export default function Payment() {
   const navigation = useNavigation<PaymentScreenNavigationProp>();
   const route = useRoute();
-  const { user } = useContext(AuthContext)
+  const { user, signOut } = useContext(AuthContext);
   const { comandaId, totalPoints, totalPrice } = route.params as PaymentRouteProps;
-  const { signOut } = useContext(AuthContext);
 
   const [selectedCard, setSelectedCard] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
@@ -48,8 +47,7 @@ export default function Payment() {
   const [garcomClosed, setGarcomClosed] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Valor da Comanda
-
+  const [pontosModalVisible, setPontosModalVisible] = useState(false);
 
   // Avaliação
   const [avaliacaoModalVisible, setAvaliacaoModalVisible] = useState(false);
@@ -85,6 +83,8 @@ export default function Payment() {
     setFinalConfirmVisible(true);
   };
 
+  const ganhoPontos = () => totalPrice * 0.25;
+
   const handleFinalConfirm = async () => {
     if (!selectedOption) return;
     try {
@@ -99,7 +99,7 @@ export default function Payment() {
         tipoPagamento = selectedOption.toLowerCase();
       }
 
-      await api.put("/comanda/pagar", { comanda_id: comandaId, tipoPagamento });
+      await api.put("/comanda/fechar", { comanda_id: comandaId, tipoPagamento });
 
       setPaymentConfirmed(true);
       setFinalConfirmVisible(false);
@@ -117,31 +117,27 @@ export default function Payment() {
   const handleFecharGarcom = () => {
     setConfirmModalVisible(false);
     setGarcomClosed(true);
-    setAvaliacaoModalVisible(true);
+
+    // Se for convidado - NÃO GANHA PONTOS e pula direto para avaliação
+    if (user?.guest === true) {
+      setAvaliacaoModalVisible(true);
+      return;
+    }
+
+    // Usuário normal - abre modal de pontos
+    const pontos = ganhoPontos();
+    if (pontos > 0) {
+      setPontosModalVisible(true);
+    } else {
+      setAvaliacaoModalVisible(true);
+    }
   };
 
-  function ganhoPontos() {
-    return totalPrice * 0.25
-  }
 
-  // const handleEnviarAvaliacao = async () => {
-  //   if (nota === 0) {
-  //     alert("Dê uma nota de 1 a 5 estrelas antes de enviar.");
-  //     return;
-  //   }
-  //   try {
-  //     setEnviandoAvaliacao(true);
-  //     await api.post("/avaliacao", { comanda_id: comandaId, nota, descricao });
-  //     alert("Obrigado pela sua avaliação!");
-  //     setAvaliacaoModalVisible(false);
-  //     navigation.navigate("Home");
-  //   } catch (error: any) {
-  //     console.log("Erro ao enviar avaliação:", error.response?.data || error.message);
-  //     alert(error.response?.data?.error || "Erro ao enviar avaliação.");
-  //   } finally {
-  //     setEnviandoAvaliacao(false);
-  //   }
-  // };
+  const handleFecharPontosModal = () => {
+    setPontosModalVisible(false);
+    setAvaliacaoModalVisible(true); // abrir avaliação após fechar modal de pontos
+  };
 
   const handleEnviarAvaliacao = async () => {
     if (nota === 0) {
@@ -157,10 +153,9 @@ export default function Payment() {
       alert("Obrigado pela sua avaliação!");
       setAvaliacaoModalVisible(false);
 
-      //TENTANDO FAZER LOGOUT AUTOMÁTICO APÓS A AVALIAÇÃO 
       setTimeout(() => {
         signOut();
-      }, 800); // pequeno delay pra dar tempo de o alerta sumir
+      }, 800);
     } catch (error: any) {
       console.log("Erro ao enviar avaliação:", error.response?.data || error.message);
       alert(error.response?.data?.error || "Erro ao enviar avaliação.");
@@ -168,7 +163,6 @@ export default function Payment() {
       setEnviandoAvaliacao(false);
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -289,15 +283,6 @@ export default function Payment() {
             </TouchableOpacity>
           </LinearGradient>
         </View>
-
-        {garcomClosed && (
-          <TouchableOpacity
-            onPress={signOut}
-            style={styles.logoutButton}
-          >
-            <Text style={styles.logoutButtonText}>Sair do App</Text>
-          </TouchableOpacity>
-        )}
       </ScrollView>
 
       {/* Modal confirmação antes de pagar */}
@@ -341,14 +326,29 @@ export default function Payment() {
             <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center", marginBottom: 20 }}>
               O garçom está a caminho com sua comanda!
             </Text>
-            {user?.guest && <Text style={{ color: "#FFD700", fontSize: 16, textAlign: "center", marginBottom: 12 }}>
-              Você ganhará {ganhoPontos().toFixed(2)} pts quando o garçom fechar a comanda.
-            </Text>}
             <TouchableOpacity
               style={styles.modalButtonConfirm2}
               onPress={handleFecharGarcom}
             >
               <Text style={styles.modalButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal Ganho de Pontos */}
+      <Modal transparent visible={pontosModalVisible} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Ionicons name="star" size={20} color="#ffde09ff" />
+            <Text style={{ color: "#FFD700", fontSize: 20, fontWeight: "700", marginBottom: 20, textAlign: "center" }}>
+              Você ganhou {ganhoPontos().toFixed(2)} pontos!
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButtonConfirm2}
+              onPress={handleFecharPontosModal}
+            >
+              <Text style={styles.modalButtonText}>Continuar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -395,14 +395,11 @@ export default function Payment() {
                 style={styles.modalButtonCancel}
                 onPress={() => {
                   setAvaliacaoModalVisible(false);
-                  setTimeout(() => {
-                    signOut();
-                  }, 800); // pequeno delay para o modal fechar antes do logout
+                  setTimeout(() => signOut(), 800);
                 }}
               >
                 <Text style={styles.modalButtonText}>Sair sem avaliar</Text>
               </TouchableOpacity>
-
             </View>
           </View>
         </View>
@@ -438,195 +435,36 @@ export default function Payment() {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1d1d2e",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: 52,
-    paddingBottom: 10,
-    paddingHorizontal: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ffffff1b",
-  },
-  backButton: {
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  headerAvaliation: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#FFF",
-    paddingHorizontal: 20,
-    marginBottom: 15,
-  },
-  paymentIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-    marginRight: 14,
-  },
-  paymentLabel: {
-    color: "#FFF",
-    fontSize: 17,
-    fontWeight: "600",
-    flex: 1,
-  },
-  summaryContainer: {
-    marginTop: 40,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  summaryBox: {
-    backgroundColor: "#1f1f33",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  summaryLabel: {
-    color: "#AAA",
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 6,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
-  summaryMoney: {
-    color: "#00C851",
-    fontSize: 26,
-    fontWeight: "900",
-    marginBottom: 6,
-  },
-  pointsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
-  },
-  summaryPoints: {
-    color: "#FFD700",
-    fontWeight: "700",
-    fontSize: 15,
-  },
-  confirmButtonGradient: {
-    borderRadius: 14,
-    paddingVertical: 16,
-    marginTop: 10,
-    shadowColor: "#FF3F4B",
-    shadowOpacity: 0.4,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  confirmButtonText: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "800",
-    fontSize: 18,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-  },
-  logoutButton: {
-    backgroundColor: "#FF3F4B",
-    marginHorizontal: 20,
-    marginBottom: 40,
-    borderRadius: 14,
-    paddingVertical: 16,
-  },
-  logoutButtonText: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "700",
-    fontSize: 18,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalBox: {
-    backgroundColor: "#2a2a40",
-    padding: 24,
-    borderRadius: 16,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  modalSubtitle: {
-    color: "#AAA",
-    fontSize: 15,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButtonConfirm: {
-    flex: 1,
-    backgroundColor: "#00C851",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  modalButtonConfirm2: {
-    backgroundColor: "#00C851",
-    padding: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  modalButtonCancel: {
-    flex: 1,
-    backgroundColor: "#FF3F4B",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  modalButtonText: {
-    color: "#FFF",
-    fontWeight: "700",
-  },
-  textInput: {
-    backgroundColor: "#1d1d2e",
-    color: "#FFF",
-    width: "100%",
-    height: 100,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 20,
-    textAlignVertical: "top",
-  },
+  container: { flex: 1, backgroundColor: "#1d1d2e" },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 10, paddingHorizontal: 30, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
+  backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
+  headerTitle: { color: "#FFF", fontSize: 22, fontWeight: "800" },
+  headerAvaliation: { color: "#FFF", fontSize: 20, fontWeight: "700" },
+  sectionTitle: { fontSize: 24, fontWeight: "700", color: "#FFF", paddingHorizontal: 20, marginBottom: 15 },
+  paymentIcon: { width: 50, height: 50, borderRadius: 8, marginRight: 14 },
+  paymentLabel: { color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 },
+  summaryContainer: { marginTop: 40, paddingHorizontal: 20, paddingBottom: 40 },
+  summaryBox: { backgroundColor: "#1f1f33", borderRadius: 16, padding: 20, marginBottom: 20, shadowColor: "#000", shadowOpacity: 0.2, shadowOffset: { width: 0, height: 2 }, shadowRadius: 6, elevation: 5 },
+  summaryLabel: { color: "#AAA", fontSize: 14, fontWeight: "600", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.6 },
+  summaryMoney: { color: "#00C851", fontSize: 26, fontWeight: "900", marginBottom: 6 },
+  pointsRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  summaryPoints: { color: "#FFD700", fontWeight: "700", fontSize: 15 },
+  confirmButtonGradient: { borderRadius: 14, paddingVertical: 16, marginTop: 10, shadowColor: "#FF3F4B", shadowOpacity: 0.4, shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 5 },
+  confirmButtonText: { color: "#FFF", textAlign: "center", fontWeight: "800", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" },
+  logoutButton: { backgroundColor: "#FF3F4B", marginHorizontal: 20, marginBottom: 40, borderRadius: 14, paddingVertical: 16 },
+  logoutButtonText: { color: "#FFF", textAlign: "center", fontWeight: "700", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" },
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center" },
+  modalBox: { backgroundColor: "#2a2a40", padding: 24, borderRadius: 16, width: "80%", alignItems: "center" },
+  modalTitle: { color: "#FFF", fontSize: 18, fontWeight: "700", marginBottom: 10, textAlign: "center" },
+  modalSubtitle: { color: "#AAA", fontSize: 15, textAlign: "center", marginBottom: 20 },
+  modalButtonConfirm: { flex: 1, backgroundColor: "#00C851", paddingVertical: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
+  modalButtonConfirm2: { backgroundColor: "#00C851", padding: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
+  modalButtonCancel: { flex: 1, backgroundColor: "#FF3F4B", paddingVertical: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
+  modalButtonText: { color: "#FFF", fontWeight: "700" },
+  textInput: { backgroundColor: "#1d1d2e", color: "#FFF", width: "100%", height: 100, borderRadius: 10, padding: 10, marginBottom: 20, textAlignVertical: "top" },
 });
