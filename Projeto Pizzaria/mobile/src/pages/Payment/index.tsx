@@ -11,7 +11,7 @@ import {
   StyleSheet,
   TextInput
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — using plain View for headers/buttons now
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamsList } from "../../routes/app.routes";
@@ -55,6 +55,11 @@ export default function Payment() {
   const [descricao, setDescricao] = useState("");
   const [enviandoAvaliacao, setEnviandoAvaliacao] = useState(false);
 
+  const [avaliacaoConfirmadaModal, setAvaliacaoConfirmadaModal] = useState(false);
+  const [notaVaziaModal, setNotaVaziaModal] = useState(false);
+  const [pagamentoNaoSelecionadoModal, setPagamentoNaoSelecionadoModal] = useState(false);
+
+
   const cardOptions = [
     { label: "Crédito", value: "crédito" },
     { label: "Débito", value: "débito" },
@@ -77,7 +82,7 @@ export default function Payment() {
 
   const handleConfirmPayment = () => {
     if (!selectedOption) {
-      alert("Por favor, selecione uma forma de pagamento antes de confirmar.");
+      setPagamentoNaoSelecionadoModal(true);
       return;
     }
     setFinalConfirmVisible(true);
@@ -141,7 +146,7 @@ export default function Payment() {
 
   const handleEnviarAvaliacao = async () => {
     if (nota === 0) {
-      alert("Dê uma nota de 1 a 5 estrelas antes de enviar.");
+      setNotaVaziaModal(true);
       return;
     }
 
@@ -150,8 +155,8 @@ export default function Payment() {
 
       await api.post("/avaliacao", { comanda_id: comandaId, nota, descricao });
 
-      alert("Obrigado pela sua avaliação!");
       setAvaliacaoModalVisible(false);
+      setAvaliacaoConfirmadaModal(true);
 
       setTimeout(() => {
         signOut();
@@ -167,12 +172,7 @@ export default function Payment() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        colors={["#3D1F93", "#1d1d2e"]}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -182,7 +182,7 @@ export default function Payment() {
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
         <View style={{ width: 26 }} />
-      </LinearGradient>
+      </View>
 
       {/* Conteúdo principal */}
       <ScrollView
@@ -261,10 +261,7 @@ export default function Payment() {
           </View>
 
           {/* Botão confirmar */}
-          <LinearGradient
-            colors={garcomClosed ? ["#777", "#555"] : ["#FF3F4B", "#e83640"]}
-            style={styles.confirmButtonGradient}
-          >
+          <View style={[styles.confirmButtonGradient, garcomClosed ? { backgroundColor: '#777' } : { backgroundColor: '#FF3F4B' }]}>
             <TouchableOpacity
               onPress={handleConfirmPayment}
               disabled={garcomClosed || loading}
@@ -281,9 +278,47 @@ export default function Payment() {
                 </Text>
               )}
             </TouchableOpacity>
-          </LinearGradient>
+          </View>
         </View>
       </ScrollView>
+
+      {/* Modal pagamento não selecionado */}
+      <Modal transparent visible={pagamentoNaoSelecionadoModal} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text
+              style={{
+                color: "#FF3F4B",
+                fontSize: 18,
+                fontWeight: "700",
+                marginBottom: 10,
+                textAlign: "center",
+              }}
+            >
+              ⚠ Forma de pagamento não selecionada
+            </Text>
+
+            <Text
+              style={{
+                color: "#ccc",
+                fontSize: 16,
+                textAlign: "center",
+                marginBottom: 20,
+              }}
+            >
+              Por favor, selecione uma forma de pagamento antes de confirmar.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButtonConfirm2}
+              onPress={() => setPagamentoNaoSelecionadoModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
 
       {/* Modal confirmação antes de pagar */}
       <Modal transparent visible={finalConfirmVisible} animationType="fade">
@@ -405,6 +440,64 @@ export default function Payment() {
         </View>
       </Modal>
 
+      {/* Modal Nota Obrigatória */}
+      <Modal transparent visible={notaVaziaModal} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={{
+              color: "#FF3F4B",
+              fontSize: 18,
+              fontWeight: "700",
+              marginBottom: 10,
+              textAlign: "center"
+            }}>
+              ⚠ Nota obrigatória
+            </Text>
+
+            <Text style={{
+              color: "#ccc",
+              fontSize: 16,
+              textAlign: "center",
+              marginBottom: 20
+            }}>
+              Dê uma nota de 1 a 5 estrelas antes de enviar.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButtonConfirm2}
+              onPress={() => setNotaVaziaModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      {/* Modal Avaliação Enviada */}
+      <Modal transparent visible={avaliacaoConfirmadaModal} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={{ color: "#00C851", fontSize: 18, fontWeight: "700", marginBottom: 10, textAlign: 'center' }}>
+              ✅ Avaliação enviada!
+            </Text>
+            <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center", marginBottom: 20 }}>
+              Obrigado pela sua avaliação!
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButtonConfirm2}
+              onPress={() => {
+                setAvaliacaoConfirmadaModal(false);
+                setTimeout(() => signOut(), 300);
+              }}
+            >
+              <Text style={styles.modalButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Modal de seleção de cartão */}
       <Modal transparent visible={modalVisible} animationType="fade">
         <View style={styles.modalOverlay}>
@@ -440,31 +533,215 @@ export default function Payment() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1d1d2e" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 10, paddingHorizontal: 30, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
-  backButton: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
-  headerTitle: { color: "#FFF", fontSize: 22, fontWeight: "800" },
-  headerAvaliation: { color: "#FFF", fontSize: 20, fontWeight: "700" },
-  sectionTitle: { fontSize: 24, fontWeight: "700", color: "#FFF", paddingHorizontal: 20, marginBottom: 15 },
-  paymentIcon: { width: 50, height: 50, borderRadius: 8, marginRight: 14 },
-  paymentLabel: { color: "#FFF", fontSize: 17, fontWeight: "600", flex: 1 },
-  summaryContainer: { marginTop: 40, paddingHorizontal: 20, paddingBottom: 40 },
-  summaryBox: { backgroundColor: "#1f1f33", borderRadius: 16, padding: 20, marginBottom: 20, shadowColor: "#000", shadowOpacity: 0.2, shadowOffset: { width: 0, height: 2 }, shadowRadius: 6, elevation: 5 },
-  summaryLabel: { color: "#AAA", fontSize: 14, fontWeight: "600", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.6 },
-  summaryMoney: { color: "#00C851", fontSize: 26, fontWeight: "900", marginBottom: 6 },
-  pointsRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
-  summaryPoints: { color: "#FFD700", fontWeight: "700", fontSize: 15 },
-  confirmButtonGradient: { borderRadius: 14, paddingVertical: 16, marginTop: 10, shadowColor: "#FF3F4B", shadowOpacity: 0.4, shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 5 },
-  confirmButtonText: { color: "#FFF", textAlign: "center", fontWeight: "800", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" },
-  logoutButton: { backgroundColor: "#FF3F4B", marginHorizontal: 20, marginBottom: 40, borderRadius: 14, paddingVertical: 16 },
-  logoutButtonText: { color: "#FFF", textAlign: "center", fontWeight: "700", fontSize: 18, letterSpacing: 0.8, textTransform: "uppercase" },
-  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center" },
-  modalBox: { backgroundColor: "#2a2a40", padding: 24, borderRadius: 16, width: "80%", alignItems: "center" },
-  modalTitle: { color: "#FFF", fontSize: 18, fontWeight: "700", marginBottom: 10, textAlign: "center" },
-  modalSubtitle: { color: "#AAA", fontSize: 15, textAlign: "center", marginBottom: 20 },
-  modalButtonConfirm: { flex: 1, backgroundColor: "#00C851", paddingVertical: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
-  modalButtonConfirm2: { backgroundColor: "#00C851", padding: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
-  modalButtonCancel: { flex: 1, backgroundColor: "#FF3F4B", paddingVertical: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
-  modalButtonText: { color: "#FFF", fontWeight: "700" },
-  textInput: { backgroundColor: "#1d1d2e", color: "#FFF", width: "100%", height: 100, borderRadius: 10, padding: 10, marginBottom: 20, textAlignVertical: "top" },
+  container: {
+    flex: 1,
+    backgroundColor: "#1d1d2e",
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff1b",
+  },
+
+  backButton: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  headerTitle: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+
+  headerAvaliation: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#FFF",
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+
+  paymentIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    marginRight: 14,
+  },
+
+  paymentLabel: {
+    color: "#FFF",
+    fontSize: 17,
+    fontWeight: "600",
+    flex: 1,
+  },
+
+  summaryContainer: {
+    marginTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+
+  summaryBox: {
+    backgroundColor: "#1f1f33",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+
+  summaryLabel: {
+    color: "#AAA",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+
+  summaryMoney: {
+    color: "#00C851",
+    fontSize: 26,
+    fontWeight: "900",
+    marginBottom: 6,
+  },
+
+  pointsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+
+  summaryPoints: {
+    color: "#FFD700",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+
+  confirmButtonGradient: {
+    borderRadius: 14,
+    paddingVertical: 16,
+    marginTop: 10,
+    shadowColor: "#FF3F4B",
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+
+  confirmButtonText: {
+    color: "#FFF",
+    textAlign: "center",
+    fontWeight: "800",
+    fontSize: 18,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+
+  logoutButton: {
+    backgroundColor: "#FF3F4B",
+    marginHorizontal: 20,
+    marginBottom: 40,
+    borderRadius: 14,
+    paddingVertical: 16,
+  },
+
+  logoutButtonText: {
+    color: "#FFF",
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 18,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalBox: {
+    backgroundColor: "#2a2a40",
+    padding: 24,
+    borderRadius: 16,
+    width: "80%",
+    alignItems: "center",
+  },
+
+  modalTitle: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  modalSubtitle: {
+    color: "#AAA",
+    fontSize: 15,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
+  modalButtonConfirm: {
+    flex: 1,
+    backgroundColor: "#00C851",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+
+  modalButtonConfirm2: {
+    backgroundColor: "#00C851",
+    padding: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+
+  modalButtonCancel: {
+    flex: 1,
+    backgroundColor: "#FF3F4B",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+
+  modalButtonText: {
+    color: "#FFF",
+    fontWeight: "700",
+  },
+
+  textInput: {
+    backgroundColor: "#1d1d2e",
+    color: "#FFF",
+    width: "100%",
+    height: 100,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+    textAlignVertical: "top",
+  },
 });

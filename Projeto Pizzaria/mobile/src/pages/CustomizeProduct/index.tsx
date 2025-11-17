@@ -16,7 +16,6 @@ import {
     Alert
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
@@ -404,7 +403,7 @@ export default function CustomizeProduct() {
                 } : undefined,
                 payWithPoints: true,
                 pointsUsed: totalPoints
-                
+
             });
             // marca o tipo do pedido como 'points' após adicionar com sucesso
             try { setOrderType && setOrderType('points'); } catch (e) { }
@@ -442,7 +441,7 @@ export default function CustomizeProduct() {
 
     return (
         <View style={styles.container}>
-            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} colors={["#3D1F93", "#1d1d2e"]} style={styles.header} >
+            <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => navigation.goBack()}>
@@ -450,7 +449,7 @@ export default function CustomizeProduct() {
                 </TouchableOpacity>
                 <Text style={styles.logoText}> Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text> </Text>
                 <View style={{ width: 24 }} />
-            </LinearGradient>
+            </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                 {/* Card principal */}
@@ -656,7 +655,7 @@ export default function CustomizeProduct() {
                     </View>
                 </Modal>
 
-                </ScrollView>
+            </ScrollView>
         </View >
     )
 }
@@ -670,8 +669,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 52,
-        paddingBottom: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
         paddingHorizontal: 30,
         borderBottomWidth: 1,
         borderBottomColor: "#ffffff1b",

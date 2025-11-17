@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header uses plain View now
 import { useComanda } from "../../contexts/comandaContext";
 import { usePedido } from "../../contexts/pedidoContext";
 
@@ -95,16 +95,11 @@ export default function QRScanner() {
 	return (
 		<View style={styles.container}>
 			{/* HEADER */}
-			<LinearGradient
-				start={{ x: 0, y: 0 }}
-				end={{ x: 0, y: 1 }}
-				colors={["#3D1F93", "#1d1d2e"]}
-				style={[styles.header, startCamera && styles.headerCameraOpen]}
-			>
+			<View style={[styles.header, startCamera && styles.headerCameraOpen]}>
 				<Text style={styles.logoText}>
 					Penta<Text style={styles.logoRed}>Pizza</Text>
 				</Text>
-			</LinearGradient>
+			</View>
 
 			{/* Tela inicial */}
 			{!startCamera && (

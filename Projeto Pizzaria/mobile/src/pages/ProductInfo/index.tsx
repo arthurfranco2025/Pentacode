@@ -9,8 +9,9 @@ import {
   Easing,
   ScrollView,
   Alert,
+  Modal
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header uses plain View now
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
@@ -44,6 +45,9 @@ export default function ProductInfo() {
   const { user } = useContext(AuthContext);
   const route = useRoute<RouteParams>();
   const { product } = route.params;
+
+  const [pointsModal, setPointsModal] = useState(false);
+
 
   const isGuest = user?.guest || !user?.email;
 
@@ -114,20 +118,12 @@ export default function ProductInfo() {
   };
 
   const handlePointsInfo = () => {
-    Alert.alert(
-      "Como funciona nossa mecânica de pontos?",
-      "Na PentaPizza, todo produto possui um valor em pontos. Você pode pagar seu pedido com os pontos que voce adquirir no nosso aplicativo, sem gastar dinheiro real! Adquira seus pontos fazendo compras no app."
-    );
+    setPointsModal(true);
   };
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        colors={["#3D1F93", "#1d1d2e"]}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -137,7 +133,7 @@ export default function ProductInfo() {
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
         <View style={{ width: 26 }} />
-      </LinearGradient>
+      </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
         <Image
@@ -208,6 +204,40 @@ export default function ProductInfo() {
           <Text style={styles.orderText}>Pedido atual</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={pointsModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPointsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Animated.View style={[styles.modalCard]}>
+
+            {/* Ícone */}
+            <View style={styles.iconWrapper}>
+              <Ionicons name="star" size={42} color="#ffde09ff" />
+            </View>
+
+            <Text style={styles.modalTitle}>Mecânica de Pontos</Text>
+
+            <Text style={styles.modalMessage}>
+              Cada produto da PentaPizza possui um valor em pontos. Utilize seus pontos acumulados para pagar pedidos sem gastar dinheiro!
+              {"\n\n"}
+              Ganhe pontos automaticamente ao fazer compras no app.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setPointsModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendi</Text>
+            </TouchableOpacity>
+
+          </Animated.View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -219,8 +249,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 52,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingHorizontal: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
@@ -231,9 +261,8 @@ const styles = StyleSheet.create({
     height: 260,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
-    marginBottom: 10,
   },
-  contentContainer: { paddingHorizontal: 22, paddingVertical: 20 },
+  contentContainer: { paddingHorizontal: 22, paddingVertical: 20, },
   titleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -299,5 +328,82 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
     letterSpacing: 0.8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.65)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
+  modalCard: {
+    width: "100%",
+    backgroundColor: "#1F1F2E",
+    borderRadius: 18,
+    paddingVertical: 30,
+    paddingHorizontal: 25,
+    alignItems: "center",
+
+    // Glass effect leve
+    borderColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1.2,
+
+    // Sombra suave
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+
+  iconWrapper: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,222,9,0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 14,
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+
+  modalMessage: {
+    fontSize: 16,
+    color: "#dcdcdc",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 28,
+    paddingHorizontal: 5,
+  },
+
+  modalButton: {
+    width: "85%",
+    backgroundColor: "#FF3F4B",
+    paddingVertical: 13,
+    borderRadius: 12,
+    alignItems: "center",
+
+    shadowColor: "#FF3F4B",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
   },
 });

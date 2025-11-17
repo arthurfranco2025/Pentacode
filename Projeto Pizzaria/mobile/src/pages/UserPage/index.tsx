@@ -14,7 +14,7 @@ import {
     Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header uses plain View now
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -491,12 +491,7 @@ export default function UserPage() {
 
     return (
         <View style={styles.container}>
-            <LinearGradient
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                colors={["#3D1F93", "#1d1d2e"]}
-                style={styles.header}
-            >
+            <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => {
@@ -513,7 +508,7 @@ export default function UserPage() {
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                 </Text>
                 <View style={{ width: 24 }} />
-            </LinearGradient>
+            </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.avatarWrapper}>

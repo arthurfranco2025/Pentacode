@@ -10,7 +10,7 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header/footer use plain View now
 import { api } from "../../services/api";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
@@ -193,12 +193,7 @@ export default function Home() {
 	return (
 		<View style={styles.container}>
 			{/* HEADER */}
-			<LinearGradient
-				start={{ x: 0, y: 0 }}
-				end={{ x: 0, y: 1 }}
-				colors={["#3D1F93", "#1d1d2e"]}
-				style={styles.header}
-			>
+			<View style={styles.header}>
 				{/* Botão de usuário */}
 				<TouchableOpacity onPress={() => navigation.navigate("UserPage")}>
 					<Image
@@ -212,11 +207,12 @@ export default function Home() {
 				</TouchableOpacity>
 
 				{/* Logo */}
-				<View style={{ flex: 1, alignItems: "center" }}>
+				<View style={styles.logoContainer}>
 					<Text style={styles.logoText}>
 						Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 					</Text>
 				</View>
+
 
 				{/* Ícone de pontos */}
 				<View style={styles.pointsContainer}>
@@ -257,7 +253,7 @@ export default function Home() {
 					)}
 				</TouchableOpacity>
 
-			</LinearGradient>
+			</View>
 
 
 			{/* SEARCH ROW */}
@@ -356,12 +352,7 @@ export default function Home() {
 			</View>
 
 			{/* FOOTER */}
-			<LinearGradient
-				start={{ x: 0, y: 0 }}
-				end={{ x: 0, y: 1 }}
-				colors={["#1d1d2e", "#3D1F93"]}
-				style={styles.footer}
-			>
+			<View style={styles.footer}>
 				<View style={styles.footerRow}>
 					<Image
 						source={{
@@ -378,7 +369,7 @@ export default function Home() {
 				>
 					<Text style={styles.orderText}>Pedido atual</Text>
 				</TouchableOpacity>
-			</LinearGradient>
+			</View>
 		</View>
 	);
 }
@@ -395,7 +386,7 @@ const styles = StyleSheet.create({
 	pointsText: {
 		color: "#FFD700",
 		fontWeight: "700",
-		marginLeft: 4,
+		marginLeft: 5,
 	},
 	container: { flex: 1, backgroundColor: "#1d1d2e" },
 	content: { flex: 1 },
@@ -410,16 +401,18 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#ffffff1b",
 	},
 	icon24: { width: 24, height: 24 },
+	logoContainer: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		alignItems: "center",
+		zIndex: 10,
+	},
 	logoText: {
 		color: "#fff",
 		fontSize: 22,
 		fontWeight: "700",
-
-		//tentando centralizar a logo abaixo e falhando miseravelmente
-		//   textAlign: "center", 
-
-		// alignItems: "center",
-		// justifyContent: "space-around",
+		marginBottom: 50,
 	},
 	mesaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
 	menuSearchRow: {

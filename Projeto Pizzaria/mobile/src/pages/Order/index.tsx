@@ -8,7 +8,7 @@ import {
     StyleSheet,
     ScrollView
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header uses plain View now
 import { useNavigation } from "@react-navigation/native";
 import { formatarPreco } from "../../components/utils/formatPrice";
 import { usePedido } from "../../contexts/pedidoContext";
@@ -123,12 +123,7 @@ export default function Order() {
 
     return (
         <View style={styles.container}>
-            <LinearGradient
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                colors={["#3D1F93", "#1d1d2e"]}
-                style={styles.header}
-            >
+            <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => navigation.goBack()}>
@@ -138,7 +133,7 @@ export default function Order() {
                     Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
                 </Text>
                 <View style={{ width: 26 }} />
-            </LinearGradient>
+            </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <Text style={styles.title}>Pedido</Text>
@@ -271,8 +266,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 52,
-        paddingBottom: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
         paddingHorizontal: 30,
         borderBottomWidth: 1,
         borderBottomColor: "#ffffff1b",

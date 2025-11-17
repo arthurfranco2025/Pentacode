@@ -9,7 +9,7 @@ import {
   Image,
   ActivityIndicator
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// LinearGradient removed — header uses plain View now
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { StackParamsList } from "../../routes/app.routes";
 import { useComanda } from "../../contexts/comandaContext";
@@ -344,17 +344,12 @@ export default function OrderTicket() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        colors={["#3D1F93", "#1d1d2e"]}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
         <View style={{ width: 26 }} />
-      </LinearGradient>
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -608,8 +603,8 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    paddingTop: 52,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingHorizontal: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
