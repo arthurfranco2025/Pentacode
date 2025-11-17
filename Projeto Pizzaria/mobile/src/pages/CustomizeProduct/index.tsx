@@ -52,7 +52,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function CustomizeProduct() {
-    const { addItem, pedidoId, setPedidoId } = usePedido();
+    const { addItem, pedidoId, setPedidoId, orderType, setOrderType } = usePedido();
     const { user } = useContext(AuthContext);
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
@@ -71,6 +71,10 @@ export default function CustomizeProduct() {
     const [selectedExtras, setSelectedExtras] = useState<{ [key: string]: boolean }>({});
     const [error, setError] = useState("");
     const [isAdding, setIsAdding] = useState(false);
+
+    // se já houver um tipo de pedido em andamento, usamos para bloquear o outro botão
+    const confirmDisabled = isAdding || orderType === 'points';
+    const pointsDisabled = isAdding || orderType === 'normal';
 
     const [showSecondFlavorModal, setShowSecondFlavorModal] = useState(false);
     const [secondFlavorProducts, setSecondFlavorProducts] = useState<Product[]>([]);
@@ -280,6 +284,8 @@ export default function CustomizeProduct() {
                 payWithPoints: false,
                 pointsUsed: 0
             });
+            // marca o tipo do pedido como 'normal' após adicionar com sucesso
+            try { setOrderType && setOrderType('normal'); } catch (e) { }
             sendNotificationOrder()
             navigation.navigate("Order");
         } catch (error: any) {
@@ -400,6 +406,8 @@ export default function CustomizeProduct() {
                 pointsUsed: totalPoints
                 
             });
+            // marca o tipo do pedido como 'points' após adicionar com sucesso
+            try { setOrderType && setOrderType('points'); } catch (e) { }
             sendNotificationOrder()
             navigation.navigate("Order");
         } catch (error: any) {
@@ -577,20 +585,22 @@ export default function CustomizeProduct() {
                 <TextInput style={styles.textArea} placeholder="Observações... " placeholderTextColor="#aaa" value={observation} onChangeText={setObservation} />
 
                 {/* Botões */}
-                <TouchableOpacity style={[styles.confirmButton, isAdding && { opacity: 0.5 }]} onPress={() => {
-                    handleAddToPedido();
-                }} disabled={isAdding} >
-                    <Text style={styles.confirmText}> {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
+                <TouchableOpacity
+                    style={[styles.confirmButton, confirmDisabled && { opacity: 0.5 }]}
+                    onPress={() => { handleAddToPedido(); }}
+                    disabled={confirmDisabled}
+                >
+                    <Text style={styles.confirmText}> {confirmDisabled && isAdding ? <ActivityIndicator /> : `Adicionar ${formatarPreco(totalPrice)}`} </Text>
                 </TouchableOpacity>
 
                 {/* 🔸 Botão de pontos */}
                 <TouchableOpacity
-                    style={[styles.pointsButton, isAdding && { opacity: 0.5 }]}
+                    style={[styles.pointsButton, pointsDisabled && { opacity: 0.5 }]}
                     onPress={handleAddWithPoints}
-                    disabled={isAdding}
+                    disabled={pointsDisabled}
                 >
                     <Text style={styles.pointsButtonText}>
-                        {isAdding ? <ActivityIndicator></ActivityIndicator> : `Adicionar com Pontos (${totalPoints.toFixed(1)} pts)`}
+                        {pointsDisabled && isAdding ? <ActivityIndicator /> : `Adicionar com Pontos (${totalPoints.toFixed(1)} pts)`}
                     </Text>
                 </TouchableOpacity>
                 <Modal visible={error !== ""} animationType="fade" transparent>

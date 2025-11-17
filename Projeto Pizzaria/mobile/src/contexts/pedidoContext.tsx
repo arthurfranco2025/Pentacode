@@ -32,6 +32,9 @@ interface pedidoContextType {
     setPedidoId: (id: string | null) => void;
     pedidoStatus: string | null;
     fetchPedidoStatus: () => void;
+    // tipo do pedido no fluxo atual: 'normal' | 'points' | null
+    orderType: 'normal' | 'points' | null;
+    setOrderType: (t: 'normal' | 'points' | null) => void;
 }
 
 const pedidoContext = createContext<pedidoContextType | undefined>(undefined);
@@ -40,6 +43,7 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
     const [pedido, setpedido] = useState<PedidoItem[]>([]);
     const [pedidoId, setPedidoId] = useState<string | null>(null);
     const [pedidoStatus, setPedidoStatus] = useState<string | null>(null);
+    const [orderType, setOrderType] = useState<'normal' | 'points' | null>(null);
 
     const addItem = (item: PedidoItem) => {
         // If caller already provided a computed totalPrice, use it directly.
@@ -65,6 +69,8 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
         setPedidoStatus("");
         setpedido([]);
         setPedidoId(null);
+        // reseta também o tipo de pedido ao limpar o pedido
+        setOrderType(null);
     };
 
     const totalPedido = pedido.reduce((acc, item) => acc + (item.totalPrice ?? 0), 0);
@@ -86,6 +92,13 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
         return () => clearInterval(interval);
     }, [pedidoId]);
 
+    // Se a lista de itens ficar vazia, garante que o orderType seja resetado
+    useEffect(() => {
+        if (pedido.length === 0) {
+            setOrderType(null);
+        }
+    }, [pedido]);
+
     return (
         <pedidoContext.Provider
             value={{
@@ -98,6 +111,8 @@ export const PedidoProvider = ({ children }: { children: ReactNode }) => {
                 setPedidoId,
                 pedidoStatus,
                 fetchPedidoStatus
+                ,orderType,
+                setOrderType
             }}>
             {children}
         </pedidoContext.Provider>

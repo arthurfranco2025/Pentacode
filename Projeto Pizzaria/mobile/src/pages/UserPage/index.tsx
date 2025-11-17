@@ -471,21 +471,21 @@ export default function UserPage() {
     }
 
     async function handleRemoveFavorite(favoritoId: string) {
-        Alert.alert('Remover favorito', 'Deseja remover este favorito?', [
-            { text: 'Cancelar', style: 'cancel' },
-            {
-                text: 'Remover', style: 'destructive', onPress: async () => {
-                    try {
-                        await api.delete('/favorito/delete', { data: { id: favoritoId } });
-                        setFavoritesList(prev => prev.filter(p => p.favorito.id !== favoritoId));
-                        Alert.alert('Sucesso', 'Favorito removido.');
-                    } catch (err: any) {
-                        console.log('Erro ao remover favorito:', err?.response || err);
-                        Alert.alert('Erro', err?.response?.data?.error || 'Erro ao remover favorito');
-                    }
-                }
-            }
-        ]);
+        try {
+            await api.delete("/favorito/delete", {
+                data: { id: favoritoId },
+            });
+
+            // Atualizar a lista de favoritos removendo o item
+            setFavoritesList(prev => prev.filter(item => item.favorito.id !== favoritoId));
+
+            showInfo("Sucesso", "Favorito removido com sucesso!");
+            return true;
+        } catch (err: any) {
+            console.log("Erro ao remover favorito:", err?.response || err);
+            showInfo("Erro", "Não foi possível remover o favorito.");
+            throw err;
+        }
     }
 
 
@@ -743,10 +743,10 @@ export default function UserPage() {
                             )}
 
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                                <Text style={styles.historyPrice}>{formatarPreco(selectedComanda.price ?? selectedComanda.total_price ?? (selectedComanda.itens?.reduce((a:any,b:any)=>a+(b.price||0),0) || 0))}</Text>
+                                <Text style={styles.historyPrice}>{formatarPreco(selectedComanda.price ?? selectedComanda.total_price ?? (selectedComanda.itens?.reduce((a: any, b: any) => a + (b.price || 0), 0) || 0))}</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="star" size={18} color="#ffde09" />
-                                    <Text style={[styles.historyPoints, { marginLeft: 8 }]}>{(selectedComanda.itens?.reduce((a:any,b:any)=>a + (b.points ?? Math.round(((b.price||0) * 0.25) * 100) / 100), 0) || 0)} pts</Text>
+                                    <Text style={[styles.historyPoints, { marginLeft: 8 }]}>{(selectedComanda.itens?.reduce((a: any, b: any) => a + (b.points ?? Math.round(((b.price || 0) * 0.25) * 100) / 100), 0) || 0)} pts</Text>
                                 </View>
                             </View>
                         </View>
@@ -758,8 +758,8 @@ export default function UserPage() {
                         renderItem={({ item }) => (
                             <View style={styles.historyItem}>
                                 <View style={{ flex: 1 }}>
-                                            <Text style={styles.historyTitle}>{item.product?.name || item.product2?.name || "Produto"}</Text>
-                                            <Text style={styles.historyDate}>Qtd: {item.qtd ?? item.quantity ?? item.quantity ?? 1}</Text>
+                                    <Text style={styles.historyTitle}>{item.product?.name || item.product2?.name || "Produto"}</Text>
+                                    <Text style={styles.historyDate}>Qtd: {item.qtd ?? item.quantity ?? item.quantity ?? 1}</Text>
                                     {item.adicionais && item.adicionais.length > 0 && (
                                         <Text style={{ color: '#FFD700', fontSize: 13, marginTop: 2 }}>
                                             Adicionais: {item.adicionais.map((a: any) => a.nome || a.name).join(', ')}
@@ -771,14 +771,14 @@ export default function UserPage() {
                                     {item.points !== undefined && (
                                         <Text style={styles.historyPoints}>{item.points} pts</Text>
                                     )}
-                                            {/* badge de status do item (se existir) */}
-                                            {item.status && (
-                                                <View style={{ marginTop: 6, alignItems: 'flex-end' }}>
-                                                    <View style={{ backgroundColor: getStatusColor(item.status), paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
-                                                        <Text style={{ color: '#fff', fontWeight: '700' }}>{formatStatusLabel(item.status)}</Text>
-                                                    </View>
-                                                </View>
-                                            )}
+                                    {/* badge de status do item (se existir) */}
+                                    {item.status && (
+                                        <View style={{ marginTop: 6, alignItems: 'flex-end' }}>
+                                            <View style={{ backgroundColor: getStatusColor(item.status), paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
+                                                <Text style={{ color: '#fff', fontWeight: '700' }}>{formatStatusLabel(item.status)}</Text>
+                                            </View>
+                                        </View>
+                                    )}
                                 </View>
                             </View>
                         )}
