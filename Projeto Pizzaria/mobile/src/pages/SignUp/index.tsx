@@ -248,89 +248,108 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1d1d2e",
   },
+
   scrollContent: {
-    paddingHorizontal: 28,
-    // paddingVertical: 40,
+    paddingHorizontal: 32,
+    paddingTop: 40,
+    paddingBottom: 80,
   },
+
   logo: {
-    marginTop: 30,
-    marginBottom: 30,
-    fontSize: 58,
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 56,
     fontWeight: "bold",
     textAlign: "center",
   },
+
   white: { color: "#fff" },
   red: { color: "#E32636" },
+
   title: {
     color: "#fff",
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 35,
   },
+
   inputGroup: {
-    marginBottom: 18,
+    marginBottom: 22,
   },
+
   inputLabel: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 6,
+    marginBottom: 8,
   },
+
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#8A8A8A",
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderColor: "#5A5A5A",
+    borderRadius: 10,
+    paddingHorizontal: 12,
     backgroundColor: "#101026",
-    height: 45,
+    height: 50,
   },
+
   icon: {
-    marginRight: 5,
+    marginRight: 8,
   },
+
   input: {
     flex: 1,
     color: "#F0F0F0",
-    fontSize: 14,
+    fontSize: 15,
   },
+
   button: {
     backgroundColor: "#FF3F4B",
-    borderRadius: 6,
-    paddingVertical: 14,
+    borderRadius: 10,
+    paddingVertical: 15,
     alignItems: "center",
-    marginTop: 10,
-    marginBottom: 14,
+    marginTop: 15,
+    marginBottom: 22,
   },
+
   buttonText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "bold",
   },
+
+  errorText: {
+    color: "#ff4c4c",
+    marginTop: -10,
+    marginBottom: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 14,
+  },
+
   dividerText: {
     textAlign: "center",
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "bold",
-    marginBottom: 18,
+    marginBottom: 22,
   },
+
   loginText: {
     textAlign: "center",
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 60,
+    marginBottom: 40,
   },
+
   linkText: {
     textDecorationLine: "underline",
     fontWeight: "bold",
     color: "#FF3F4B",
-  },
-  errorText: {
-    color: "red",
-    marginBottom: 12,
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });

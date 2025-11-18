@@ -361,8 +361,7 @@ export default function UserPage() {
 
     async function openFavorites() {
         if (isGuest) {
-            Alert.alert('Aviso', 'Convidados não podem ver favoritos.');
-            return;
+            return showInfo('Aviso', 'Convidados não podem ver favoritos.');
         }
         setFavoritesVisible(true);
         setFavoritesLoading(true);
@@ -399,8 +398,7 @@ export default function UserPage() {
 
     async function openHistory() {
         if (isGuest) {
-            Alert.alert('Aviso', 'Convidados não possuem histórico.');
-            return;
+            return showInfo('Aviso', 'Convidados não possuem histórico.');
         }
 
         setHistoryVisible(true);
@@ -753,7 +751,7 @@ export default function UserPage() {
                         renderItem={({ item }) => (
                             <View style={styles.historyItem}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.historyTitle}>{item.product?.name || item.product2?.name || "Produto"}</Text>
+                                    <Text style={styles.historyTitle} ellipsizeMode="tail" >{item.product?.name || item.product2?.name || "Produto"}</Text>
                                     <Text style={styles.historyDate}>Qtd: {item.qtd ?? item.quantity ?? item.quantity ?? 1}</Text>
                                     {item.adicionais && item.adicionais.length > 0 && (
                                         <Text style={{ color: '#FFD700', fontSize: 13, marginTop: 2 }}>
@@ -813,34 +811,34 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingTop: 52,
-        paddingBottom: 10,
+        paddingBottom: 14,
         paddingHorizontal: 30,
         borderBottomWidth: 1,
-        borderBottomColor: "#ffffff1b",
+        borderBottomColor: "rgba(255,255,255,0.08)",
+    },
+
+    backButton: {
+        width: 28,
+        height: 28,
+        justifyContent: "center",
+        alignItems: "center",
     },
 
     disabledButton: {
         opacity: 0.5,
     },
 
-    backButton: {
-        width: 24,
-        height: 24,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
     logoText: {
         color: "#fff",
         fontSize: 22,
         fontWeight: "700",
+        letterSpacing: 0.5,
     },
 
     scrollContent: {
         alignItems: "center",
         paddingVertical: 20,
     },
-
     avatarWrapper: {
         position: "relative",
         marginBottom: 10,
@@ -851,6 +849,8 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 50,
         backgroundColor: "#2C2C44",
+        borderWidth: 2,
+        borderColor: "rgba(255,255,255,0.12)",
     },
 
     addPhotoBtn: {
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
     },
 
     welcome: {
-        color: "#fff",
+        color: "#dcdcf0",
         fontSize: 16,
         marginBottom: 20,
     },
@@ -872,11 +872,13 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        backgroundColor: "#2a2a40",
-        paddingVertical: 14,
-        borderRadius: 10,
+        backgroundColor: "#2a2a3f",
+        paddingVertical: 15,
+        borderRadius: 12,
         width: "100%",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.06)",
     },
 
     buttonText: {
@@ -886,12 +888,16 @@ const styles = StyleSheet.create({
     },
 
     logoutButton: {
-        backgroundColor: "#FF4B4B",
-        paddingVertical: 14,
-        borderRadius: 10,
+        backgroundColor: "#e44444",
+        paddingVertical: 15,
+        borderRadius: 12,
         marginTop: 20,
         width: "80%",
         alignItems: "center",
+        shadowColor: "#e44444",
+        shadowOpacity: 0.4,
+        shadowRadius: 5,
+        elevation: 4,
     },
 
     logoutText: {
@@ -914,46 +920,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: "#343450",
+        borderColor: "rgba(255,255,255,0.12)",
     },
 
     saveButton: {
-        backgroundColor: "#4B3FFF",
+        backgroundColor: "#6246EA",
         width: "100%",
-        paddingVertical: 14,
+        paddingVertical: 15,
         borderRadius: 10,
         alignItems: "center",
-        marginTop: 5,
+        marginTop: 10,
+        shadowColor: "#6246EA",
+        shadowOpacity: 0.45,
+        shadowRadius: 6,
+        elevation: 4,
     },
 
     saveText: {
         color: "#fff",
         fontWeight: "700",
         fontSize: 15,
-    },
-
-    removeOverlay: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    removeBox: {
-        backgroundColor: "rgba(0,0,0,0.6)",
-        padding: 20,
-        borderRadius: 10,
-        alignItems: "center",
-    },
-
-    removeText: {
-        color: "#fff",
-        marginTop: 10,
-        fontSize: 14,
     },
 
     modalOverlay: {
@@ -965,14 +951,16 @@ const styles = StyleSheet.create({
 
     modalBox: {
         backgroundColor: "#2C2C44",
-        padding: 20,
-        borderRadius: 10,
+        padding: 22,
+        borderRadius: 16,
         width: "80%",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.08)",
     },
 
     modalTitle: {
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: "700",
         color: "#fff",
         marginBottom: 10,
@@ -980,22 +968,22 @@ const styles = StyleSheet.create({
 
     modalMessage: {
         fontSize: 15,
-        color: "#fff",
+        color: "#dcdcf0",
         textAlign: "center",
     },
 
     modalBtn: {
-        backgroundColor: "#4B3FFF",
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 8,
+        backgroundColor: "#6246EA",
+        paddingVertical: 12,
+        paddingHorizontal: 22,
+        borderRadius: 10,
         marginTop: 15,
     },
 
     modalBtnText: {
         color: "#fff",
         fontWeight: "700",
-        textAlign: "center",
+        fontSize: 15,
     },
 
     favContainer: {
@@ -1069,16 +1057,15 @@ const styles = StyleSheet.create({
     historyItem: {
         flexDirection: "row",
         justifyContent: "space-between",
-        // alignItems: "center",
-        padding: 16,
-        borderBottomWidth: 1,
-        // borderColor: "#3a3a5cff",
-        backgroundColor: "#25253b",
+        padding: 18,
         borderRadius: 14,
-        marginVertical: 6,
+        marginVertical: 5,
+        backgroundColor: "#232335",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.06)",
         shadowColor: "#000",
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
         elevation: 3,
     },
 
@@ -1087,37 +1074,33 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: "700",
         marginBottom: 5,
+        letterSpacing: 0.2,
     },
 
     historyDate: {
-        color: "#b3b3c4",
-        fontSize: 13,
+        color: "#b6b6c7",
+        fontSize: 12,
         marginBottom: 5,
     },
 
     historyStatus: {
         color: "#9c9cb8",
-        fontSize: 13,
+        fontSize: 12,
         marginBottom: 5,
     },
 
     historyPrice: {
-        color: "#00C851",
+        color: "#00d27f",
+        fontSize: 17,
         fontWeight: "800",
-        fontSize: 16,
         marginBottom: 5,
     },
 
     historyPoints: {
         color: "#FFD700",
         fontSize: 14,
+        fontWeight: "700",
         marginBottom: 5,
-        fontWeight: "600",
-    },
-
-    historyRight: {
-        alignItems: "flex-end",
-        // justifyContent: "space-between",
     },
 
     historyLeft: {
@@ -1125,10 +1108,12 @@ const styles = StyleSheet.create({
         paddingRight: 10,
     },
 
+    historyRight: {
+        alignItems: "flex-end",
+    },
+
     buttonsContainer: {
         flexDirection: 'row',
-        // alignItems: 'flex-end',
-        // justifyContent: 'space-between',
         marginTop: 8,
     },
 
@@ -1164,4 +1149,4 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginHorizontal: 6,
     },
-})
+});

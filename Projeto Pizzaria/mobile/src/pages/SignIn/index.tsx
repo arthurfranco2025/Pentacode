@@ -170,112 +170,135 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1d1d2e",
   },
+
   scrollContent: {
-    paddingHorizontal: 28,
-    // paddingVertical: 40,
+    paddingHorizontal: 32,
+    paddingVertical: 50,
+    paddingBottom: 80,
   },
+
   logo: {
-    marginTop: 30,
-    marginBottom: 30,
-    fontSize: 58,
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 56,
     fontWeight: "bold",
     textAlign: "center",
   },
+
   white: { color: "#fff" },
   red: { color: "#E32636" },
+
   title: {
     color: "#fff",
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 30,
+    marginTop: 25,
+    marginBottom: 35,
   },
+
   inputGroup: {
-    marginBottom: 15,
+    marginBottom: 22,
   },
+
   inputLabel: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 6,
+    marginBottom: 8,
   },
+
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#8A8A8A",
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderColor: "#5A5A5A",
+    borderRadius: 10,
+    paddingHorizontal: 12,
     backgroundColor: "#101026",
-    height: 45,
+    height: 50,
   },
+
   icon: {
     marginRight: 8,
   },
+
   input: {
     flex: 1,
-    color: "#F0F0F0",
-    fontSize: 14,
-  },
-  button: {
-    backgroundColor: "#FF3F4B",
-    borderRadius: 6,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 14,
-  },
-  guestButton: {
-    backgroundColor: "#391D8A",
-    borderRadius: 6,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "#fff",
+    color: "#FFF",
     fontSize: 15,
-    fontWeight: "bold",
   },
-  dividerText: {
-    textAlign: "center",
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "bold",
-    marginBottom: 18,
-  },
-  loginText: {
-    textAlign: "center",
+
+  forgotPassword: {
     color: "#fff",
     fontSize: 13,
     fontWeight: "600",
-    marginBottom: 20,
+    marginTop: 2,
+    marginBottom: 22,
   },
+
+  errorText: {
+    color: "#ff4c4c",
+    marginBottom: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 14,
+  },
+
+  button: {
+    backgroundColor: "#FF3F4B",
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 16,
+  },
+
+  guestButton: {
+    backgroundColor: "#391D8A",
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: "center",
+    marginBottom: 25,
+  },
+
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  dividerText: {
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 22,
+  },
+
+  loginText: {
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 30,
+  },
+
   linkText: {
     textDecorationLine: "underline",
     fontWeight: "bold",
     color: "#FF3F4B",
   },
-  forgotPassword: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-    marginBottom: 20,
-  },
+
   backIcon: {
     width: 28,
     height: 28,
   },
+
   GoBack: {
     position: "absolute",
     top: 45,
     left: 25,
     zIndex: 1,
-  },
-  errorText: {
-    color: "red",
-    marginBottom: 12,
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });

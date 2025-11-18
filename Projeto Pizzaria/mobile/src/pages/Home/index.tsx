@@ -194,67 +194,47 @@ export default function Home() {
 		<View style={styles.container}>
 			{/* HEADER */}
 			<View style={styles.header}>
+
 				{/* Botão de usuário */}
-				<TouchableOpacity onPress={() => navigation.navigate("UserPage")}>
+				<TouchableOpacity onPress={() => navigation.navigate("UserPage")} style={styles.leftIcon}>
 					<Image
 						source={
 							authUser?.image_url
 								? { uri: authUser.image_url }
 								: { uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF" }
 						}
-						style={[styles.icon24, authUser?.image_url && styles.avatarIcon]}
+						style={[styles.userAvatar, authUser?.image_url && styles.avatarIcon]}
 					/>
 				</TouchableOpacity>
 
 				{/* Logo */}
-				<View style={styles.logoContainer}>
+				<View style={styles.headerCenter}>
 					<Text style={styles.logoText}>
 						Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
 					</Text>
 				</View>
 
-
-				{/* Ícone de pontos */}
-				<View style={styles.pointsContainer}>
-					<Ionicons name="star" size={24} color="#FFD700" />
-					<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
-				</View>
-
 				{/* Lado direito do header */}
-				<TouchableOpacity
-					onPress={() => navigation.navigate("OrderTicket")}
-					style={{
-						backgroundColor: "rgba(255,255,255,0.15)",
-						paddingHorizontal: 10,
-						paddingVertical: 5,
-						borderRadius: 10,
-						flexDirection: "row",
-						alignItems: "center",
-						gap: 8,
-					}}
-					activeOpacity={0.8}
-				>
-					<Text style={[styles.mesaText, { fontWeight: "bold", color: "#fff" }]}>
-						Mesa {comanda?.numero_mesa}
-					</Text>
-					<Ionicons name="reader-sharp" size={18} color="#fff" />
-					{totalPedido > 0 && (
-						<View
-							style={{
-								position: "absolute",
-								top: -3,
-								right: -3,
-								backgroundColor: "#FF3F4B",
-								width: 10,
-								height: 10,
-								borderRadius: 5,
-							}}
-						/>
-					)}
-				</TouchableOpacity>
+				<View style={styles.rightArea}>
+					{/* Pontos */}
+					<View style={styles.pointsContainer}>
+						<Ionicons name="star" size={20} color="#FFD700" />
+						<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
+					</View>
 
+					{/* Mesa */}
+					<TouchableOpacity
+						onPress={() => navigation.navigate("OrderTicket")}
+						style={styles.mesaButton}
+						activeOpacity={0.8}
+					>
+						<Text style={styles.mesaButtonText}>Mesa {comanda?.numero_mesa}</Text>
+						<Ionicons name="reader-sharp" size={16} color="#fff" />
+
+						{totalPedido > 0 && <View style={styles.notificationDot} />}
+					</TouchableOpacity>
+				</View>
 			</View>
-
 
 			{/* SEARCH ROW */}
 			<View style={styles.menuSearchRow}>
@@ -375,54 +355,103 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-	pointsContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: "rgba(0,0,0,0.3)",
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 12,
-	},
-	pointsText: {
-		color: "#FFD700",
-		fontWeight: "700",
-		marginLeft: 5,
-	},
 	container: { flex: 1, backgroundColor: "#1d1d2e" },
-	content: { flex: 1 },
+	content: { flex: 1, paddingTop: 5 },
 	header: {
 		flexDirection: "row",
-		justifyContent: "space-between",
 		alignItems: "center",
-		paddingTop: 52,
-		paddingBottom: 10,
-		paddingHorizontal: 30,
+		justifyContent: "space-between",
+		paddingTop: 50,
+		paddingBottom: 14,
+		paddingHorizontal: 20,
+		backgroundColor: "transparent",
 		borderBottomWidth: 1,
-		borderBottomColor: "#ffffff1b",
+		borderBottomColor: "rgba(255,255,255,0.08)",
 	},
-	icon24: { width: 24, height: 24 },
-	logoContainer: {
+
+	leftIcon: {
+		padding: 4,
+	},
+
+	userAvatar: {
+		width: 34,
+		height: 34,
+		borderRadius: 50,
+	},
+
+	headerCenter: {
 		position: "absolute",
 		left: 0,
 		right: 0,
 		alignItems: "center",
-		zIndex: 0, // antes era 10
-		pointerEvents: "none", 
+		justifyContent: "center",
+		pointerEvents: "none",
 	},
+
 	logoText: {
+		fontSize: 26,
 		color: "#fff",
-		fontSize: 22,
-		fontWeight: "700",
-		marginBottom: 50,
+		fontWeight: "800",
+		letterSpacing: 1,
 	},
-	mesaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
+
+	rightArea: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 12,
+	},
+
+	pointsContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "rgba(255,255,255,0.12)",
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		borderRadius: 10,
+	},
+
+	pointsText: {
+		color: "#FFD700",
+		fontWeight: "700",
+		marginLeft: 5,
+		fontSize: 14,
+	},
+
+	mesaButton: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "rgba(255,255,255,0.15)",
+		paddingHorizontal: 10,
+		paddingVertical: 6,
+		borderRadius: 10,
+		gap: 6,
+		position: "relative",
+	},
+
+	mesaButtonText: {
+		color: "#fff",
+		fontWeight: "700",
+		fontSize: 14,
+	},
+
+	notificationDot: {
+		position: "absolute",
+		top: -3,
+		right: -3,
+		backgroundColor: "#FF3F4B",
+		width: 10,
+		height: 10,
+		borderRadius: 5,
+	},
 	menuSearchRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		paddingHorizontal: 20,
-		marginVertical: 10,
+		marginTop: 12,
+		marginBottom: 8,
+		gap: 10,
 	},
-	sideIcon: { width: 40, height: 40, marginRight: 10 },
+	sideIcon: { width: 36, height: 36, marginRight: 10 },
 	searchBox: {
 		flex: 1,
 		flexDirection: "row",
@@ -430,25 +459,29 @@ const styles = StyleSheet.create({
 		borderColor: "#8A8A8A",
 		borderRadius: 15,
 		borderWidth: 1,
-		paddingHorizontal: 10,
+		paddingHorizontal: 12,
 		height: 40,
+		backgroundColor: "#2b2b3d"
 	},
-	searchIcon: { width: 20, height: 20, marginRight: 8 },
-	input: { flex: 1, color: "#FFF" },
+	searchIcon: { width: 18, height: 18, marginRight: 8, opacity: 0.8 },
+	input: { flex: 1, color: "#FFF", fontSize: 15 },
 	mainRow: { flexDirection: "row", width: "100%", height: "100%" },
 	leftColumn: { width: "35%", borderRightWidth: 1, borderRightColor: "#ffffff1b" },
 	rightColumn: { width: "65%", paddingHorizontal: 8 },
 	rightColumnFull: { width: "100%" },
 	categoriesContainer: { paddingVertical: 10 },
-	categoryItem: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
-	selectedCategory: { backgroundColor: "#3b3b55f7" },
+	categoryItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "#ffffff1b" },
+	selectedCategory: {
+		backgroundColor: "#3b3b55f7",
+		borderRadius: 8,
+	},
 	categoryBg: { alignItems: "center", paddingHorizontal: 5 },
-	categoryImage: { width: 65, height: 65 },
+	categoryImage: { width: 65, height: 65, borderRadius: 20 },
 	categoryText: {
 		color: "#FFF",
 		fontWeight: "600",
-		fontSize: 15,
-		marginTop: 5,
+		fontSize: 14,
+		marginTop: 6,
 		textAlign: "center",
 	},
 	productsContainer: { paddingVertical: 10, flexGrow: 1 },
