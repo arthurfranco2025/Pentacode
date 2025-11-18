@@ -60,6 +60,7 @@ export default function Payment() {
   const [avaliacaoConfirmadaModal, setAvaliacaoConfirmadaModal] = useState(false);
   const [notaVaziaModal, setNotaVaziaModal] = useState(false);
   const [pagamentoNaoSelecionadoModal, setPagamentoNaoSelecionadoModal] = useState(false);
+  const [insufficientPointsModal, setInsufficientPointsModal] = useState(false);
 
 
   const cardOptions = [
@@ -133,9 +134,12 @@ export default function Payment() {
       setConfirmModalVisible(true);
     } catch (error: any) {
       console.log("Erro ao pagar comanda:", error.response?.data || error.message);
-      alert(
-        error.response?.data?.error || "Erro ao registrar pagamento. Tente novamente."
-      );
+      const msg = error.response?.data?.error || error.message || "Erro ao registrar pagamento. Tente novamente.";
+      if (msg.toLowerCase().includes('ponto') || msg.toLowerCase().includes('pontos') || msg.toLowerCase().includes('insuf')) {
+        setInsufficientPointsModal(true);
+      } else {
+        alert(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -509,6 +513,25 @@ export default function Payment() {
         </View>
       </Modal>
 
+      {/* Modal Pontos Insuficientes */}
+      <Modal transparent visible={insufficientPointsModal} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={{ color: "#FF3F4B", fontSize: 18, fontWeight: "700", marginBottom: 10, textAlign: "center" }}>
+              ⚠ Pontos insuficientes
+            </Text>
+            <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center", marginBottom: 20 }}>
+              Você não tem pontos suficientes para pagar os itens marcados com pontos. Remova os itens pagos com pontos antes de confirmar, ou escolha outra forma de pagamento.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButtonConfirm2}
+              onPress={() => setInsufficientPointsModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal Avaliação Enviada */}
       <Modal transparent visible={avaliacaoConfirmadaModal} animationType="fade">

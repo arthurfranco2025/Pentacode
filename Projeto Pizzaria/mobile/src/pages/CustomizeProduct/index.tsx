@@ -610,10 +610,6 @@ export default function CustomizeProduct() {
                             <>
                                 {'Adicionar com Pontos '}
                                 <Ionicons
-                                    style={{
-                                        borderColor: "#000",
-                                        borderWidth: 1
-                                    }}
                                     name="star"
                                     size={21}
                                     color="#1d1d2e"

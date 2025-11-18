@@ -196,7 +196,8 @@ class CreateItemService {
       where: { id: pedido_id },
       data: {
         price: { increment: precoFinal },
-        points: { increment: pontosFinal },
+        // Apenas incrementa pontos do pedido se for payWithPoints (pontos gastos)
+        ...(payWithPoints ? { points: { increment: pontosFinal } } : { points: 0 })
       }
     });
 
@@ -217,7 +218,8 @@ class CreateItemService {
         where: { id: pedidoData.comanda_id },
         data: {
           price: { increment: precoFinal },
-          points: { increment: pontosFinal},
+          // Apenas adiciona ao comanda.points se o item foi pago com pontos
+          ...(payWithPoints ? { points: { increment: pontosFinal } } : { points: 0 })
         }
       });
       // Se após essa atualização a comanda não possuir preço (todos os itens pagos por pontos),
@@ -238,7 +240,8 @@ class CreateItemService {
           where: { id: comanda.id },
           data: {
             price: { increment: precoFinal },
-            points: { increment: pontosFinal },
+            // Apenas adiciona ao comanda.points se o item foi pago com pontos
+            ...(payWithPoints ? { points: { increment: pontosFinal } } : { points: 0 })
           }
         });
       }
