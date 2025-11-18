@@ -261,24 +261,27 @@ export default function Payment() {
           </View>
 
           {/* Botão confirmar */}
-          <View style={[styles.confirmButtonGradient, garcomClosed ? { backgroundColor: '#777' } : { backgroundColor: '#FF3F4B' }]}>
-            <TouchableOpacity
-              onPress={handleConfirmPayment}
-              disabled={garcomClosed || loading}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color="#FFF" />
-              ) : (
-                <Text style={styles.confirmButtonText}>
-                  {paymentConfirmed
-                    ? garcomClosed
-                      ? "Pagamento Finalizado"
-                      : "Forma de Pagamento Confirmada"
-                    : "Confirmar Pagamento"}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[
+              styles.confirmButtonGradient,
+              garcomClosed ? { backgroundColor: '#777' } : { backgroundColor: '#FF3F4B' }
+            ]}
+            onPress={handleConfirmPayment}
+            disabled={garcomClosed || loading}
+            activeOpacity={0.7}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+              <Text style={styles.confirmButtonText}>
+                {paymentConfirmed
+                  ? garcomClosed
+                    ? "Pagamento Finalizado"
+                    : "Forma de Pagamento Confirmada"
+                  : "Confirmar Pagamento"}
+              </Text>
+            )}
+          </TouchableOpacity>
         </View>
       </ScrollView>
 

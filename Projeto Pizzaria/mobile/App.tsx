@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { linking } from './src/linking';
 import Routes from './src/routes';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Notifications from 'expo-notifications';
@@ -24,7 +25,7 @@ export default function App() {
   });
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking} fallback={<StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false} /> }>
       <AuthProvider>
         <StatusBar backgroundColor='#000000ff' barStyle='light-content' translucent={false} />
         <Routes />

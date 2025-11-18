@@ -19,6 +19,8 @@ import { AuthClienteController } from './controllers/cliente/AuthClienteControll
 import { EditClienteController } from './controllers/cliente/EditClienteController'
 import { ForgotPasswordClienteController } from './controllers/cliente/ForgotPasswordClienteController'
 import { RequestPasswordResetController } from './controllers/cliente/RequestPasswordResetController'
+import { ResetPasswordClienteController } from './controllers/cliente/ResetPasswordClienteController'
+import { ResetPasswordPublicController } from './controllers/cliente/ResetPasswordPublicController'
 import { DetailClienteController } from './controllers/cliente/DetailClienteController'
 
 import { CreateFavoritoController } from './controllers/favorito/createFavoritoController'
@@ -92,6 +94,12 @@ router.put("/edit", isAuthenticated, upload.single('banner'), new EditClienteCon
 router.put('/login/esqueciMinhaSenha', new ForgotPasswordClienteController().handle.bind(new ForgotPasswordClienteController()));
 // Rota para solicitar envio de email de redefinição (envia link/token por email)
 router.post('/login/solicitarRedefinicaoSenha', new RequestPasswordResetController().handle.bind(new RequestPasswordResetController()));
+
+// Rota para resetar senha autenticado (ex: tela de editar senha quando logado)
+router.post('/login/resetarSenha', isAuthenticated, new ResetPasswordClienteController().handle.bind(new ResetPasswordClienteController()));
+
+// Rota pública para resetar senha via token enviado por email (usuário não precisa estar logado)
+router.post('/login/resetarSenhaPublic', new ResetPasswordPublicController().handle.bind(new ResetPasswordPublicController()));
 
 //FAVORITOS ROUTE
 router.post('/favorito', isAuthenticated, new CreateFavoritoController().handle)

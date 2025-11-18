@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
-  SafeAreaView,
   View,
   ScrollView,
   Image,
@@ -11,6 +10,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Modal,
+  Animated,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +29,20 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const opacity = useRef(new Animated.Value(0)).current;
+
+
+  function openModal() {
+    setModalVisible(true);
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }
+
+
 
   async function handleForgotPassword() {
     if (!email) {
@@ -42,8 +57,8 @@ export default function ForgotPassword() {
       await api.post('/login/solicitarRedefinicaoSenha', { email });
 
       setLoading(false);
-      alert('Email enviado! Verifique sua caixa de entrada para instruções.');
-      navigation.navigate('SignIn');
+      openModal();
+
     } catch (err: any) {
       setLoading(false);
       console.error('Erro completo:', err);
@@ -64,6 +79,35 @@ export default function ForgotPassword() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="fade"
+        >
+          <View style={styles.modalContainer}>
+            <Animated.View style={[styles.modalContent, { opacity }]}>
+              <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
+
+              <Text style={styles.modalTitle}>Email enviado!</Text>
+
+              <Text style={styles.modalMessage}>
+                Verifique sua caixa de entrada para instruções de redefinição.
+              </Text>
+
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate("SignIn");
+                }}
+              >
+                <Text style={styles.modalButtonText}>Fechar</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        </Modal>
+
         <ScrollView style={styles.scrollView}>
           {/* Logo */}
           <Image
@@ -130,6 +174,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1D1D2E",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
+  modalContent: {
+    backgroundColor: "#1D1D2E",
+    width: "100%",
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    elevation: 10,
+  },
+
+  modalTitle: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 15,
+  },
+
+  modalMessage: {
+    color: "#E2E2E2",
+    fontSize: 15,
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+
+  modalButton: {
+    backgroundColor: "#FF3F4B",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 6,
+    width: "60%",
+    alignItems: "center",
+  },
+
+  modalButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   scrollView: {
     flex: 1,

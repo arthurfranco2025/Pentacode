@@ -1,118 +1,187 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, ScrollView, Text, TextInput, StyleSheet, } from "react-native";
-export default () => {
-	const [textInput1, onChangeTextInput1] = useState('');
-	const [textInput2, onChangeTextInput2] = useState('');
+import {
+	View,
+	ScrollView,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	StyleSheet,
+	Platform,
+	StatusBar,
+} from "react-native";
+import { api } from "../../services/api";
+import { useNavigation, useRoute, RouteProp, NavigationProp } from "@react-navigation/native";
+
+
+export default function ChangePassword() {
+	const [password, setPassword] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [message, setMessage] = useState("");
+	const navigation = useNavigation<NavigationProp<any>>();
+	const route = useRoute<RouteProp<{ EditPassword: { token?: string } }, 'EditPassword'>>();
+	const tokenFromLink = route?.params?.token;
+
+	async function handleSubmit() {
+		// previne chamadas duplicadas quando o botão já está em loading
+		if (loading) return;
+		if (!password || password.length < 6) {
+			setMessage("A senha deve ter pelo menos 6 caracteres.");
+			return;
+		}
+		setLoading(true);
+		console.log('[EditPassword] handleSubmit start');
+		try {
+		setMessage("");
+			// Faz a chamada usando a instância axios que já tem baseURL e header Authorization
+			// Usar endpoint público se houver token (fluxo de 'esqueci minha senha')
+			let data: any;
+			if (tokenFromLink) {
+				const resp = await api.post('/login/resetarSenhaPublic', { token: tokenFromLink, password });
+				data = resp.data;
+			} else {
+				// fallback para rota autenticada (caso o usuário esteja logado)
+				const resp = await api.post('/login/resetarSenha', { password });
+				data = resp.data;
+			}
+			console.log('[EditPassword] api response', data);
+			setMessage(data.message || 'Senha alterada com sucesso!');
+			setPassword("");
+			// navegar para SignIn após sucesso no fluxo de recuperação de senha
+			navigation.navigate("SignIn");
+		} catch (error) {
+			const err: any = error;
+			console.error('Erro no reset senha:', err?.response || err?.message || err);
+			const msg = err?.response?.data?.message || err?.message || 'Erro de conexão. Tente novamente.';
+			setMessage(msg);
+			// se status for 401 (token inválido), pode ser útil redirecionar para sign in
+			if (err?.response?.status === 401) {
+				console.warn('[EditPassword] Token inválido ou expirado. Redirecionando para SignIn.');
+				// navigation.navigate('SignIn'); // opcional
+			}
+		} finally {
+			setLoading(false);
+		}
+	}
+
 	return (
-		<SafeAreaView style={styles.container}>
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.view}>
-					<View style={styles.column}>
-						<View style={styles.view2}>
-							<Text style={styles.text}>
-								{"Pizza"}
-							</Text>
-						</View>
-						<Text style={styles.text2}>
-							{"Sujeito"}
-						</Text>
-					</View>
+		<View style={styles.container}>
+
+			{/* HEADER */}
+			<View style={styles.header}>
+				<Text style={styles.logoText}>
+					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+				</Text>
+			</View>
+
+			{/* CONTENT */}
+			<ScrollView contentContainerStyle={styles.content}>
+
+				{/* TÍTULO */}
+				<View style={styles.titleWrap}>
+					<Text style={styles.title}>Alterar senha</Text>
 				</View>
-				<View style={styles.view3}>
-					<Text style={styles.text3}>
-						{"Alterar senha"}
-					</Text>
-				</View>
-				<View style={styles.column2}>
-					<Text style={styles.text4}>
-						{"Senha"}
-					</Text>
+
+				{/* CAMPO DE SENHA */}
+				<View style={styles.inputGroup}>
 					<TextInput
-						placeholder={"Digite a nova senha"}
-						value={textInput1}
-						onChangeText={onChangeTextInput1}
+						placeholder="Digite a nova senha"
+						placeholderTextColor="#8A8A8A"
 						style={styles.input}
+						secureTextEntry
+						value={password}
+						onChangeText={setPassword}
 					/>
 				</View>
-				<TextInput
-					placeholder={"Enviar"}
-					value={textInput2}
-					onChangeText={onChangeTextInput2}
-					style={styles.input2}
-				/>
+
+
+					{/* FEEDBACK */}
+					{message ? (
+						<Text style={{ color: message.includes('sucesso') ? '#0f0' : '#f44', marginBottom: 16, textAlign: 'center' }}>{message}</Text>
+					) : null}
+
+					{/* BOTÃO */}
+					<TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+						<Text style={styles.buttonText}>{loading ? 'Enviando...' : 'Enviar'}</Text>
+					</TouchableOpacity>
+
 			</ScrollView>
-		</SafeAreaView>
-	)
+
+		</View>
+	);
 }
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#FFFFFF",
+		backgroundColor: "#1d1d2e",
+		paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
 	},
-	column: {
-		paddingVertical: 4,
-		paddingHorizontal: 1,
+
+	/* HEADER */
+	header: {
+		paddingTop: 20,
+		paddingBottom: 20,
+		alignItems: "center",
+		borderBottomWidth: 1,
+		borderBottomColor: "#ffffff1b",
 	},
-	column2: {
-		marginBottom: 20,
-		marginLeft: 53,
+	logoText: {
+		color: "#fff",
+		fontSize: 32,
+		fontWeight: "700",
+	},
+
+	/* CONTENT */
+	content: {
+		paddingHorizontal: 30,
+		paddingTop: 40,
+		alignItems: "center",
+	},
+
+	/* TÍTULO */
+	titleWrap: {
+		marginBottom: 30,
+	},
+	title: {
+		color: "#FFFFFF",
+		fontSize: 28,
+		fontWeight: "700",
+		textAlign: "center",
+	},
+
+	/* INPUT */
+	inputGroup: {
+		width: "100%",
+		marginBottom: 30,
 	},
 	input: {
-		color: "#F0F0F0",
-		fontSize: 14,
+		width: "100%",
 		backgroundColor: "#101026",
 		borderColor: "#8A8A8A",
-		borderRadius: 3,
 		borderWidth: 1,
+		borderRadius: 8,
+		color: "#FFF",
 		paddingVertical: 12,
-		paddingHorizontal: 13,
+		paddingHorizontal: 14,
+		fontSize: 15,
 	},
-	input2: {
-		color: "#FFFFFF",
-		fontSize: 14,
-		fontWeight: "bold",
-		marginBottom: 493,
-		marginLeft: 53,
+
+	/* BOTÃO */
+	button: {
+		width: "70%",
 		backgroundColor: "#FF3F4B",
-		borderRadius: 3,
-		paddingVertical: 11,
-		paddingHorizontal: 135,
-	},
-	scrollView: {
-		flex: 1,
-		backgroundColor: "#1D1D2E",
-	},
-	text: {
-		color: "#FF3F4B",
-		fontSize: 48,
-		fontWeight: "bold",
-	},
-	text2: {
-		color: "#FFFFFF",
-		fontSize: 48,
-		fontWeight: "bold",
-	},
-	text3: {
-		color: "#FFFFFF",
-		fontSize: 34,
-		fontWeight: "bold",
-	},
-	text4: {
-		color: "#FFFFFF",
-		fontSize: 14,
-		fontWeight: "bold",
-		marginBottom: 10,
-	},
-	view: {
+		borderRadius: 8,
+		paddingVertical: 12,
 		alignItems: "center",
-		marginTop: 57,
-		marginBottom: 62,
+		justifyContent: "center",
+		elevation: 4,
+		shadowColor: "#FF3F4B",
 	},
-	view2: {
-		alignItems: "flex-end",
-	},
-	view3: {
-		alignItems: "center",
-		marginBottom: 60,
+	buttonText: {
+		color: "#FFF",
+		fontSize: 16,
+		fontWeight: "bold",
+		textTransform: "uppercase",
+		letterSpacing: 1,
 	},
 });

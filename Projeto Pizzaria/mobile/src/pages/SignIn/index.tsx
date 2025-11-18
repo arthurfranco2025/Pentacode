@@ -172,11 +172,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 28,
-    paddingVertical: 40,
+    // paddingVertical: 40,
   },
   logo: {
     marginTop: 30,
-    marginBottom: 10,
+    marginBottom: 30,
     fontSize: 58,
     fontWeight: "bold",
     textAlign: "center",

@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		alignItems: "center",
 		zIndex: 0, // antes era 10
-		pointerEvents: "none", // garante que NÃO bloqueia toques
+		pointerEvents: "none", 
 	},
 	logoText: {
 		color: "#fff",

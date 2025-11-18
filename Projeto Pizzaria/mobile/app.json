@@ -25,6 +25,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": "pentapizza",
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    },
+    "plugins": [],
+    "deepLinks": [
+      "https://pentapizza.com.br/*",
+      "pentapizza://*"
+    ]
   }
 }
