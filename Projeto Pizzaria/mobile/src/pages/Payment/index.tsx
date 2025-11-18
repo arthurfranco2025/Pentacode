@@ -38,6 +38,8 @@ export default function Payment() {
   const { user, signOut } = useContext(AuthContext);
   const { comandaId, totalPoints, totalPrice } = route.params as PaymentRouteProps;
 
+  const payWithPointsOnly = Number(totalPrice) === 0 && Number(totalPoints) > 0;
+
   const [selectedCard, setSelectedCard] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,6 +83,12 @@ export default function Payment() {
   };
 
   const handleConfirmPayment = () => {
+    if (payWithPointsOnly) {
+      // Se a comanda é totalmente por pontos, confirmar pagamento por pontos diretamente
+      setFinalConfirmVisible(true);
+      return;
+    }
+
     if (!selectedOption) {
       setPagamentoNaoSelecionadoModal(true);
       return;
@@ -91,9 +99,23 @@ export default function Payment() {
   const ganhoPontos = () => totalPrice * 0.25;
 
   const handleFinalConfirm = async () => {
-    if (!selectedOption) return;
     try {
       setLoading(true);
+
+      // Se for pagamento por pontos, usamos endpoint específico
+      if (payWithPointsOnly) {
+        await api.put("/comanda/pagarPorPontos", { comanda_id: comandaId });
+
+        setPaymentConfirmed(true);
+        setFinalConfirmVisible(false);
+        setConfirmModalVisible(true);
+        return;
+      }
+
+      if (!selectedOption) {
+        setPagamentoNaoSelecionadoModal(true);
+        return;
+      }
 
       let tipoPagamento = "";
       if (selectedOption === "cartao") {
@@ -231,9 +253,12 @@ export default function Payment() {
                 marginHorizontal: 20,
                 borderWidth: selectedOption === item.value ? 2 : 0,
                 borderColor: "#00C851",
+                opacity: (garcomClosed || payWithPointsOnly) ? 0.5 : 1
               }}
-              onPress={item.onPress || (() => setSelectedOption(item.value))}
-              disabled={garcomClosed}
+              onPress={
+                payWithPointsOnly ? undefined : (item.onPress || (() => setSelectedOption(item.value)))
+              }
+              disabled={garcomClosed || payWithPointsOnly}
             >
               <Image
                 source={{ uri: item.image }}
@@ -329,11 +354,19 @@ export default function Payment() {
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>Confirmar pagamento?</Text>
             <Text style={styles.modalSubtitle}>
-              Deseja realmente registrar o pagamento com{" "}
-              <Text style={{ color: "#00C851", fontWeight: "700" }}>
-                {selectedOption.toUpperCase()}
-              </Text>
-              ?
+              {payWithPointsOnly ? (
+                <>
+                  Deseja realmente registrar o pagamento <Text style={{ color: "#00C851", fontWeight: "700" }}>com pontos</Text>?
+                </>
+              ) : (
+                <>
+                  Deseja realmente registrar o pagamento com{" "}
+                  <Text style={{ color: "#00C851", fontWeight: "700" }}>
+                    {selectedOption.toUpperCase()}
+                  </Text>
+                  ?
+                </>
+              )}
             </Text>
             <View style={{ flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
               <TouchableOpacity

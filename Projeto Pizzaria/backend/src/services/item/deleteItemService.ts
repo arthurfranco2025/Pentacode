@@ -50,6 +50,10 @@ class DeleteItemService {
       }
     }
 
+    // Nota: não restauramos pontos aqui. Pontos só são decrementados no momento do pagamento
+    // (fluxo de pagamento). Restaurar pontos apenas quando houver confirmação explícita
+    // de que o cliente já gastou os pontos.
+
     // 3. Deleta o item
     const item = await PrismaClient.item.delete({
       where: { id }

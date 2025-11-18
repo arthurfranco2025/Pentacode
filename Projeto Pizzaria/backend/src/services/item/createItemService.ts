@@ -34,7 +34,7 @@ class CreateItemService {
       where: { id: pedido_id },
       include: {
         cliente: {
-          select: { data_nasc: true }
+          select: { data_nasc: true, points: true }
         }
       }
     });
@@ -83,23 +83,7 @@ class CreateItemService {
       // Verificação de bebida alcoólica no segundo sabor será feita abaixo junto com a do primeiro sabor
     }
 
-    const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
-    let idade = null as number | null;
-    if (precisaChecarIdade) {
-      const dataNasc = pedido.cliente.data_nasc;
-      if (!dataNasc) throw new Error('Você precisa estar logado para adicionar bebidas alcoólicas à comanda.');
-
-      const hoje = new Date();
-      idade = hoje.getFullYear() - dataNasc.getFullYear();
-      const mes = hoje.getMonth() - dataNasc.getMonth();
-      if (mes < 0 || (mes === 0 && hoje.getDate() < dataNasc.getDate())) idade--;
-
-      if (idade < 18) {
-        throw new Error('Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.');
-      }
-    }
-
-    // 🔹 Cálculo de preço e pontos
+    // 🔹 Cálculo de preço e pontos (movido antes das validações de pagamento/idade)
     let precoFinal = produto.price;
     let pontosFinal = produto.points;
 
@@ -126,20 +110,48 @@ class CreateItemService {
     precoFinal = qtd * (precoFinal + adicionaisTotal);
     pontosFinal = qtd * (pontosFinal + adicionaisPontos);
 
-    // Se o cliente pagar com pontos, sobrescrever:
+    // Valida saldo de pontos do cliente antes da checagem de idade — assim o erro correto aparece quando
+    // o cliente não tem pontos suficientes para adicionar o item usando pontos.
     if (payWithPoints) {
-      // preço em dinheiro fica 0
+      const clienteAtual = pedido.cliente as any;
+      if (!clienteAtual) throw new Error('Cliente não encontrado');
+
+      // Calcula pontos já reservados na comanda (itens marcados payWithPoints)
+      const comandaId = (pedido as any).comanda_id;
+      let pontosReservados = 0;
+      if (comandaId) {
+        const itensReservados = await PrismaClient.item.findMany({
+          where: { pedido: { comanda_id: comandaId }, payWithPoints: true },
+          select: { points: true }
+        });
+        pontosReservados = itensReservados.reduce((acc, i) => acc + (i.points || 0), 0);
+      }
+
+      const pontosDesejados = Number(pointsUsed ?? pontosFinal);
+      if (pontosDesejados + pontosReservados > clienteAtual.points) {
+        throw new Error('Cliente não tem pontos suficientes para adicionar esse item');
+      }
+
+      // Não decrementamos o saldo do cliente aqui — será feito no pagamento.
+      pontosFinal = pontosDesejados;
       precoFinal = 0;
-      // pontos armazenados no item representam os pontos consumidos
-      pontosFinal = pointsUsed || 0;
+    }
 
-      // reduzir pontos do cliente
-      await PrismaClient.cliente.update({
-        where: { id: pedido.cliente_id },
-        data: { points: { decrement: pontosFinal } },
-      });
+    // Checagem de idade
+    const precisaChecarIdade = isAlcoholCategory(produto.category.name) || (produto2 && isAlcoholCategory(produto2.category.name));
+    let idade = null as number | null;
+    if (precisaChecarIdade) {
+      const dataNasc = pedido.cliente.data_nasc;
+      if (!dataNasc) throw new Error('Você precisa estar logado para adicionar bebidas alcoólicas à comanda.');
 
-      // Ao atualizar pedido/comanda, incrementamos price com 0, e provavelmente NÃO incrementamos pontos (pontos ganhos), então usamos valores apropriados abaixo.
+      const hoje = new Date();
+      idade = hoje.getFullYear() - dataNasc.getFullYear();
+      const mes = hoje.getMonth() - dataNasc.getMonth();
+      if (mes < 0 || (mes === 0 && hoje.getDate() < dataNasc.getDate())) idade--;
+
+      if (idade < 18) {
+        throw new Error('Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.');
+      }
     }
 
     // Verifica se o pedido existe antes de criar o item (mensagem mais clara que um erro de null)
@@ -208,6 +220,12 @@ class CreateItemService {
           points: { increment: pontosFinal},
         }
       });
+      // Se após essa atualização a comanda não possuir preço (todos os itens pagos por pontos),
+      // marcamos a comanda como pagamento por pontos para que o frontend bloqueie outras formas.
+      const comandaAtual = await PrismaClient.comanda.findUnique({ where: { id: pedidoData.comanda_id }, select: { price: true, points: true, tipoPagamento: true } });
+      if (comandaAtual && comandaAtual.price === 0 && comandaAtual.points > 0) {
+        await PrismaClient.comanda.update({ where: { id: pedidoData.comanda_id }, data: { tipoPagamento: 'pontos' } });
+      }
     } else if (pedidoData) {
       // Fallback: se por algum motivo o pedido não tiver comanda_id, tentamos atualizar a comanda aberta do cliente (menos desejável, mas mantém compatibilidade)
       const comanda = await PrismaClient.comanda.findFirst({

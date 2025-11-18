@@ -420,16 +420,21 @@ export default function CustomizeProduct() {
                 error.message ||
                 "Erro ao adicionar item";
 
-            // 🔹 Verifica mensagens relacionadas a idade/álcool, mesmo que genéricas
-            if (
-                mensagem.toLowerCase().includes("menor") ||
-                mensagem.toLowerCase().includes("idade") ||
-                mensagem.toLowerCase().includes("álcool") ||
-                mensagem.toLowerCase().includes("alcool") ||
-                status === 400 && data && !data.message // caso backend só retorne 400 genérico
+            const msgLower = mensagem.toLowerCase();
+
+            // Caso: pontos insuficientes (backend devolve mensagem clara contendo 'ponto'/'pontos' ou 'insuf')
+            if (msgLower.includes("ponto") || msgLower.includes("pontos") || msgLower.includes("insuf")) {
+                setError("insufficientPoints");
+            }
+            // 🔹 Verifica mensagens relacionadas a idade/álcool explicitamente
+            else if (
+                msgLower.includes("menor") ||
+                msgLower.includes("idade") ||
+                msgLower.includes("álcool") ||
+                msgLower.includes("alcool")
             ) {
                 setError("underageAlcohol");
-            } else if (mensagem.toLowerCase().includes("convidado") && mensagem.toLowerCase().includes("ponto")) {
+            } else if (msgLower.includes("convidado") && msgLower.includes("ponto")) {
                 setError("guestPoints");
             } else {
                 setError(mensagem);
@@ -599,7 +604,24 @@ export default function CustomizeProduct() {
                     disabled={pointsDisabled}
                 >
                     <Text style={styles.pointsButtonText}>
-                        {pointsDisabled && isAdding ? <ActivityIndicator /> : `Adicionar com Pontos (${totalPoints.toFixed(1)} pts)`}
+                        {pointsDisabled && isAdding ? (
+                            <ActivityIndicator />
+                        ) : (
+                            <>
+                                {'Adicionar com Pontos '}
+                                <Ionicons
+                                    style={{
+                                        borderColor: "#000",
+                                        borderWidth: 1
+                                    }}
+                                    name="star"
+                                    size={21}
+                                    color="#1d1d2e"
+                                />
+                                {' '}
+                                {totalPoints.toFixed(1)}
+                            </>
+                        )}
                     </Text>
                 </TouchableOpacity>
                 <Modal visible={error !== ""} animationType="fade" transparent>
@@ -624,6 +646,17 @@ export default function CustomizeProduct() {
                                 <>
                                     <Text style={styles.errorMessage}>
                                         Menores de 18 anos não podem adicionar bebidas alcoólicas à comanda.
+                                    </Text>
+                                </>
+                            )}
+
+                            {error === "insufficientPoints" && (
+                                <>
+                                    <Text style={styles.errorMessage}>
+                                        Você não possui pontos suficientes para adicionar este item.
+                                    </Text>
+                                    <Text style={styles.errorGuestMessage}>
+                                        Acumule mais pontos efetuando compras ou escolha pagar com dinheiro.
                                     </Text>
                                 </>
                             )}

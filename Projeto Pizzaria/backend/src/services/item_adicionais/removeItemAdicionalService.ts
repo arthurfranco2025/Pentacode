@@ -46,6 +46,10 @@ class RemoveItemAdicional {
                 }
             })
 
+            // Nota: não restauramos pontos referentes a adicionais aqui. Pontos são decrementados
+            // apenas no momento do pagamento — restaurá-los sem confirmação de pagamento
+            // poderia resultar em ganho indevido de pontos pelo cliente.
+
             // Atualiza a comanda (recalculando todos os pedidos)
             if (pedidoAtualizado.comanda_id) {
                 const pedidosComanda = await PrismaClient.pedido.findMany({

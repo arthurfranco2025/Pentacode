@@ -25,23 +25,16 @@ class RemovePedidoService{
             throw new Error('Esse pedido não pode ser removido pois já entrou em produção')
         }
 
-        await PrismaClient.item.deleteMany({
-            where: {
-                pedido_id: pedido_id
-            }
-        })
+        // Nota: não restauramos pontos aqui. Pontos só são decrementados no fluxo de pagamento
+        // (quando o cliente efetivamente paga a comanda/pedido). Restaurar pontos neste ponto
+        // sem confirmação de pagamento causaria ganho indevido de pontos.
+        await PrismaClient.item.deleteMany({ where: { pedido_id: pedido_id } });
 
         await PrismaClient.comanda.update({
-            where:{
-                id: pedido.comanda_id
-            },
+            where:{ id: pedido.comanda_id },
             data:{
-                price:{
-                    decrement: pedido.price
-                },
-                points:{
-                    decrement: pedido.points
-                }
+                price:{ decrement: pedido.price },
+                points:{ decrement: pedido.points }
             }
         })
 
