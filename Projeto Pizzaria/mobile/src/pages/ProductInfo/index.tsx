@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff1b",
   },
-  logoText: { color: "#fff", fontSize: 22, fontWeight: "700" },
+  logoText: { color: "#fff", fontSize: 22, fontWeight: "800" },
   image: {
     width: "100%",
     height: 260,

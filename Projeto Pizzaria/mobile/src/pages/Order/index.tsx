@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     logoText: {
         color: "#FFF",
         fontSize: 22,
-        fontWeight: "700",
+        fontWeight: "800",
     },
     title: {
         fontSize: 26,

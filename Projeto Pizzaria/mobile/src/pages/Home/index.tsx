@@ -192,37 +192,39 @@ export default function Home() {
 
 	return (
 		<View style={styles.container}>
+			<View style={styles.topLogoArea}>
+				<Text style={styles.logoText}>
+					Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
+				</Text>
+			</View>
+
 			{/* HEADER */}
 			<View style={styles.header}>
-
-				{/* Botão de usuário */}
-				<TouchableOpacity onPress={() => navigation.navigate("UserPage")} style={styles.leftIcon}>
-					<Image
-						source={
-							authUser?.image_url
-								? { uri: authUser.image_url }
-								: { uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF" }
-						}
-						style={[styles.userAvatar, authUser?.image_url && styles.avatarIcon]}
-					/>
-				</TouchableOpacity>
-
-				{/* Logo */}
-				<View style={styles.headerCenter}>
-					<Text style={styles.logoText}>
-						Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
-					</Text>
+				<View style={{ width: 40 }}>
+					<TouchableOpacity onPress={() => navigation.navigate("UserPage")} style={styles.leftIcon}>
+						<Image
+							source={
+								authUser?.image_url
+									? { uri: authUser.image_url }
+									: { uri: "https://img.icons8.com/?size=100&id=85147&format=png&color=FFFFFF" }
+							}
+							style={[styles.userAvatar, authUser?.image_url && styles.avatarIcon]}
+						/>
+					</TouchableOpacity>
 				</View>
 
-				{/* Lado direito do header */}
-				<View style={styles.rightArea}>
-					{/* Pontos */}
-					<View style={styles.pointsContainer}>
-						<Ionicons name="star" size={20} color="#FFD700" />
-						<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
-					</View>
+				<View style={{ flex: 1 }} />
 
-					{/* Mesa */}
+				<View style={styles.rightArea}>
+
+					{/* Mostrar pontos só se não for convidado */}
+					{!authUser?.guest && (
+						<View style={styles.pointsContainer}>
+							<Ionicons name="star" size={20} color="#FFD700" />
+							<Text style={styles.pointsText}>{pontos.toFixed(2)}</Text>
+						</View>
+					)}
+
 					<TouchableOpacity
 						onPress={() => navigation.navigate("OrderTicket")}
 						style={styles.mesaButton}
@@ -230,7 +232,6 @@ export default function Home() {
 					>
 						<Text style={styles.mesaButtonText}>Mesa {comanda?.numero_mesa}</Text>
 						<Ionicons name="reader-sharp" size={16} color="#fff" />
-
 						{totalPedido > 0 && <View style={styles.notificationDot} />}
 					</TouchableOpacity>
 				</View>
@@ -357,12 +358,16 @@ export default function Home() {
 const styles = StyleSheet.create({
 	container: { flex: 1, backgroundColor: "#1d1d2e" },
 	content: { flex: 1, paddingTop: 5 },
+	topLogoArea: {
+		width: "100%",
+		alignItems: "center",
+		paddingTop: 5,
+	},
 	header: {
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "space-between",
-		paddingTop: 50,
-		paddingBottom: 14,
+		paddingTop: 5,
+		paddingBottom: 5,
 		paddingHorizontal: 20,
 		backgroundColor: "transparent",
 		borderBottomWidth: 1,
@@ -377,15 +382,6 @@ const styles = StyleSheet.create({
 		width: 34,
 		height: 34,
 		borderRadius: 50,
-	},
-
-	headerCenter: {
-		position: "absolute",
-		left: 0,
-		right: 0,
-		alignItems: "center",
-		justifyContent: "center",
-		pointerEvents: "none",
 	},
 
 	logoText: {

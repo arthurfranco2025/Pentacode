@@ -204,7 +204,7 @@ export default function Payment() {
           onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
+        <Text style={styles.logoText}>
           Penta<Text style={{ color: "#FF3F4B" }}>Pizza</Text>
         </Text>
         <View style={{ width: 26 }} />
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  headerTitle: {
+  logoText: {
     color: "#FFF",
     fontSize: 22,
     fontWeight: "800",

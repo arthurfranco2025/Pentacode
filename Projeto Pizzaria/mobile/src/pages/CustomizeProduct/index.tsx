@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
     logoText: {
         color: "#fff",
         fontSize: 22,
-        fontWeight: "700"
+        fontWeight: "800"
     },
     card: {
         flexDirection: "row",
